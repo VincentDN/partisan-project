@@ -112,8 +112,14 @@ not canon, and no place names have been committed on purpose.
 
 ## Companion documents
 
-`docs/ai-design.md` — AI design document and roadmap (v0.1.0). The five-layer
-architecture, the belief model, morale and suppression, the director spec, the
-three asymmetric faction brains, and a phased build plan. Not deployed as a
-page; it is a repo document. It does not affect the site `VERSION` and carries
-its own version in its header comment.
+`docs/ai-design.md` — AI design document and roadmap (v0.1.0). The executive
+summary. Read this first.
+
+`docs/ai/` — the AI Compendium (v1.0.0). Thirteen volumes plus appendices,
+~49,000 words. Start at `00-index.md`. Covers the historical and technical
+corpus, the belief model, individual and squad AI, spatial reasoning, faction
+brains, the director, Unreal implementation against UE 5.8, legibility,
+companions, validation, and production.
+
+Neither is deployed as a page. They do not affect the site `VERSION` and carry
+their own versions in their header comments.
