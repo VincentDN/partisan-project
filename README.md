@@ -107,3 +107,13 @@ The premise, timeline placement, three-faction structure and constraint sheet
 are settled. Everything under **Open questions** is genuinely open, including
 the island's name. The island geography and anchor-location list are proposals,
 not canon, and no place names have been committed on purpose.
+
+---
+
+## Companion documents
+
+`docs/ai-design.md` — AI design document and roadmap (v0.1.0). The five-layer
+architecture, the belief model, morale and suppression, the director spec, the
+three asymmetric faction brains, and a phased build plan. Not deployed as a
+page; it is a repo document. It does not affect the site `VERSION` and carries
+its own version in its header comment.
