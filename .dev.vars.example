@@ -1,0 +1,7 @@
+# Local development only. Copy to `.dev.vars` (which is gitignored) and run:
+#   npx wrangler pages dev .
+#
+# On the live Cloudflare Pages project this is set instead under
+# Settings -> Environment variables, as type "Secret", for both
+# Production and Preview. It must NEVER be committed.
+SITE_PASSWORD="the passphrase goes here"

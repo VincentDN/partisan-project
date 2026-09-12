@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<!--
+  ══════════════════════════════════════════════════════════════════════
+  PARTISAN  ·  internal design document
+  A WW2044 setting project · Kaiser Cat Collective / Atelier Vincent De Nil BV
+  ──────────────────────────────────────────────────────────────────────
+  VERSION : 0.2.0
+  BUILD   : 2026-09-12
+  STATUS  : INTERNAL. Hidden deployment. noindex + robots.txt disallow.
+
+  CHANGELOG
+    0.1.0  Initial build. Structure and CSS architecture cloned from
+           americankingdoms-projectsite v1.27.0 (token block, .wrap /
+           .plate / .sec-pad rhythm, header comment versioning, VERSION
+           file, self-contained index.html, Cloudflare Pages direct
+           deploy with no build step).
+           Reskinned from the AK "illuminated proclamation" system to a
+           "limewash and cobalt" system: chalk-white Cycladic wall plates
+           alternating with Aegean-night indigo, Ottoman crimson and
+           dust-olive as secondaries. Archivo + Source Serif 4.
+           No JSON-LD entity graph (deliberate, see README).
+           No motion beyond focus states, matching the AK house rule.
+    0.2.0  Site-wide password gate (functions/_middleware.js). Every route
+           is held behind a styled passphrase page; sessions are an
+           HMAC-SHA256 signed HttpOnly cookie keyed on SITE_PASSWORD, which
+           lives in Cloudflare env vars and never in this repo. Fails closed
+           if the variable is unset.
+  ══════════════════════════════════════════════════════════════════════
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PARTISAN | Internal design document</title>
+<meta name="description" content="Internal working document for PARTISAN, a WW2044 setting project. Not for distribution.">
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+<meta name="theme-color" content="#0e1a24">
+<meta name="version" content="0.2.0">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   PARTISAN, limewash-and-cobalt design
+   Tokens → base → components → sections → responsive
+   ============================================================ */
+:root{
+  --night:#0e1a24;        /* Aegean night, base dark            */
+  --night-2:#152431;      /* raised dark panel                  */
+  --night-3:#081119;      /* deepest, vignettes and footer      */
+  --lime:#eceee9;         /* limewash wall, cool chalk white    */
+  --lime-2:#dee2dc;       /* deeper chalk, panels on light      */
+  --lime-ink:#18212a;     /* text on chalk                      */
+  --lime-ink-2:#56646f;   /* muted text on chalk                */
+  --chalk:#f1f3ef;        /* text on dark                       */
+  --chalk-dim:#9aa9b4;    /* muted text on dark                 */
+  --cobalt:#1f5f9e;       /* shutter blue, GREF                 */
+  --cobalt-lite:#5b9ed4;  /* links on dark                      */
+  --crimson:#a8232e;      /* Ottoman red, REDFOR                */
+  --crimson-lite:#d4626c;
+  --olive:#767b5a;        /* dust and webbing, tertiary         */
+  --sand:#c2a171;         /* sun-bleached stone accent          */
+  --rule:rgba(31,95,158,.28);
+  --rule-dark:rgba(241,243,239,.16);
+
+  --display:'Archivo','Helvetica Neue',Arial,sans-serif;
+  --body:'Source Serif 4',Georgia,'Times New Roman',serif;
+
+  --wrap:1180px;
+  --read:66ch;
+  --pad:clamp(1.25rem,5vw,4rem);
+  --sec:clamp(4rem,8vw,7rem);
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:auto}
+body{
+  margin:0;
+  background:var(--lime);
+  color:var(--lime-ink);
+  font-family:var(--body);
+  font-size:clamp(1.02rem,.6rem + .6vw,1.13rem);
+  line-height:1.72;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+img,svg{max-width:100%;display:block}
+a{color:var(--cobalt)}
+a:focus-visible,button:focus-visible{outline:3px solid var(--sand);outline-offset:3px}
+::selection{background:var(--cobalt);color:var(--chalk)}
+
+h1,h2,h3,h4{font-family:var(--display);margin:0;line-height:1.06;letter-spacing:-.015em}
+h2{font-weight:700;font-size:clamp(1.85rem,1rem + 2.6vw,3rem)}
+h3{font-weight:700;font-size:clamp(1.2rem,.9rem + .9vw,1.5rem);line-height:1.2}
+h4{font-weight:600;font-size:1.02rem;line-height:1.3}
+p{margin:0 0 1.15em}
+p:last-child{margin-bottom:0}
+
+.wrap{max-width:var(--wrap);margin-inline:auto;padding-inline:var(--pad)}
+.read{max-width:var(--read)}
+.sec-pad{padding-block:var(--sec)}
+
+/* --- dark plates, with a faint limewash-over-render grain --- */
+.plate{position:relative;background:var(--night);color:var(--chalk)}
+.plate::before{
+  content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+  background-image:
+    radial-gradient(circle at 22% 34%,rgba(241,243,239,.10) 0 1px,transparent 1.6px),
+    radial-gradient(circle at 72% 68%,rgba(0,0,0,.22) 0 1px,transparent 1.7px),
+    repeating-linear-gradient(96deg,rgba(241,243,239,.018) 0 1px,transparent 1px 7px);
+  background-size:33px 31px,47px 41px,auto;
+  opacity:.75;
+}
+.plate > *{position:relative;z-index:1}
+.plate a{color:var(--cobalt-lite)}
+.plate .muted{color:var(--chalk-dim)}
+.muted{color:var(--lime-ink-2)}
+
+/* --- section heads: a hairline the width of the reading column --- */
+.head{margin-bottom:clamp(1.8rem,3.5vw,2.8rem)}
+.head h2{margin-bottom:.7rem}
+.head p{max-width:var(--read);margin:0;color:var(--lime-ink-2);font-size:1.02rem}
+.plate .head p{color:var(--chalk-dim)}
+.head::after{content:"";display:block;width:5.5rem;height:3px;background:var(--cobalt);margin-top:1.5rem}
+.plate .head::after{background:var(--sand)}
+
+/* --- classification strip --- */
+.classif{
+  background:var(--night-3);color:var(--sand);
+  font-family:var(--display);font-weight:600;font-size:.8rem;letter-spacing:.06em;
+  padding:.55rem var(--pad);text-align:center;line-height:1.4;
+}
+
+/* --- masthead --- */
+header{background:var(--night);border-bottom:1px solid var(--rule-dark)}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:1.5rem;padding-block:.9rem;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:.75rem;text-decoration:none;color:var(--chalk)}
+.brand .mark{width:34px;height:23px;flex:none;border:1px solid rgba(241,243,239,.35)}
+.brand b{font-family:var(--display);font-weight:800;font-size:1.22rem;letter-spacing:.13em;color:var(--chalk)}
+.brand .brandtext span{font-family:var(--display);font-weight:500;font-size:.78rem;letter-spacing:.09em;color:var(--chalk-dim)}
+.nav-links{display:flex;flex-wrap:wrap;gap:.35rem 1.35rem;list-style:none;margin:0;padding:0}
+.nav-links a{font-family:var(--display);font-weight:600;font-size:.88rem;color:var(--chalk-dim);text-decoration:none}
+.nav-links a:hover{color:var(--chalk)}
+
+/* --- hero --- */
+.hero{background:var(--night);color:var(--chalk);padding-block:clamp(3rem,7vw,5.5rem) clamp(3.5rem,8vw,6rem);position:relative}
+.hero-grid{display:grid;grid-template-columns:minmax(0,320px) minmax(0,1fr);gap:clamp(2rem,5vw,4rem);align-items:center}
+.hero-flag{border:1px solid rgba(241,243,239,.22);box-shadow:0 18px 44px rgba(0,0,0,.45)}
+.hero-cap{margin:.85rem 0 0;font-family:var(--display);font-weight:500;font-size:.78rem;color:var(--chalk-dim);line-height:1.5}
+.hero h1{
+  font-weight:800;font-size:clamp(3.2rem,1.5rem + 9vw,7rem);
+  letter-spacing:.02em;margin:0 0 1rem;
+}
+.hero .sub{font-family:var(--display);font-weight:600;font-size:clamp(1rem,.8rem + .5vw,1.22rem);color:var(--sand);margin:0 0 1.4rem;letter-spacing:.01em}
+.hero .lede{max-width:52ch;color:var(--chalk);margin:0 0 1.8rem}
+.hero-cta{display:flex;flex-wrap:wrap;gap:.8rem}
+
+/* --- buttons --- */
+.btn{
+  display:inline-block;font-family:var(--display);font-weight:700;font-size:.92rem;
+  padding:.85rem 1.5rem;text-decoration:none;border:2px solid transparent;
+}
+.btn-primary{background:var(--cobalt);color:#fff;border-color:var(--cobalt)}
+.btn-primary:hover{background:#18507f;border-color:#18507f}
+.btn-ghost{border-color:rgba(241,243,239,.4);color:var(--chalk)}
+.btn-ghost:hover{border-color:var(--chalk)}
+
+/* --- premise, first light plate --- */
+.premise .lead{font-size:clamp(1.2rem,.95rem + .8vw,1.5rem);line-height:1.55;font-weight:600;max-width:34ch}
+.premise-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:clamp(1.8rem,4vw,3.5rem);align-items:start}
+
+/* --- timeline, a genuine sequence so it gets dated markers --- */
+.tl{list-style:none;margin:0;padding:0;display:grid;gap:0}
+.tl li{
+  display:grid;grid-template-columns:7.5rem minmax(0,1fr);gap:clamp(1rem,3vw,2.5rem);
+  padding-block:1.5rem;border-top:1px solid var(--rule-dark);
+}
+.tl li:last-child{border-bottom:1px solid var(--rule-dark)}
+.tl .yr{font-family:var(--display);font-weight:800;font-size:clamp(1.4rem,1rem + 1.4vw,2rem);color:var(--sand);line-height:1.1}
+.tl .yr small{display:block;font-weight:500;font-size:.74rem;letter-spacing:.05em;color:var(--chalk-dim);margin-top:.35rem}
+.tl h3{margin-bottom:.35rem;color:var(--chalk)}
+.tl p{color:var(--chalk-dim);margin:0;font-size:1rem}
+.tl li.is-now{background:linear-gradient(90deg,rgba(31,95,158,.18),transparent 62%)}
+.tl li.is-now .yr{color:var(--cobalt-lite)}
+
+/* --- factions --- */
+.fac{display:grid;grid-template-columns:repeat(auto-fit,minmax(255px,1fr));gap:clamp(1.2rem,2.5vw,2rem)}
+.fac article{background:var(--lime-2);padding:1.6rem 1.5rem 1.8rem;border-top:5px solid var(--olive)}
+.fac article.gref{border-top-color:var(--cobalt)}
+.fac article.redfor{border-top-color:var(--crimson)}
+.fac article.bluefor{border-top-color:var(--sand)}
+.fac .flagchip{width:74px;height:49px;border:1px solid rgba(24,33,42,.3);margin-bottom:1.1rem}
+.fac .tag{font-family:var(--display);font-weight:700;font-size:.78rem;letter-spacing:.1em;color:var(--lime-ink-2);display:block;margin-bottom:.3rem}
+.fac h3{margin-bottom:.7rem}
+.fac p{font-size:.99rem;margin-bottom:.8rem}
+.fac dl{margin:1.1rem 0 0;font-size:.93rem;line-height:1.55}
+.fac dt{font-family:var(--display);font-weight:700;font-size:.78rem;letter-spacing:.05em;color:var(--lime-ink-2);margin-top:.75rem}
+.fac dd{margin:0}
+
+/* --- constraint table, the design-doc core --- */
+.rules{width:100%;border-collapse:collapse;font-size:.99rem}
+.rules caption{text-align:left;color:var(--lime-ink-2);font-size:.95rem;padding-bottom:1rem}
+.rules th,.rules td{text-align:left;vertical-align:top;padding:.95rem 1.1rem .95rem 0;border-bottom:1px solid var(--rule)}
+.rules thead th{font-family:var(--display);font-weight:700;font-size:.82rem;letter-spacing:.06em;color:var(--lime-ink-2);border-bottom:2px solid var(--cobalt);padding-bottom:.6rem}
+.rules tbody th{font-family:var(--display);font-weight:700;width:11rem;color:var(--lime-ink)}
+.rules .yes{color:var(--cobalt);font-weight:600}
+.rules .no{color:var(--crimson);font-weight:600}
+
+/* --- pillars --- */
+.pillars{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:clamp(1.5rem,3vw,2.6rem)}
+.pillars h3{color:var(--chalk);margin-bottom:.6rem;padding-top:1.1rem;border-top:3px solid var(--sand)}
+.pillars p{color:var(--chalk-dim);font-size:1rem;margin:0}
+
+/* --- open questions --- */
+.qs{list-style:none;margin:0;padding:0;max-width:var(--read)}
+.qs li{padding:1.15rem 0;border-bottom:1px solid var(--rule)}
+.qs li:first-child{border-top:1px solid var(--rule)}
+.qs strong{font-family:var(--display);font-weight:700;display:block;margin-bottom:.2rem}
+.qs span{display:block;color:var(--lime-ink-2);font-size:.97rem;line-height:1.6}
+
+/* --- status --- */
+.status{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1.4rem;margin-top:2rem}
+.status div{border-left:4px solid var(--rule-dark);padding:.2rem 0 .2rem 1.1rem}
+.status div.done{border-left-color:var(--cobalt-lite)}
+.status div.now{border-left-color:var(--sand)}
+.status h4{color:var(--chalk);margin-bottom:.35rem}
+.status p{color:var(--chalk-dim);font-size:.95rem;margin:0}
+
+/* --- callout --- */
+.note{
+  background:var(--lime-2);border-left:5px solid var(--sand);
+  padding:1.3rem 1.5rem;margin:2.2rem 0 0;max-width:var(--read);font-size:.99rem;
+}
+.plate .note{background:var(--night-2);border-left-color:var(--sand);color:var(--chalk-dim)}
+
+/* --- footer --- */
+footer{background:var(--night-3);color:var(--chalk-dim);padding-block:3.2rem;text-align:center;font-size:.92rem}
+footer .mark{width:62px;height:41px;margin:0 auto 1.4rem;border:1px solid rgba(241,243,239,.3)}
+footer .motto{font-family:var(--display);font-weight:700;letter-spacing:.16em;font-size:.95rem;color:var(--sand);margin:0 0 1rem}
+footer a{color:var(--cobalt-lite)}
+footer .fine{margin:0;line-height:1.9}
+
+/* --- responsive --- */
+@media(max-width:860px){
+  .hero-grid{grid-template-columns:1fr;gap:2.2rem}
+  .hero-flag{max-width:260px}
+  .premise-grid{grid-template-columns:1fr}
+  .tl li{grid-template-columns:1fr;gap:.55rem}
+  .tl .yr small{display:inline;margin-left:.6rem}
+  .rules tbody th{width:auto}
+  .rules,.rules tbody,.rules tr,.rules td,.rules th{display:block}
+  .rules thead{display:none}
+  .rules tr{border-bottom:1px solid var(--rule);padding-block:.6rem}
+  .rules td,.rules th{border:0;padding:.2rem 0}
+  .rules tbody th{font-size:1.02rem;padding-top:.7rem}
+}
+@media(max-width:560px){
+  .nav{gap:.9rem}
+  .nav-links{gap:.3rem .9rem}
+}
+</style>
+</head>
+<body>
+
+<div class="classif">Internal working document · Not for distribution · PARTISAN v0.2.0 · Kaiser Cat Collective</div>
+
+<header>
+  <nav class="wrap nav" aria-label="Primary">
+    <a class="brand" href="#top">
+      <svg class="mark" viewBox="0 0 90 60" role="img" aria-label="Provisional flag of the Free State of Yantis">
+        <rect width="90" height="60" fill="#f1f3ef"/>
+        <rect width="14" height="60" fill="#a8232e"/>
+        <rect x="14" y="24" width="76" height="12" fill="#1f5f9e"/>
+        <rect x="44" y="0" width="12" height="60" fill="#1f5f9e"/>
+      </svg>
+      <span class="brandtext">
+        <b>PARTISAN</b><br>
+        <span>Yantis · 2012 · a WW2044 setting</span>
+      </span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#premise">Premise</a></li>
+      <li><a href="#timeline">Timeline</a></li>
+      <li><a href="#island">The island</a></li>
+      <li><a href="#factions">Factions</a></li>
+      <li><a href="#rules">Constraints</a></li>
+      <li><a href="#pillars">Pillars</a></li>
+      <li><a href="#open">Open questions</a></li>
+      <li><a href="#status">Status</a></li>
+    </ul>
+  </nav>
+</header>
+
+<!-- ============================ HERO ============================ -->
+<section class="hero" id="top">
+  <div class="wrap hero-grid">
+    <div>
+      <svg class="hero-flag" viewBox="0 0 900 600" role="img" aria-label="Provisional flag of the Free State of Yantis: a white field with a blue cross throughout and a crimson band at the hoist">
+        <rect width="900" height="600" fill="#f1f3ef"/>
+        <rect width="138" height="600" fill="#a8232e"/>
+        <rect x="138" y="246" width="762" height="108" fill="#1f5f9e"/>
+        <rect x="438" y="0" width="108" height="600" fill="#1f5f9e"/>
+      </svg>
+      <p class="hero-cap">Provisional flag of the Free State of Yantis.<br>Placeholder. Yours to redesign.</p>
+    </div>
+    <div>
+      <h1>PARTISAN</h1>
+      <p class="sub">Yantis, autumn 2012. The last Ottoman island.</p>
+      <p class="lede">Greece has been free for a hundred and eighty years. Yantis has not. When the garrison's relief column fails to sail, a handful of islanders with hunting rifles and a fishing fleet decide to stop waiting for Athens and take the island themselves.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#premise">Read the document</a>
+        <a class="btn btn-ghost" href="#open">Jump to open questions</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ PREMISE ============================ -->
+<section class="sec-pad" id="premise">
+  <div class="wrap">
+    <div class="head">
+      <h2>What this is</h2>
+      <p>The one-paragraph version, for anyone arriving cold.</p>
+    </div>
+    <div class="premise-grid">
+      <p class="lead">PARTISAN is a WW2044 project. Not a spin-off. It sits on the same timeline, one shift earlier.</p>
+      <div>
+        <p>WW2044 runs the twentieth century a hundred years late: the Second World War is fought in the 2040s with the hardware of the 2040s, but with the doctrine, alliances and stakes of 1939 to 1945. Crete is still the turning point. It just happens in 2041.</p>
+        <p>Apply the same shift to the Balkan Wars and 1912 becomes 2012. That is where PARTISAN lives. The Ottoman Empire is still standing, still holding the last of the eastern Aegean, and still two years away from the war that will end it. The island of Yantis rises before the Greek fleet arrives, runs itself for five months, and is then annexed by the country it was fighting to join.</p>
+        <p>The men who hold the ridge above Yantis harbour in 2012 are the grandfathers of the men who hold Crete in 2041. That is the whole reason this project exists.</p>
+      </div>
+    </div>
+    <div class="note">
+      <p><strong>Historical anchor.</strong> This is the Free State of Icaria, July to November 1912. Ikarian islanders threw out their Ottoman garrison on their own initiative, months before the First Balkan War formally began, and ran an independent state with its own flag, stamps and militia until Greece annexed it. Yantis is that story with the serial numbers filed off and a hundred years added.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ TIMELINE ============================ -->
+<section class="plate sec-pad" id="timeline">
+  <div class="wrap">
+    <div class="head">
+      <h2>Where it sits</h2>
+      <p>The WW2044 ladder holds all the way down. Every rung is its historical counterpart plus one hundred years.</p>
+    </div>
+    <ol class="tl">
+      <li>
+        <div class="yr">2011 <small>&larr; 1911</small></div>
+        <div>
+          <h3>The empire is overstretched</h3>
+          <p>An Italian war in North Africa pulls Ottoman reserves south and leaves the Aegean garrisons thin, unpaid and resented. Yantis has a company where it should have a battalion.</p>
+        </div>
+      </li>
+      <li class="is-now">
+        <div class="yr">2012 <small>&larr; 1912 · PARTISAN</small></div>
+        <div>
+          <h3>The island rises</h3>
+          <p>The uprising, the five-month republic, the arrival of the Hellenic Navy, and the annexation nobody on the island voted for. This is the playable window.</p>
+        </div>
+      </li>
+      <li>
+        <div class="yr">2013 <small>&larr; 1913</small></div>
+        <div>
+          <h3>The victors turn on each other</h3>
+          <p>The Balkan allies fall out over the spoils. Yantis is now Greek territory and the partisans are now, on paper, Greek soldiers. Several of them object.</p>
+        </div>
+      </li>
+      <li>
+        <div class="yr">2014 <small>&larr; 1914</small></div>
+        <div>
+          <h3>The first great war</h3>
+          <p>The Balkan question detonates. The Ottoman Empire enters and does not leave. Yantis becomes a rear-area supply anchorage and stays one for four years.</p>
+        </div>
+      </li>
+      <li>
+        <div class="yr">2041 <small>&larr; 1941</small></div>
+        <div>
+          <h3>Crete</h3>
+          <p>The WW2044 turning point. Airborne insertion at night, the doctrine the setting is built around. Yantis veterans, or their grandsons, are on the receiving end.</p>
+        </div>
+      </li>
+      <li>
+        <div class="yr">2044 <small>&larr; 1944</small></div>
+        <div>
+          <h3>WW2044</h3>
+          <p>The parent project. PARTISAN is its prologue, thirty-two years and one technological generation earlier.</p>
+        </div>
+      </li>
+    </ol>
+    <div class="note">
+      <p>The thirty-two year gap is the feature, not the problem. It buys a completely different silhouette, a completely different weapon set and a completely different visual language from WW2044, while staying inside the same continuity.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ THE ISLAND ============================ -->
+<section class="sec-pad" id="island">
+  <div class="wrap">
+    <div class="head">
+      <h2>The island</h2>
+      <p>Terrain first. Everything about how this plays comes out of the ground.</p>
+    </div>
+    <div class="premise-grid">
+      <div>
+        <p>Yantis is a long, thin, steep eastern Aegean island: a limestone spine running most of its length, terraced olive and vine on the south slopes, pine and scrub on the north, and almost no flat ground. One deep harbour town. A handful of inland villages reachable only by switchback. A single coast road that can be cut in four places by two men and a crowbar.</p>
+        <p>That geography does the design work. The garrison holds the harbour, the customs house and the road. The partisans hold everything above the treeline and everything the road cannot reach. Neither can dislodge the other without help from the sea, which is why the sea is where the campaign is decided.</p>
+        <p>The island is close enough to the Anatolian coast to see it on a clear day. That sightline is the whole strategic problem in one image.</p>
+      </div>
+      <div>
+        <h3 style="margin-bottom:.8rem">Anchor locations</h3>
+        <ul style="padding-left:1.15rem;margin:0">
+          <li>The harbour town, customs house and Ottoman barracks</li>
+          <li>The coast road and its four cut points</li>
+          <li>The monastery on the spine, the partisans' first headquarters</li>
+          <li>The abandoned emery workings, arms cache and prison</li>
+          <li>The fishing anchorages on the north shore, the smuggling route</li>
+          <li>The signal station on the summit, contested throughout</li>
+        </ul>
+        <p class="muted" style="margin-top:1.1rem;font-size:.95rem">Names deliberately withheld. Yantis does not currently scan as a Greek toponym and the whole naming layer should be settled in one pass rather than accreted.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ FACTIONS ============================ -->
+<section class="sec-pad" id="factions" style="background:var(--lime-2)">
+  <div class="wrap">
+    <div class="head">
+      <h2>Three sides, not two</h2>
+      <p>The third faction is the point. The relief force is not straightforwardly the cavalry.</p>
+    </div>
+    <div class="fac">
+      <article class="gref">
+        <svg class="flagchip" viewBox="0 0 90 60" role="img" aria-label="GREF colours">
+          <rect width="90" height="60" fill="#f1f3ef"/><rect width="14" height="60" fill="#a8232e"/>
+          <rect x="14" y="24" width="76" height="12" fill="#1f5f9e"/><rect x="44" width="12" height="60" fill="#1f5f9e"/>
+        </svg>
+        <span class="tag">GREF</span>
+        <h3>The Yantis militia</h3>
+        <p>Fishermen, quarrymen, shepherds, two ex-army sergeants and a schoolteacher who can write a proclamation. They liberated the island themselves and they have no intention of handing it to anyone.</p>
+        <dl>
+          <dt>Strength</dt><dd>Terrain knowledge, the fishing fleet, total local support</dd>
+          <dt>Weakness</dt><dd>No artillery, no medical chain, ammunition measured in rounds not crates</dd>
+          <dt>Wants</dt><dd>An independent Yantis, or failing that, terms</dd>
+        </dl>
+      </article>
+      <article class="redfor">
+        <svg class="flagchip" viewBox="0 0 90 60" role="img" aria-label="REDFOR colours">
+          <rect width="90" height="60" fill="#a8232e"/>
+          <circle cx="38" cy="30" r="14" fill="#f1f3ef"/><circle cx="43" cy="30" r="11.5" fill="#a8232e"/>
+          <path d="M58 22 l2.6 6.2 6.7.5-5.1 4.4 1.6 6.5-5.8-3.5-5.8 3.5 1.6-6.5-5.1-4.4 6.7-.5z" fill="#f1f3ef"/>
+        </svg>
+        <span class="tag">REDFOR</span>
+        <h3>The garrison</h3>
+        <p>An understrength company a long way from home, six months behind on pay, holding a town that hates them for a government that has stopped answering. Not villains. Men who want to go home and are being shot at by farmers.</p>
+        <dl>
+          <dt>Strength</dt><dd>The harbour, the only artillery on the island, actual training</dd>
+          <dt>Weakness</dt><dd>Cannot leave the road, cannot be reinforced, cannot trust the town</dd>
+          <dt>Wants</dt><dd>Relief, or a ship, or an honourable surrender</dd>
+        </dl>
+      </article>
+      <article class="bluefor">
+        <svg class="flagchip" viewBox="0 0 90 60" role="img" aria-label="BLUFOR colours">
+          <rect width="90" height="60" fill="#1f5f9e"/>
+          <g fill="#f1f3ef"><rect y="6.7" width="90" height="6.7"/><rect y="20" width="90" height="6.7"/><rect y="33.3" width="90" height="6.7"/><rect y="46.7" width="90" height="6.7"/></g>
+          <rect width="33.3" height="33.3" fill="#1f5f9e"/>
+          <rect x="13.3" width="6.7" height="33.3" fill="#f1f3ef"/><rect y="13.3" width="33.3" height="6.7" fill="#f1f3ef"/>
+        </svg>
+        <span class="tag">BLUFOR</span>
+        <h3>The Hellenic relief force</h3>
+        <p>Regular infantry landed off a cruiser, arriving after the hard part is done to accept a surrender the militia already secured. Competent, well equipped, and carrying annexation orders in a sealed envelope.</p>
+        <dl>
+          <dt>Strength</dt><dd>Naval gunfire, supply, legitimacy, numbers</dd>
+          <dt>Weakness</dt><dd>Knows nothing of the island, and is not entirely welcome</dd>
+          <dt>Wants</dt><dd>Yantis as Greek territory, with or without Yantine consent</dd>
+        </dl>
+      </article>
+    </div>
+    <div class="note">
+      <p><strong>The turn.</strong> The campaign should not end when the garrison surrenders. It should end when the militia has to decide what to do about the people who came to save them. That is the real Icaria story and it is worth more than another beach landing.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ CONSTRAINTS ============================ -->
+<section class="sec-pad" id="rules">
+  <div class="wrap">
+    <div class="head">
+      <h2>The constraint sheet</h2>
+      <p>The single rule that makes the setting legible, and what it lets in and keeps out.</p>
+    </div>
+    <p class="read" style="margin-bottom:2rem"><strong>The rule:</strong> real hardware of the stated year, historical war of the year minus one hundred. WW2044 is 2040s equipment fighting 1940s. PARTISAN is 2010s equipment fighting 1910s. Anything that fails that test is out, however good it looks.</p>
+    <table class="rules">
+      <caption>Applies to art, models, sound, UI and copy alike.</caption>
+      <thead>
+        <tr><th scope="col">Layer</th><th scope="col">In</th><th scope="col">Out</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">Small arms</th>
+          <td class="yes">Kalashnikov pattern, worn G3s, hunting shotguns, bolt guns older than the men holding them</td>
+          <td class="no">Anything from the WW2044 kit sheet, modular rails on militia weapons</td>
+        </tr>
+        <tr>
+          <th scope="row">Optics and night</th>
+          <td class="yes">Cheap red dots on a minority of weapons, handheld torches, flares, one prized monocular</td>
+          <td class="no">Quad-tube night vision, thermal, the 2044 nocturnal doctrine</td>
+        </tr>
+        <tr>
+          <th scope="row">Vehicles</th>
+          <td class="yes">Pickups, an ex-municipal truck, mules, caiques, one requisitioned ferry</td>
+          <td class="no">Armour of any kind on the island. The road will not take it.</td>
+        </tr>
+        <tr>
+          <th scope="row">Comms</th>
+          <td class="yes">Mobile phones with intermittent coverage, handheld VHF off the boats, runners, church bells</td>
+          <td class="no">Encrypted mesh, drones, satellite links, anything that removes uncertainty</td>
+        </tr>
+        <tr>
+          <th scope="row">Uniform</th>
+          <td class="yes">Civilian clothes with an armband, mismatched surplus, chest rigs over fishing jumpers</td>
+          <td class="no">A partisan uniform. There isn't one. That is the visual identity.</td>
+        </tr>
+        <tr>
+          <th scope="row">Garrison kit</th>
+          <td class="yes">Genuine issued uniform, correct but old, visibly unmaintained and unreplaced</td>
+          <td class="no">Modern professional-army silhouette. They are a neglected colonial garrison.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="note">
+      <p><strong>Production note.</strong> This constraint set is cheap. 2012 irregular warfare is the most photographed conflict aesthetic of the last two decades, so reference is everywhere and the asset burden is a fraction of the bespoke 2044 hardware. That is a real argument for making PARTISAN the next thing rather than the someday thing.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ PILLARS ============================ -->
+<section class="plate sec-pad" id="pillars">
+  <div class="wrap">
+    <div class="head">
+      <h2>Design pillars</h2>
+      <p>Four. If a decision does not serve one of these, it does not go in.</p>
+    </div>
+    <div class="pillars">
+      <div>
+        <h3>The ground is the enemy</h3>
+        <p>No flat ground, one road, and a ridgeline nobody can hold cheaply. Movement should cost more than shooting does.</p>
+      </div>
+      <div>
+        <h3>Scarcity over loadout</h3>
+        <p>Ammunition, medicine and boats are the resources. There is no armoury. What the militia carries is what the militia found.</p>
+      </div>
+      <div>
+        <h3>Nobody here is a monster</h3>
+        <p>The garrison is unpaid and abandoned. The relief force is not lying about its orders. The tragedy works only if all three sides are reasonable.</p>
+      </div>
+      <div>
+        <h3>Liberation is not the end</h3>
+        <p>The island wins and then loses itself. The second half of the campaign is political, and it should hurt more than the first.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ OPEN QUESTIONS ============================ -->
+<section class="sec-pad" id="open">
+  <div class="wrap">
+    <div class="head">
+      <h2>Open questions</h2>
+      <p>Unresolved. Listed here so they stop being re-litigated in chat.</p>
+    </div>
+    <ul class="qs">
+      <li>
+        <strong>Is Yantis the name?</strong>
+        <span>It does not read as Greek. Decide the whole toponym layer at once, island and locations together, before any art is labelled.</span>
+      </li>
+      <li>
+        <strong>Does the Ottoman Empire survive as the Ottoman Empire?</strong>
+        <span>A straight hundred-year shift keeps the empire alive to 2012, which is the cleanest option and matches the WW2044 method. The alternative is a modern successor state that is Ottoman in name and posture. Pick one and hold it, because the flags and insignia fall out of this answer.</span>
+      </li>
+      <li>
+        <strong>How much does 2012 real-world politics show through?</strong>
+        <span>2012 already carries a heavy set of associations for irregular Mediterranean warfare. Deliberate resonance or careful distance, but not accident.</span>
+      </li>
+      <li>
+        <strong>Does PARTISAN get its own domain?</strong>
+        <span>American Kingdoms and The Divided States both did. WW2044 is still a Shopify page. This site currently assumes hidden and internal, and takes no position.</span>
+      </li>
+      <li>
+        <strong>Is the playable window the uprising, the republic, or the annexation?</strong>
+        <span>All three is the ambitious answer. The republic is the one nobody else has made.</span>
+      </li>
+      <li>
+        <strong>Wiki or no wiki?</strong>
+        <span>AK runs collaborative lore on Miraheze. A single island with a five-month history may be better served closed and authored.</span>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================ STATUS ============================ -->
+<section class="plate sec-pad" id="status">
+  <div class="wrap">
+    <div class="head">
+      <h2>Where it stands</h2>
+      <p>As of 12 September 2026.</p>
+    </div>
+    <div class="status">
+      <div class="done">
+        <h4>Settled</h4>
+        <p>Timeline placement at 2012, the hundred-year shift, the Icaria model, the three-faction structure and the constraint sheet.</p>
+      </div>
+      <div class="now">
+        <h4>In hand</h4>
+        <p>This document. Naming pass. First flag designs for all three factions.</p>
+      </div>
+      <div>
+        <h4>Not started</h4>
+        <p>Island map, concept art, weapon sheet, the political second act, and any decision about what form PARTISAN actually ships in.</p>
+      </div>
+    </div>
+    <div class="note">
+      <p>Nothing here is public. No JSON-LD, no sitemap, noindex on the page and a blanket disallow in robots.txt. If this goes public later, the schema graph lifts straight out of the American Kingdoms build.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <svg class="mark" viewBox="0 0 90 60" role="img" aria-label="Provisional flag of the Free State of Yantis">
+    <rect width="90" height="60" fill="#f1f3ef"/><rect width="14" height="60" fill="#a8232e"/>
+    <rect x="14" y="24" width="76" height="12" fill="#1f5f9e"/><rect x="44" width="12" height="60" fill="#1f5f9e"/>
+  </svg>
+  <p class="motto">ΕΛΕΥΘΕΡΙΑ Ή ΘΑΝΑΤΟΣ</p>
+  <p class="fine">
+    PARTISAN v0.2.0 · internal · © 2026 Kaiser Cat Collective / Atelier Vincent De Nil BV<br>
+    <a href="https://kaisercatcinema.com/s/about-ww2044">WW2044</a> &nbsp;·&nbsp;
+    <a href="https://kaisercatcinema.com/">Kaiser Cat Collective</a> &nbsp;·&nbsp;
+    <a href="https://american-kingdoms.com/">American Kingdoms</a> &nbsp;·&nbsp;
+    <a href="https://dividedstates-project.com/">The Divided States</a> &nbsp;·&nbsp;
+    <a href="https://flagmaker-print.com/">Flagmaker &amp; Print</a>
+  </p>
+</footer>
+
+</body>
+</html>
