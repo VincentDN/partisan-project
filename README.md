@@ -121,5 +121,13 @@ corpus, the belief model, individual and squad AI, spatial reasoning, faction
 brains, the director, Unreal implementation against UE 5.8, legibility,
 companions, validation, and production.
 
-Neither is deployed as a page. They do not affect the site `VERSION` and carry
+`docs/ai/audio/` — spoken-briefing adaptation of the Compendium. Six parts,
+~2 hours, written for text-to-speech or reading aloud. Start at
+`00-listen-first.md`.
+
+`docs/audience-and-playtest-strategy.md` — who the game is for, how to reach
+them without harvesting anyone's data, and how the audience constrains the AI
+design (§9). Read alongside the Compendium.
+
+None of these are deployed as pages. They do not affect the site `VERSION` and carry
 their own versions in their header comments.
