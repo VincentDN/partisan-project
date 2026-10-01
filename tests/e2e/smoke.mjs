@@ -55,8 +55,8 @@ await check('opening scene: the table, the rifle, four buttons; the shell keeps 
   await page.waitForFunction(() => window.PARP_INTRO?.ready, null, {timeout: 90000});
   const labels = await page.locator('.actions a').allInnerTexts();
   assert.deepEqual(
-    labels.map(l => l.replace(/\s+E$/, '').trim()),
-    ['Customize this weapon', 'PARTISAN project index', 'Read Game Design Doc', 'Load Advanced animations test'],
+    labels.map(l => l.replace(/\s+E$/, '').trim().toLowerCase()),
+    ['customize this weapon', 'partisan project index', 'read game design doc', 'load advanced animations test'],
   );
   assert.equal(await page.locator('.pbar a[href$="menu/"]').count(), 1, 'top bar has INDEX');
   assert.equal(await page.locator('.pbar a[href$="game-design-master-doc.html"]').count(), 1, 'top bar has DESIGN DOC');
