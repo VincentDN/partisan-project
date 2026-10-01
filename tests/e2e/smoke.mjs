@@ -262,6 +262,8 @@ await check('bench: Skip fits the part, Cancel before the commit changes nothing
   await page.evaluate(() => (document.querySelector('#first-run').hidden = true));
   const optic = () => page.evaluate(() => window.PARP_BENCH.rifle.build.optic);
   const before = await optic();
+  // A frozen clock keeps the task before its commit however slow the software renderer is.
+  await page.evaluate(() => (window.PARP_BENCH.actions.now = () => 0));
   await page.evaluate(() => window.PARP_BENCH.change('optic', 'scope'));
   assert.equal(await page.evaluate(() => window.PARP_BENCH.actions.busy), true);
   assert.equal(await page.locator('#skip').isEnabled(), true);
