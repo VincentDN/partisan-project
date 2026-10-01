@@ -5,10 +5,10 @@ Small on purpose. Read this first, then `AGENTS.md`. Plan and sizes: [`README.md
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-01 19:35 UTC · agent · (no packet) · partial**
+**2026-10-01 21:19 UTC · agent · (no packet) · partial**
 
-- Branch `claude/friendly-dijkstra-4ky9w6` at `2d7364e`; **18 uncommitted file(s)** (commit before stopping): M .gitignore,  M CHANGELOG.md,  M assets/REGISTER.md,  M assets/register.json,  M bench/bench.js,  M docs/CODEMAP.md.
-- Last commits: 2d7364e vincent-todo: network access and foley archive items · 3d9b015 Restore the recorded handling foley (42 owner-cleared takes) · eef471c Bench Lab: contact-sheet tool for reviewing hand contacts
+- Branch `claude/friendly-dijkstra-4ky9w6` at `57e9a10`; **1 uncommitted file(s)** (commit before stopping): M docs/CODEMAP.md.
+- Last commits: 57e9a10 Fix intro a11y role and label-case test (tests running) · a49e7f3 WIP: shell, opening scene, Nokia index on the table, top bar (tests running) · d13ff8d Commit the vendored three.js build (it was git-ignored by the build/ rule)
 - What happened: (write one or two sentences)
 - Next step: (name the exact next action, file and command)
 <!-- handoff:end -->
