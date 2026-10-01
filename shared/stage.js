@@ -1,7 +1,6 @@
 // Shared 3D stage for PARP modules: renderer, orbit camera, HDR image-based lighting that follows
-// the camera, a shadow-catching floor and adaptive resolution. The Operator Customiser and the
-// Asset Viewer use it. (The Weapon Workbench still carries its own copy of this logic in
-// workbench/viewer.js; folding it in is tracked as WP-TD-01 in docs/master-roadmap.md.)
+// the camera, a shadow-catching floor and adaptive resolution. The Operator Customiser, the
+// Asset Viewer and the Weapon Workbench all use it.
 import * as T from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {RGBELoader} from 'three/addons/loaders/RGBELoader.js';

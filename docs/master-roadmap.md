@@ -139,7 +139,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | **M3** Integration and sharing | v0.6.0 | 2/4 | 56 BU | 50% |
 | **M4** Weapon roster 2: modern and WW2 | v0.7.0 | 0/7 | 111 BU | 0% |
 | **M5** Production acceptance | v1.0.0 | 1/6 | 67 BU | 30% |
-| **TD** Tech debt (fill windows) | — | 3/4 | 44 BU | 55% |
+| **TD** Tech debt (fill windows) | — | 4/4 | 44 BU | 100% |
 | **D** Design docs | — | 0/5 | 59 BU | 0% |
 | **H27** 2027 horizon | — | 0/3 | 48 BU | 0% |
 
@@ -226,7 +226,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 
 | ID | Packet | Size | Status | Needs | Depends on |
 |---|---|---|---|---|---|
-| `WP-T1` | Fold the Workbench viewer into shared/stage.js and shared/music-ui.js; split viewer.js into state/ui/camera/photo modules | M (20) | planned | — | — |
+| `WP-T1` | Fold the Workbench viewer into shared/stage.js and shared/music-ui.js; split viewer.js into state/ui/camera/photo modules | M (20) | done | — | — |
 | `WP-T2` | Formatter + linter (Prettier, ESLint) and reformat the dense legacy modules | S (8) | done | — | — |
 | `WP-T3` | Type-check with JSDoc + tsc --checkJs (no build step) | S (8) | done | — | `WP-T2` |
 | `WP-T4` | Unit tests for stats, compatibility rules and Workbench hash codes | S (8) | done | — | — |

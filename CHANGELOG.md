@@ -4,6 +4,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 ## [0.3.1] · 2026-10-01
 
+### Changed
+- **WP-T1**: `workbench/viewer.js` now uses `shared/stage.js` and `shared/music-ui.js`; stats panel, summary and PNG export moved to `stats-panel.js`, `summary.js`, `export.js` (1,109 → ~720 lines). Behaviour unchanged.
+
 ### Added
 - **Recon, Insurgent, Enforcer** (v1) in the Operator Customiser as roster bases: original extension packs (hood, houndstooth scarf, chest radio; knit beanie, shemagh) bound to the Base Operator skeleton by bone name, plus a shirt torso pack so "Uniform only" no longer shows a hollow chest.
 - Generated plaid and Recon camo fabrics; `tools/assets/blender_common.py`, `build-*-pack.py`, `optimize-pack.mjs`.
