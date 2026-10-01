@@ -1,6 +1,6 @@
 {
  "generated": "2026-10-01",
- "triangles": 304,
+ "triangles": 388,
  "bones": [
   "root",
   "pelvis",
@@ -88,6 +88,20 @@
  ],
  "meshes": [
   {
+   "node": "SK_Recon_Canister",
+   "triangles": 36,
+   "materials": [
+    "M_Canister"
+   ]
+  },
+  {
+   "node": "SK_Recon_Carabiner",
+   "triangles": 48,
+   "materials": [
+    "M_Carabiner"
+   ]
+  },
+  {
    "node": "SK_Recon_Hood",
    "triangles": 140,
    "materials": [
@@ -110,6 +124,24 @@
   }
  ],
  "materials": [
+  {
+   "name": "M_Canister",
+   "baseColor": [
+    0.254,
+    0.144,
+    0.027
+   ],
+   "textured": false
+  },
+  {
+   "name": "M_Carabiner",
+   "baseColor": [
+    0.539,
+    0.578,
+    0.591
+   ],
+   "textured": false
+  },
   {
    "name": "M_Hood",
    "baseColor": [

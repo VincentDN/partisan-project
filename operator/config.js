@@ -339,6 +339,8 @@ const RECON_PARTS = {
   hood: {nodes: ['SK_Recon_Hood']},
   scarf: {nodes: ['SK_Recon_Scarf']},
   radio: {nodes: ['SK_Recon_Radio']},
+  carabiner: {nodes: ['SK_Recon_Carabiner']},
+  canister: {nodes: ['SK_Recon_Canister']},
 };
 const bySlot = (id, patch) => SLOTS.map(s => (s.id !== id ? s : {...s, ...patch}));
 const RECON_SLOTS = [
@@ -371,6 +373,18 @@ const RECON_SLOTS = [
     default: 'on',
     options: [
       {id: 'on', label: 'Radio', show: on('radio')},
+      {id: 'off', label: 'None', show: on()},
+    ],
+  },
+  {
+    id: 'props',
+    label: 'Hip props',
+    camera: 'torso',
+    default: 'both',
+    options: [
+      {id: 'both', label: 'Carabiner + canister', show: on('carabiner', 'canister')},
+      {id: 'carabiner', label: 'Carabiner', show: on('carabiner')},
+      {id: 'canister', label: 'Canister', show: on('canister')},
       {id: 'off', label: 'None', show: on()},
     ],
   },

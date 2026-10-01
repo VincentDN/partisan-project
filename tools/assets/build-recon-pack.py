@@ -71,5 +71,20 @@ bc.box(ctx, bm, .145, -.205, 1.455, .008, .008, .090)      # antenna
 radio = bc.make(ctx, 'SK_Recon_Radio', bm, bc.material('M_Radio', '#2b2e27'))
 bc.skin(ctx, radio, lambda p: {'spine_03': 1})
 
-bc.export(ctx, a.out, (hood, scarf, radio))
+# ---- Props: a carabiner clipped to the right chest strap and a gas canister on the lower back ---
+bm = bmesh.new()
+bc.box(ctx, bm, -.150, -.228, 1.440, .007, .012, .046)   # carabiner spine
+bc.box(ctx, bm, -.130, -.228, 1.440, .007, .012, .046)   # gate
+bc.box(ctx, bm, -.140, -.228, 1.490, .020, .012, .007)   # top bar
+bc.box(ctx, bm, -.140, -.228, 1.390, .020, .012, .007)   # bottom bar
+carabiner = bc.make(ctx, 'SK_Recon_Carabiner', bm, bc.material('M_Carabiner', '#c2c8ca'))
+bc.skin(ctx, carabiner, lambda p: {'spine_03': 1})
+bm = bmesh.new()
+bc.box(ctx, bm, 0, .165, 1.06, .040, .040, .110)         # canister body
+bc.box(ctx, bm, 0, .165, 1.185, .020, .020, .020)        # neck
+bc.box(ctx, bm, 0, .165, 1.215, .034, .014, .012)        # valve
+canister = bc.make(ctx, 'SK_Recon_Canister', bm, bc.material('M_Canister', '#8a6a2e'))
+bc.skin(ctx, canister, lambda p: {'spine_01': 1})
+
+bc.export(ctx, a.out, (hood, scarf, radio, carabiner, canister))
 print('recon pack ->', a.out)

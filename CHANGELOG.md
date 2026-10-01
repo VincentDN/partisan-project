@@ -5,6 +5,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 ## [0.3.1] · 2026-10-01
 
 ### Changed
+- **WP-C3 (props)**: Recon gets a chest carabiner and a back canister ("Hip props" slot); recon pack 388 triangles. Owner sign-off still pending.
 - **WP-C10**: bare-head options grow to 4 hairstyles (short crop, buzz, swept fringe, long) and 3 facial-hair styles plus both (moustache, goatee, beard), all in the Hair colour zone; core pack 984 triangles.
 - **WP-D5**: `docs/ui-style-guide.md`; shared design tokens extracted to `shared/tokens.css` (imported by `panel-ui.css`).
 - **WP-I4**: Operator Customiser "Save share card" (`operator/share-card.js`): operator render, look list, carried weapon and its stat bars, branding and link in one PNG.
