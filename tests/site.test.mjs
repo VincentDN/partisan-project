@@ -34,6 +34,7 @@ test('internal documents and raw sources are not published', () => {
     'docs/packets.json',
     'workbench/index.html',
     'operator/index.html',
+    'bench/index.html',
     'viewer/index.html',
     '.nojekyll',
   ])

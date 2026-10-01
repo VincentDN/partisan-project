@@ -1108,6 +1108,87 @@
     "docs/engineering/standards.md"
    ],
    "acceptance": "Findings filed as packets; no blocker left."
+  },
+  {
+   "track": "Bench Lab",
+   "milestone": "M3",
+   "agent": "any",
+   "needs": [
+    "browser"
+   ],
+   "id": "WP-X1",
+   "title": "Bench Lab v1: staged part changes with IK arms, tray, Skip/Cancel, review mode, synth handling sounds",
+   "size": "M",
+   "bu": 20,
+   "status": "done",
+   "deps": [],
+   "inputs": [
+    "bench/",
+    "workbench/rifle-instance.js"
+   ],
+   "acceptance": "All seven slot families run through Skip; cancel before commit changes nothing; reduced motion is instant; tests and a11y green."
+  },
+  {
+   "track": "Bench Lab",
+   "milestone": "M3",
+   "agent": "any",
+   "needs": [
+    "browser"
+   ],
+   "id": "WP-X2",
+   "title": "Bench Lab: per-option grip contacts and hand silhouettes; review every slot extreme with a contact sheet",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-X1"
+   ],
+   "inputs": [
+    "bench/hands.js",
+    "bench/bench.js"
+   ],
+   "acceptance": "No hand/part intersection at approach, grip and release for every option on both rifles (contact sheet reviewed); reach error < 20 mm."
+  },
+  {
+   "track": "Bench Lab",
+   "milestone": "M3",
+   "agent": "any",
+   "needs": [
+    "browser"
+   ],
+   "id": "WP-X3",
+   "title": "Bench Lab: bench atmosphere (lamp, radio playing the music, camp ambience) and camera shots per family",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-X1"
+   ],
+   "inputs": [
+    "bench/scene.js",
+    "shared/music.js"
+   ],
+   "acceptance": "Radio-filtered music option; per-family camera framing keeps the active mount unoccluded."
+  },
+  {
+   "track": "Bench Lab",
+   "milestone": "M3",
+   "agent": "any",
+   "needs": [
+    "browser"
+   ],
+   "id": "WP-X4",
+   "title": "Bench Lab: performance and device pass (60 fps desktop, 30 fps mid phone) and handling-sound listening review",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-X1"
+   ],
+   "inputs": [
+    "bench/bench.js"
+   ],
+   "acceptance": "Frame-time percentiles recorded on desktop and one phone; owner approves the sounds."
   }
  ]
 }

@@ -5,10 +5,10 @@ Small on purpose. Read this first, then `AGENTS.md`. Plan and sizes: [`README.md
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-01 18:35 UTC · agent · (no packet) · partial**
+**2026-10-01 19:08 UTC · agent · (no packet) · partial**
 
-- Branch `claude/friendly-dijkstra-4ky9w6` at `955683f`; **2 uncommitted file(s)** (commit before stopping): M docs/agent-ops/packets.json,  M docs/master-roadmap.md.
-- Last commits: 955683f WP-C3: Recon carabiner and canister props · f8fcd40 WP-C10: more hairstyles and facial hair · 66d5db8 WP-D5: UI style guide and shared design tokens
+- Branch `claude/friendly-dijkstra-4ky9w6` at `885c0a3`; **16 uncommitted file(s)** (commit before stopping): M CHANGELOG.md,  M README.md,  M assets/js/items.js,  M docs/CODEMAP.md,  M docs/adr/README.md,  M docs/agent-ops/packets.json.
+- Last commits: 885c0a3 Fix next-packet test for an exhausted roadmap · 380cad4 Add owner to-do checklist · 040cc35 WP-C3 blocked on owner sign-off
 - What happened: (write one or two sentences)
 - Next step: (name the exact next action, file and command)
 <!-- handoff:end -->

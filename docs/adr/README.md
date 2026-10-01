@@ -11,3 +11,4 @@ One short file per decision that would be expensive to rediscover. Format: Conte
 | [0005](0005-scope-removals-and-operator.md) | Firing, hand animation and the code-built operator removed; operator on the purchased skeleton; pose data model |
 | [0006](0006-agent-ops.md) | Work packets, budget units and handoffs for two $20 plans |
 | [0007](0007-asset-register.md) | Asset register and licence policy |
+| [0008](0008-bench-lab.md) | Bench Lab: the advanced workbench animations return as an opt-in experiment (amends 0005) |

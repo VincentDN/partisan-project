@@ -19,6 +19,7 @@ const pages = [
   ['workbench', 'workbench/', async p => p.waitForSelector('#build .slot', {timeout: 60000})],
   ['operator', 'operator/', async p => p.waitForFunction(() => window.PARP_OPERATOR?.ready, null, {timeout: 60000})],
   ['operator (recon)', 'operator/#base=recon', async p => p.waitForFunction(() => window.PARP_OPERATOR?.ready, null, {timeout: 60000})],
+  ['bench', 'bench/', async p => p.waitForFunction(() => window.PARP_BENCH?.ready, null, {timeout: 90000})],
   ['viewer', 'viewer/', async p => p.waitForFunction(() => window.PARP_VIEWER?.ready, null, {timeout: 60000})],
   ['design document', 'docs/game-design-master-doc.html', async p => p.waitForSelector('#milestones .ms')],
   ['master roadmap', 'docs/master-roadmap.html', async p => p.waitForSelector('main h1')],

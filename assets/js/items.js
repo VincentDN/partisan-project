@@ -16,6 +16,12 @@ export const ITEMS = [
     help: 'Demo. Demo. Four operators: dress, repaint and pose them. Hero poses, idles.',
   },
   {
+    label: 'Bench Lab',
+    href: './bench/',
+    icon: px('1111101010111110101011111'),
+    help: 'Experiment. Watch hands take a part off the rifle, tray it and fit another.',
+  },
+  {
     label: 'Asset Viewer',
     href: './viewer/',
     icon: px('1111110001101011000111111'),

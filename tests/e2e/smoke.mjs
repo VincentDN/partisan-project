@@ -36,7 +36,7 @@ await check('index: splash, menu, number key navigates', async () => {
   assert.equal(await page.evaluate(() => window.PARP_INDEX.mode), 'splash');
   await page.keyboard.press('Enter');
   assert.equal(await page.evaluate(() => window.PARP_INDEX.mode), 'menu');
-  assert.equal(await page.locator('.menu a').count(), 9);
+  assert.equal(await page.locator('.menu a').count(), 10);
   await page.keyboard.press('ArrowDown');
   assert.equal(await page.evaluate(() => window.PARP_INDEX.index), 1);
   await Promise.all([page.waitForURL(/operator\/?$/), page.keyboard.press('2')]);
@@ -254,6 +254,33 @@ await check('workbench: the guided tour steps through, is remembered, and the st
   assert.equal(await page.evaluate(() => localStorage.getItem('parp-tour-workbench')), '1');
   noProblems(page);
   await page.close();
+});
+
+await check('bench: Skip fits the part, Cancel before the commit changes nothing, reduced motion is instant', async () => {
+  const page = await open(browser, server.url + 'bench/', {reducedMotion: 'no-preference'});
+  await page.waitForFunction(() => window.PARP_BENCH?.ready, null, {timeout: 90000});
+  await page.evaluate(() => (document.querySelector('#first-run').hidden = true));
+  const optic = () => page.evaluate(() => window.PARP_BENCH.rifle.build.optic);
+  const before = await optic();
+  await page.evaluate(() => window.PARP_BENCH.change('optic', 'scope'));
+  assert.equal(await page.evaluate(() => window.PARP_BENCH.actions.busy), true);
+  assert.equal(await page.locator('#skip').isEnabled(), true);
+  await page.locator('#cancel').click();
+  assert.equal(await optic(), before, 'cancel before the commit leaves the build alone');
+  assert.equal(await page.evaluate(() => window.PARP_BENCH.ghosts), null, 'presentation copies are removed');
+  await page.evaluate(() => window.PARP_BENCH.change('optic', 'scope'));
+  await page.locator('#skip').click();
+  assert.equal(await optic(), 'scope');
+  assert.match(await page.evaluate(() => location.hash), /optic=scope/);
+  assert.equal(await page.evaluate(() => window.PARP_BENCH.rifle.slots.optic.container.visible), true);
+  noProblems(page);
+  await page.close();
+  const instant = await open(browser, server.url + 'bench/');
+  await instant.waitForFunction(() => window.PARP_BENCH?.ready, null, {timeout: 90000});
+  await instant.evaluate(() => window.PARP_BENCH.change('muzzle', 'comp'));
+  assert.equal(await instant.evaluate(() => window.PARP_BENCH.actions.busy), false);
+  assert.equal(await instant.evaluate(() => window.PARP_BENCH.rifle.build.muzzle), 'comp');
+  await instant.close();
 });
 
 await check('workbench: loads, swapping a part writes the hash, both rifles load', async () => {

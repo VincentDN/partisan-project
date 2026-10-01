@@ -1,4 +1,4 @@
-# Owner to-do
+# Vincent to-do
 
 Things only the project owner can do. Agents cannot, or must not, do these. The full list of every packet is in [master-roadmap.md](master-roadmap.md); the agent hand-off is [agent-ops/STATE.md](agent-ops/STATE.md).
 
@@ -16,6 +16,8 @@ Things only the project owner can do. Agents cannot, or must not, do these. The 
 ## Creative decisions
 - [ ] **WP-D1, setting canon.** Yantis / WW2044 prologue, or the modern low-poly operator look? This unblocks WP-D2 (design doc expansion) and WP-D3 (faction insignia and flags).
 - [ ] **WP-C3, Recon sign-off.** Compare the Recon operator against `docs/moodboard/recon-hero-pose.jpg` and say what to change.
+
+- [ ] **WP-X1, Bench Lab look.** Open `bench/`, fit a few parts and tell an agent what looks wrong (hand poses, camera, tray). Mark which handling sounds you like.
 
 ## Whenever convenient
 - [ ] **WP-Q6, manual accessibility pass.** Screen reader (NVDA or VoiceOver), 200 % zoom, high-contrast mode, a real phone.
