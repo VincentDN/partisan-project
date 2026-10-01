@@ -444,7 +444,7 @@
   },
   {
    "id": "WP-C3",
-   "title": "Recon: textures, palette, patches (MP-O tag, shield), gear props (radio, carabiner, canister)",
+   "title": "Recon: gear props (carabiner, canister, radio handheld) and owner sign-off against the sheet",
    "track": "Characters",
    "milestone": "M2",
    "size": "S",
@@ -458,7 +458,8 @@
    "inputs": [
     "docs/moodboard/recon-insignia-props.jpg"
    ],
-   "acceptance": "Recon is visually signed off against recon-hero-pose.jpg by the owner."
+   "acceptance": "Recon is visually signed off against recon-hero-pose.jpg by the owner.",
+   "notes": "Patches (MP-O tag, shield) shipped with WP-C7. Chest radio exists. Remaining: carabiner, canister, owner sign-off."
   },
   {
    "id": "WP-C4",
@@ -522,15 +523,14 @@
   },
   {
    "id": "WP-C7",
-   "title": "Insignia and patch system (decals on sleeve/chest/helmet, faction flags)",
+   "title": "Insignia and patch system: six sleeve patch designs, left and right (faction flags come with WP-D3)",
    "track": "Characters",
    "milestone": "M2",
    "size": "M",
    "bu": 20,
-   "status": "planned",
+   "status": "done",
    "deps": [
-    "WP-C4",
-    "WP-D3"
+    "WP-C4"
    ],
    "agent": "any",
    "needs": [],

@@ -5,8 +5,9 @@ import fs from 'node:fs';
 import {PARTS, SLOTS, ZONES, PALETTES, VIEWS, TRIANGLE_BUDGET, PRESETS, ROSTER, BASES, defaultsFor} from '../operator/config.js';
 
 const manifest = JSON.parse(fs.readFileSync('assets/models/operators/base-operator.manifest.json', 'utf8'));
-const corePack = JSON.parse(fs.readFileSync('assets/models/operators/core-pack.manifest.json', 'utf8'));
-const nodes = new Map([...manifest.meshes, ...corePack.meshes].map(m => [m.node, m]));
+const readManifest = n => JSON.parse(fs.readFileSync(`assets/models/operators/${n}.manifest.json`, 'utf8'));
+const corePack = readManifest('core-pack'), patchesPack = readManifest('patches-pack');
+const nodes = new Map([...manifest.meshes, ...corePack.meshes, ...patchesPack.meshes].map(m => [m.node, m]));
 
 test('Base Operator model is within budget and well-formed', () => {
   assert.ok(fs.existsSync('assets/models/operators/base-operator.glb'));

@@ -5,12 +5,12 @@ Small on purpose. Read this first, then `AGENTS.md`. Plan and sizes: [`README.md
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-01 17:14 UTC · claude · WP-A6/A7/A8/T4 · done**
+**2026-10-01 17:24 UTC · claude · WP-C7 · done**
 
-- Branch `claude/friendly-dijkstra-4ky9w6` at `773fb2e`; **14 uncommitted file(s)** (commit before stopping): M CHANGELOG.md,  M README.md,  M docs/CODEMAP.md,  M docs/agent-ops/packets.json,  M docs/game-design-master-doc.html,  M docs/master-roadmap.md.
-- Last commits: 773fb2e feat(WP-I1,WP-I3): Workbench build on the operator and versioned P1 loadout codes · 5825db0 feat(WP-C9,WP-C10): blink, head-follow, a real head with hair and facial hair (v0.3.1) · 6740013 feat(WP-C8): ten poses including crouch, kneel and salute
-- What happened: Rail footprints, four new slots (rail, trigger, charging, sling) plus back-up sight, workbench tests. 86 tests, smoke green.
-- Next step: M1 now waits on the owner: WP-A1 (CC0 downloads), WP-A9 (G3A3 licence). Agents: WP-T1 split viewer.js, WP-Q1 accessibility, WP-Q4 guided tour, WP-I4 share card, WP-D4/D5 docs.
+- Branch `claude/friendly-dijkstra-4ky9w6` at `c13dd2b`; **11 uncommitted file(s)** (commit before stopping): M CHANGELOG.md,  M assets/REGISTER.md,  M assets/register.json,  M docs/CODEMAP.md,  M docs/agent-ops/packets.json,  M docs/master-roadmap.md.
+- Last commits: c13dd2b feat(WP-Q1): axe-core accessibility audit in CI, keyboard-operable 3D stages · 59b0707 feat(WP-A6,WP-A7,WP-A8,WP-T4): rail footprints, new slots and workbench tests · 773fb2e feat(WP-I1,WP-I3): Workbench build on the operator and versioned P1 loadout codes
+- What happened: Sleeve patches: 6 designs both sides, placed below the shoulder pouch. Tests 86, smoke, a11y green.
+- Next step: WP-C3 props+sign-off (owner), WP-T1/T2/T3, WP-Q4 tour, WP-I4 share card, WP-D4/D5.
 <!-- handoff:end -->
 
 ## Active this week

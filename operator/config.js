@@ -29,6 +29,12 @@ export const PARTS = {
 // Always shown: SK_Face, SK_Eyeball, SK_Body (uniform top), SK_Legs, SK_Gloves, SK_Shoes.
 
 const on = (...parts) => parts;
+
+// Sleeve patches (patches-pack.glb): six designs, one quad each per sleeve. Slots below choose one per side.
+export const PATCH_DESIGNS = [['star', 'Star roundel'], ['shield', 'Mountain shield'], ['tag', 'MP-O tag'], ['tricolour', 'Tricolour (placeholder)'], ['cross', 'Medic cross'], ['chevrons', 'Chevrons']];
+for (const side of ['L', 'R']) for (const [id] of PATCH_DESIGNS) PARTS[`patch${side}_${id}`] = {nodes: [`SK_Patch_${side}_${id}`]};
+const patchSlot = (side, def = 'none') => ({id: `patch${side}`, label: side === 'L' ? 'Left sleeve patch' : 'Right sleeve patch', camera: 'torso', default: def, options: [
+  {id: 'none', label: 'None', show: on()}, ...PATCH_DESIGNS.map(([id, label]) => ({id, label, show: on(`patch${side}_${id}`)}))]});
 export const SLOTS = [
   {id: 'head', label: 'Headgear', camera: 'head', default: 'nvg', options: [
     {id: 'nvg',    label: 'Helmet + NVG', show: on('helmet', 'nvg')},
@@ -84,6 +90,7 @@ export const SLOTS = [
     {id: 'elbow', label: 'Elbow only',   show: on('elbowGuards')},
     {id: 'none',  label: 'None',         show: on()},
   ]},
+  patchSlot('L'), patchSlot('R'),
   {id: 'weapon', label: 'Carried weapon', camera: 'full', default: 'none', options: [
     {id: 'none',  label: 'None',    show: on()},
     {id: 'ak74m', label: 'AK-74M',  show: on(), weapon: 'ak74m'},
@@ -169,6 +176,7 @@ const RECON_SLOTS = [
   ...bySlot('pack', {default: 'off'}).filter(s => s.id === 'pack'),
   ...bySlot('holsters', {default: 'right'}).filter(s => s.id === 'holsters'),
   ...SLOTS.filter(s => s.id === 'guards'),
+  patchSlot('L', 'shield'), patchSlot('R', 'tag'),
   ...bySlot('weapon', {default: 'ak15k'}).filter(s => s.id === 'weapon'),
 ];
 const RECON_ZONES = [
@@ -183,8 +191,8 @@ const RECON_PRESETS = [
 ];
 
 export const BASES = {
-  base: {id: 'base', label: 'Base Operator', model: '../assets/models/operators/base-operator.glb', packs: ['../assets/models/operators/core-pack.glb'], parts: PARTS, slots: SLOTS, zones: ZONES, presets: PRESETS, defaults: {}, status: 'available'},
-  recon: {id: 'recon', label: 'Recon', model: '../assets/models/operators/base-operator.glb', packs: ['../assets/models/operators/core-pack.glb', '../assets/models/operators/recon-pack.glb'], parts: RECON_PARTS, slots: RECON_SLOTS, zones: RECON_ZONES, presets: RECON_PRESETS, defaults: {pose: 'hero'}, status: 'available'},
+  base: {id: 'base', label: 'Base Operator', model: '../assets/models/operators/base-operator.glb', packs: ['../assets/models/operators/core-pack.glb', '../assets/models/operators/patches-pack.glb'], parts: PARTS, slots: SLOTS, zones: ZONES, presets: PRESETS, defaults: {}, status: 'available'},
+  recon: {id: 'recon', label: 'Recon', model: '../assets/models/operators/base-operator.glb', packs: ['../assets/models/operators/core-pack.glb', '../assets/models/operators/patches-pack.glb', '../assets/models/operators/recon-pack.glb'], parts: RECON_PARTS, slots: RECON_SLOTS, zones: RECON_ZONES, presets: RECON_PRESETS, defaults: {pose: 'hero'}, status: 'available'},
 };
 // ---- Insurgent and Enforcer: both wear the headwear pack (knit beanie, shemagh); Enforcer is otherwise Base parts in black ----
 const HEADWEAR_PARTS = {...PARTS, beanie: {nodes: ['SK_Ins_Beanie']}, shemagh: {nodes: ['SK_Ins_Shemagh']}};
@@ -203,15 +211,15 @@ const HEADWEAR_ZONES = [
   {id: 'beanie',  label: 'Beanie',  materials: ['M_Beanie'],  camera: 'head', default: 'original', palette: 'dark'},
   {id: 'shemagh', label: 'Shemagh', materials: ['M_Shemagh'], textured: true, camera: 'head', default: 'original', palette: 'fabric'},
 ];
-const INSURGENT_SLOTS = variantSlots('beanie', 'shemagh', {comms: 'off', armor: 'soft', rig: 'mags', belt: 'on', pack: 'off', holsters: 'none', guards: 'none', weapon: 'ak74m'});
+const INSURGENT_SLOTS = variantSlots('beanie', 'shemagh', {comms: 'off', armor: 'soft', rig: 'mags', belt: 'on', pack: 'off', holsters: 'none', guards: 'none', weapon: 'ak74m', patchL: 'star'});
 const ENFORCER_SLOTS = variantSlots('beanie', 'shemagh', {comms: 'off', armor: 'plates', rig: 'full', belt: 'on', pack: 'off', holsters: 'both', guards: 'both', weapon: 'ak15k'});
 
-BASES.insurgent = {id: 'insurgent', label: 'Insurgent', model: BASES.base.model, packs: ['../assets/models/operators/core-pack.glb', '../assets/models/operators/insurgent-pack.glb'], parts: HEADWEAR_PARTS,
+BASES.insurgent = {id: 'insurgent', label: 'Insurgent', model: BASES.base.model, packs: ['../assets/models/operators/core-pack.glb', '../assets/models/operators/patches-pack.glb', '../assets/models/operators/insurgent-pack.glb'], parts: HEADWEAR_PARTS,
   slots: INSURGENT_SLOTS, zones: variantZones({top: 'plaidGreen', pants: 'khaki', gear: 'brown', gloves: 'brown'}, HEADWEAR_ZONES),
   presets: [{id: 'insurgent', label: 'Keyframe 1', state: {}}, {id: 'brown', label: 'Brown plaid', state: {'z.top': 'plaidBrown', 'z.pants': 'olive', 'z.shemagh': 'khaki'}},
             {id: 'ak', label: 'AK rifleman', state: {'z.top': 'tan', 'z.pants': 'olive', 'z.gear': 'olive', rig: 'full', armor: 'plates', 'z.armor': 'olive', head: 'bare', face: 'shemagh'}}],
   defaults: {pose: 'ready'}, status: 'available'};
-BASES.enforcer = {id: 'enforcer', label: 'Enforcer', model: BASES.base.model, packs: ['../assets/models/operators/core-pack.glb', '../assets/models/operators/insurgent-pack.glb'], parts: HEADWEAR_PARTS,
+BASES.enforcer = {id: 'enforcer', label: 'Enforcer', model: BASES.base.model, packs: ['../assets/models/operators/core-pack.glb', '../assets/models/operators/patches-pack.glb', '../assets/models/operators/insurgent-pack.glb'], parts: HEADWEAR_PARTS,
   slots: ENFORCER_SLOTS, zones: variantZones({top: 'black', pants: 'black', armor: 'black', helmet: 'tan', gear: 'olive', gloves: 'black', boots: 'black'}, HEADWEAR_ZONES),
   presets: [{id: 'enforcer', label: 'Keyframe 2', state: {}}, {id: 'nvg', label: 'NVG night', state: {head: 'nvg', face: 'both', 'z.helmet': 'black', 'z.gear': 'black'}}, {id: 'tan', label: 'Tan kit', state: {'z.top': 'tan', 'z.pants': 'tan', 'z.armor': 'brown', 'z.gear': 'brown'}}],
   defaults: {pose: 'hero'}, status: 'available'};

@@ -135,7 +135,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 |---|---|---|---|---|
 | **M0** Foundation | v0.3.0 | 8/10 | 130 BU | 95% |
 | **M1** Gun modder: real parts, three weapons | v0.4.0 | 3/11 | 143 BU | 34% |
-| **M2** Operator roster: Recon, Insurgent, Enforcer | v0.5.0 | 7/11 | 172 BU | 67% |
+| **M2** Operator roster: Recon, Insurgent, Enforcer | v0.5.0 | 8/11 | 172 BU | 79% |
 | **M3** Integration and sharing | v0.6.0 | 2/4 | 56 BU | 50% |
 | **M4** Weapon roster 2: modern and WW2 | v0.7.0 | 0/7 | 111 BU | 0% |
 | **M5** Production acceptance | v1.0.0 | 1/6 | 67 BU | 30% |
@@ -180,11 +180,11 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 |---|---|---|---|---|---|
 | `WP-C1` | Skeleton contract: document the shared 83-bone rig, add a test that poses/idles run on any base with the same bone names | S (8) | done | — | — |
 | `WP-C2` | Recon: hood and scarf meshes skinned to the Base skeleton (bpy), plate-carrier variant | M (20) | done | bpy, browser | `WP-C1` |
-| `WP-C3` | Recon: textures, palette, patches (MP-O tag, shield), gear props (radio, carabiner, canister) | S (8) | planned | — | `WP-C2` |
+| `WP-C3` | Recon: gear props (carabiner, canister, radio handheld) and owner sign-off against the sheet | S (8) | planned | — | `WP-C2` |
 | `WP-C4` | Roster switcher: data-driven per-base slot and zone configs | S (8) | done | — | `WP-C1` |
 | `WP-C5` | Insurgent: plaid shirt, shemagh, bare head, AK-pattern kit built from Base parts plus new meshes | M (20) | done | bpy | `WP-C4` |
 | `WP-C6` | Enforcer: black kit, bold pouches, NVG helmet variant | M (20) | done | bpy | `WP-C4` |
-| `WP-C7` | Insignia and patch system (decals on sleeve/chest/helmet, faction flags) | M (20) | planned | — | `WP-C4`, `WP-D3` |
+| `WP-C7` | Insignia and patch system: six sleeve patch designs, left and right (faction flags come with WP-D3) | M (20) | done | — | `WP-C4` |
 | `WP-C8` | Pose library expansion: crouch, kneel, sit, salute, sling carry, rifle-on-shoulder | M (20) | done | browser | `WP-C1` |
 | `WP-C9` | Idle polish: blink and head-follow of the camera (reduced-motion safe) | M (20) | done | — | `WP-C1` |
 | `WP-C10` | More hairstyles and facial-hair options for bare-head looks | M (20) | planned | bpy | `WP-C4` |
