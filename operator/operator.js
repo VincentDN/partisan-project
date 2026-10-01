@@ -6,6 +6,7 @@
 import * as T from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
+import {startTour} from '../shared/tour.js';
 import {createStage, reduceMotion} from '../shared/stage.js';
 import {bindMusicUI} from '../shared/music-ui.js';
 import {camoFor, FABRIC} from '../shared/camo.js';
@@ -480,13 +481,6 @@ $('#photo').onclick = () => {
   a.href = out.toDataURL('image/png');
   a.click();
 };
-$('#first-run-close').onclick = () => {
-  $('#first-run').hidden = true;
-  try {
-    localStorage.setItem('parp-operator-seen', '1');
-  } catch {}
-};
-
 // ---------- Boot ----------
 // Hash -> state. `base=` picks the roster entry (loading its model); other keys are validated against it.
 async function restore(hash) {
@@ -511,14 +505,14 @@ addEventListener('hashchange', () => {
   if (location.hash.replace(/^#/, '') !== hashOf()) restore(location.hash);
 });
 view('full');
-try {
-  if (!localStorage.getItem('parp-operator-seen')) {
-    $('#first-run').hidden = false;
-    setTimeout(() => {
-      $('#first-run').hidden = true;
-    }, 14000);
-  }
-} catch {}
+startTour(
+  [
+    {target: '#presets', text: 'Pick a look preset to start from.'},
+    {target: '#slots', text: 'Change equipment, then recolour each part under Colour.'},
+    {target: '#poses', text: 'Choose a hero pose, then an idle style to bring it to life.'},
+  ],
+  {key: 'parp-tour-operator'},
+);
 
 const headPos = new T.Vector3(),
   camPos = new T.Vector3(),

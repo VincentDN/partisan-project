@@ -1,6 +1,7 @@
 import {installCamo as installRifleCamo, applyFinishState} from './rifle-finishes.js';
 import {loadRifle as loadRifleInstance, applySlotState} from './rifle-instance.js';
 import * as T from 'three';
+import {startTour} from '../shared/tour.js';
 import {bindMusicUI} from '../shared/music-ui.js';
 import {createStage} from '../shared/stage.js';
 import {renderStatsPanel} from './stats-panel.js';
@@ -563,25 +564,15 @@ try {
   };
   document.querySelector('#wear').onchange = () => writeHash();
   document.querySelector('#card').onclick = () => saveCard({renderer, scene, camera, rifle, buildBox});
-  // First visit: a one-off hint, dismissed by its button or after 14 s; remembered per browser.
-  {
-    const hint = document.querySelector('#first-run');
-    let seen = false;
-    try {
-      seen = !!localStorage.getItem('partisan-demo-seen');
-    } catch {}
-    if (!seen) {
-      hint.hidden = false;
-      const close = () => {
-        hint.hidden = true;
-        try {
-          localStorage.setItem('partisan-demo-seen', '1');
-        } catch {}
-      };
-      hint.querySelector('button').onclick = close;
-      setTimeout(close, 14000);
-    }
-  }
+  // First visit: a short guided tour (preset > part > stat), remembered per browser.
+  startTour(
+    [
+      {target: '#presets', text: 'Start from a preset loadout, or build your own.'},
+      {target: '#build', text: 'Swap a part at any mount point. Hover an option to preview its effect.'},
+      {target: '#stats', text: 'The stat bars show what each choice does to handling. Green is better.'},
+    ],
+    {key: 'parp-tour-workbench'},
+  );
   document.querySelector('#presets').replaceChildren(
     ...PRESETS.map(p => {
       const b = document.createElement('button');

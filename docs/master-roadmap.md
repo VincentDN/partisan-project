@@ -138,7 +138,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | **M2** Operator roster: Recon, Insurgent, Enforcer | v0.5.0 | 9/11 | 172 BU | 84% |
 | **M3** Integration and sharing | v0.6.0 | 2/4 | 56 BU | 50% |
 | **M4** Weapon roster 2: modern and WW2 | v0.7.0 | 0/7 | 111 BU | 0% |
-| **M5** Production acceptance | v1.0.0 | 1/6 | 67 BU | 30% |
+| **M5** Production acceptance | v1.0.0 | 2/6 | 67 BU | 42% |
 | **TD** Tech debt (fill windows) | — | 4/4 | 44 BU | 100% |
 | **D** Design docs | — | 1/5 | 59 BU | 14% |
 | **H27** 2027 horizon | — | 0/3 | 48 BU | 0% |
@@ -218,7 +218,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-Q1` | Accessibility audit across all demos (axe-core in CI, keyboard orbit, contrast, reduced motion) | M (20) | done | — | — |
 | `WP-Q2` | Performance acceptance: desktop 60 fps and a mid-range phone 30 fps, cold/warm load, memory under repeated actions | M (20) | planned | — | — |
 | `WP-Q3` | Credits page generated from the asset register; licence audit as a CI gate | S (8) | planned | — | `WP-F8` |
-| `WP-Q4` | Short guided first run across demos (preset > part > stat; look > pose) | S (8) | planned | — | — |
+| `WP-Q4` | Short guided first run across demos (preset > part > stat; look > pose) | S (8) | done | — | — |
 | `WP-Q5` | Release checklist and v1.0.0 tag for the 2026 demo | S (8) | planned | — | `WP-Q1`, `WP-Q2`, `WP-Q3` |
 | `WP-Q6` | Manual accessibility pass: screen reader (NVDA/VoiceOver), zoom 200 %, high-contrast mode, a real phone | XS (3) | planned | owner | `WP-Q1` |
 

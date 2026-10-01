@@ -224,6 +224,21 @@ await check('operator: eyelids exist (hidden until a blink) and the head follows
   await page.close();
 });
 
+await check('workbench: the guided tour steps through, is remembered, and the stats panel renders', async () => {
+  const page = await open(browser, server.url + 'workbench/');
+  await page.waitForSelector('#build .slot', {timeout: 60000});
+  await page.waitForSelector('#stats .bar', {timeout: 10000});
+  assert.equal(await page.locator('#first-run').isVisible(), true, 'tour shows on first visit');
+  assert.match(await page.locator('#first-run').innerText(), /1 \/ 3/);
+  await page.locator('#first-run button', {hasText: 'Next'}).click();
+  assert.equal(await page.locator('.tour-lit').count(), 1);
+  await page.locator('#first-run button', {hasText: 'Skip tour'}).click();
+  assert.equal(await page.locator('#first-run').isVisible(), false);
+  assert.equal(await page.evaluate(() => localStorage.getItem('parp-tour-workbench')), '1');
+  noProblems(page);
+  await page.close();
+});
+
 await check('workbench: loads, swapping a part writes the hash, both rifles load', async () => {
   const page = await open(browser, server.url + 'workbench/');
   await page.waitForSelector('#build .slot', {timeout: 60000});

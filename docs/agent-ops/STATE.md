@@ -5,10 +5,10 @@ Small on purpose. Read this first, then `AGENTS.md`. Plan and sizes: [`README.md
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-01 17:34 UTC · agent · (no packet) · partial**
+**2026-10-01 17:39 UTC · agent · (no packet) · partial**
 
-- Branch `claude/friendly-dijkstra-4ky9w6` at `7c8e760`; **4 uncommitted file(s)** (commit before stopping): M docs/CODEMAP.md,  M docs/agent-ops/packets.json,  M docs/master-roadmap.md, ?? docs/audio-direction.md.
-- Last commits: 7c8e760 WP-C11: spring-based secondary motion on the operator idle · ebd75ac WP-T1: workbench viewer on shared stage; split stats/export modules · 7684357 chore(WP-T2,WP-T3): ESLint, Prettier and tsc --checkJs, legacy JS formatted
+- Branch `claude/friendly-dijkstra-4ky9w6` at `52dd06f`; **11 uncommitted file(s)** (commit before stopping): M CHANGELOG.md,  M docs/CODEMAP.md,  M docs/agent-ops/packets.json,  M docs/master-roadmap.md,  M operator/index.html,  M operator/operator.js.
+- Last commits: 52dd06f WP-D4: audio direction one-pager · 7c8e760 WP-C11: spring-based secondary motion on the operator idle · ebd75ac WP-T1: workbench viewer on shared stage; split stats/export modules
 - What happened: (write one or two sentences)
 - Next step: (name the exact next action, file and command)
 <!-- handoff:end -->
