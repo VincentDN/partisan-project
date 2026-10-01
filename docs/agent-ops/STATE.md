@@ -5,10 +5,10 @@ Small on purpose. Read this first, then `AGENTS.md`. Plan and sizes: [`README.md
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-01 17:32 UTC · agent · (no packet) · partial**
+**2026-10-01 17:34 UTC · agent · (no packet) · partial**
 
-- Branch `claude/friendly-dijkstra-4ky9w6` at `7684357`; **9 uncommitted file(s)** (commit before stopping): M CHANGELOG.md,  M docs/CODEMAP.md,  M docs/agent-ops/packets.json,  M docs/master-roadmap.md,  M shared/stage.js,  M workbench/viewer.js.
-- Last commits: 7684357 chore(WP-T2,WP-T3): ESLint, Prettier and tsc --checkJs, legacy JS formatted · ff66460 feat(WP-C7): sleeve patches in six designs · c13dd2b feat(WP-Q1): axe-core accessibility audit in CI, keyboard-operable 3D stages
+- Branch `claude/friendly-dijkstra-4ky9w6` at `ebd75ac`; **7 uncommitted file(s)** (commit before stopping): M CHANGELOG.md,  M docs/CODEMAP.md,  M docs/agent-ops/STATE.md,  M docs/agent-ops/packets.json,  M docs/master-roadmap.md,  M operator/rig.js.
+- Last commits: ebd75ac WP-T1: workbench viewer on shared stage; split stats/export modules · 7684357 chore(WP-T2,WP-T3): ESLint, Prettier and tsc --checkJs, legacy JS formatted · ff66460 feat(WP-C7): sleeve patches in six designs
 - What happened: (write one or two sentences)
 - Next step: (name the exact next action, file and command)
 <!-- handoff:end -->

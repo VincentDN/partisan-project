@@ -5,6 +5,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 ## [0.3.1] · 2026-10-01
 
 ### Changed
+- **WP-C11**: secondary motion — a damped spring (`Spring` in `operator/rig.js`) makes the neck/scarf bone trail the torso's idle; off under reduced motion; unit-tested for stability and cost.
 - **WP-T1**: `workbench/viewer.js` now uses `shared/stage.js` and `shared/music-ui.js`; stats panel, summary and PNG export moved to `stats-panel.js`, `summary.js`, `export.js` (1,109 → ~720 lines). Behaviour unchanged.
 
 ### Added

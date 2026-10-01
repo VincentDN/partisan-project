@@ -56,6 +56,35 @@ export function lookDeltas(yaw, pitch) {
   return {head: [-pitch * 0.5, yaw * 0.55, 0], neck_01: [-pitch * 0.2, yaw * 0.3, 0], spine_04: [0, yaw * 0.15, 0]};
 }
 
+/**
+ * Critically-damped-ish spring used for secondary motion (scarf, radio, straps follow the torso late).
+ * Semi-implicit Euler with a fixed sub-step so it is stable at any frame rate. Pure: no THREE objects.
+ */
+export class Spring {
+  constructor(stiffness = 90, damping = 11) {
+    this.k = stiffness;
+    this.c = damping;
+    this.x = 0;
+    this.v = 0;
+  }
+  /** Pull the value toward `target` for `dt` seconds; returns the new value. */
+  step(target, dt) {
+    const h = 1 / 120;
+    for (let left = Math.min(dt, 0.1); left > 1e-9; left -= h) {
+      const s = Math.min(h, left);
+      this.v += (this.k * (target - this.x) - this.c * this.v) * s;
+      this.x += this.v * s;
+    }
+    return this.x;
+  }
+}
+
+// Bone that carries the soft parts, the bone whose motion drives it, and how strongly the lag shows.
+export const SECONDARY = [
+  {bone: 'neck_02', drive: 'spine_03', axis: 0, gain: 0.55},
+  {bone: 'neck_02', drive: 'spine_03', axis: 2, gain: 0.55},
+];
+
 export class Rig {
   /** @param {T.Object3D} root the loaded glTF scene containing the skeleton */
   constructor(root, data) {
@@ -79,6 +108,7 @@ export class Rig {
     this.look = {yaw: 0, pitch: 0}; // degrees the head turns toward the camera (set by the page each frame)
     this.lower = 0; // metres the whole body is lowered (crouch, kneel); blended like the bone deltas
     this.targetLower = 0;
+    this.springs = SECONDARY.map(() => new Spring());
     this._r = new T.Quaternion();
     this._e = new T.Euler();
   }
@@ -135,7 +165,7 @@ export class Rig {
    * @param {number} dt seconds
    * @param {number} t  absolute time for idle layers
    * @param {string|null} idleId  key of data.idles, or null for a held pose
-   * @param {number} idleScale  0 under reduced motion
+   * @param {number} idleScale  0 under reduced motion (also switches off secondary motion)
    */
   update(dt, t, idleId = null, idleScale = 1) {
     if (this.blend < 1) {
@@ -152,6 +182,15 @@ export class Rig {
     }
     const idle = idleId ? this.data.idles[idleId] : null;
     const look = lookDeltas(this.look.yaw, this.look.pitch);
+    // Secondary motion: the soft parts' bone settles toward the driver's pose late, so it lags it.
+    const lag = {};
+    if (idleScale) {
+      SECONDARY.forEach((s, i) => {
+        const drive = (this.current[s.drive]?.[s.axis] || 0) + (idle ? Rig.idleDelta(idle, s.drive, t)[s.axis] * idleScale : 0);
+        const x = this.springs[i].step(drive, dt);
+        (lag[s.bone] ||= [0, 0, 0])[s.axis] += (drive - x) * s.gain; // lag = how far the spring trails
+      });
+    } else this.springs.forEach(sp => ((sp.x = 0), (sp.v = 0)));
     for (const name of this.order) {
       const bone = this.bones.get(name),
         rest = this.rest.get(name);
@@ -164,6 +203,12 @@ export class Rig {
         x += i[0] * idleScale;
         y += i[1] * idleScale;
         z += i[2] * idleScale;
+      }
+      const sec = lag[name];
+      if (sec) {
+        x += sec[0];
+        y += sec[1];
+        z += sec[2];
       }
       const l = look[name];
       if (l) {

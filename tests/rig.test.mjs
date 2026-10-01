@@ -3,7 +3,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import * as T from 'three';
-import {Rig, blinkAt, lookDeltas} from '../operator/rig.js';
+import {Rig, Spring, blinkAt, lookDeltas} from '../operator/rig.js';
 
 const poseData = JSON.parse(fs.readFileSync('operator/poses.json', 'utf8'));
 const manifest = JSON.parse(fs.readFileSync('assets/models/operators/base-operator.manifest.json', 'utf8'));
@@ -174,4 +174,29 @@ test('look-at turns the head toward +x when the target is on the left', () => {
   root.updateMatrixWorld(true);
   const v = tip.getWorldPosition(new T.Vector3()); // head takes 55 % of 90 degrees ~ 49.5 degrees
   assert.ok(v.x > 0.7 && v.z < 0.7, `forward (+z) vector turns toward +x, got ${v.toArray()}`);
+});
+
+test('spring settles on its target without overshooting wildly and is frame-rate independent', () => {
+  const run = fps => {
+    const s = new Spring();
+    let peak = 0;
+    for (let i = 0; i < fps * 3; i++) peak = Math.max(peak, s.step(10, 1 / fps));
+    return {x: s.x, peak};
+  };
+  for (const fps of [30, 60, 144]) {
+    const {x, peak} = run(fps);
+    assert.ok(Math.abs(x - 10) < 0.05, `settles at ${fps} fps`);
+    assert.ok(peak < 12, `overshoot bounded at ${fps} fps`);
+  }
+  assert.ok(Math.abs(run(30).x - run(144).x) < 0.05);
+});
+
+test('secondary motion is off at idleScale 0 and costs well under 0.3 ms per update', () => {
+  const rig = new Rig(new T.Group(), {poses: {a: {bones: {}}}, idles: {}});
+  rig.setPose('a', 0);
+  rig.update(1 / 60, 0, null, 0);
+  assert.ok(rig.springs.every(s => s.x === 0 && s.v === 0));
+  const t0 = performance.now();
+  for (let i = 0; i < 2000; i++) rig.update(1 / 60, i / 60, null, 1);
+  assert.ok((performance.now() - t0) / 2000 < 0.3);
 });
