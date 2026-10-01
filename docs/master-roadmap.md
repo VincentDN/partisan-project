@@ -50,7 +50,7 @@ Everything else (environment diorama, AI belief-model visualiser) is the 2027 ho
 | Remove shooting, operator and workbench hand animation features | Done (ADR 0005) |
 | Replace the generated operator with the purchased asset; Base Operator; Recon / Insurgent / Enforcer later | Base Operator live; others planned (M2) |
 | Character customiser separate from the workbench | `operator/` |
-| Idle animations and hero poses from the sheet | 5 poses (incl. the sheet's hero pose), 3 idles, data-driven |
+| Idle animations and hero poses from the sheet | 10 poses (incl. the sheet's hero pose, crouch, kneel, salute), 3 idles, data-driven |
 | Replace generated assets and attachments with real CC0 counterparts; add all outstanding assets | **Pipeline and register done; downloads blocked in this sandbox** (M1/M4 packets list each one) |
 | Consolidate with the old roadmap into a master document and a one-page site | This file and the design document |
 | The earlier `partisan-project` contents (AI docs) move to vincentdenil-site/docs | Done: `vincentdenil.com/docs/partisan-ai/` |
@@ -101,7 +101,7 @@ and the import path (`import-asset.py` → `optimize-glb.mjs` → `register.mjs 
 
 Done: Base Operator **plus Recon, Insurgent and Enforcer v1** (original extension packs: hood, houndstooth scarf, chest radio, knit beanie, shemagh, a shirt torso, generated plaid and recon camo); slots (headgear, headset, face, body armour, chest rig, belt, backpack, holsters, pads, carried
 weapon); colour zones (top, trousers, armour, helmet, gear, gloves, boots, skin) with the pack's own camo plus four
-generated camos; five poses (Relaxed, Hero rifle-up, Low ready, Radio check, Overwatch); three idles (Calm,
+generated camos; ten poses (Relaxed, Hero rifle-up, Low ready, High ready, Shoulder arms, Crouch, Kneel, Salute, Radio check, Overwatch; legs fold via a `lower` offset); three idles (Calm,
 Alert scanning, Weary); URL looks; photo export; triangle/draw-call readout against budget.
 
 Next: patches and props (`C3`, `C7`), more poses (`C8`), idle polish (`C9`), faces/hair (`C10`), owner sign-off of the three roster operators.
@@ -136,7 +136,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 |---|---|---|---|---|
 | **M0** Foundation | v0.3.0 | 8/10 | 130 BU | 95% |
 | **M1** Gun modder: real parts, three weapons | v0.4.0 | 0/11 | 143 BU | 0% |
-| **M2** Operator roster: Recon, Insurgent, Enforcer | v0.5.0 | 5/10 | 164 BU | 46% |
+| **M2** Operator roster: Recon, Insurgent, Enforcer | v0.5.0 | 6/10 | 164 BU | 59% |
 | **M3** Integration and sharing | v0.6.0 | 0/4 | 56 BU | 0% |
 | **M4** Weapon roster 2: modern and WW2 | v0.7.0 | 0/7 | 111 BU | 0% |
 | **M5** Production acceptance | v1.0.0 | 0/5 | 64 BU | 0% |
@@ -186,7 +186,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-C5` | Insurgent: plaid shirt, shemagh, bare head, AK-pattern kit built from Base parts plus new meshes | M (20) | done | bpy | `WP-C4` |
 | `WP-C6` | Enforcer: black kit, bold pouches, NVG helmet variant | M (20) | done | bpy | `WP-C4` |
 | `WP-C7` | Insignia and patch system (decals on sleeve/chest/helmet, faction flags) | M (20) | planned | — | `WP-C4`, `WP-D3` |
-| `WP-C8` | Pose library expansion: crouch, kneel, sit, salute, sling carry, rifle-on-shoulder | M (20) | planned | browser | `WP-C1` |
+| `WP-C8` | Pose library expansion: crouch, kneel, sit, salute, sling carry, rifle-on-shoulder | M (20) | done | browser | `WP-C1` |
 | `WP-C9` | Idle polish: blink, scarf/strap secondary motion, head-follow of the camera (reduced-motion safe) | M (20) | planned | — | `WP-C1` |
 | `WP-C10` | Face, hair and beard options for bare-head looks | M (20) | planned | bpy | `WP-C4` |
 

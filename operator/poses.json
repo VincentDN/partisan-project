@@ -278,6 +278,360 @@
     "r": 0.6,
     "l": 0.6
    }
+  },
+  "crouch": {
+   "label": "Crouch",
+   "detail": "Low and ready behind cover, rifle forward.",
+   "lower": 0.44,
+   "bones": {
+    "thigh_r": [
+     -88,
+     0,
+     6
+    ],
+    "calf_r": [
+     92,
+     0,
+     0
+    ],
+    "foot_r": [
+     -4,
+     0,
+     0
+    ],
+    "thigh_l": [
+     -88,
+     0,
+     -6
+    ],
+    "calf_l": [
+     92,
+     0,
+     0
+    ],
+    "foot_l": [
+     -4,
+     0,
+     0
+    ],
+    "spine_01": [
+     14,
+     0,
+     0
+    ],
+    "spine_02": [
+     10,
+     0,
+     0
+    ],
+    "spine_03": [
+     6,
+     0,
+     0
+    ],
+    "neck_01": [
+     -18,
+     0,
+     0
+    ],
+    "head": [
+     -10,
+     0,
+     0
+    ],
+    "upperarm_r": [
+     6,
+     36,
+     36
+    ],
+    "lowerarm_r": [
+     -57,
+     0,
+     0
+    ],
+    "upperarm_l": [
+     -31,
+     -6,
+     -57
+    ],
+    "lowerarm_l": [
+     5,
+     0,
+     0
+    ]
+   },
+   "curl": {
+    "r": 0.8,
+    "l": 0.8
+   },
+   "weapon": {
+    "hand": "r",
+    "rotation": [
+     0,
+     -55,
+     -8
+    ],
+    "offset": [
+     0,
+     0,
+     0
+    ]
+   }
+  },
+  "kneel": {
+   "label": "Kneel",
+   "detail": "One knee down, watching the road.",
+   "lower": 0.5,
+   "bones": {
+    "thigh_r": [
+     -4,
+     0,
+     5
+    ],
+    "calf_r": [
+     100,
+     0,
+     0
+    ],
+    "foot_r": [
+     0,
+     0,
+     0
+    ],
+    "thigh_l": [
+     -88,
+     0,
+     -5
+    ],
+    "calf_l": [
+     88,
+     0,
+     0
+    ],
+    "foot_l": [
+     0,
+     0,
+     0
+    ],
+    "spine_01": [
+     8,
+     0,
+     0
+    ],
+    "spine_02": [
+     8,
+     0,
+     0
+    ],
+    "spine_03": [
+     4,
+     0,
+     0
+    ],
+    "neck_01": [
+     -12,
+     0,
+     0
+    ],
+    "head": [
+     -4,
+     12,
+     0
+    ],
+    "upperarm_r": [
+     6,
+     36,
+     36
+    ],
+    "lowerarm_r": [
+     -57,
+     0,
+     0
+    ],
+    "upperarm_l": [
+     -31,
+     -6,
+     -57
+    ],
+    "lowerarm_l": [
+     5,
+     0,
+     0
+    ]
+   },
+   "curl": {
+    "r": 0.8,
+    "l": 0.8
+   },
+   "weapon": {
+    "hand": "r",
+    "rotation": [
+     0,
+     -55,
+     -8
+    ],
+    "offset": [
+     0,
+     0,
+     0
+    ]
+   }
+  },
+  "salute": {
+   "label": "Salute",
+   "detail": "Right hand to the brow, heels together.",
+   "bones": {
+    "upperarm_r": [
+     -55,
+     60,
+     -10
+    ],
+    "lowerarm_r": [
+     5,
+     0,
+     -125
+    ],
+    "hand_r": [
+     0,
+     0,
+     0
+    ],
+    "upperarm_l": [
+     -4,
+     0,
+     -22
+    ],
+    "lowerarm_l": [
+     -8,
+     0,
+     0
+    ],
+    "thigh_r": [
+     0,
+     0,
+     6
+    ],
+    "thigh_l": [
+     0,
+     0,
+     -6
+    ],
+    "head": [
+     -3,
+     0,
+     0
+    ],
+    "spine_03": [
+     -3,
+     0,
+     0
+    ]
+   },
+   "curl": {
+    "r": 0.0,
+    "l": 0.4
+   }
+  },
+  "highready": {
+   "label": "High ready",
+   "detail": "Rifle tucked in, muzzle up and left.",
+   "bones": {
+    "upperarm_r": [
+     9,
+     46,
+     27
+    ],
+    "lowerarm_r": [
+     -72,
+     0,
+     0
+    ],
+    "upperarm_l": [
+     -50,
+     -18,
+     -70
+    ],
+    "lowerarm_l": [
+     -15,
+     0,
+     0
+    ],
+    "spine_02": [
+     -2,
+     0,
+     0
+    ]
+   },
+   "curl": {
+    "r": 0.8,
+    "l": 0.8
+   },
+   "weapon": {
+    "hand": "r",
+    "rotation": [
+     0,
+     -50,
+     40
+    ],
+    "offset": [
+     0,
+     0,
+     0
+    ]
+   }
+  },
+  "shoulder": {
+   "label": "Shoulder arms",
+   "detail": "Rifle resting on the shoulder, easy walk.",
+   "bones": {
+    "upperarm_r": [
+     -10,
+     0,
+     -10
+    ],
+    "lowerarm_r": [
+     -110,
+     0,
+     0
+    ],
+    "upperarm_l": [
+     -4,
+     0,
+     -20
+    ],
+    "lowerarm_l": [
+     -12,
+     0,
+     0
+    ],
+    "pelvis": [
+     0,
+     -4,
+     1.5
+    ],
+    "head": [
+     0,
+     8,
+     0
+    ]
+   },
+   "curl": {
+    "r": 0.85,
+    "l": 0.3
+   },
+   "weapon": {
+    "hand": "r",
+    "rotation": [
+     0,
+     -30,
+     70
+    ],
+    "offset": [
+     0,
+     0,
+     0
+    ]
+   }
   }
  },
  "idles": {

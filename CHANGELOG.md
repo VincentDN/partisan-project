@@ -9,6 +9,8 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 - Generated plaid and Recon camo fabrics; `tools/assets/blender_common.py`, `build-*-pack.py`, `optimize-pack.mjs`.
 - `docs/engineering/skeleton-contract.md`, skeleton-contract and per-base tests, Recon/Insurgent/Enforcer browser tests.
 
+- **Pose library to 10**: High ready, Shoulder arms, Crouch, Kneel (legs fold via a pose `lower` offset), Salute; `tools/pose-fit.mjs` can solve a raised elbow (`lowerZ=1`).
+
 ### Fixed
 - Optimiser no longer merges materials (it had fused the top and trousers camo and two strap materials); packs keep UVs for runtime textures.
 - Helmet and other multi-primitive parts now toggle correctly.

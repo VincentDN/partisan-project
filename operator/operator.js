@@ -316,6 +316,7 @@ try { if (!localStorage.getItem('parp-operator-seen')) { $('#first-run').hidden 
 
 stage.onFrame((dt, t) => {
   rig.update(dt, t, state.idle === 'off' ? null : state.idle, reduceMotion ? 0 : 1);
+  operator.position.y = -rig.lower;               // crouch / kneel: legs fold, the whole body drops
   operator.updateMatrixWorld(true);
   placeWeapon();
   if (turntable) turn.rotation.y += dt * 0.5;

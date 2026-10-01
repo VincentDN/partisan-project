@@ -88,3 +88,23 @@ test('pose angles are sane (|deg| <= 180) and every pose has a label and detail'
     assert.ok(Math.abs(l.amp) <= 30, `${id}: amplitude ${l.amp} too large for an idle`);
   }
 });
+
+test('the pose library has the required breadth, and lowered poses stay physically plausible', () => {
+  const ids = Object.keys(poseData.poses);
+  assert.ok(ids.length >= 10, `need >= 10 poses, have ${ids.length}`);
+  for (const id of ['hero', 'crouch', 'kneel', 'salute']) assert.ok(ids.includes(id), id);
+  for (const [id, p] of Object.entries(poseData.poses)) {
+    const lower = p.lower || 0;
+    assert.ok(lower >= 0 && lower <= 0.6, `${id}: lower ${lower} m`);
+    if (lower > 0.3) assert.ok((p.bones.thigh_l?.[0] ?? 0) <= -60 || (p.bones.thigh_r?.[0] ?? 0) <= -60, `${id}: a lowered pose must flex a hip`);
+  }
+});
+
+test('lowering is blended like bone deltas and cleared when the pose changes back', () => {
+  const {root} = chain();
+  const rig = new Rig(root, {poses: {a: {bones: {}}, b: {bones: {}, lower: 0.4}}, idles: {}});
+  rig.setPose('b', 1); rig.update(0.5, 0, null, 0);
+  assert.ok(Math.abs(rig.lower - 0.2) < 1e-9, String(rig.lower));
+  rig.update(1, 0, null, 0); assert.equal(rig.lower, 0.4);
+  rig.setPose('a', 0); assert.equal(rig.lower, 0);
+});

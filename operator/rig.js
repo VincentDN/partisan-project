@@ -43,6 +43,8 @@ export class Rig {
     this.target = {};
     this.blend = 1;
     this.poseId = null;
+    this.lower = 0;             // metres the whole body is lowered (crouch, kneel); blended like the bone deltas
+    this.targetLower = 0;
     this._r = new T.Quaternion();
     this._e = new T.Euler();
   }
@@ -71,8 +73,9 @@ export class Rig {
     if (!pose) throw new Error(`Unknown pose "${id}"`);
     this.poseId = id;
     this.target = Rig.expand(pose);
-    if (seconds <= 0) { this.current = structuredClone(this.target); this.blend = 1; }
-    else { this.from = structuredClone(this.current); this.blend = 0; this.blendSeconds = seconds; }
+    this.targetLower = pose.lower || 0;
+    if (seconds <= 0) { this.current = structuredClone(this.target); this.lower = this.targetLower; this.blend = 1; }
+    else { this.from = structuredClone(this.current); this.fromLower = this.lower; this.blend = 0; this.blendSeconds = seconds; }
   }
 
   /** Idle layer sum for one bone at time t: {x,y,z} degrees. Pure function of (idle, bone, t). */
@@ -97,6 +100,7 @@ export class Rig {
       this.blend = Math.min(1, this.blend + dt / this.blendSeconds);
       const k = this.blend * this.blend * (3 - 2 * this.blend); // smoothstep
       const names = new Set([...Object.keys(this.from || {}), ...Object.keys(this.target)]);
+      this.lower = this.fromLower + (this.targetLower - this.fromLower) * k;
       this.current = {};
       for (const n of names) {
         const a = this.from?.[n] || [0, 0, 0], b = this.target[n] || [0, 0, 0];
