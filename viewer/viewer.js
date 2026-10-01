@@ -42,6 +42,7 @@ async function show(path) {
   $('#report').innerHTML = s.rows.map(([k, v, warn]) => `<div>${k}: <b${warn ? ' style="color:#ffb56b"' : ''}>${v}</b></div>`).join('');
   for (const b of $('#models').children) b.setAttribute('aria-pressed', String(b.dataset.path === path));
   $('#status').hidden = true;
+  stage.wake();
 }
 const glbs = register.assets.filter(a => a.path.endsWith('.glb'));
 $('#models').replaceChildren(
@@ -77,6 +78,7 @@ $('#bones').onclick = e => {
   }
   e.currentTarget.setAttribute('aria-pressed', String(on));
 };
+stage.setAnimated(() => spinning);
 stage.onFrame(dt => {
   if (spinning && current) current.rotation.y += dt * 0.6;
 });

@@ -5,10 +5,10 @@ Small on purpose. Read this first, then `AGENTS.md`. Plan and sizes: [`README.md
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-01 19:23 UTC · agent · (no packet) · partial**
+**2026-10-01 19:35 UTC · agent · (no packet) · partial**
 
-- Branch `claude/friendly-dijkstra-4ky9w6` at `3d9b015`; **1 uncommitted file(s)** (commit before stopping): M docs/vincent-todo.md.
-- Last commits: 3d9b015 Restore the recorded handling foley (42 owner-cleared takes) · eef471c Bench Lab: contact-sheet tool for reviewing hand contacts · 6116293 Bench Lab: advanced workbench animations return as an opt-in demo; rename owner to-do to vincent-todo
+- Branch `claude/friendly-dijkstra-4ky9w6` at `2d7364e`; **18 uncommitted file(s)** (commit before stopping): M .gitignore,  M CHANGELOG.md,  M assets/REGISTER.md,  M assets/register.json,  M bench/bench.js,  M docs/CODEMAP.md.
+- Last commits: 2d7364e vincent-todo: network access and foley archive items · 3d9b015 Restore the recorded handling foley (42 owner-cleared takes) · eef471c Bench Lab: contact-sheet tool for reviewing hand contacts
 - What happened: (write one or two sentences)
 - Next step: (name the exact next action, file and command)
 <!-- handoff:end -->

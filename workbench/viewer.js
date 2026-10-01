@@ -41,7 +41,9 @@ let selected = null,
   restoring = true;
 // Everything that belongs to the mounted rifle; replaced on a switch.
 let rifle = null;
-const socketMarkers = new T.Group();
+const socketMarkers = new T.Group(),
+  labelPoint = new T.Vector3();
+let labelsShown = false;
 socketMarkers.visible = false;
 
 const loadRifle = id => loadRifleInstance(id, {decorate: installCamo});
@@ -349,6 +351,7 @@ const defaultOption = slot => {
 const defaultFinish = target => rifle.config.defaults?.finish?.[target.id] ?? 'original';
 // Loadout codes live in the URL hash, e.g. #rifle=ak15k&optic=scope@-20&stock-finish=fde
 function writeHash() {
+  st?.wake();
   if (restoring) return;
   // Ids and offsets are URL-safe, so the hash is joined by hand to keep '@' readable.
   const params = rifle.id === DEFAULT_MODEL ? [] : ['rifle=' + rifle.id];
@@ -490,6 +493,7 @@ function view(name) {
 
 // The rifle sits at the origin, facing +x.
 function showRifle() {
+  st?.wake();
   if (rifle.model.parent !== scene) scene.add(rifle.model);
   rifle.model.position.set(0, 0, 0);
   rifle.model.quaternion.identity();
@@ -549,6 +553,7 @@ try {
   // Warm the HTTP cache with the other rifles once the page is idle, so switching is instant.
   (window.requestIdleCallback || setTimeout)(
     () => {
+      if (navigator.connection?.saveData) return; // respect Data Saver
       for (const [id, m] of Object.entries(MODELS)) if (id !== rifle.id) fetch(m.url).catch(() => {});
     },
     {timeout: 4000},
@@ -694,17 +699,22 @@ try {
     if (e.key === 'Escape' && selected) select(selected);
   });
 
+  st.setAnimated(() => spinning || tweens.length > 0);
   st.onFrame(dt => {
     if (spinning) {
       rifle.model.rotation.y += dt * 0.5;
       socketMarkers.rotation.y = rifle.model.rotation.y;
     }
     stepTweens(dt);
-    for (const {socket, el} of rifle.socketLabels) {
-      const p = socket.getWorldPosition(new T.Vector3()).project(camera);
-      el.hidden = !socketMarkers.visible || p.z > 1;
-      el.style.left = (p.x * 0.5 + 0.5) * stageEl.clientWidth + 'px';
-      el.style.top = (-p.y * 0.5 + 0.5) * stageEl.clientHeight - 18 + 'px';
+    // Mount-point labels only cost anything while they are shown; hide them once when the markers go off.
+    if (socketMarkers.visible || labelsShown) {
+      labelsShown = socketMarkers.visible;
+      for (const {socket, el} of rifle.socketLabels) {
+        const p = socket.getWorldPosition(labelPoint).project(camera);
+        el.hidden = !labelsShown || p.z > 1;
+        el.style.left = (p.x * 0.5 + 0.5) * stageEl.clientWidth + 'px';
+        el.style.top = (-p.y * 0.5 + 0.5) * stageEl.clientHeight - 18 + 'px';
+      }
     }
   });
 } catch (err) {

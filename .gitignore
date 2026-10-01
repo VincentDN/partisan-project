@@ -8,3 +8,5 @@ assets-incoming/
 *.blend
 *.blend1
 *.fbx
+__pycache__/
+*.pyc

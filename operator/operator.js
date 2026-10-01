@@ -311,6 +311,7 @@ const camoGradient = id => {
 };
 
 function render() {
+  stage.wake();
   $('#slots').replaceChildren(
     ...base.slots.map(slot => {
       const row = document.createElement('div');
@@ -531,9 +532,14 @@ startTour(
   {key: 'parp-tour-operator'},
 );
 
+let lidCache = {meshes: null, count: -1, list: []};
 const headPos = new T.Vector3(),
   camPos = new T.Vector3(),
-  lids = () => meshes.filter(m => meshPart.get(m) === 'lids');
+  lids = () => {
+    if (lidCache.meshes !== meshes || lidCache.count !== meshes.length)
+      lidCache = {meshes, count: meshes.length, list: meshes.filter(m => meshPart.get(m) === 'lids')};
+    return lidCache.list;
+  };
 function updateLook(dt) {
   const target = {yaw: 0, pitch: 0};
   if (state.look === 'on' && !reduceMotion) {
@@ -551,6 +557,8 @@ function updateLook(dt) {
   rig.look.yaw += (target.yaw - rig.look.yaw) * k;
   rig.look.pitch += (target.pitch - rig.look.pitch) * k;
 }
+// Idle motion, the turntable and a pose blend animate on their own; otherwise the stage idles at a low frame rate.
+stage.setAnimated(() => (!reduceMotion && state.idle !== 'off') || turntable || rig.blend < 1);
 stage.onFrame((dt, t) => {
   updateLook(dt);
   if (!reduceMotion && state.idle !== 'off') {

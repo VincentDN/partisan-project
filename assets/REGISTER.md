@@ -63,6 +63,9 @@ Policy: CC0 or CC BY 4.0 only for downloaded assets, unless the owner records an
 | Foley long: bolt-0052_26s | `assets/audio/foley/long/bolt-0052_26s.wav` | sfx | real | Supplied by the project owner; checked and cleared by the owner | (owner-supplied recording) | Owner (earlier workbench sfx/cuts) |
 | Foley long: sar-0495_80s | `assets/audio/foley/long/sar-0495_80s.wav` | sfx | real | Supplied by the project owner; checked and cleared by the owner | (owner-supplied recording) | Owner (earlier workbench sfx/cuts) |
 | Foley long: sar-0552_84s | `assets/audio/foley/long/sar-0552_84s.wav` | sfx | real | Supplied by the project owner; checked and cleared by the owner | (owner-supplied recording) | Owner (earlier workbench sfx/cuts) |
+| Venice Sunset (HDR, half size for phones) | `assets/lighting/venice_sunset_512.hdr` | lighting | real | CC0 | Poly Haven | [link](https://polyhaven.com/a/venice_sunset) |
+| Quarry 01 (HDR, half size for phones) | `assets/lighting/quarry_01_512.hdr` | lighting | real | CC0 | Poly Haven | [link](https://polyhaven.com/a/quarry_01) |
+| Studio (HDR, half size for phones) | `assets/lighting/studio_512.hdr` | lighting | real | Original (CC0 by the project) | PARP | tools/assets/generate-studio-hdr.py |
 
 ## Pipeline: placeholders and pending assets
 

@@ -92,6 +92,7 @@ const slotLabel = id => rifle.slots[id]?.spec.label.toLowerCase() || id;
 // ---------- Panel ----------
 const benchSlots = () => Object.values(rifle.slots).filter(s => FAMILY_OF[s.spec.id] && s.options.length > 1);
 function renderBuild() {
+  stage?.wake();
   $('#build').replaceChildren(
     ...benchSlots().map(slot => {
       const row = document.createElement('div');
@@ -354,6 +355,7 @@ try {
   stage.scene.add(arms.group);
   await mount(startLoadout());
   parkArms();
+  stage.setAnimated(() => actions.busy);
   stage.onFrame(() => actions.tick());
   persist();
   startTour(

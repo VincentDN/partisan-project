@@ -679,6 +679,42 @@
    "source": "Owner (earlier workbench sfx/cuts)",
    "attribution_required": false,
    "notes": "Restored from the earlier workbench's shipped 42-take bank; checked and cleared by the owner (statement 2026-10-01, ADR 0009). The old sfx README classified these cuts from a longer recording, so keep the owner's clearance on file."
+  },
+  {
+   "id": "hdr-venice-512",
+   "label": "Venice Sunset (HDR, half size for phones)",
+   "path": "assets/lighting/venice_sunset_512.hdr",
+   "kind": "lighting",
+   "status": "real",
+   "license": "CC0",
+   "author": "Poly Haven",
+   "source": "https://polyhaven.com/a/venice_sunset",
+   "attribution_required": false,
+   "notes": "Generated from the full-size map by tools/assets/downscale-hdr.py."
+  },
+  {
+   "id": "hdr-quarry-512",
+   "label": "Quarry 01 (HDR, half size for phones)",
+   "path": "assets/lighting/quarry_01_512.hdr",
+   "kind": "lighting",
+   "status": "real",
+   "license": "CC0",
+   "author": "Poly Haven",
+   "source": "https://polyhaven.com/a/quarry_01",
+   "attribution_required": false,
+   "notes": "Generated from the full-size map by tools/assets/downscale-hdr.py."
+  },
+  {
+   "id": "hdr-studio-512",
+   "label": "Studio (HDR, half size for phones)",
+   "path": "assets/lighting/studio_512.hdr",
+   "kind": "lighting",
+   "status": "real",
+   "license": "Original (CC0 by the project)",
+   "author": "PARP",
+   "source": "tools/assets/generate-studio-hdr.py",
+   "attribution_required": false,
+   "notes": "Generated from the full-size map by tools/assets/downscale-hdr.py."
   }
  ],
  "pipeline": [

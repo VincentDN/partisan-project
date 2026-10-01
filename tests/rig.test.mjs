@@ -200,3 +200,23 @@ test('secondary motion is off at idleScale 0 and costs well under 0.3 ms per upd
   for (let i = 0; i < 2000; i++) rig.update(1 / 60, i / 60, null, 1);
   assert.ok((performance.now() - t0) / 2000 < 0.3);
 });
+
+test('a held pose skips the bone pass, and leaving idle writes the held pose back', () => {
+  const root = new T.Group(),
+    bone = new T.Bone();
+  bone.name = 'spine_03';
+  root.add(bone);
+  const data = {poses: {a: {bones: {}}}, idles: {sway: {layers: [{bone: 'spine_03', axis: 'x', amp: 10, hz: 1}]}}};
+  const rig = new Rig(root, data);
+  rig.setPose('a', 0);
+  rig.update(1 / 60, 0.25, 'sway', 1);
+  const swayed = bone.quaternion.clone();
+  assert.ok(swayed.angleTo(new T.Quaternion()) > 0.05, 'idle moves the bone');
+  rig.update(1 / 60, 0.3, null, 1); // idle switched off: back to the held pose
+  assert.ok(bone.quaternion.angleTo(new T.Quaternion()) < 1e-6);
+  for (let i = 0; i < 600; i++) rig.update(1 / 60, 1 + i / 60, null, 1); // springs settle
+  assert.ok(rig.springs.every(s => s.x === 0 && s.v === 0));
+  bone.quaternion.set(0.1, 0, 0, 0.99);
+  rig.update(1 / 60, 20, null, 1); // nothing changed: the pass is skipped, the bone is not rewritten
+  assert.equal(bone.quaternion.x, 0.1);
+});

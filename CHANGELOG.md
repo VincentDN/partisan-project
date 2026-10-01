@@ -4,6 +4,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 ## [0.3.1] · 2026-10-01
 
+### Performance
+- **Idle render throttle** (`shared/stage.js`): a still scene renders at 8 fps instead of 60; any input, camera move or `stage.wake()` restores full rate; demos declare self-animation with `stage.setAnimated()`. Big battery and heat win on phones.
+- **Half-size HDR environments** (512x256, `tools/assets/downscale-hdr.py`) are loaded on phones and coarse pointers: about a quarter of the bytes and GPU memory (Operator page 1.79 to 1.07 MB).
+- Phones also use hard-edged PCF shadows; Data Saver skips the rifle prefetch.
+- `Rig.update` skips the 83-bone pass when nothing changed (held pose, no idle, head still, springs settled); spring snaps to rest. Cached eyelid lookup; no per-frame allocations for mount-point labels.
+
 ### Added
 - **Recorded handling foley restored** (ADR 0009): the 42-take bank from the earlier workbench (`assets/audio/foley/`, about 1.5 MB), owner-cleared and registered take by take. `workbench/mech.js` plays it once loaded and falls back to the synthesised sounds; Workbench, Customiser and Bench Lab all use it.
 - **Bench Lab** (`bench/`, WP-X1, ADR 0008): the advanced workbench animations return as an opt-in experiment. Pick a part and two IK arms take the old one off, set it in the tray, fetch the new one and fit it, with Skip, Cancel, Quick changes, a review mode (`?review=1`) and synthesised handling sounds. No firing.

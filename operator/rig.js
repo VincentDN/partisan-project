@@ -75,6 +75,11 @@ export class Spring {
       this.v += (this.k * (target - this.x) - this.c * this.v) * s;
       this.x += this.v * s;
     }
+    // Settled: snap, so a resting spring is exactly at rest (lets the rig skip its bone pass).
+    if (Math.abs(this.x - target) < 1e-4 && Math.abs(this.v) < 1e-4) {
+      this.x = target;
+      this.v = 0;
+    }
     return this.x;
   }
 }
@@ -109,6 +114,10 @@ export class Rig {
     this.lower = 0; // metres the whole body is lowered (crouch, kneel); blended like the bone deltas
     this.targetLower = 0;
     this.springs = SECONDARY.map(() => new Spring());
+    this._dirty = true; // bones need one write after any change
+    this._idleOn = false;
+    this._lookYaw = NaN;
+    this._lookPitch = NaN;
     this._r = new T.Quaternion();
     this._e = new T.Euler();
   }
@@ -136,6 +145,7 @@ export class Rig {
     const pose = this.data.poses[id];
     if (!pose) throw new Error(`Unknown pose "${id}"`);
     this.poseId = id;
+    this._dirty = true;
     this.target = Rig.expand(pose);
     this.targetLower = pose.lower || 0;
     if (seconds <= 0) {
@@ -168,6 +178,15 @@ export class Rig {
    * @param {number} idleScale  0 under reduced motion (also switches off secondary motion)
    */
   update(dt, t, idleId = null, idleScale = 1) {
+    // A held pose with no idle, no head-follow change and no blend leaves every bone where it is: skip the 83-bone pass.
+    const idleOn = !!(idleId && idleScale);
+    if (idleOn !== this._idleOn) this._dirty = true; // leaving idle needs one write back to the held pose
+    this._idleOn = idleOn;
+    const lookMoved = this.look.yaw !== this._lookYaw || this.look.pitch !== this._lookPitch;
+    if (this.blend >= 1 && !idleOn && !lookMoved && !this._dirty && !this.springs.some(s => s.x || s.v)) return;
+    this._lookYaw = this.look.yaw;
+    this._lookPitch = this.look.pitch;
+    this._dirty = false;
     if (this.blend < 1) {
       this.blend = Math.min(1, this.blend + dt / this.blendSeconds);
       const k = this.blend * this.blend * (3 - 2 * this.blend); // smoothstep
