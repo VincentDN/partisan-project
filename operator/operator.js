@@ -11,8 +11,10 @@ import {bindMusicUI} from '../shared/music-ui.js';
 import {camoFor, FABRIC} from '../shared/camo.js';
 import {Rig, blinkAt} from './rig.js';
 import {PALETTES, CAMO_IDS, VIEWS, HERO_AZIMUTH, TRIANGLE_BUDGET, ROSTER, BASES, DEFAULT_BASE, defaultsFor} from './config.js';
-import {loadRifle, applySlotState} from '../workbench/rifle-instance.js';
+import {loadRifle} from '../workbench/rifle-instance.js';
 import {MODELS} from '../workbench/models.js';
+import {applyLoadout, emptyLoadout, installCamo} from '../workbench/apply-loadout.js';
+import {encode, decode, parseLegacy} from '../shared/loadout.js';
 
 const $ = s => document.querySelector(s);
 const status = $('#status');
@@ -98,6 +100,7 @@ const slotOf = id => base.slots.find(s => s.id === id);
 function valid(key, value) {
   if (key === 'pose') return !!poseData.poses[value];
   if (key === 'look') return value === 'on' || value === 'off';
+  if (key === 'build') return value === '' || decode(value) !== null;
   if (key === 'idle') return value === 'off' || !!poseData.idles[value];
   if (key.startsWith('z.')) { const z = base.zones.find(z => z.id === key.slice(2)); return !!z && zoneOptions(z).some(o => o.id === value); }
   return !!slotOf(key)?.options.some(o => o.id === value);
@@ -160,17 +163,18 @@ function applyAll() {
 let weapon = null, weaponId = 'none';
 async function syncWeapon() {
   const option = slotOf('weapon')?.options.find(o => o.id === state.weapon);
-  const id = option?.weapon || 'none';
-  if (id === weaponId) return;
-  weaponId = id;
+  const choice = option?.weapon || 'none';
+  const key = choice === 'bench' ? 'bench:' + state.build : choice;       // a different build is a different prop
+  if (key === weaponId) return;
+  weaponId = key;
   if (weapon) { weapon.holder.removeFromParent(); weapon = null; }
-  if (id === 'none') { applyEquipment(); return; }
-  const rifle = await loadRifle(id);
-  if (weaponId !== id) return; // switched again while loading
-  for (const [sid, slot] of Object.entries(rifle.slots)) {
-    const wanted = MODELS[id].defaults?.build?.[sid];
-    applySlotState(rifle, sid, slot.options.some(o => o.id === wanted) ? wanted : slot.options[0].id);
-  }
+  if (choice === 'none') { applyEquipment(); return; }
+  let loadout = choice === 'bench' ? (decode(state.build) || emptyLoadout('ak74m')) : emptyLoadout(choice);
+  if (!MODELS[loadout.rifle]) loadout = emptyLoadout('ak74m');
+  const wearUniform = {value: 0};
+  const rifle = await loadRifle(loadout.rifle, {decorate: m => installCamo(m, wearUniform)});
+  if (weaponId !== key) return; // switched again while loading
+  applyLoadout(rifle, loadout, wearUniform);
   // Mount so the pistol-grip socket sits at the pivot origin; rifle axes: +x muzzle, +y up.
   const grip = rifle.sockets.find(s => s.userData.id === 'grip');
   const gp = grip ? rifle.model.worldToLocal(grip.getWorldPosition(new T.Vector3())) : new T.Vector3();
@@ -180,7 +184,7 @@ async function syncWeapon() {
   pivot.add(holder);
   let tris = 0;
   rifle.model.traverseVisible(o => { if (o.isMesh) tris += triangles(o); });
-  weapon = {rifle, holder, tris};
+  weapon = {rifle, holder, tris, loadout};
   applyEquipment();
 }
 const handPos = new T.Vector3(), tmpE = new T.Euler();
@@ -205,6 +209,10 @@ function chip(label, pressed, onclick, attrs = {}) {
 }
 function set(key, value, cameraView) {
   state = {...state, [key]: value};
+  if (key === 'weapon' && value === 'bench') {                          // capture the Workbench's latest build so the link is self-contained
+    let stored = ''; try { stored = localStorage.getItem('parp-loadout') || ''; } catch {}
+    state.build = encode(parseLegacy(stored));
+  } else if (key === 'weapon') state.build = '';
   applyAll(); render(); writeHash();
   if (cameraView) view(cameraView);
 }

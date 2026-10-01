@@ -112,8 +112,7 @@ prints numbers to paste. **No hand IK at runtime, no firing, no bench animation*
 
 ### 5.3 Integration and sharing
 
-Carry the Workbench build onto the operator (shared loadout state), grip-contact data per weapon/stock combination,
-versioned compact loadout codes with backward compatibility for old AK hashes, a combined share card.
+Done: the Workbench build carries onto the operator ("Workbench build" weapon option; the operator link embeds the build so it works for anyone) and versioned `P1.` codes with backward compatibility for every old link (`shared/loadout.js`). Next: grip-contact data per weapon/stock combination (`WP-I2`) and a combined share card (`WP-I4`).
 
 ### 5.4 Quality and release
 
@@ -137,7 +136,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | **M0** Foundation | v0.3.0 | 8/10 | 130 BU | 95% |
 | **M1** Gun modder: real parts, three weapons | v0.4.0 | 0/11 | 143 BU | 0% |
 | **M2** Operator roster: Recon, Insurgent, Enforcer | v0.5.0 | 7/11 | 172 BU | 67% |
-| **M3** Integration and sharing | v0.6.0 | 0/4 | 56 BU | 0% |
+| **M3** Integration and sharing | v0.6.0 | 2/4 | 56 BU | 50% |
 | **M4** Weapon roster 2: modern and WW2 | v0.7.0 | 0/7 | 111 BU | 0% |
 | **M5** Production acceptance | v1.0.0 | 0/5 | 64 BU | 0% |
 | **TD** Tech debt (fill windows) | — | 0/4 | 44 BU | 0% |
@@ -195,9 +194,9 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 
 | ID | Packet | Size | Status | Needs | Depends on |
 |---|---|---|---|---|---|
-| `WP-I1` | Shared loadout state: carry the Workbench build into the Operator Customiser (URL + localStorage) | M (20) | planned | — | `WP-C4` |
+| `WP-I1` | Shared loadout state: carry the Workbench build into the Operator Customiser (URL + localStorage) | M (20) | done | — | `WP-C4` |
 | `WP-I2` | Per-weapon grip contact data and pose-fit for every supported weapon/stock combination | M (20) | planned | — | `WP-I1`, `WP-A10` |
-| `WP-I3` | Versioned compact loadout codes (base64url) with backward compatibility for old AK hashes | S (8) | planned | — | `WP-I1` |
+| `WP-I3` | Versioned loadout codes (P1.<base64url>) with backward compatibility for old AK hashes | S (8) | done | — | `WP-I1` |
 | `WP-I4` | Combined share card (operator + weapon + stats) and photo-mode extras | S (8) | planned | — | `WP-I3` |
 
 #### M4 · Weapon roster 2: modern and WW2

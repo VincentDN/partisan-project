@@ -4,6 +4,7 @@ import * as T from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {RGBELoader} from 'three/addons/loaders/RGBELoader.js';
 import {soundLayer} from '../shared/sound-layer.js';
+import {parseLegacy,toLegacy,encode,decode} from '../shared/loadout.js';
 import {MODELS,DEFAULT_MODEL} from './models.js';
 import {STATS,computeStats,blockedBy} from './stats.js';
 import * as mech from './mech.js';
@@ -222,6 +223,8 @@ function writeHash(){
  for(const t of rifle.finishTargets)if(rifle.finish[t.id]!==defaultFinish(t))params.push(t.id+'-finish='+rifle.finish[t.id]);
  if(wear)params.push('wear='+Math.round(wear*100));
  history.replaceState(null,'',params.length?'#'+params.join('&'):location.pathname+location.search);
+ // The Operator Customiser can carry this build as its rifle ("Workbench build").
+ try{localStorage.setItem('parp-loadout',location.hash.replace(/^#/,''));}catch{}
 }
 
 // Swap in another rifle; the camera, lighting and music carry on untouched.
@@ -407,6 +410,9 @@ try{
  document.querySelector('#presets').replaceChildren(...PRESETS.map(p=>{const b=document.createElement('button');b.textContent=p.label;b.onclick=()=>{mech.handle(1);mech.clunk(.6);setTimeout(()=>mech.charge(),250);applyPreset(p);};return b;}));
  // Reset returns the rifle build to its defaults; the chosen rifle stays.
  document.querySelector('#reset').onclick=()=>{mech.handle(1);mech.clunk(.5);const keep=location.hash.replace(/^#/,'').split('&').filter(p=>/^rifle/.test(p));restore(keep.length?'#'+keep.join('&'):'').then(()=>view('hero'));};
+// A versioned, paste-able code for the whole build (also accepted: a legacy link). See shared/loadout.js.
+ document.querySelector('#copy-code').onclick=async e=>{const button=e.currentTarget;writeHash();const code=encode(parseLegacy(location.hash));try{await navigator.clipboard.writeText(code);button.textContent='Code copied';}catch{prompt('Copy this loadout code:',code);}setTimeout(()=>{button.textContent='Copy loadout code';},1600);};
+ document.querySelector('#load-code').onclick=()=>{const text=prompt('Paste a loadout code (P1.…) or a Workbench link:');if(text===null)return;const l=decode(text);if(!l){alert('That code could not be read. It may come from a newer version.');return;}restore('#'+toLegacy(l)).then(()=>view('hero'));};
  document.querySelector('#share').onclick=async e=>{const button=e.currentTarget;writeHash();try{await navigator.clipboard.writeText(location.href);button.textContent='Link copied';}catch{prompt('Copy this loadout link:',location.href);}setTimeout(()=>{button.textContent='Copy loadout link';},1600);};
  addEventListener('hashchange',()=>restore(location.hash));
 

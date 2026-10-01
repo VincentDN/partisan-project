@@ -88,6 +88,7 @@ export const SLOTS = [
     {id: 'none',  label: 'None',    show: on()},
     {id: 'ak74m', label: 'AK-74M',  show: on(), weapon: 'ak74m'},
     {id: 'ak15k', label: 'AK-15K',  show: on(), weapon: 'ak15k'},
+    {id: 'bench', label: 'Workbench build', show: on(), weapon: 'bench'},
   ]},
 ];
 
@@ -222,6 +223,6 @@ export const defaultsFor = base => ({
   base: base.id,
   ...Object.fromEntries(base.slots.map(s => [s.id, s.default])),
   ...Object.fromEntries(base.zones.map(z => [`z.${z.id}`, z.default])),
-  pose: 'relaxed', idle: 'calm', look: 'on',
+  pose: 'relaxed', idle: 'calm', look: 'on', build: '',
   ...base.defaults,
 });

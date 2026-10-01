@@ -112,6 +112,22 @@ await check('operator: idle animation moves bones; reduced motion freezes them',
   assert.deepEqual(c, d); await still.close();
 });
 
+await check('operator: carries the Workbench build (P1 code) onto the character', async () => {
+  const page = await open(browser, server.url + 'operator/');
+  await page.waitForFunction(() => window.PARP_OPERATOR?.ready, null, {timeout: 60000});
+  await page.evaluate(() => localStorage.setItem('parp-loadout', 'rifle=ak15k&muzzle=brake&optic=scope@-20&stock-finish=fde&wear=40'));
+  await page.evaluate(() => window.PARP_OPERATOR.set('weapon', 'bench'));
+  await page.waitForFunction(() => window.PARP_OPERATOR.weapon, null, {timeout: 60000});
+  const r = await page.evaluate(() => { const w = window.PARP_OPERATOR.weapon; return {rifle: w.rifle.id, muzzle: w.rifle.build.muzzle, optic: w.rifle.build.optic, stock: w.rifle.finish.stock, hash: location.hash}; });
+  assert.deepEqual([r.rifle, r.muzzle, r.optic, r.stock], ['ak15k', 'brake', 'scope', 'fde']);
+  assert.match(r.hash, /weapon=bench&build=P1\./, 'the link is self-contained: it carries the code');
+  // the link works in a fresh browser profile with no stored build
+  const other = await open(browser, server.url + 'operator/' + r.hash);
+  await other.waitForFunction(() => window.PARP_OPERATOR?.weapon, null, {timeout: 60000});
+  assert.equal(await other.evaluate(() => window.PARP_OPERATOR.weapon.rifle.build.muzzle), 'brake');
+  await other.close(); await page.close();
+});
+
 await check('operator: eyelids exist (hidden until a blink) and the head follows the camera', async () => {
   const page = await open(browser, server.url + 'operator/#idle=off', {reducedMotion: 'no-preference'});
   await page.waitForFunction(() => window.PARP_OPERATOR?.ready, null, {timeout: 60000});
@@ -129,9 +145,11 @@ await check('workbench: loads, swapping a part writes the hash, both rifles load
   await page.waitForSelector('#build .slot', {timeout: 60000});
   await page.locator('#build .chips button', {hasText: 'Compensator'}).first().click();
   assert.match(await page.evaluate(() => location.hash), /muzzle=comp/);
+  assert.match(await page.evaluate(() => localStorage.getItem('parp-loadout')), /muzzle=comp/, 'the Workbench publishes its build for the Operator Customiser');
   await page.locator('[data-rifle="ak15k"]').click();
   await page.waitForFunction(() => document.querySelector('#title').textContent.includes('AK-15K'), null, {timeout: 60000});
   assert.equal(await page.locator('.fire').count(), 0, 'no test-fire control remains');
+  assert.equal(await page.locator('#copy-code').count(), 1);
   noProblems(page);
   await page.close();
 });

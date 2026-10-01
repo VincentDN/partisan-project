@@ -14,6 +14,8 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 - **Idle polish**: eyelids blink on a deterministic schedule, and the head follows the camera (clamped, smoothed, off under reduced motion or with the toggle).
 - **A real head**: the purchased character only has an eye strip inside a balaclava, so "bare head" showed floating eyes. The core pack adds a skull with ears and nose, a short-crop hairstyle, moustache and beard, hair colour and new slots (hair, facial hair). Beanie sits above the eyes.
 
+- **Shared loadouts**: the Workbench publishes its build; the Operator Customiser can carry it as "Workbench build" (finishes, wear, rail offsets, rule repair). `shared/loadout.js` adds versioned `P1.` codes (also accepting every legacy link; retired Field/operator keys are ignored) with Copy code / Load code in the Workbench.
+
 ### Fixed
 - Optimiser no longer merges materials (it had fused the top and trousers camo and two strap materials); packs keep UVs for runtime textures.
 - Helmet and other multi-primitive parts now toggle correctly.

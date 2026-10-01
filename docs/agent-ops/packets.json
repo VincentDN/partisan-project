@@ -601,7 +601,7 @@
    "milestone": "M3",
    "size": "M",
    "bu": 20,
-   "status": "planned",
+   "status": "done",
    "deps": [
     "WP-C4"
    ],
@@ -634,12 +634,12 @@
   },
   {
    "id": "WP-I3",
-   "title": "Versioned compact loadout codes (base64url) with backward compatibility for old AK hashes",
+   "title": "Versioned loadout codes (P1.<base64url>) with backward compatibility for old AK hashes",
    "track": "Integration",
    "milestone": "M3",
    "size": "S",
    "bu": 8,
-   "status": "planned",
+   "status": "done",
    "deps": [
     "WP-I1"
    ],
