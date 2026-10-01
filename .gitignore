@@ -1,5 +1,5 @@
 node_modules/
-build/
+/build/
 _site/
 .DS_Store
 Thumbs.db
