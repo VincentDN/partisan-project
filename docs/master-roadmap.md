@@ -180,7 +180,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 |---|---|---|---|---|---|
 | `WP-C1` | Skeleton contract: document the shared 83-bone rig, add a test that poses/idles run on any base with the same bone names | S (8) | done | — | — |
 | `WP-C2` | Recon: hood and scarf meshes skinned to the Base skeleton (bpy), plate-carrier variant | M (20) | done | bpy, browser | `WP-C1` |
-| `WP-C3` | Recon: gear props (carabiner, canister, radio handheld) and owner sign-off against the sheet | S (8) | planned | — | `WP-C2` |
+| `WP-C3` | Recon: gear props (carabiner, canister, radio handheld) and owner sign-off against the sheet | S (8) | blocked | — | `WP-C2` |
 | `WP-C4` | Roster switcher: data-driven per-base slot and zone configs | S (8) | done | — | `WP-C1` |
 | `WP-C5` | Insurgent: plaid shirt, shemagh, bare head, AK-pattern kit built from Base parts plus new meshes | M (20) | done | bpy | `WP-C4` |
 | `WP-C6` | Enforcer: black kit, bold pouches, NVG helmet variant | M (20) | done | bpy | `WP-C4` |

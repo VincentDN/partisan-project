@@ -449,7 +449,7 @@
    "milestone": "M2",
    "size": "S",
    "bu": 8,
-   "status": "planned",
+   "status": "blocked",
    "deps": [
     "WP-C2"
    ],
