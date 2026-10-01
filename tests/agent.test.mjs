@@ -70,5 +70,5 @@ test('master-roadmap.md packet table is in sync with packets.json', () => {
 });
 test('next-packet CLI runs', () => {
   const out = execFileSync('node', ['tools/agent/next-packet.mjs', '--budget', '10'], {encoding: 'utf8'});
-  assert.match(out, /Budget 10 BU/);
+  assert.match(out, /Budget 10 BU|No packet fits 10 BU/); // the second form is what a fully worked-through roadmap prints
 });
