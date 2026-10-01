@@ -5,6 +5,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 ## [0.3.1] · 2026-10-01
 
 ### Changed
+- **WP-C10**: bare-head options grow to 4 hairstyles (short crop, buzz, swept fringe, long) and 3 facial-hair styles plus both (moustache, goatee, beard), all in the Hair colour zone; core pack 984 triangles.
 - **WP-D5**: `docs/ui-style-guide.md`; shared design tokens extracted to `shared/tokens.css` (imported by `panel-ui.css`).
 - **WP-I4**: Operator Customiser "Save share card" (`operator/share-card.js`): operator render, look list, carried weapon and its stat bars, branding and link in one PNG.
 - **WP-Q4**: guided first-run tour (`shared/tour.js`, 3 steps, Skip/Esc, remembered per demo) in the Workbench and Operator Customiser.

@@ -1,6 +1,6 @@
 {
  "generated": "2026-10-01",
- "triangles": 582,
+ "triangles": 984,
  "bones": [
   "root",
   "pelvis",
@@ -95,8 +95,36 @@
    ]
   },
   {
+   "node": "SK_Core_Goatee",
+   "triangles": 12,
+   "materials": [
+    "M_Hair"
+   ]
+  },
+  {
    "node": "SK_Core_Hair",
    "triangles": 106,
+   "materials": [
+    "M_Hair"
+   ]
+  },
+  {
+   "node": "SK_Core_Hair_Buzz",
+   "triangles": 106,
+   "materials": [
+    "M_Hair"
+   ]
+  },
+  {
+   "node": "SK_Core_Hair_Long",
+   "triangles": 166,
+   "materials": [
+    "M_Hair"
+   ]
+  },
+  {
+   "node": "SK_Core_Hair_Swept",
+   "triangles": 118,
    "materials": [
     "M_Hair"
    ]

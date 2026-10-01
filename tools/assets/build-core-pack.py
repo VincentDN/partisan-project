@@ -61,6 +61,24 @@ hair_mat = bc.material('M_Hair', '#3b2a1e')
 hair = bc.make(ctx, 'SK_Core_Hair', bm, hair_mat)
 bc.skin(ctx, hair, lambda p: {'head': 1})
 
+# More styles, all in the same M_Hair material so the one Hair colour zone paints them.
+def hair_style(name, profile, extra=None):
+    bm_ = bmesh.new()
+    bc.loft(ctx, bm_, [head_ring(*p_) for p_ in profile])
+    if extra: extra(bm_)
+    o = bc.make(ctx, name, bm_, hair_mat)
+    bc.skin(ctx, o, lambda p: {'head': 1})
+    return o
+# Buzz: hugs the skull, a hair's breadth proud of it.
+buzz = hair_style('SK_Core_Hair_Buzz', [(1.726, -.097, .090, .086), (1.756, -.093, .088, .085), (1.784, -.071, .069, .071), (1.801, -.030, .022, .038), (1.806, -.004, -.002, .010)])
+# Swept: taller on top with a fringe over the brow and side-parted volume.
+def fringe(b): bc.box(ctx, b, .012, -.106, 1.742, .060, .014, .016)
+swept = hair_style('SK_Core_Hair_Swept', [(1.700, -.104, .098, .094), (1.740, -.108, .098, .094), (1.780, -.090, .084, .084), (1.812, -.050, .040, .060), (1.830, -.010, .004, .024)], fringe)
+# Long: a cap plus a curtain down the back of the neck to the shoulder blades.
+def curtain(b):
+    bc.loft(ctx, b, [head_ring(1.700, .006, .108, .080, 10), head_ring(1.640, .020, .120, .082, 10), head_ring(1.560, .030, .122, .076, 10), head_ring(1.500, .036, .118, .062, 10)], close_top=False)
+long_hair = hair_style('SK_Core_Hair_Long', hair_profile, curtain)
+
 # Facial hair: a moustache bar and a jaw beard.
 bm = bmesh.new()
 bc.box(ctx, bm, 0, -.1255, 1.607, .052, .012, .014)
@@ -72,5 +90,10 @@ bc.loft(ctx, bm, [head_ring(*p_) for p_ in beard_profile])
 beard = bc.make(ctx, 'SK_Core_Beard', bm, hair_mat)
 bc.skin(ctx, beard, lambda p: {'head': 1})
 
-bc.export(ctx, a.out, (shirt, lids, head, hair, stache, beard))
+bm = bmesh.new()
+bc.box(ctx, bm, 0, -.1265, 1.566, .020, .012, .026)
+goatee = bc.make(ctx, 'SK_Core_Goatee', bm, hair_mat)
+bc.skin(ctx, goatee, lambda p: {'head': 1})
+
+bc.export(ctx, a.out, (shirt, lids, head, hair, buzz, swept, long_hair, stache, beard, goatee))
 print('core pack ->', a.out)

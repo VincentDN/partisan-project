@@ -12,8 +12,12 @@ export const PARTS = {
   mask: {nodes: ['SK_Mask']},
   visor: {nodes: ['SK_Glass']},
   hair: {nodes: ['SK_Core_Hair']},
+  hairBuzz: {nodes: ['SK_Core_Hair_Buzz']},
+  hairSwept: {nodes: ['SK_Core_Hair_Swept']},
+  hairLong: {nodes: ['SK_Core_Hair_Long']},
   stache: {nodes: ['SK_Core_Moustache']},
   beard: {nodes: ['SK_Core_Beard']},
+  goatee: {nodes: ['SK_Core_Goatee']},
   lids: {nodes: ['SK_Core_Lids']}, // shown only while blinking (operator.js); no slot controls it
   plates: {nodes: ['SK_Body'], materials: ['M_Body_Armor']},
   chestPouches: {nodes: ['SK_Chest_Pouches']},
@@ -88,6 +92,9 @@ export const SLOTS = [
     default: 'short',
     options: [
       {id: 'short', label: 'Short crop', show: on('hair')},
+      {id: 'buzz', label: 'Buzz cut', show: on('hairBuzz')},
+      {id: 'swept', label: 'Swept fringe', show: on('hairSwept')},
+      {id: 'long', label: 'Long', show: on('hairLong')},
       {id: 'none', label: 'None', show: on()},
     ],
   },
@@ -99,6 +106,7 @@ export const SLOTS = [
     options: [
       {id: 'none', label: 'None', show: on()},
       {id: 'stache', label: 'Moustache', show: on('stache')},
+      {id: 'goatee', label: 'Goatee', show: on('goatee')},
       {id: 'beard', label: 'Beard', show: on('beard')},
       {id: 'full', label: 'Both', show: on('stache', 'beard')},
     ],

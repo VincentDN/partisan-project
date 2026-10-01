@@ -135,7 +135,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 |---|---|---|---|---|
 | **M0** Foundation | v0.3.0 | 8/10 | 130 BU | 95% |
 | **M1** Gun modder: real parts, three weapons | v0.4.0 | 3/11 | 143 BU | 34% |
-| **M2** Operator roster: Recon, Insurgent, Enforcer | v0.5.0 | 9/11 | 172 BU | 84% |
+| **M2** Operator roster: Recon, Insurgent, Enforcer | v0.5.0 | 10/11 | 172 BU | 95% |
 | **M3** Integration and sharing | v0.6.0 | 3/4 | 56 BU | 64% |
 | **M4** Weapon roster 2: modern and WW2 | v0.7.0 | 0/7 | 111 BU | 0% |
 | **M5** Production acceptance | v1.0.0 | 2/6 | 67 BU | 42% |
@@ -187,7 +187,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-C7` | Insignia and patch system: six sleeve patch designs, left and right (faction flags come with WP-D3) | M (20) | done | — | `WP-C4` |
 | `WP-C8` | Pose library expansion: crouch, kneel, sit, salute, sling carry, rifle-on-shoulder | M (20) | done | browser | `WP-C1` |
 | `WP-C9` | Idle polish: blink and head-follow of the camera (reduced-motion safe) | M (20) | done | — | `WP-C1` |
-| `WP-C10` | More hairstyles and facial-hair options for bare-head looks | M (20) | planned | bpy | `WP-C4` |
+| `WP-C10` | More hairstyles and facial-hair options for bare-head looks | M (20) | done | bpy | `WP-C4` |
 | `WP-C11` | Secondary motion: scarf drape and strap follow-through on the idle | S (8) | done | bpy, browser | `WP-C9` |
 
 ### M3 · Integration and sharing

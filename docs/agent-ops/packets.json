@@ -578,7 +578,7 @@
    "milestone": "M2",
    "size": "M",
    "bu": 20,
-   "status": "planned",
+   "status": "done",
    "deps": [
     "WP-C4"
    ],
