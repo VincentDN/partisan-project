@@ -3,7 +3,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import * as T from 'three';
-import {Rig} from '../operator/rig.js';
+import {Rig, blinkAt, lookDeltas} from '../operator/rig.js';
 
 const poseData = JSON.parse(fs.readFileSync('operator/poses.json', 'utf8'));
 const manifest = JSON.parse(fs.readFileSync('assets/models/operators/base-operator.manifest.json', 'utf8'));
@@ -107,4 +107,30 @@ test('lowering is blended like bone deltas and cleared when the pose changes bac
   assert.ok(Math.abs(rig.lower - 0.2) < 1e-9, String(rig.lower));
   rig.update(1, 0, null, 0); assert.equal(rig.lower, 0.4);
   rig.setPose('a', 0); assert.equal(rig.lower, 0);
+});
+
+test('blink: deterministic, short, and rare enough to look natural', () => {
+  assert.equal(blinkAt(12.345), blinkAt(12.345));
+  let closed = 0, edges = 0, prev = false;
+  for (let t = 0; t < 120; t += 0.01) { const c = blinkAt(t); if (c) closed++; if (c && !prev) edges++; prev = c; }
+  const duty = closed * 0.01 / 120, perMinute = edges / 2;
+  assert.ok(duty > 0.02 && duty < 0.08, `duty ${duty}`);
+  assert.ok(perMinute > 14 && perMinute < 32, `blinks per minute ${perMinute}`);
+});
+
+test('look-at: head takes most of the turn, neck and upper spine share the rest, signs are consistent', () => {
+  const d = lookDeltas(30, 10);
+  assert.ok(Math.abs(d.head[1] + d.neck_01[1] + d.spine_04[1] - 30) < 1e-9, 'yaw shares add up to the full turn');
+  assert.ok(d.head[1] > d.neck_01[1] && d.neck_01[1] > d.spine_04[1]);
+  assert.ok(d.head[0] < 0, 'a camera above the head tilts the head back (negative pitch)');
+});
+
+test('look-at turns the head toward +x when the target is on the left', () => {
+  const root = new T.Group(), head = new T.Bone(), tip = new T.Bone();
+  head.name = 'head'; tip.name = 'tip'; tip.position.set(0, 0, 1); head.add(tip); root.add(head); root.updateMatrixWorld(true);
+  const rig = new Rig(root, {poses: {p: {bones: {}}}, idles: {}});
+  rig.setPose('p', 0);
+  rig.look = {yaw: 90, pitch: 0}; rig.update(0, 0, null, 0); root.updateMatrixWorld(true);
+  const v = tip.getWorldPosition(new T.Vector3());                 // head takes 55 % of 90 degrees ~ 49.5 degrees
+  assert.ok(v.x > 0.7 && v.z < 0.7, `forward (+z) vector turns toward +x, got ${v.toArray()}`);
 });

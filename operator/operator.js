@@ -9,7 +9,7 @@ import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
 import {createStage, reduceMotion} from '../shared/stage.js';
 import {bindMusicUI} from '../shared/music-ui.js';
 import {camoFor, FABRIC} from '../shared/camo.js';
-import {Rig} from './rig.js';
+import {Rig, blinkAt} from './rig.js';
 import {PALETTES, CAMO_IDS, VIEWS, HERO_AZIMUTH, TRIANGLE_BUDGET, ROSTER, BASES, DEFAULT_BASE, defaultsFor} from './config.js';
 import {loadRifle, applySlotState} from '../workbench/rifle-instance.js';
 import {MODELS} from '../workbench/models.js';
@@ -54,8 +54,13 @@ function bindPack(packScene, scene, baseRig) {
     if (bones.some(b => !b)) throw new Error(`pack mesh ${mesh.name} uses bones the base does not have`);
     // A pack material named like one of the base's shares the base instance, so colour zones paint both.
     const shared = baseMaterials.get(mesh.material.name);
-    if (shared) mesh.material = shared;
+    if (shared) mesh.material = shared; else baseMaterials.set(mesh.material.name, mesh.material);   // also share between pack meshes (e.g. hair, moustache, beard)
     mesh.bind(new T.Skeleton(bones, mesh.skeleton.boneInverses), mesh.bindMatrix);
+    // The base's skin material uses vertex colours; a pack mesh without a colour attribute would render black.
+    if (mesh.material.vertexColors && !mesh.geometry.attributes.color) {
+      const n = mesh.geometry.attributes.position.count;
+      mesh.geometry.setAttribute('color', new T.BufferAttribute(new Float32Array(n * 3).fill(1), 3));
+    }
     armature.add(mesh);
   }
 }
@@ -92,6 +97,7 @@ async function loadBase(id) {
 const slotOf = id => base.slots.find(s => s.id === id);
 function valid(key, value) {
   if (key === 'pose') return !!poseData.poses[value];
+  if (key === 'look') return value === 'on' || value === 'off';
   if (key === 'idle') return value === 'off' || !!poseData.idles[value];
   if (key.startsWith('z.')) { const z = base.zones.find(z => z.id === key.slice(2)); return !!z && zoneOptions(z).some(o => o.id === value); }
   return !!slotOf(key)?.options.some(o => o.id === value);
@@ -121,7 +127,11 @@ function paintZone(zone, id) {
 // ---------- Apply state ----------
 function visibleParts() {
   const set = new Set();
-  for (const slot of base.slots) for (const p of (slot.options.find(o => o.id === state[slot.id]) || slot.options[0]).show) set.add(p);
+  const chosen = id => { const slot = slotOf(id); return slot && (slot.options.find(o => o.id === state[id]) || slot.options[0]); };
+  for (const slot of base.slots) for (const p of (chosen(slot.id)).show) set.add(p);
+  // Hair needs a bare head; a beard and moustache need an uncovered lower face.
+  if (!chosen('head')?.hair) set.delete('hair');
+  if (chosen('face')?.covers) { set.delete('beard'); set.delete('stache'); }
   return set;
 }
 function applyEquipment() {
@@ -229,6 +239,7 @@ function render() {
     return row;
   }));
   $('#poses').replaceChildren(...Object.entries(poseData.poses).map(([id, p]) => chip(p.label, state.pose === id, () => set('pose', id))));
+  $('#lookat').replaceChildren(chip('Head follows camera', state.look === 'on', () => set('look', state.look === 'on' ? 'off' : 'on')));
   $('#pose-detail').textContent = poseData.poses[state.pose].detail;
   $('#idles').replaceChildren(...[['off', 'Held'], ...Object.entries(poseData.idles).map(([id, i]) => [id, i.label])].map(([id, label]) => chip(label, state.idle === id, () => set('idle', id))));
   $('#presets').replaceChildren(...base.presets.map(p => chip(p.label, false, () => { state = {...DEFAULTS, pose: state.pose, idle: state.idle, ...p.state}; applyAll(); render(); writeHash(); view('full'); })));
@@ -314,7 +325,24 @@ addEventListener('hashchange', () => { if (location.hash.replace(/^#/, '') !== h
 view('full');
 try { if (!localStorage.getItem('parp-operator-seen')) { $('#first-run').hidden = false; setTimeout(() => { $('#first-run').hidden = true; }, 14000); } } catch {}
 
+const headPos = new T.Vector3(), camPos = new T.Vector3(), lids = () => meshes.filter(m => meshPart.get(m) === 'lids');
+function updateLook(dt) {
+  const target = {yaw: 0, pitch: 0};
+  if (state.look === 'on' && !reduceMotion) {
+    turn.worldToLocal(rig.bones.get('head').getWorldPosition(headPos));
+    turn.worldToLocal(camPos.copy(camera.position));
+    const dx = camPos.x - headPos.x, dz = camPos.z - headPos.z;
+    let yaw = Math.atan2(dx, dz) * 180 / Math.PI;                       // 0 = camera straight ahead, + = to the character's left
+    const pitch = Math.atan2(camPos.y - headPos.y, Math.hypot(dx, dz)) * 180 / Math.PI;
+    if (Math.abs(yaw) > 110) yaw = 0;                                   // camera behind: do not wring the neck
+    target.yaw = Math.max(-40, Math.min(40, yaw)); target.pitch = Math.max(-20, Math.min(20, pitch));
+  }
+  const k = 1 - Math.exp(-dt * 4);
+  rig.look.yaw += (target.yaw - rig.look.yaw) * k; rig.look.pitch += (target.pitch - rig.look.pitch) * k;
+}
 stage.onFrame((dt, t) => {
+  updateLook(dt);
+  if (!reduceMotion && state.idle !== 'off') { const closed = blinkAt(t); for (const m of lids()) m.visible = closed; }
   rig.update(dt, t, state.idle === 'off' ? null : state.idle, reduceMotion ? 0 : 1);
   operator.position.y = -rig.lower;               // crouch / kneel: legs fold, the whole body drops
   operator.updateMatrixWorld(true);
@@ -325,5 +353,5 @@ stage.onFrame((dt, t) => {
 // Test hook: lets browser tests await a fully loaded operator and inspect state.
 window.PARP_OPERATOR = {
   get state() { return state; }, get rig() { return rig; }, get meshes() { return meshes; }, get meshPart() { return meshPart; },
-  get weapon() { return weapon; }, get base() { return base; }, stage, pivot, set: (k, v) => set(k, v), switchBase, ready: true,
+  get weapon() { return weapon; }, get look() { return rig.look; }, get base() { return base; }, stage, pivot, set: (k, v) => set(k, v), switchBase, ready: true,
 };

@@ -11,6 +11,10 @@ export const PARTS = {
   nvg:          {nodes: ['SK_Helmet_Scope']},
   mask:         {nodes: ['SK_Mask']},
   visor:        {nodes: ['SK_Glass']},
+  hair:         {nodes: ['SK_Core_Hair']},
+  stache:       {nodes: ['SK_Core_Moustache']},
+  beard:        {nodes: ['SK_Core_Beard']},
+  lids:         {nodes: ['SK_Core_Lids']},   // shown only while blinking (operator.js); no slot controls it
   plates:       {nodes: ['SK_Body'], materials: ['M_Body_Armor']},
   chestPouches: {nodes: ['SK_Chest_Pouches']},
   bellyPouches: {nodes: ['SK_Belly_Pouches']},
@@ -29,17 +33,27 @@ export const SLOTS = [
   {id: 'head', label: 'Headgear', camera: 'head', default: 'nvg', options: [
     {id: 'nvg',    label: 'Helmet + NVG', show: on('helmet', 'nvg')},
     {id: 'helmet', label: 'Helmet',       show: on('helmet')},
-    {id: 'bare',   label: 'Bare head',    show: on()},
+    {id: 'bare',   label: 'Bare head',    show: on(), hair: true},
   ]},
   {id: 'comms', label: 'Headset', camera: 'head', default: 'on', options: [
     {id: 'on',  label: 'Headset', show: on('headset')},
     {id: 'off', label: 'None',    show: on()},
   ]},
   {id: 'face', label: 'Face', camera: 'head', default: 'mask', options: [
-    {id: 'mask',  label: 'Mask',      show: on('mask')},
+    {id: 'mask',  label: 'Balaclava', show: on('mask'), covers: true},
     {id: 'visor', label: 'Visor',     show: on('visor')},
-    {id: 'both',  label: 'Mask + visor', show: on('mask', 'visor')},
+    {id: 'both',  label: 'Balaclava + visor', show: on('mask', 'visor'), covers: true},
     {id: 'bare',  label: 'Bare face', show: on()},
+  ]},
+  {id: 'hair', label: 'Hair (bare head only)', camera: 'head', default: 'short', options: [
+    {id: 'short', label: 'Short crop', show: on('hair')},
+    {id: 'none',  label: 'None',       show: on()},
+  ]},
+  {id: 'facial', label: 'Facial hair (uncovered face)', camera: 'head', default: 'none', options: [
+    {id: 'none',     label: 'None',      show: on()},
+    {id: 'stache',   label: 'Moustache', show: on('stache')},
+    {id: 'beard',    label: 'Beard',     show: on('beard')},
+    {id: 'full',     label: 'Both',      show: on('stache', 'beard')},
   ]},
   {id: 'armor', label: 'Body armour', camera: 'torso', default: 'plates', options: [
     {id: 'plates', label: 'Plate carrier', show: on('plates')},
@@ -87,9 +101,11 @@ export const ZONES = [
   {id: 'gloves', label: 'Gloves',      materials: ['M_Glove'],      camera: 'full',  default: 'black',  palette: 'dark'},
   {id: 'boots',  label: 'Boots',       materials: ['M_Shoe'],       camera: 'legs',  default: 'black',  palette: 'dark'},
   {id: 'skin',   label: 'Skin tone',   materials: ['M_Head'],       camera: 'head',  default: 'original', palette: 'skin'},
+  {id: 'hair',   label: 'Hair colour', materials: ['M_Hair'],       camera: 'head',  default: 'original', palette: 'hair'},
 ];
 
 export const PALETTES = {
+  hair: [['black', 'Black', '#1c1917'], ['brown', 'Brown', '#4a3222'], ['blonde', 'Blonde', '#b8955a'], ['grey', 'Grey', '#8b8a86'], ['auburn', 'Auburn', '#7a3a1e']],
   skin: [['s1', 'Fair', '#f1c9a5'], ['s2', 'Light', '#e0ac85'], ['s3', 'Tan', '#c68a5e'], ['s4', 'Brown', '#a0673f'], ['s5', 'Deep', '#7a4a2c'], ['s6', 'Dark', '#4f2f1d']],
   dark:  [['black', 'Black', '#16171a'], ['brown', 'Brown', '#3b2c20'], ['olive', 'Olive', '#3a4229'], ['grey', 'Grey', '#4c5054']],
   gear:  [['black', 'Black', '#1c1d20'], ['brown', 'Coyote brown', '#6b5538'], ['tan', 'Tan', '#8c7350'], ['olive', 'Olive drab', '#4b5a3a'], ['grey', 'Wolf grey', '#63676b'], ['navy', 'Navy', '#2a3348']],
@@ -137,7 +153,7 @@ const RECON_SLOTS = [
     {id: 'hood',   label: 'Hood',           show: on('hood')},
     {id: 'nvg',    label: 'Helmet + NVG',   show: on('helmet', 'nvg')},
     {id: 'helmet', label: 'Helmet',         show: on('helmet')},
-    {id: 'bare',   label: 'Bare head',      show: on()},
+    {id: 'bare',   label: 'Bare head',      show: on(), hair: true},
   ]},
   {id: 'neck', label: 'Scarf', camera: 'head', default: 'on', options: [
     {id: 'on',  label: 'Houndstooth scarf', show: on('scarf')},
@@ -148,7 +164,7 @@ const RECON_SLOTS = [
     {id: 'off', label: 'None',  show: on()},
   ]},
   ...bySlot('comms', {default: 'off'}).filter(s => s.id === 'comms'),
-  ...['face', 'armor', 'rig', 'belt'].map(id => SLOTS.find(s => s.id === id)),
+  ...['face', 'hair', 'facial', 'armor', 'rig', 'belt'].map(id => SLOTS.find(s => s.id === id)),
   ...bySlot('pack', {default: 'off'}).filter(s => s.id === 'pack'),
   ...bySlot('holsters', {default: 'right'}).filter(s => s.id === 'holsters'),
   ...SLOTS.filter(s => s.id === 'guards'),
@@ -173,10 +189,10 @@ export const BASES = {
 const HEADWEAR_PARTS = {...PARTS, beanie: {nodes: ['SK_Ins_Beanie']}, shemagh: {nodes: ['SK_Ins_Shemagh']}};
 const headSlot = def => ({id: 'head', label: 'Headgear', camera: 'head', default: def, options: [
   {id: 'beanie', label: 'Knit beanie', show: on('beanie')}, {id: 'nvg', label: 'Helmet + NVG', show: on('helmet', 'nvg')},
-  {id: 'helmet', label: 'Helmet', show: on('helmet')}, {id: 'bare', label: 'Bare head', show: on()}]});
+  {id: 'helmet', label: 'Helmet', show: on('helmet')}, {id: 'bare', label: 'Bare head', show: on(), hair: true}]});
 const faceSlot = def => ({id: 'face', label: 'Face', camera: 'head', default: def, options: [
-  {id: 'shemagh', label: 'Shemagh', show: on('shemagh')}, {id: 'mask', label: 'Mask', show: on('mask')},
-  {id: 'visor', label: 'Visor', show: on('visor')}, {id: 'both', label: 'Mask + visor', show: on('mask', 'visor')}, {id: 'bare', label: 'Bare face', show: on()}]});
+  {id: 'shemagh', label: 'Shemagh', show: on('shemagh'), covers: true}, {id: 'mask', label: 'Balaclava', show: on('mask'), covers: true},
+  {id: 'visor', label: 'Visor', show: on('visor')}, {id: 'both', label: 'Balaclava + visor', show: on('mask', 'visor'), covers: true}, {id: 'bare', label: 'Bare face', show: on()}]});
 const variantSlots = (head, face, defaults) => SLOTS.map(s => {
   const slot = s.id === 'head' ? headSlot(head) : s.id === 'face' ? faceSlot(face) : s;
   return defaults[s.id] ? {...slot, default: defaults[s.id]} : slot;
@@ -206,6 +222,6 @@ export const defaultsFor = base => ({
   base: base.id,
   ...Object.fromEntries(base.slots.map(s => [s.id, s.default])),
   ...Object.fromEntries(base.zones.map(z => [`z.${z.id}`, z.default])),
-  pose: 'relaxed', idle: 'calm',
+  pose: 'relaxed', idle: 'calm', look: 'on',
   ...base.defaults,
 });

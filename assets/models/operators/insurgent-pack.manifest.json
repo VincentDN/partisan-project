@@ -1,6 +1,6 @@
 {
  "generated": "2026-10-01",
- "triangles": 208,
+ "triangles": 212,
  "bones": [
   "root",
   "pelvis",
@@ -89,7 +89,7 @@
  "meshes": [
   {
    "node": "SK_Ins_Beanie",
-   "triangles": 124,
+   "triangles": 128,
    "materials": [
     "M_Beanie"
    ]

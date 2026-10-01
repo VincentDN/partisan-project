@@ -112,6 +112,18 @@ await check('operator: idle animation moves bones; reduced motion freezes them',
   assert.deepEqual(c, d); await still.close();
 });
 
+await check('operator: eyelids exist (hidden until a blink) and the head follows the camera', async () => {
+  const page = await open(browser, server.url + 'operator/#idle=off', {reducedMotion: 'no-preference'});
+  await page.waitForFunction(() => window.PARP_OPERATOR?.ready, null, {timeout: 60000});
+  const lids = await page.evaluate(() => window.PARP_OPERATOR.meshes.filter(m => window.PARP_OPERATOR.meshPart.get(m) === 'lids').map(m => m.visible));
+  assert.deepEqual(lids, [false], 'one eyelid mesh, hidden');
+  await page.evaluate(() => { const {camera, controls} = window.PARP_OPERATOR.stage; controls.target.set(0, 1.5, 0); camera.position.set(3, 1.5, 1.2); controls.update(); });
+  await page.waitForFunction(() => Math.abs(window.PARP_OPERATOR.look.yaw) > 15, null, {timeout: 20000});
+  const yaw = await page.evaluate(() => window.PARP_OPERATOR.look.yaw);
+  assert.ok(yaw > 15 && yaw <= 40, `camera on the character's left turns the head left (+): ${yaw}`);
+  await page.close();
+});
+
 await check('workbench: loads, swapping a part writes the hash, both rifles load', async () => {
   const page = await open(browser, server.url + 'workbench/');
   await page.waitForSelector('#build .slot', {timeout: 60000});

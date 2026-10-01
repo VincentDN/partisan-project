@@ -22,19 +22,19 @@ arm, S = ctx.arm, bc.smooth
 # ---- Beanie: a close knit cap with a folded cuff -------------------------------------------------
 bm = bmesh.new()
 sections = [  # z, rx, ry, cy
-    (1.640, .128, .158, -.020), (1.668, .134, .166, -.020), (1.690, .126, .158, -.018),   # cuff (slightly proud)
-    (1.730, .122, .150, -.010), (1.775, .112, .136, 0.000), (1.815, .090, .108, .008), (1.842, .040, .052, .012)]
+    (1.708, .118, .140, -.012), (1.730, .124, .146, -.012), (1.752, .118, .142, -.010),   # cuff (slightly proud), above the brow so the eyes show
+    (1.784, .110, .130, 0.000), (1.820, .092, .108, .008), (1.846, .044, .056, .012), (1.858, .012, .018, .014)]
 bc.loft(ctx, bm, [bc.ring_pts(0, cy, z, rx, ry, 10) for z, rx, ry, cy in sections])
 for f in list(bm.faces):                                    # the face opens below the cuff: trim the front of the first band
     c = sum((arm.matrix_world @ v.co for v in f.verts), Vector()) / len(f.verts)
-    if c.y < -0.1 and abs(c.x) < 0.06 and c.z < 1.675: bm.faces.remove(f)
+    pass
 beanie = bc.make(ctx, 'SK_Ins_Beanie', bm, bc.material('M_Beanie', '#1c1d1f'))
 bc.skin(ctx, beanie, lambda p: {'head': 1})
 
 # ---- Shemagh: wrapped over mouth and nose, around the neck, a loose tail on the chest ---------------
 bm = bmesh.new()
 sections = [  # z, rx, ry, cy: bulges forward at the mouth, stops under the eyes
-    (1.455, .150, .125, .000), (1.510, .136, .128, -.004), (1.568, .126, .150, -.020), (1.628, .122, .168, -.030), (1.664, .118, .164, -.024)]
+    (1.455, .150, .125, .000), (1.510, .136, .128, -.004), (1.568, .126, .150, -.020), (1.622, .120, .160, -.026), (1.648, .112, .150, -.020)]
 verts = bc.loft(ctx, bm, [bc.ring_pts(0, cy, z, rx, ry, 10) for z, rx, ry, cy in sections], close_top=False)
 tail = [((.07, -.150, 1.46), (.0, -.170, 1.46)), ((.07, -.186, 1.36), (.0, -.200, 1.36)), ((.05, -.196, 1.28), (.012, -.206, 1.26))]
 vv = [[bm.verts.new(ctx.to_local @ Vector(p)) for p in pair] for pair in tail]

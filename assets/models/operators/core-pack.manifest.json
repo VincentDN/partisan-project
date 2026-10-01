@@ -1,6 +1,6 @@
 {
  "generated": "2026-10-01",
- "triangles": 120,
+ "triangles": 582,
  "bones": [
   "root",
   "pelvis",
@@ -88,6 +88,41 @@
  ],
  "meshes": [
   {
+   "node": "SK_Core_Beard",
+   "triangles": 82,
+   "materials": [
+    "M_Hair"
+   ]
+  },
+  {
+   "node": "SK_Core_Hair",
+   "triangles": 106,
+   "materials": [
+    "M_Hair"
+   ]
+  },
+  {
+   "node": "SK_Core_Head",
+   "triangles": 238,
+   "materials": [
+    "M_Head"
+   ]
+  },
+  {
+   "node": "SK_Core_Lids",
+   "triangles": 24,
+   "materials": [
+    null
+   ]
+  },
+  {
+   "node": "SK_Core_Moustache",
+   "triangles": 12,
+   "materials": [
+    "M_Hair"
+   ]
+  },
+  {
    "node": "SK_Core_Shirt",
    "triangles": 120,
    "materials": [
@@ -96,6 +131,24 @@
   }
  ],
  "materials": [
+  {
+   "name": "M_Hair",
+   "baseColor": [
+    0.044,
+    0.023,
+    0.013
+   ],
+   "textured": false
+  },
+  {
+   "name": "M_Head",
+   "baseColor": [
+    0.27,
+    0.159,
+    0.12
+   ],
+   "textured": false
+  },
   {
    "name": "M_Top_Fabric",
    "baseColor": [

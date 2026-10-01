@@ -11,6 +11,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 - **Pose library to 10**: High ready, Shoulder arms, Crouch, Kneel (legs fold via a pose `lower` offset), Salute; `tools/pose-fit.mjs` can solve a raised elbow (`lowerZ=1`).
 
+- **Idle polish**: eyelids blink on a deterministic schedule, and the head follows the camera (clamped, smoothed, off under reduced motion or with the toggle).
+- **A real head**: the purchased character only has an eye strip inside a balaclava, so "bare head" showed floating eyes. The core pack adds a skull with ears and nose, a short-crop hairstyle, moustache and beard, hair colour and new slots (hair, facial hair). Beanie sits above the eyes.
+
 ### Fixed
 - Optimiser no longer merges materials (it had fused the top and trousers camo and two strap materials); packs keep UVs for runtime textures.
 - Helmet and other multi-primitive parts now toggle correctly.

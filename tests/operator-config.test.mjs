@@ -5,7 +5,8 @@ import fs from 'node:fs';
 import {PARTS, SLOTS, ZONES, PALETTES, VIEWS, TRIANGLE_BUDGET, PRESETS, ROSTER, BASES, defaultsFor} from '../operator/config.js';
 
 const manifest = JSON.parse(fs.readFileSync('assets/models/operators/base-operator.manifest.json', 'utf8'));
-const nodes = new Map(manifest.meshes.map(m => [m.node, m]));
+const corePack = JSON.parse(fs.readFileSync('assets/models/operators/core-pack.manifest.json', 'utf8'));
+const nodes = new Map([...manifest.meshes, ...corePack.meshes].map(m => [m.node, m]));
 
 test('Base Operator model is within budget and well-formed', () => {
   assert.ok(fs.existsSync('assets/models/operators/base-operator.glb'));
@@ -42,7 +43,7 @@ test('no part is shown by two different slots (they would fight)', () => {
 });
 
 test('colour zones target real materials and real palettes', () => {
-  const materials = new Set(manifest.materials.map(m => m.name));
+  const materials = new Set([...manifest.materials, ...corePack.materials].map(m => m.name));
   for (const z of ZONES) {
     assert.ok(PALETTES[z.palette], `${z.id}: palette ${z.palette}`);
     for (const m of z.materials) assert.ok(materials.has(m), `${z.id}: material ${m} not in model`);

@@ -25,6 +25,23 @@ const FINGER_CURL = [
 ];
 const THUMB_CURL = [['thumb_01', 18, 'y'], ['thumb_02', 34, 'z'], ['thumb_03', 40, 'z']];
 
+/**
+ * Blink schedule: true while the eyes should be closed at time t (seconds). Deterministic, so tests and
+ * screenshots are repeatable. A blink is 0.13 s roughly every 3.4 s, jittered; every fifth cycle blinks twice.
+ */
+export function blinkAt(t) {
+  const PERIOD = 3.4, k = Math.floor(t / PERIOD), local = t - k * PERIOD;
+  const jitter = ((Math.imul(k + 1, 2654435761) >>> 0) % 1000) / 1000;      // 0..1, stable per cycle
+  const start = 0.6 + jitter * 2.0;
+  const closed = x => x >= 0 && x < 0.13;
+  return closed(local - start) || (k % 5 === 4 && closed(local - start - 0.26));
+}
+
+/** Head-follow deltas (degrees) for a camera at yaw/pitch (degrees) from the character's facing. */
+export function lookDeltas(yaw, pitch) {
+  return {head: [-pitch * 0.5, yaw * 0.55, 0], neck_01: [-pitch * 0.2, yaw * 0.3, 0], spine_04: [0, yaw * 0.15, 0]};
+}
+
 export class Rig {
   /** @param {T.Object3D} root the loaded glTF scene containing the skeleton */
   constructor(root, data) {
@@ -43,6 +60,7 @@ export class Rig {
     this.target = {};
     this.blend = 1;
     this.poseId = null;
+    this.look = {yaw: 0, pitch: 0};   // degrees the head turns toward the camera (set by the page each frame)
     this.lower = 0;             // metres the whole body is lowered (crouch, kneel); blended like the bone deltas
     this.targetLower = 0;
     this._r = new T.Quaternion();
@@ -108,6 +126,7 @@ export class Rig {
       }
     }
     const idle = idleId ? this.data.idles[idleId] : null;
+    const look = lookDeltas(this.look.yaw, this.look.pitch);
     for (const name of this.order) {
       const bone = this.bones.get(name), rest = this.rest.get(name);
       const base = this.current[name];
@@ -116,6 +135,8 @@ export class Rig {
         const i = Rig.idleDelta(idle, name, t);
         x += i[0] * idleScale; y += i[1] * idleScale; z += i[2] * idleScale;
       }
+      const l = look[name];
+      if (l) { x += l[0]; y += l[1]; z += l[2]; }
       if (!x && !y && !z) { bone.quaternion.copy(rest.local); continue; }
       this._r.setFromEuler(this._e.set(x * DEG, y * DEG, z * DEG, 'XYZ'));
       bone.quaternion.copy(rest.local).multiply(rest.worldInv).multiply(this._r).multiply(rest.world);

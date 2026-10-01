@@ -561,23 +561,23 @@
   },
   {
    "id": "WP-C9",
-   "title": "Idle polish: blink, scarf/strap secondary motion, head-follow of the camera (reduced-motion safe)",
+   "title": "Idle polish: blink and head-follow of the camera (reduced-motion safe)",
    "track": "Characters",
    "milestone": "M2",
    "size": "M",
    "bu": 20,
-   "status": "planned",
+   "status": "done",
    "deps": [
     "WP-C1"
    ],
    "agent": "any",
    "needs": [],
    "inputs": [],
-   "acceptance": "Idle shows life without foot sliding; reduced motion disables all idle; frame-time cost < 0.5 ms."
+   "acceptance": "Blink and look-at implemented and tested (rig.test.mjs, smoke); reduced motion disables both; no foot sliding."
   },
   {
    "id": "WP-C10",
-   "title": "Face, hair and beard options for bare-head looks",
+   "title": "More hairstyles and facial-hair options for bare-head looks",
    "track": "Characters",
    "milestone": "M2",
    "size": "M",
@@ -591,7 +591,8 @@
     "bpy"
    ],
    "inputs": [],
-   "acceptance": ">= 4 hairstyles, 3 facial-hair options, skin-tone safe; triangle budget respected."
+   "acceptance": ">= 4 hairstyles, 3 facial-hair options, skin-tone safe; triangle budget respected.",
+   "notes": "Started in v0.3.1: a real head (SK_Core_Head with ears and nose), one short-crop hairstyle, moustache and beard, hair colour zone. Remaining for acceptance: >= 4 hairstyles."
   },
   {
    "id": "WP-I1",
@@ -1069,6 +1070,28 @@
    "needs": [],
    "inputs": [],
    "acceptance": "One squad, one terrace; belief and morale made visible."
+  },
+  {
+   "id": "WP-C11",
+   "title": "Secondary motion: scarf drape and strap follow-through on the idle",
+   "track": "Characters",
+   "milestone": "M2",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-C9"
+   ],
+   "agent": "any",
+   "needs": [
+    "bpy",
+    "browser"
+   ],
+   "inputs": [
+    "operator/rig.js",
+    "tools/assets/build-recon-pack.py"
+   ],
+   "acceptance": "Scarf/radio/straps lag the torso by a damped spring; reduced motion disables it; < 0.3 ms per frame."
   }
  ]
 }

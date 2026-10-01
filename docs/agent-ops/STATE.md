@@ -5,12 +5,12 @@ Small on purpose. Read this first, then `AGENTS.md`. Plan and sizes: [`README.md
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-01 16:50 UTC · claude · WP-C1/C2/C4/C5/C6 · done**
+**2026-10-01 17:02 UTC · claude · WP-C8/C9 (+C10 started) · done**
 
-- Branch `claude/friendly-dijkstra-4ky9w6` at `f1edae0`; **31 uncommitted file(s)** (commit before stopping): M CHANGELOG.md,  M VERSION,  M assets/REGISTER.md,  M assets/js/items.js,  M assets/register.json,  M docs/CODEMAP.md.
-- Last commits: f1edae0 feat(WP-C1,WP-C4): skeleton contract and data-driven roster switcher · 34cccd4 feat(WP-F1..F7): Partisan Project (PARP) v0.3.0 foundation · caded09 Agent briefings
-- What happened: Skeleton contract, roster switcher, and v1 of Recon, Insurgent, Enforcer (extension packs bound by bone name, core shirt pack, plaid/recon camo). Tests 56/56, smoke green.
-- Next step: Owner: WP-F8, WP-A1, WP-D1. Agents: WP-C8 poses, WP-C9 idle polish, WP-C3/C7 patches, WP-T4 workbench tests, then WP-T1.
+- Branch `claude/friendly-dijkstra-4ky9w6` at `6740013`; **17 uncommitted file(s)** (commit before stopping): M CHANGELOG.md,  M assets/models/operators/core-pack.glb,  M assets/models/operators/core-pack.manifest.json,  M assets/models/operators/insurgent-pack.glb,  M assets/models/operators/insurgent-pack.manifest.json,  M docs/CODEMAP.md.
+- Last commits: 6740013 feat(WP-C8): ten poses including crouch, kneel and salute · 54d9890 feat(WP-C2,WP-C5,WP-C6): Recon, Insurgent and Enforcer v1 on the shared skeleton (v0.3.1) · f1edae0 feat(WP-C1,WP-C4): skeleton contract and data-driven roster switcher
+- What happened: Poses (10), blink, head-follow, a real head with hair and beard, beanie fix. Tests 61/61, smoke green.
+- Next step: Owner: WP-F8, WP-A1, WP-D1. Agents: WP-C3/C7 patches (C7 needs WP-D3), WP-I1 shared loadout, WP-T4/T1/T2/T3, WP-Q1, WP-Q4.
 <!-- handoff:end -->
 
 ## Active this week
