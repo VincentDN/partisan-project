@@ -5,10 +5,10 @@ Small on purpose. Read this first, then `AGENTS.md`. Plan and sizes: [`README.md
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-01 19:19 UTC · agent · (no packet) · partial**
+**2026-10-01 19:23 UTC · agent · (no packet) · partial**
 
-- Branch `claude/friendly-dijkstra-4ky9w6` at `eef471c`; **13 uncommitted file(s)** (commit before stopping): M CHANGELOG.md,  M assets/REGISTER.md,  M assets/register.json,  M docs/adr/0004-audio-provenance.md,  M docs/adr/README.md,  M docs/audio-direction.md.
-- Last commits: eef471c Bench Lab: contact-sheet tool for reviewing hand contacts · 6116293 Bench Lab: advanced workbench animations return as an opt-in demo; rename owner to-do to vincent-todo · 885c0a3 Fix next-packet test for an exhausted roadmap
+- Branch `claude/friendly-dijkstra-4ky9w6` at `3d9b015`; **1 uncommitted file(s)** (commit before stopping): M docs/vincent-todo.md.
+- Last commits: 3d9b015 Restore the recorded handling foley (42 owner-cleared takes) · eef471c Bench Lab: contact-sheet tool for reviewing hand contacts · 6116293 Bench Lab: advanced workbench animations return as an opt-in demo; rename owner to-do to vincent-todo
 - What happened: (write one or two sentences)
 - Next step: (name the exact next action, file and command)
 <!-- handoff:end -->
