@@ -31,7 +31,7 @@ Everything else (environment diorama, AI belief-model visualiser) is the 2027 ho
 | Home | PARP index browser (1-bit LCD, dither, keypad), design document, this roadmap, moodboard |
 | Repository | Moved out of the portfolio site into `partisan-project`; buildless static site; three.js vendored; Pages workflow (needs one owner click, `WP-F8`) |
 | Operator Customiser | **Live**: four operators on one skeleton, *Base*, *Recon*, *Insurgent*, *Enforcer* (extension packs bound to the purchased soldier's rig by bone name); 10+ equipment slots, 8–10 colour zones per base, 5 hero poses, 3 idle animations, shareable URL looks, optional carried rifle as a prop |
-| Weapon Workbench | **Live**: AK-74M and AK-15K, 7 slot families with rails, stats and hover deltas, rules, presets, finishes, camo, wear, photo and loadout card |
+| Weapon Workbench | **Live**: AK-74M and AK-15K, 12 slots on three rails that cannot overlap (back-up sight, trigger, charging handle, sling…), stats and hover deltas, rules, presets, finishes, camo, wear, photo and loadout card |
 | Asset Viewer | **Live**: inspects registered GLBs against budgets |
 | Removed | Test fire, recoil, reload, range drill, bench scene with hands, Advanced animations experiment, code-built operator, recorded foley (provenance) |
 | Not done | Real CC0 attachments and extra weapons (the build sandbox cannot reach OpenGameArt, itch.io, Sketchfab: see §5); roster patches/props and owner art sign-off |
@@ -134,12 +134,12 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | Milestone | Target | Packets | Budget | Progress |
 |---|---|---|---|---|
 | **M0** Foundation | v0.3.0 | 8/10 | 130 BU | 95% |
-| **M1** Gun modder: real parts, three weapons | v0.4.0 | 0/11 | 143 BU | 0% |
+| **M1** Gun modder: real parts, three weapons | v0.4.0 | 3/11 | 143 BU | 34% |
 | **M2** Operator roster: Recon, Insurgent, Enforcer | v0.5.0 | 7/11 | 172 BU | 67% |
 | **M3** Integration and sharing | v0.6.0 | 2/4 | 56 BU | 50% |
 | **M4** Weapon roster 2: modern and WW2 | v0.7.0 | 0/7 | 111 BU | 0% |
 | **M5** Production acceptance | v1.0.0 | 0/5 | 64 BU | 0% |
-| **TD** Tech debt (fill windows) | — | 0/4 | 44 BU | 0% |
+| **TD** Tech debt (fill windows) | — | 1/4 | 44 BU | 18% |
 | **D** Design docs | — | 0/5 | 59 BU | 0% |
 | **H27** 2027 horizon | — | 0/3 | 48 BU | 0% |
 
@@ -167,9 +167,9 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-A3` | Wire real parts through glb() for magazines, one muzzle device and one optic | S (8) | planned | — | `WP-A2` |
 | `WP-A4` | Generalise finishes/camo to real-asset material names | S (8) | planned | — | `WP-A3` |
 | `WP-A5` | Convert remaining attachment families to real parts (foregrip, grip, stock, side rail, suppressor, brake) | M (20) | planned | bpy | `WP-A3` |
-| `WP-A6` | Rail footprints: generalise rail length, pitch and footprints so incompatible placements cannot overlap | M (20) | planned | — | `WP-A3` |
-| `WP-A7` | New slots: sling mount, charging handle, trigger, dust-cover rail | M (20) | planned | — | `WP-A6` |
-| `WP-A8` | Stat consistency pass: ergonomics, recoil, mass, length, ADS, sound signature, hover deltas for every option | S (8) | planned | — | `WP-A5` |
+| `WP-A6` | Rail footprints: parts on one rail cannot overlap (footprints, travel, auto-slide, repair on load) | M (20) | done | — | — |
+| `WP-A7` | New slots: sling mount, charging handle, trigger, dust-cover rail | M (20) | done | — | `WP-A6` |
+| `WP-A8` | Stat consistency pass: ergonomics, recoil, mass, length, ADS, sound signature, hover deltas for every option | S (8) | done | — | — |
 | `WP-A9` | G3A3: verify licence (owner), import, models.js entry (parts, sockets, defaults, factory options) | M (20) | blocked | bpy | `WP-A1` |
 | `WP-A10` | Weapon-depth exit tests: >=3 weapons, visible compatibility reasons, hover deltas, presets, regression | S (8) | planned | — | `WP-A9`, `WP-A7`, `WP-A8` |
 | `WP-A11` | Handling sounds from cleared CC0 recordings (optional upgrade over synthesis) | M (20) | planned | net | — |
@@ -228,7 +228,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-T1` | Fold the Workbench viewer into shared/stage.js and shared/music-ui.js; split viewer.js into state/ui/camera/photo modules | M (20) | planned | — | — |
 | `WP-T2` | Formatter + linter (Prettier, ESLint) and reformat the dense legacy modules | S (8) | planned | — | — |
 | `WP-T3` | Type-check with JSDoc + tsc --checkJs (no build step) | S (8) | planned | — | `WP-T2` |
-| `WP-T4` | Unit tests for stats, compatibility rules and Workbench hash codes | S (8) | ready | — | — |
+| `WP-T4` | Unit tests for stats, compatibility rules and Workbench hash codes | S (8) | done | — | — |
 
 #### D · Design docs
 

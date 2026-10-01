@@ -5,7 +5,8 @@ import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {RGBELoader} from 'three/addons/loaders/RGBELoader.js';
 import {soundLayer} from '../shared/sound-layer.js';
 import {parseLegacy,toLegacy,encode,decode} from '../shared/loadout.js';
-import {MODELS,DEFAULT_MODEL} from './models.js';
+import {MODELS,DEFAULT_MODEL,RAIL_OF} from './models.js';
+import {resolve,fits} from './rails.js';
 import {STATS,computeStats,blockedBy} from './stats.js';
 import * as mech from './mech.js';
 
@@ -118,6 +119,31 @@ function stepTweens(dt){
  tweens=tweens.filter(t=>t.t<1);
 }
 
+// ---------- Rails: parts on one rail cannot overlap (rails.js) ----------
+function railItems(){
+ return Object.values(rifle.slots).filter(s=>RAIL_OF[s.spec.id]&&s.rail).map(s=>({slot:s.spec.id,rail:RAIL_OF[s.spec.id],baseX:s.base.x,offset:s.offset,fp:s.options.find(o=>o.id===rifle.build[s.spec.id])?.fp||[0,0],travel:s.rail}));
+}
+const say=text=>{detail.textContent=text;detail.classList.remove('flash');void detail.offsetWidth;detail.classList.add('flash');};
+const slotLabel=id=>rifle.slots[id]?.spec.label.toLowerCase()||id;
+// Fit an option on its rail, sliding neighbours clear when that is possible. Returns false (and explains) when there is no room.
+function chooseOption(slot,option,current){
+ const id=slot.spec.id,r=resolve(railItems(),id,option.fp||[0,0],slot.offset);
+ if(!r.ok){say(`${option.label} won't fit: no room on the ${RAIL_OF[id]} rail next to the ${r.blockedBy.map(slotLabel).join(' and ')}.`);return false;}
+ if(o_changed(option,current))mech.fit(id,option,current);
+ for(const [sid,off] of Object.entries(r.offsets))if(sid!==id)applySlot(sid,rifle.build[sid],off,true);
+ applySlot(id,option.id,r.offsets[id],true);
+ if(r.moved.length)say(`Slid the ${r.moved.map(slotLabel).join(' and ')} to make room for the ${option.label.toLowerCase()}.`);
+ return true;
+}
+const o_changed=(a,b)=>a&&b&&a.id!==b.id;
+// After a restore (links can be hand-edited) settle any overlap by sliding parts to free positions.
+function settleRails(){
+ for(const it of railItems()){
+  const slot=rifle.slots[it.slot],r=resolve(railItems(),it.slot,it.fp,it.offset);
+  if(r.ok)for(const [sid,off] of Object.entries(r.offsets))if(rifle.slots[sid].offset!==off)applySlot(sid,rifle.build[sid],off);
+ }
+}
+
 // Build panel: one chip row per slot, plus rail position steppers.
 function renderBuild(){
  if(restoring)return;
@@ -131,7 +157,7 @@ function renderBuild(){
    for(const [text,delta,label] of [['−',-step,'rearward'],[`${mm>0?'+':''}${mm} mm`,0],['+',step,'forward']]){
     if(!delta){const out=document.createElement('output');out.textContent=text;stepper.append(out);continue;}
     const b=document.createElement('button');b.textContent=text;b.setAttribute('aria-label',`Move ${slot.spec.label.toLowerCase()} ${label} one rail slot`);
-    b.disabled=delta<0?slot.offset<=min+1e-6:slot.offset>=max-1e-6;b.onclick=()=>{mech.railStep(Math.sign(delta));applySlot(slot.spec.id,rifle.build[slot.spec.id],slot.offset+delta,true);frame(slot.spec.id);};stepper.append(b);
+    b.disabled=delta<0?slot.offset<=min+1e-6:slot.offset>=max-1e-6;if(!b.disabled&&!fits(railItems(),slot.spec.id,slot.offset+delta)){b.disabled=true;b.title='Another part is in the way on this rail.';}b.onclick=()=>{mech.railStep(Math.sign(delta));applySlot(slot.spec.id,rifle.build[slot.spec.id],slot.offset+delta,true);frame(slot.spec.id);};stepper.append(b);
    }
    head.append(stepper);
   }
@@ -139,9 +165,9 @@ function renderBuild(){
   for(const o of slot.options){
    const b=document.createElement('button');b.textContent=o.label;b.setAttribute('aria-pressed',String(rifle.build[slot.spec.id]===o.id));
    // Blocked options stay visible; clicking explains why instead of fitting them.
-   const rule=blockedBy(rifle.build,slot.spec.id,o.id);
+   const rule=blockedBy(rifle.build,slot.spec.id,o.id)||(RAIL_OF[slot.spec.id]&&!resolve(railItems(),slot.spec.id,o.fp||[0,0],slot.offset).ok?{reason:'No room on the '+RAIL_OF[slot.spec.id]+' rail: another part is in the way.'}:null);
    if(rule){b.setAttribute('aria-disabled','true');b.classList.add('blocked');b.title=rule.reason;}
-   b.onclick=()=>{if(rule){detail.textContent=`${o.label} can't be fitted: ${rule.reason}`;detail.classList.remove('flash');void detail.offsetWidth;detail.classList.add('flash');return;}if(o.id!==current.id)mech.fit(slot.spec.id,o,current);applySlot(slot.spec.id,o.id,undefined,true);frame(slot.spec.id);};
+   b.onclick=()=>{if(rule){detail.textContent=`${o.label} can't be fitted: ${rule.reason}`;detail.classList.remove('flash');void detail.offsetWidth;detail.classList.add('flash');return;}if(chooseOption(slot,o,current))frame(slot.spec.id);};
    // Hover or focus previews the stat change this option would make.
    const preview=()=>renderStats({...rifle.build,[slot.spec.id]:o.id});
    b.onpointerenter=b.onfocus=preview;b.onpointerleave=b.onblur=()=>renderStats();
@@ -263,6 +289,7 @@ function restore(hash){
   // Old or hand-edited links may break a rule; the later slot falls back to its default.
   for(const slot of Object.values(rifle.slots)){const id=slot.spec.id;if(blockedBy(rifle.build,id,rifle.build[id]))rifle.build[id]=[defaultOption(slot),...slot.options.map(o=>o.id)].find(o=>!blockedBy(rifle.build,id,o));}
   for(const sid of Object.keys(rifle.slots))applySlot(sid,rifle.build[sid],rifle.slots[sid].pendingOffset);
+  settleRails();
   for(const t of rifle.finishTargets)applyFinish(t.id,params.get(t.id+'-finish')??defaultFinish(t));
   setWear(T.MathUtils.clamp(Number(params.get('wear'))||0,0,100)/100);
   restoring=false;renderBuild();renderFinish();renderStats();showRifle();writeHash();

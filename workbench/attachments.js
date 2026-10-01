@@ -101,50 +101,58 @@ export const SLOTS=[
    [[tube(.0195,.024,.19,[0,0],12),tube(.017,.19,.198,[0,0],12,.0195)],materials['h-190']])},
   {id:'bare',grams:0,label:'Bare',detail:'Bare 24×1.5 mm threaded muzzle.'}
  ]},
+ {id:'rail',camera:{direction:[-.3,.5,1],distance:.5},label:'Top rail',library:[
+  {id:'bare',fp:[0,0],grams:-60,label:'No rail',detail:'Bolt-on rail removed: iron sights only. No optic or back-up sight can be mounted.'}
+ ]},
  {id:'optic',camera:{direction:[-.45,.4,1],distance:.5},label:'Optic',library:[
-  {id:'micro',grams:180,sightHeight:.034,label:'Micro dot',detail:'Compact tube red dot on a low mount.',build:({materials})=>{
+  {id:'micro',fp:[-0.026,0.026],grams:180,sightHeight:.034,label:'Micro dot',detail:'Compact tube red dot on a low mount.',build:({materials})=>{
    const g=group(
     [[box(.042,.01,.03,[0,.005,0]),box(.03,.012,.018,[0,.016,0]),tube(.0155,-.024,.024,[.034,0],12),tube(.0175,.018,.026,[.034,0],12),tube(.0175,-.026,-.018,[.034,0],12),new T.CylinderGeometry(.006,.006,.012,8).translate(0,.054,0)],materials['h-190']],
     [tube(.0145,.0245,.0255,[.034,0],12),materials.glass]);
    const dot=new T.Mesh(new T.SphereGeometry(.001,6,4),materials.red_emission);dot.position.set(0,.034,0);g.add(dot);return g;}},
-  {id:'holo',grams:320,sightHeight:.04,label:'Holographic',detail:'Box-hooded holographic sight with a wide window.',build:({materials})=>{
+  {id:'holo',fp:[-0.04,0.04],grams:320,sightHeight:.04,label:'Holographic',detail:'Box-hooded holographic sight with a wide window.',build:({materials})=>{
    const g=group(
     [[box(.08,.012,.032,[0,.006,0]),box(.028,.026,.036,[-.02,.025,0]),box(.05,.004,.036,[.012,.058,0]),box(.05,.046,.004,[.012,.035,.017]),box(.05,.046,.004,[.012,.035,-.017]),box(.012,.012,.012,[-.02,.044,.02])],materials['h-190']],
     [box(.002,.034,.03,[.03,.037,0]),materials.glass]);
    const dot=new T.Mesh(new T.SphereGeometry(.0012,6,4),materials.red_emission);dot.position.set(.03,.04,0);g.add(dot);return g;}},
-  {id:'scope',grams:460,sightHeight:.046,label:'4× scope',detail:'4× fixed-power scope in two rings, 280 mm long.',build:({materials})=>group(
+  {id:'scope',fp:[-0.155,0.151],grams:460,sightHeight:.046,label:'4× scope',detail:'4× fixed-power scope in two rings, 280 mm long.',build:({materials})=>group(
    [[tube(.0127,-.07,.07,[.046,0],12),tube(.021,.07,.12,[.046,0],12,.0127),tube(.021,.12,.15,[.046,0],12),tube(.0127,-.12,-.07,[.046,0],12,.019),tube(.019,-.155,-.12,[.046,0],12),
      new T.CylinderGeometry(.009,.009,.018,8).translate(0,.066,0),new T.CylinderGeometry(.009,.009,.018,8).rotateX(Math.PI/2).translate(0,.046,.02),
      box(.016,.03,.028,[-.05,.021,0]),box(.016,.03,.028,[.05,.021,0]),box(.026,.008,.03,[-.05,.004,0]),box(.026,.008,.03,[.05,.004,0])],materials['h-190']],
    [[tube(.019,.1495,.151,[.046,0],12),tube(.0165,-.1555,-.1545,[.046,0],12)],materials.glass])},
-  {id:'none',sightHeight:.012,label:'Irons',detail:'No optic: the rifle falls back to its iron sights.'}
+  {id:'none',fp:[0,0],sightHeight:.012,label:'Irons',detail:'No optic: the rifle falls back to its iron sights.'}
+ ]},
+ {id:'buis',camera:{direction:[-.45,.4,1],distance:.5},label:'Back-up sight',library:[
+  {id:'flip',fp:[-.017,.017],grams:55,label:'Flip-up sight',detail:'Folding back-up iron sight on a rail clamp. It rides ahead of the optic; a long scope pushes it forward.',build:({materials})=>group(
+   [[box(.034,.008,.03,[0,.004,0]),box(.006,.02,.004,[0,.018,.011]),box(.006,.02,.004,[0,.018,-.011]),box(.006,.004,.026,[0,.03,0])],materials['h-190']])},
+  {id:'none',fp:[0,0],label:'None',detail:'No back-up sight.'}
  ]},
  {id:'foregrip',camera:{direction:[.1,-.28,1],distance:.46,aim:[0,-.03,0]},label:'Foregrip',library:[
-  {id:'vertical',grams:90,label:'Vertical',detail:'Plain vertical foregrip on a rail clamp.',build:({materials})=>group(
+  {id:'vertical',fp:[-0.023,0.023],grams:90,label:'Vertical',detail:'Plain vertical foregrip on a rail clamp.',build:({materials})=>group(
    [[box(.046,.01,.028,[0,-.005,0]),new T.CylinderGeometry(.0145,.013,.085,8).translate(0,-.052,0),new T.CylinderGeometry(.015,.015,.006,8).translate(0,-.096,0)],materials.polymer])},
-  {id:'angled',grams:60,label:'Angled',detail:'Angled foregrip: a thumb ramp for a high, straight-arm hold.',build:({materials})=>group(
+  {id:'angled',fp:[-0.051,0.045],grams:60,label:'Angled',detail:'Angled foregrip: a thumb ramp for a high, straight-arm hold.',build:({materials})=>group(
    [profile([[-.048,0],[.042,0],[.038,-.012],[-.028,-.046],[-.046,-.042]],.028,.003),materials.polymer])},
-  {id:'stop',grams:30,label:'Hand stop',detail:'Low hand stop at the front of the lower rail.',build:({materials})=>group(
+  {id:'stop',fp:[-0.018,0.022],grams:30,label:'Hand stop',detail:'Low hand stop at the front of the lower rail.',build:({materials})=>group(
    [profile([[-.016,0],[.02,0],[.02,-.016],[.008,-.021],[-.016,-.008]],.024,.002),materials.polymer])},
-  {id:'none',label:'None',detail:'Clean handguard, no foregrip.'}
+  {id:'none',fp:[0,0],label:'None',detail:'Clean handguard, no foregrip.'}
  ]},
  {id:'side',camera:{direction:[.25,.2,1],distance:.42},label:'Side rail',library:[
   // Mounted on the right-hand rail: +z points away from the rifle.
-  {id:'light',grams:110,label:'Weapon light',detail:'Compact weapon light on a rail clamp; its beam lights the scene.',build:({materials})=>{
+  {id:'light',fp:[-0.045,0.052],grams:110,label:'Weapon light',detail:'Compact weapon light on a rail clamp; its beam lights the scene.',build:({materials})=>{
    const g=group(
     [[box(.03,.012,.016,[0,0,.008]),tube(.013,-.045,.035,[0,.03],10),tube(.016,.035,.05,[0,.03],10,.013)],materials['h-190']],
     [tube(.0145,.0505,.0515,[0,.03],10),new T.MeshStandardMaterial({color:'#fff6de',emissive:'#fff1c4',emissiveIntensity:2})]);
    // Beam: a soft spotlight along the barrel.
    const beam=new T.SpotLight(0xfff1d6,6,6,.28,.6,1.5);beam.position.set(.052,0,.03);beam.target.position.set(2,0,.03);g.add(beam,beam.target);
    return g;}},
-  {id:'laser',grams:80,label:'Laser',detail:'Visible laser aiming module; the dot helps from the hip.',build:({materials})=>{
+  {id:'laser',fp:[-0.025,0.03],grams:80,label:'Laser',detail:'Visible laser aiming module; the dot helps from the hip.',build:({materials})=>{
    const g=group([[box(.03,.012,.016,[0,0,.008]),box(.06,.028,.026,[.005,.02,.025])],materials['h-190']],[box(.002,.008,.008,[.036,.02,.025]),materials.red_emission]);
    const ray=new T.Mesh(new T.CylinderGeometry(.0006,.0006,1.4,4).rotateZ(-Math.PI/2).translate(.037+.7,.02,.025),new T.MeshBasicMaterial({color:'#ff2a2a',transparent:true,opacity:.55,depthWrite:false}));ray.userData.visualEffect=true;g.add(ray);return g;}},
-  {id:'combo',grams:190,label:'Light + laser',detail:'Combined light and laser unit.',build:({materials})=>{
+  {id:'combo',fp:[-0.032,0.034],grams:190,label:'Light + laser',detail:'Combined light and laser unit.',build:({materials})=>{
    const g=group([[box(.03,.012,.016,[0,0,.008]),box(.065,.028,.028,[0,.022,.026])],materials['h-190']],
     [tube(.0105,.0325,.0335,[.026,.026],10),new T.MeshStandardMaterial({color:'#fff6de',emissive:'#fff1c4',emissiveIntensity:2})],[box(.002,.006,.006,[.0335,.012,.026]),materials.red_emission]);
    const beam=new T.SpotLight(0xfff1d6,6,6,.28,.6,1.5);beam.position.set(.034,.026,.026);beam.target.position.set(2,.026,.026);g.add(beam,beam.target);return g;}},
-  {id:'none',label:'None',detail:'Bare side rail.'}
+  {id:'none',fp:[0,0],label:'None',detail:'Bare side rail.'}
  ]},
  {id:'magazine',camera:{direction:[.3,-.05,1],distance:.55,aim:[.03,-.1,0]},label:'Magazine',library:[
   // Stretched copies of the source magazine; the part inside the mag well keeps its shape.
@@ -165,5 +173,24 @@ export const SLOTS=[
  ]},
  {id:'stock',camera:{direction:[-.7,.25,.7],distance:.55},label:'Stock',library:[
   {id:'none',label:'Removed',detail:'Stock removed: bare trunnion.'}
+ ]},
+ {id:'trigger',camera:{direction:[.15,-.25,1],distance:.34,aim:[0,-.02,0]},label:'Trigger',library:[
+  {id:'match',grams:12,label:'Match trigger',detail:'Wide, flat match trigger shoe: a cleaner, lighter break.',build:({materials})=>group(
+   [[box(.012,.028,.012,[.002,-.014,0]),box(.016,.004,.022,[.006,-.03,0])],materials.stell])}
+ ]},
+ {id:'charging',camera:{direction:[.15,.25,1],distance:.4},label:'Charging handle',library:[
+  // Right-hand side of the bolt carrier: +z points away from the rifle.
+  {id:'ext',grams:25,label:'Extended handle',detail:'Oversized charging lever with a knurled knob, easy to hit with gloves on.',build:({materials})=>group(
+   [[box(.014,.012,.03,[0,0,.015]),box(.02,.018,.014,[.004,0,.037]),box(.012,.008,.02,[-.014,0,.012])],materials.stell])}
+ ]},
+ {id:'sling',camera:{direction:[-.8,.15,.6],distance:.62,aim:[.2,-.05,0]},label:'Sling',library:[
+  {id:'swivel',grams:35,label:'Sling swivel',detail:'Quick-detach swivel on the rear mount, ready for a sling.',build:({materials})=>group(
+   [[new T.TorusGeometry(.012,.0027,6,12).rotateY(Math.PI/2).translate(-.014,-.012,0),box(.016,.012,.01,[-.004,0,0])],materials.stell])},
+  {id:'strap',grams:140,label:'Two-point sling',detail:'Padded two-point sling running from the rear swivel to the handguard, hanging in a loose catenary.',build:({materials})=>{
+   const top=[],bot=[],n=14,len=.64,sag=.15;
+   for(let k=0;k<=n;k++){const t=k/n,x=-.014+t*len,y=-.012-sag*Math.sin(Math.PI*t);top.push([x,y]);bot.push([x,y-.006]);}
+   return group(
+    [[new T.TorusGeometry(.012,.0027,6,12).rotateY(Math.PI/2).translate(-.014,-.012,0),box(.016,.012,.01,[-.004,0,0])],materials.stell],
+    [profile([...top,...bot.reverse()],.03,.001),materials.polymer]);}}
  ]}
 ];

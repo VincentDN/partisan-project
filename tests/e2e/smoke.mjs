@@ -146,6 +146,12 @@ await check('workbench: loads, swapping a part writes the hash, both rifles load
   await page.locator('#build .chips button', {hasText: 'Compensator'}).first().click();
   assert.match(await page.evaluate(() => location.hash), /muzzle=comp/);
   assert.match(await page.evaluate(() => localStorage.getItem('parp-loadout')), /muzzle=comp/, 'the Workbench publishes its build for the Operator Customiser');
+  // rails: a back-up sight and a 4x scope share the top rail, so fitting the scope slides the sight forward
+  await page.locator('#build .chips button', {hasText: 'Flip-up sight'}).click();
+  await page.locator('#build .chips button', {hasText: '4× scope'}).click();
+  const hash = await page.evaluate(() => location.hash);
+  assert.match(hash, /optic=scope/); assert.match(hash, /buis=flip@(\d+)/);
+  assert.ok(+hash.match(/buis=flip@(\d+)/)[1] >= 40, 'back-up sight pushed at least 40 mm forward: ' + hash);
   await page.locator('[data-rifle="ak15k"]').click();
   await page.waitForFunction(() => document.querySelector('#title').textContent.includes('AK-15K'), null, {timeout: 60000});
   assert.equal(await page.locator('.fire').count(), 0, 'no test-fire control remains');

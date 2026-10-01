@@ -21,6 +21,11 @@ export const MODIFIERS={
   reddot:{sighting:22,handling:-2},micro:{sighting:18,handling:-1},holo:{sighting:26,handling:-4},
   scope:{sighting:55,handling:-12,ergo:-4},none:{}
  },
+ buis:{flip:{sighting:3,handling:-1},none:{}},
+ rail:{b13:{},bare:{ergo:1,handling:1,sighting:-8}},
+ trigger:{std:{},match:{ergo:2,recoil:-1}},
+ charging:{std:{},ext:{handling:2,ergo:1}},
+ sling:{none:{},swivel:{ergo:1},strap:{ergo:3,handling:-1}},
  foregrip:{
   rk1:{ergo:6,recoil:-4},vertical:{ergo:5,recoil:-5},angled:{ergo:7,recoil:-3,handling:2},stop:{ergo:3,handling:2},none:{}
  },
@@ -41,7 +46,8 @@ export const RULES=[
  {when:{magazine:'drum'},block:{stock:['folded']},reason:'The folded stock would lie against the drum.'},
  {when:{magazine:'60'},block:{stock:['folded']},reason:'The quad-stack is too wide for the stock to fold past it.'},
  {when:{optic:'scope'},block:{stock:['folded','none']},reason:'A 4× scope needs a shouldered stock to hold eye relief.'},
- {when:{foregrip:'angled'},block:{magazine:['drum']},reason:'The drum sits where the support hand wraps the angled grip.'}
+ {when:{foregrip:'angled'},block:{magazine:['drum']},reason:'The drum sits where the support hand wraps the angled grip.'},
+ {when:{rail:'bare'},block:{optic:['reddot','micro','holo','scope'],buis:['flip']},reason:'Without the top rail there is nothing to clamp an optic or back-up sight to.'}
 ];
 
 const clamp=v=>Math.max(0,Math.min(100,v));

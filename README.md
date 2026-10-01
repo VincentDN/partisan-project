@@ -8,7 +8,7 @@ casual-friendly resistance shooter. Live site (after the one-time Pages setup in
 |---|---|---|
 | Index browser | Nokia-style 1-bit LCD menu with dither | [`index.html`](index.html) |
 | **Operator Modder** | Base Operator: equipment slots, colour zones, 10 poses (hero, ready, crouch, kneel, salute…), 3 idles, shareable looks | [`operator/`](operator/) |
-| **Weapon Workbench** | AK-74M / AK-15K, 7 attachment families, stats, rules, finishes, wear, photo | [`workbench/`](workbench/) |
+| **Weapon Workbench** | AK-74M / AK-15K, 12 attachment slots (rail-aware), stats, rules, finishes, wear, photo | [`workbench/`](workbench/) |
 | Asset Viewer | Inspect registered GLBs against triangle and licence budgets | [`viewer/`](viewer/) |
 | Design document | In-universe one-pager: pillars, dispatches, operators, moodboard, specs, credits | [`docs/game-design-master-doc.html`](docs/game-design-master-doc.html) |
 | Master roadmap | Milestones and ~60 work packets sized for $20 AI plans | [`docs/master-roadmap.md`](docs/master-roadmap.md) |

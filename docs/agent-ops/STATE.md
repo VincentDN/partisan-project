@@ -5,12 +5,12 @@ Small on purpose. Read this first, then `AGENTS.md`. Plan and sizes: [`README.md
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-01 17:06 UTC · claude · WP-I1/I3 · done**
+**2026-10-01 17:14 UTC · claude · WP-A6/A7/A8/T4 · done**
 
-- Branch `claude/friendly-dijkstra-4ky9w6` at `5825db0`; **12 uncommitted file(s)** (commit before stopping): M CHANGELOG.md,  M docs/CODEMAP.md,  M docs/agent-ops/packets.json,  M docs/master-roadmap.md,  M operator/config.js,  M operator/operator.js.
-- Last commits: 5825db0 feat(WP-C9,WP-C10): blink, head-follow, a real head with hair and facial hair (v0.3.1) · 6740013 feat(WP-C8): ten poses including crouch, kneel and salute · 54d9890 feat(WP-C2,WP-C5,WP-C6): Recon, Insurgent and Enforcer v1 on the shared skeleton (v0.3.1)
-- What happened: Shared loadout codec, Workbench build on the operator, P1 codes. 69 tests, smoke green.
-- Next step: WP-I2 grip contacts (needs WP-A10 first for new weapons), WP-I4 share card, WP-T4/T1, WP-Q1.
+- Branch `claude/friendly-dijkstra-4ky9w6` at `773fb2e`; **14 uncommitted file(s)** (commit before stopping): M CHANGELOG.md,  M README.md,  M docs/CODEMAP.md,  M docs/agent-ops/packets.json,  M docs/game-design-master-doc.html,  M docs/master-roadmap.md.
+- Last commits: 773fb2e feat(WP-I1,WP-I3): Workbench build on the operator and versioned P1 loadout codes · 5825db0 feat(WP-C9,WP-C10): blink, head-follow, a real head with hair and facial hair (v0.3.1) · 6740013 feat(WP-C8): ten poses including crouch, kneel and salute
+- What happened: Rail footprints, four new slots (rail, trigger, charging, sling) plus back-up sight, workbench tests. 86 tests, smoke green.
+- Next step: M1 now waits on the owner: WP-A1 (CC0 downloads), WP-A9 (G3A3 licence). Agents: WP-T1 split viewer.js, WP-Q1 accessibility, WP-Q4 guided tour, WP-I4 share card, WP-D4/D5 docs.
 <!-- handoff:end -->
 
 ## Active this week

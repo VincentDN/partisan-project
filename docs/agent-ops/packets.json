@@ -297,15 +297,13 @@
   },
   {
    "id": "WP-A6",
-   "title": "Rail footprints: generalise rail length, pitch and footprints so incompatible placements cannot overlap",
+   "title": "Rail footprints: parts on one rail cannot overlap (footprints, travel, auto-slide, repair on load)",
    "track": "Weapons",
    "milestone": "M1",
    "size": "M",
    "bu": 20,
-   "status": "planned",
-   "deps": [
-    "WP-A3"
-   ],
+   "status": "done",
+   "deps": [],
    "agent": "any",
    "needs": [],
    "inputs": [
@@ -321,7 +319,7 @@
    "milestone": "M1",
    "size": "M",
    "bu": 20,
-   "status": "planned",
+   "status": "done",
    "deps": [
     "WP-A6"
    ],
@@ -337,10 +335,8 @@
    "milestone": "M1",
    "size": "S",
    "bu": 8,
-   "status": "planned",
-   "deps": [
-    "WP-A5"
-   ],
+   "status": "done",
+   "deps": [],
    "agent": "any",
    "needs": [],
    "inputs": [],
@@ -932,7 +928,7 @@
    "milestone": "TD",
    "size": "S",
    "bu": 8,
-   "status": "ready",
+   "status": "done",
    "deps": [],
    "agent": "any",
    "needs": [],

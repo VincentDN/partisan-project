@@ -16,6 +16,9 @@
 
 // Meters per source unit, shared by both files: the AK-74M model is scaled to its published
 // 943 mm overall length, which puts the AK-15K at the same scale.
+// Which rail each railed slot rides on. Slots on one rail share space: workbench/rails.js keeps them from overlapping.
+export const RAIL_OF={optic:'top',buis:'top',foregrip:'bottom',side:'side'};
+
 const SCALE=.943/9.088;
 const AUTHOR={name:'D_U',url:'https://sketchfab.com/DU1701'};
 
@@ -34,6 +37,10 @@ export const MODELS={
    {id:'receiver',label:'Receiver & bolt group',detail:'AK-74M receiver, dust cover, bolt carrier, recoil spring, trigger, selector and magazine release.',nodes:['ak74m receiver_8','ak74m dust cover_11','ak74m bolt carrier_10','ak74m recoil spring.001_21','ak74m trigga_0','ak74m selector_1','ak74m mag release_2']},
    {id:'rail',label:'B-13 rail mount',detail:'Zenitco B-13 side-mount bracket with a top rail. It carries the optic.',nodes:['b13 bracket_14']},
    {id:'optic',label:'Optic',detail:'Compact red dot on the B-13 rail.',nodes:['vzor1 red dot_20']},
+   {id:'buis',label:'Back-up sight',detail:'Top-rail position for a folding back-up sight.',nodes:[]},
+   {id:'trigger',label:'Trigger',detail:'Standard trigger and guard.',nodes:[]},
+   {id:'charging',label:'Charging handle',detail:'Standard charging handle on the bolt carrier.',nodes:[]},
+   {id:'sling',label:'Sling',detail:'Rear sling mount.',nodes:[]},
    {id:'handguard',label:'B-10 / B-19 handguard',detail:'Zenitco railed handguard with a lower rail that holds the foregrip.',nodes:['b10+b19 handguard_15']},
    {id:'barrel',label:'Barrel & gas block',detail:'415 mm barrel with front sight and gas block.',nodes:['ak74m barrel_9']},
    {id:'muzzle',label:'Muzzle device',detail:'Zenitco DTK-1 muzzle brake on the threaded muzzle.',nodes:['dtk1 compensator_12']},
@@ -46,6 +53,11 @@ export const MODELS={
   sockets:[
    ['muzzle','Muzzle',[4.95,.18,0],[1,0,0]],
    ['optic','Optic rail',[.08,.69,0],[0,1,0]],
+   ['buis','Back-up sight rail',[.95,.69,0],[0,1,0]],
+   ['rail','Top rail',[.1,.62,0],[0,1,0]],
+   ['trigger','Trigger',[-.3,-.1,0],[0,-1,0]],
+   ['charging','Charging handle',[.55,.42,.13],[0,0,1]],
+   ['sling','Sling mount',[-1.12,.06,0],[-1,0,0]],
    ['foregrip','Under rail',[2.5,-.03,0],[0,-1,0]],
    ['side','Side rail',[2.4,.25,.186],[0,0,1]],
    ['magazine','Mag well',[.7,-.2,0],[0,-1,0]],
@@ -53,10 +65,15 @@ export const MODELS={
    ['stock','Stock',[-1.2,0,0],[-1,0,0]]
   ],
   slots:{
-   side:{rail:{min:-.08,max:.04,step:.01},factory:[{id:'none',label:'None',detail:'Bare side rail.'}],library:['light','laser','combo']},
+   side:{rail:{min:-.08,max:.04,step:.01},factory:[{id:'none',fp:[0,0],label:'None',detail:'Bare side rail.'}],library:['light','laser','combo']},
    muzzle:{factory:[{id:'dtk1',grams:160,label:'DTK-1',original:true}],library:['ak74','comp','can','bare']},
-   optic:{rail:{min:-.06,max:.04,step:.01},factory:[{id:'reddot',grams:210,sightHeight:.04,label:'Red dot',original:true}],library:['micro','holo','scope','none']},
-   foregrip:{rail:{min:-.08,max:0,step:.01},factory:[{id:'rk1',grams:85,label:'RK-1',original:true}],library:['vertical','angled','stop','none']},
+   optic:{rail:{min:-.06,max:.04,step:.01},factory:[{id:'reddot',fp:[-.03,.03],grams:210,sightHeight:.04,label:'Red dot',original:true}],library:['micro','holo','scope','none']},
+   rail:{factory:[{id:'b13',label:'B-13 rail',original:true,detail:'Zenitco B-13 bracket with its top rail.'}],library:['bare']},
+   trigger:{factory:[{id:'std',label:'Standard',original:true,detail:'Standard trigger.'}],library:['match']},
+   charging:{factory:[{id:'std',label:'Standard',original:true,detail:'Standard charging handle.'}],library:['ext']},
+   sling:{factory:[{id:'none',label:'None',detail:'No sling fitted.'}],library:['swivel','strap']},
+   buis:{rail:{min:-.1,max:.12,step:.01},factory:[{id:'none',fp:[0,0],label:'None',detail:'No back-up sight.'}],library:['flip']},
+   foregrip:{rail:{min:-.08,max:0,step:.01},factory:[{id:'rk1',fp:[-.02,.02],grams:85,label:'RK-1',original:true}],library:['vertical','angled','stop','none']},
    magazine:{factory:[{id:'30',grams:230,label:'30-rnd',original:true}],library:[{id:'45',label:'45-rnd RPK'},{id:'60',label:'60-rnd quad'},{id:'drum',label:'95-rnd drum'},'none']},
    grip:{factory:[{id:'rk9',grams:95,label:'RK-9',original:true}],library:['classic']},
    stock:{factory:[
@@ -84,6 +101,10 @@ export const MODELS={
    {id:'barrel',label:'Barrel, gas block & brake',detail:'Short carbine barrel with gas block, front sight and its integral muzzle brake.',nodes:['ak15k barrel_5']},
    {id:'muzzle',label:'Muzzle device',detail:'Factory brake, part of the barrel.',nodes:[]},
    {id:'optic',label:'Optic',detail:'Iron sights; the top rail takes an optic.',nodes:[]},
+   {id:'buis',label:'Back-up sight',detail:'Top-rail position for a folding back-up sight.',nodes:[]},
+   {id:'trigger',label:'Trigger',detail:'Standard trigger and guard.',nodes:[]},
+   {id:'charging',label:'Charging handle',detail:'Standard charging handle on the bolt carrier.',nodes:[]},
+   {id:'sling',label:'Sling',detail:'Rear sling mount.',nodes:[]},
    {id:'foregrip',label:'Foregrip',detail:'Clean handguard.',nodes:[]},
    {id:'side',label:'Side rail',detail:'Right-side rail on the handguard.',nodes:[]},
    {id:'magazine',label:'Magazine',detail:'30-round 7.62×39 polymer magazine.',nodes:['akm 30rnd mag (polymer)_14']},
@@ -95,6 +116,10 @@ export const MODELS={
    ['muzzle','Muzzle',[4.195,.18,0],[1,0,0]],
    // 5 mm below the rail top (y .616), like the AK-74M's, so mounts read as clamped on.
    ['optic','Optic rail',[.25,.566,0],[0,1,0]],
+   ['buis','Back-up sight rail',[1.1,.566,0],[0,1,0]],
+   ['trigger','Trigger',[-.3,-.12,0],[0,-1,0]],
+   ['charging','Charging handle',[.55,.34,.13],[0,0,1]],
+   ['sling','Sling mount',[-1.12,.0,0],[-1,0,0]],
    ['foregrip','Under rail',[2.2,-.08,0],[0,-1,0]],
    ['side','Side rail',[2.3,.15,.204],[0,0,1]],
    ['magazine','Mag well',[.7,-.2,0],[0,-1,0]],
@@ -102,11 +127,15 @@ export const MODELS={
    ['stock','Stock',[-1.2,0,0],[-1,0,0]]
   ],
   slots:{
-   side:{rail:{min:-.08,max:.04,step:.01},factory:[{id:'none',label:'None',detail:'Bare side rail.'}],library:['light','laser','combo']},
+   side:{rail:{min:-.08,max:.04,step:.01},factory:[{id:'none',fp:[0,0],label:'None',detail:'Bare side rail.'}],library:['light','laser','combo']},
    // The brake is modelled into the barrel, so the factory option leaves the slot empty and a
    // suppressor threads on in front of it.
    muzzle:{factory:[{id:'brake',grams:0,label:'Factory brake',detail:'Factory muzzle brake, modelled into the barrel.'}],library:['can']},
    optic:{rail:{min:-.04,max:.06,step:.01},factory:[{id:'none',sightHeight:.025,label:'Irons',detail:'Iron sights: rear notch on the receiver cover, post on the gas block.'}],library:['micro','holo','scope']},
+   trigger:{factory:[{id:'std',label:'Standard',original:true,detail:'Standard trigger.'}],library:['match']},
+   charging:{factory:[{id:'std',label:'Standard',original:true,detail:'Standard charging handle.'}],library:['ext']},
+   sling:{factory:[{id:'none',label:'None',detail:'No sling fitted.'}],library:['swivel','strap']},
+   buis:{rail:{min:-.1,max:.12,step:.01},factory:[{id:'none',fp:[0,0],label:'None',detail:'No back-up sight.'}],library:['flip']},
    foregrip:{rail:{min:-.06,max:.02,step:.01},factory:[{id:'none',label:'None',detail:'Clean handguard, no foregrip.'}],library:['vertical','angled','stop']},
    magazine:{factory:[{id:'30',grams:250,label:'30-rnd',original:true}],library:[{id:'45',label:'40-rnd RPK',grams:330,rounds:40},{id:'60',label:'60-rnd quad',grams:480},{id:'drum',label:'75-rnd drum',grams:950,rounds:75},'none']},
    grip:{factory:[{id:'factory',grams:90,label:'AK-15',original:true}],library:['classic']},
