@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex"><meta name="seo_hidden" content="true">
+<meta name="theme-color" content="#0d100c"><meta name="version" content="0.3.0">
+<title>PARP · Field Handbook (Game Design Document)</title>
+<meta name="description" content="Partisan Project field handbook: the in-universe game design document with live demos, moodboard, roadmap and credits.">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<style>
+:root{
+  color-scheme:dark;
+  --ink:#0d100c;--panel:#151a12;--panel-2:#1c2317;--line:#2e3828;--text:#e4e8d6;--dim:#97a487;
+  --olive:#c8d4a8;--olive-2:#8fa070;--spark:#ef8f39;--sand:#d7b892;--wolf:#758492;--night:#17181d;--hazard:#959622;
+  --lcd-0:#16200f;--lcd-1:#b5c79a;
+  --display:Impact,Haettenschweiler,"Arial Narrow Bold","Franklin Gothic Medium",sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;
+  --serif:Georgia,"Iowan Old Style","Palatino Linotype",serif;
+  --gutter:clamp(16px,4vw,40px);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
+body{margin:0;background:var(--ink);color:var(--text);font:17px/1.65 var(--serif);
+  background-image:linear-gradient(45deg,#ffffff05 25%,transparent 25% 75%,#ffffff05 75%),linear-gradient(45deg,#ffffff05 25%,transparent 25% 75%,#ffffff05 75%);background-size:4px 4px;background-position:0 0,2px 2px}
+a{color:#9fd0e6}a:hover{color:#fff}
+:focus-visible{outline:2px solid var(--spark);outline-offset:3px}
+.skip{position:absolute;left:-999px;top:8px;background:var(--spark);color:#000;padding:8px 12px;z-index:50;font:700 13px var(--mono)}
+.skip:focus{left:8px}
+/* top bar */
+.bar{position:sticky;top:0;z-index:20;background:#0d100cf0;backdrop-filter:blur(4px);border-bottom:1px solid var(--line)}
+.bar-in{max-width:1180px;margin:0 auto;padding:9px var(--gutter);display:flex;align-items:center;gap:18px;flex-wrap:wrap;font:12px/1.3 var(--mono);letter-spacing:.1em;text-transform:uppercase}
+.bar b{color:var(--olive)}.bar nav{display:flex;gap:16px;flex-wrap:wrap;margin-left:auto}.bar nav a{color:var(--dim);text-decoration:none}.bar nav a:hover{color:var(--spark)}
+.bar button{font:inherit;color:var(--olive);background:transparent;border:1px solid var(--line);padding:4px 9px;cursor:pointer;text-transform:uppercase;letter-spacing:.1em}
+.bar button[aria-pressed=true]{background:var(--lcd-1);color:var(--lcd-0);border-color:var(--lcd-1)}
+/* layout */
+main{max-width:1180px;margin:0 auto;padding:0 var(--gutter) 90px}
+section{padding:68px 0 10px;scroll-margin-top:46px}
+.eyebrow{font:700 12px var(--mono);letter-spacing:.28em;text-transform:uppercase;color:var(--spark);margin:0 0 10px}
+h1,h2,h3{font-family:var(--display);font-weight:800;text-transform:uppercase;letter-spacing:.04em;line-height:1.02;margin:0}
+h1{font-size:clamp(54px,11vw,128px);color:var(--olive)}
+h2{font-size:clamp(34px,5vw,54px);color:#fff;margin-bottom:14px}
+h3{font-size:22px;color:var(--olive);margin-bottom:6px;letter-spacing:.06em}
+.lede{font-size:clamp(19px,2.2vw,23px);max-width:46ch;color:var(--text)}
+.note{font:13px/1.55 var(--mono);color:var(--dim);border-left:3px solid var(--spark);padding:6px 12px;margin:18px 0;background:var(--panel)}
+.note b{color:var(--spark);letter-spacing:.14em;text-transform:uppercase}
+.grid{display:grid;gap:18px}.g2{grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr))}.g3{grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr))}.g4{grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr))}
+.card{background:var(--panel);border:1px solid var(--line);padding:18px 18px 16px;position:relative}
+.card p{margin:.4em 0 0;font-size:15.5px;line-height:1.55}
+.chip{display:inline-block;font:700 11px var(--mono);letter-spacing:.14em;text-transform:uppercase;padding:2px 8px;border:1px solid currentColor;margin-bottom:8px}
+.live{color:#9bd36b}.build{color:var(--spark)}.plan{color:var(--wolf)}
+.btn{display:inline-block;font:700 13px var(--mono);letter-spacing:.14em;text-transform:uppercase;padding:10px 16px;background:var(--spark);color:#111;text-decoration:none;border:0}
+.btn:hover{background:#fff;color:#000}.btn.ghost{background:transparent;color:var(--olive);border:1px solid var(--olive-2)}.btn.ghost:hover{background:var(--olive);color:#000}
+.row{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}
+/* hero */
+.hero{padding-top:46px;display:grid;gap:30px;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);align-items:center}
+.hero figure{margin:0;position:relative}
+.hero h1 span{display:block;color:#fff;font-size:.42em;letter-spacing:.2em;margin-bottom:6px}
+.bulletin{font:12px/1.5 var(--mono);color:var(--dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:18px}
+@media(max-width:860px){.hero{grid-template-columns:1fr}}
+figure{margin:0}figcaption{font:12px/1.5 var(--mono);color:var(--dim);margin-top:6px}
+.frame{position:relative;border:1px solid var(--line);background:#000}.frame img,.frame canvas{display:block;width:100%;height:auto}
+.frame canvas{position:absolute;inset:0;image-rendering:pixelated;height:100%}
+/* pillars */
+.pillar{counter-increment:p}.pillar::before{content:counter(p,decimal-leading-zero);font:56px/1 var(--display);color:#ffffff14;position:absolute;right:12px;top:6px}
+.pillars{counter-reset:p}
+/* moodboard */
+.mood{display:grid;gap:14px;grid-template-columns:repeat(12,1fr)}
+.mood figure{grid-column:span 6}.mood .wide{grid-column:span 12}.mood .third{grid-column:span 4}
+@media(max-width:760px){.mood figure,.mood .third{grid-column:span 12}}
+.swatches{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:18px 0}
+.sw{border:1px solid var(--line);background:var(--panel);font:12px/1.4 var(--mono)}.sw i{display:block;height:54px}.sw span{display:block;padding:6px 8px;color:var(--dim)}.sw b{color:var(--text)}
+.rules{columns:2 340px;column-gap:30px;padding-left:22px}.rules li{margin:0 0 10px;break-inside:avoid;font-size:15.5px}
+/* roster */
+.operator{display:flex;flex-direction:column;gap:6px}
+.operator .portrait{aspect-ratio:3/4;background:var(--panel-2);border:1px solid var(--line);overflow:hidden;position:relative}
+.operator .portrait img{width:100%;height:100%;object-fit:cover;object-position:top}
+/* roadmap */
+.ms{display:grid;grid-template-columns:minmax(0,1fr) 140px;gap:6px 16px;align-items:center;padding:12px 0;border-bottom:1px dotted var(--line)}
+.ms h3{margin:0;font-size:20px}.ms small{font:12px var(--mono);color:var(--dim)}
+.meter{height:10px;background:#ffffff12;position:relative;border:1px solid var(--line)}.meter i{position:absolute;inset:0 auto 0 0;background:repeating-linear-gradient(90deg,var(--olive-2) 0 6px,#6f8050 6px 8px)}
+.pct{font:700 13px var(--mono);color:var(--olive);text-align:right}
+table{border-collapse:collapse;width:100%;font:13.5px/1.45 var(--mono)}th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}th{background:var(--panel-2);color:var(--olive)}
+.scroll{overflow-x:auto}
+code{font:.9em var(--mono);background:var(--panel-2);padding:.1em .35em}
+footer{border-top:1px solid var(--line);padding:30px var(--gutter) 60px;max-width:1180px;margin:0 auto;font:12px/1.7 var(--mono);color:var(--dim)}
+footer a{color:var(--olive)}
+.stamp{position:absolute;top:14px;right:14px;font:700 12px var(--mono);letter-spacing:.2em;border:2px solid var(--spark);color:var(--spark);padding:4px 10px;transform:rotate(4deg);background:#0d100ccc}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="bar"><div class="bar-in">
+  <b>PARP</b><span>Field handbook n°03 · v0.3.0</span>
+  <nav aria-label="Sections"><a href="#dispatches">Dispatches</a><a href="#pillars">Pillars</a><a href="#operators">Operators</a><a href="#moodboard">Moodboard</a><a href="#roadmap">Roadmap</a><a href="#specs">Specs</a><a href="#credits">Credits</a><a href="../">Index</a></nav>
+  <button id="signal" aria-pressed="false" title="Render the images as a 1-bit dithered radio signal">Signal: clean</button>
+</div></div>
+
+<main id="main">
+
+<section class="hero" id="top" aria-labelledby="h-title">
+  <div>
+    <p class="bulletin">Transmission 0.3.0 · 1 October 2026 · clandestine design bureau</p>
+    <h1 id="h-title"><span>Partisan Project</span>PARP</h1>
+    <p class="lede">A casual-friendly, low-poly, gear-obsessed resistance shooter, written as a field handbook you can play with. Every page of this handbook is a working demo, a drawing or a number we are held to.</p>
+    <div class="row">
+      <a class="btn" href="../operator/">Dress an operator</a>
+      <a class="btn ghost" href="../workbench/">Strip a rifle</a>
+      <a class="btn ghost" href="master-roadmap.html">Read the roadmap</a>
+    </div>
+    <p class="note"><b>Design note</b> This page is both the in-universe handbook and the game design document. Grey boxes like this one step outside the fiction to say what is real, what is a placeholder and what is waiting on a decision.</p>
+  </div>
+  <figure>
+    <div class="frame"><img src="moodboard/keyframe-2-firefight.jpg" alt="Concept keyframe: two low-poly operators behind concrete barriers in hazy backlight, sparks and casings flying" width="1600" height="893" fetchpriority="high"></div>
+    <figcaption>Target keyframe. Concept art, reference only; not a game asset.</figcaption>
+  </figure>
+</section>
+
+<section id="dispatches" aria-labelledby="h-dispatches">
+  <p class="eyebrow">Dispatches</p><h2 id="h-dispatches">What you can use today</h2>
+  <p class="lede">Each dispatch is a demo. Status is honest: <span class="live">live</span> means it runs on this site; <span class="build">in build</span> means partly there; <span class="plan">planned</span> means a drawing and a packet.</p>
+  <div class="grid g3" style="margin-top:22px">
+    <article class="card"><span class="chip live">Live</span><h3>Operator Modder</h3><p>Dress the Base Operator from modular kit, repaint ten zones, strike one of five hero poses and pick an idle: calm, alert or weary. Every look is a link.</p><div class="row"><a class="btn" href="../operator/">Open</a></div></article>
+    <article class="card"><span class="chip live">Live</span><h3>Weapon Workbench</h3><p>AK-74M and AK-15K with seven attachment families on railed mounts, handling stats that move as you swap, compatibility rules with reasons, finishes, camo, wear.</p><div class="row"><a class="btn" href="../workbench/">Open</a></div></article>
+    <article class="card"><span class="chip live">Live</span><h3>Asset Viewer</h3><p>The quartermaster's inspector. Checks any registered model against its triangle budget and licence before it reaches a demo.</p><div class="row"><a class="btn ghost" href="../viewer/">Open</a></div></article>
+    <article class="card"><span class="chip build">In build</span><h3>Real parts, more rifles</h3><p>Code-built placeholders give way to cleared CC0 geometry; the G3A3 joins as third rifle, then M16, Mk14, RPK, STG44, PPSh.</p><p class="note"><b>Blocked</b> on owner downloads and licence checks (packets A1, A9).</p></article>
+    <article class="card"><span class="chip build">In build</span><h3>Recon, Insurgent, Enforcer</h3><p>Three more operators on the same skeleton, drawn from the moodboard: hooded recon, plaid-shirt insurgent, black-kit enforcer.</p></article>
+    <article class="card"><span class="chip plan">Planned · 2027</span><h3>Checkpoint &amp; the squad's mind</h3><p>A ruined-checkpoint diorama, and a visualiser for how a squad believes, doubts and breaks: belief and morale made visible.</p></article>
+  </div>
+</section>
+
+<section id="pillars" aria-labelledby="h-pillars">
+  <p class="eyebrow">Doctrine</p><h2 id="h-pillars">Four pillars</h2>
+  <div class="grid g4 pillars" style="margin-top:20px">
+    <article class="card pillar"><h3>Gear is identity</h3><p>You are what you carry. Everything wearable or mountable is a slot with options, so a hundred loadouts come from a dozen parts.</p></article>
+    <article class="card pillar"><h3>Readable at a glance</h3><p>Low-poly, faceted, flat-shaded. A silhouette must tell you who it is: hood, helmet and tubes, beanie, pack, rifle outline.</p></article>
+    <article class="card pillar"><h3>Smart because it speaks</h3><p>Perceived intelligence comes from communication, not computation: the enemy's decisions must be audible and legible.</p></article>
+    <article class="card pillar"><h3>Fair, not cheap</h3><p>Difficulty scales what the enemy knows and how fast it learns, never its health, damage or reflexes. Built for players who grew out of twitch.</p></article>
+  </div>
+  <p class="note"><b>Design note</b> Pillars 3 and 4 come from the earlier AI design compendium and audience study, kept on the portfolio site at <a href="https://vincentdenil.com/docs/partisan-ai/">vincentdenil.com/docs/partisan-ai</a>. Pillars 1 and 2 come from the demos and the moodboard.</p>
+</section>
+
+<section id="operators" aria-labelledby="h-operators">
+  <p class="eyebrow">Personnel</p><h2 id="h-operators">The operators</h2>
+  <p class="lede">One skeleton, many people. Poses and idles are data, so every new operator inherits the whole animation set the day it exists.</p>
+  <div class="grid g4" style="margin-top:22px">
+    <article class="operator card"><div class="portrait"><span class="stamp">LIVE</span><img src="moodboard/recon-hero-pose.jpg" alt="Hero pose reference: hooded operator holding a rifle upright" loading="lazy" style="object-position:center"></div><h3>Base Operator</h3><p>Purchased low-poly soldier. 8,646 triangles, 83 bones, 21 modular meshes. Playable now. <a href="../operator/">Open</a></p></article>
+    <article class="operator card"><div class="portrait"><img src="moodboard/recon-turnaround.jpg" alt="Recon turnaround sheet: front, side and back views of a hooded operator" loading="lazy" style="object-position:left top"></div><h3>Recon</h3><p>Hood and face mask, houndstooth scarf, plate carrier, admin pouch. <span class="chip build">In build</span></p></article>
+    <article class="operator card"><div class="portrait"><img src="moodboard/keyframe-1-nvg-plaid.jpg" alt="Operator in a tan helmet with night-vision tubes, green face cover and plaid shirt" loading="lazy" style="object-position:30% 30%"></div><h3>Insurgent</h3><p>Plaid shirt, shemagh, worn G3 and AK kit. Scrappy and recognisable. <span class="chip plan">Planned</span></p></article>
+    <article class="operator card"><div class="portrait"><img src="moodboard/keyframe-2-firefight.jpg" alt="Operator in black kit with olive belt pouches aiming a modern rifle" loading="lazy" style="object-position:35% 35%"></div><h3>Enforcer</h3><p>Black kit, bold pouches, NVG helmet, modern rifle. <span class="chip plan">Planned</span></p></article>
+  </div>
+  <p class="note"><b>Design note</b> Matching keyframes to roster names is a proposal; the owner confirms it when each operator is signed off.</p>
+</section>
+
+<section id="moodboard" aria-labelledby="h-mood">
+  <p class="eyebrow">Art direction</p><h2 id="h-mood">Moodboard</h2>
+  <p class="lede">Faceted low poly with painterly facets, desaturated olive and coyote, and light that does the storytelling.</p>
+  <div class="mood" style="margin-top:22px">
+    <figure class="wide"><div class="frame"><img src="moodboard/recon-character-sheet.jpg" alt="Hooded recon character sheet with front, side, back and hero pose, and a column of patches and props" width="2000" height="1125" loading="lazy"></div><figcaption>Recon character sheet v01-09: turnaround, hero pose, insignia and props. Concept art, reference only.</figcaption></figure>
+    <figure><div class="frame"><img src="moodboard/keyframe-1-nvg-plaid.jpg" alt="Golden-hour keyframe: operator with NVG helmet and plaid shirt aiming a G3-style rifle with a holographic sight" width="1600" height="893" loading="lazy"></div><figcaption>Keyframe 1: golden-hour dust, warm key, long shadows. Concept art.</figcaption></figure>
+    <figure><div class="frame"><img src="moodboard/keyframe-2-firefight.jpg" alt="Overcast keyframe with god-rays: operator in black kit firing past concrete barriers, sparks and casings in the air" width="1600" height="893" loading="lazy"></div><figcaption>Keyframe 2: cool overcast haze, volumetric rays, impact sparks. Concept art.</figcaption></figure>
+    <figure class="third"><div class="frame"><img src="moodboard/ref-abiotic-factor-low-poly.jpg" alt="Style reference: chunky low-poly character with large visor and chest radio" width="1300" height="1047" loading="lazy"></div><figcaption>Style reference: <i>Abiotic Factor</i> (Deep Field Games). Chunky, readable, accent colour. Screenshot for study only.</figcaption></figure>
+    <figure class="third"><div class="frame"><img src="moodboard/recon-insignia-props.jpg" alt="Column of reference props: MP-O patch, mountain shield patch, handheld radio, carabiner, canister" width="198" height="1312" loading="lazy" style="max-height:520px;object-fit:contain;background:#222"></div><figcaption>Insignia and props from the Recon sheet.</figcaption></figure>
+    <figure class="third"><div class="frame"><img src="moodboard/recon-hero-pose.jpg" alt="Hero pose: rifle held upright in the right hand" width="512" height="1355" loading="lazy" style="max-height:520px;object-fit:contain;background:#222"></div><figcaption>The hero pose, now an actual pose in the Operator Modder.</figcaption></figure>
+  </div>
+
+  <h3 style="margin-top:34px">Palette</h3>
+  <div class="swatches" role="list">
+    <div class="sw" role="listitem"><i style="background:#17181d"></i><span><b>Night kit</b><br>#17181d</span></div>
+    <div class="sw" role="listitem"><i style="background:#3b3635"></i><span><b>Charcoal</b><br>#3b3635</span></div>
+    <div class="sw" role="listitem"><i style="background:#4b5a3a"></i><span><b>Olive drab</b><br>#4b5a3a</span></div>
+    <div class="sw" role="listitem"><i style="background:#6e6f43"></i><span><b>Pouch olive</b><br>#6e6f43</span></div>
+    <div class="sw" role="listitem"><i style="background:#b68f65"></i><span><b>Coyote</b><br>#b68f65</span></div>
+    <div class="sw" role="listitem"><i style="background:#d7b892"></i><span><b>Sand</b><br>#d7b892</span></div>
+    <div class="sw" role="listitem"><i style="background:#758492"></i><span><b>Wolf grey</b><br>#758492</span></div>
+    <div class="sw" role="listitem"><i style="background:#afb3b3"></i><span><b>Concrete</b><br>#afb3b3</span></div>
+    <div class="sw" role="listitem"><i style="background:#ef8f39"></i><span><b>Spark</b><br>#ef8f39</span></div>
+    <div class="sw" role="listitem"><i style="background:#959622"></i><span><b>Hazard</b><br>#959622</span></div>
+    <div class="sw" role="listitem"><i style="background:#b5c79a"></i><span><b>LCD paper</b><br>#b5c79a</span></div>
+    <div class="sw" role="listitem"><i style="background:#16200f"></i><span><b>LCD ink</b><br>#16200f</span></div>
+  </div>
+
+  <h3>Rules of the look</h3>
+  <ol class="rules">
+    <li><b>Faceted, flat-shaded.</b> Visible polygons on skin, cloth and armour; colour varies per facet, never a smooth normal map.</li>
+    <li><b>Silhouette first.</b> Recognisable from a black cut-out at hero distance.</li>
+    <li><b>Layered identity.</b> Slots, colour zones and insignia over one skeleton.</li>
+    <li><b>Palette discipline.</b> Muted kit, saturated rewards: a patch, a carabiner, a spark.</li>
+    <li><b>Two lights.</b> Golden-hour dust, or overcast haze with god-rays; rim light on dark kit.</li>
+    <li><b>Storytelling props.</b> Casings, rebar, worn paint, taped magazines, a radio.</li>
+    <li><b>Real silhouettes</b> for weapons, with modern furniture on historic bodies.</li>
+    <li><b>Hero pose language.</b> Weight on one leg, rifle upright or low, head turned toward camera, camera 24° off front.</li>
+    <li><b>The UI is a phone.</b> 1-bit LCD tones, ordered dither, stencil type, hard edges.</li>
+  </ol>
+  <p class="note"><b>Design note</b> The keyframes and sheet are AI-assisted concept art. Text on signs in them (e.g. "BLACKSITE") is not a naming decision. Full notes: <a href="https://github.com/VincentDN/partisan-project/blob/main/docs/art-direction.md">art-direction.md</a>.</p>
+</section>
+
+<section id="roadmap" aria-labelledby="h-road">
+  <p class="eyebrow">Orders of march</p><h2 id="h-road">Roadmap</h2>
+  <p class="lede">Work is cut into packets small enough to finish inside one usage window of a $20 AI plan and hand to the other plan when the window runs dry. Progress below is read live from the packet list.</p>
+  <div id="milestones" aria-live="polite">
+    <div class="ms"><div><h3>M0 · Foundation <small>v0.3.0</small></h3></div><div class="pct">loading…</div></div>
+  </div>
+  <div class="row"><a class="btn" href="master-roadmap.html">Full master roadmap</a><a class="btn ghost" href="https://github.com/VincentDN/partisan-project/blob/main/docs/agent-ops/README.md">How the budget system works</a></div>
+  <p class="note"><b>Open decisions</b> (1) Setting canon: the earlier premise is Yantis, 2012, a prologue to a WW2044 timeline; the modern low-poly kit needs a reconciling decision. (2) Roster naming from the keyframes. (3) Licences: the purchased character pack's redistribution terms, two music tracks, and any exception for the SIG Spear. (4) When to drop <code>noindex</code>.</p>
+</section>
+
+<section id="specs" aria-labelledby="h-specs">
+  <p class="eyebrow">Quartermaster</p><h2 id="h-specs">Field specs we are held to</h2>
+  <div class="scroll"><table>
+    <thead><tr><th>Item</th><th>Standard</th><th>Check</th></tr></thead>
+    <tbody>
+      <tr><td>Operator + equipment</td><td>≤ 15,000 triangles, ≤ 60 draw calls</td><td>Readout in the Operator Modder; automated test</td></tr>
+      <tr><td>Weapon + attachments</td><td>≤ 30,000 triangles</td><td>Asset Viewer; register budget</td></tr>
+      <tr><td>Frame rate</td><td>Goal: 60 fps desktop, 30 fps mid-range phone</td><td>Adaptive resolution built in; device acceptance pending (WP-Q2)</td></tr>
+      <tr><td>Accessibility</td><td>Keyboard, focus, reduced motion, text contrast, WCAG 2.2 AA target</td><td>Audit pending (WP-Q1)</td></tr>
+      <tr><td>Assets</td><td>CC0 or CC BY 4.0 downloads only; everything registered</td><td>Register audit fails the build</td></tr>
+      <tr><td>Privacy</td><td>No cookies, no analytics, no third-party requests</td><td>Site check; vendored three.js</td></tr>
+      <tr><td>Stats</td><td>Illustrative handling values, not real-world data</td><td>Labelled in the demos</td></tr>
+      <tr><td>Build</td><td>Relative URLs, allowlist deploy, link-checked</td><td>CI on every push</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="credits" aria-labelledby="h-credits">
+  <p class="eyebrow">Acknowledgements</p><h2 id="h-credits">Credits &amp; licences</h2>
+  <div class="scroll"><table>
+    <thead><tr><th>Asset</th><th>Author</th><th>Licence</th><th>Status</th></tr></thead>
+    <tbody id="credit-rows">
+      <tr><td>Rifles: AK-74M Zenitco and AK-15K</td><td><a href="https://sketchfab.com/DU1701">D_U</a></td><td>CC BY 4.0</td><td>real</td></tr>
+      <tr><td>Environment lighting: Quarry 01, Venice Sunset</td><td>Poly Haven</td><td>CC0</td><td>real</td></tr>
+      <tr><td>Base Operator</td><td>Purchased pack</td><td>Purchased (terms to be confirmed)</td><td>real</td></tr>
+      <tr><td>Music</td><td>Supplied by the project owner</td><td>Rights to be reconfirmed</td><td>real</td></tr>
+    </tbody>
+  </table></div>
+  <p>Rendering by <a href="https://threejs.org/">three.js</a> (MIT). Reference art on this page is credited beside each image and used for study only. The table above is rendered from <code>assets/register.json</code> when scripts are available.</p>
+</section>
+
+</main>
+
+<footer>
+  <p>PARP · Partisan Project · v0.3.0 · © 2026 Vincent De Nil, Atelier Vincent De Nil BV. All rights reserved except where an asset's own licence says otherwise.<br>
+  <a href="../">Index</a> · <a href="master-roadmap.html">Roadmap</a> · <a href="https://github.com/VincentDN/partisan-project">Source</a> · <a href="https://vincentdenil.com/projects/">AVDN projects</a></p>
+</footer>
+
+<script type="module">
+import {drawDithered} from '../assets/js/dither.js';
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+// Live milestone progress from packets.json (generated into docs/packets.json by the site build).
+try {
+  const data = await (await fetch('packets.json')).json();
+  const rows = Object.entries(data.milestones).map(([id, m]) => {
+    const ps = data.packets.filter(p => p.milestone === id);
+    if (!ps.length || ['TD', 'D'].includes(id)) return '';
+    const total = ps.reduce((s, p) => s + p.bu, 0), done = ps.filter(p => p.status === 'done').reduce((s, p) => s + p.bu, 0);
+    const pct = Math.round(done / total * 100);
+    return `<div class="ms"><div><h3>${esc(id)} · ${esc(m.name)} ${m.version ? `<small>v${esc(m.version)}</small>` : ''}</h3><small>${ps.filter(p => p.status === 'done').length} of ${ps.length} packets · ${total} budget units</small></div><div><div class="meter" role="img" aria-label="${pct}% complete"><i style="width:${pct}%"></i></div><div class="pct">${pct}%</div></div></div>`;
+  }).join('');
+  if (rows) $('#milestones').innerHTML = rows;
+} catch (e) { $('#milestones').innerHTML = '<p class="note"><b>Offline</b> Progress could not be loaded; see the master roadmap.</p>'; }
+
+// Credits from the asset register.
+try {
+  const reg = await (await fetch('../assets/register.json')).json();
+  const link = a => a.source?.startsWith('http') ? `<a href="${esc(a.source)}">${esc(a.label)}</a>` : esc(a.label);
+  $('#credit-rows').innerHTML = reg.assets.map(a => `<tr><td>${link(a)}</td><td>${esc(a.author || '')}</td><td>${esc(a.license)}</td><td>${esc(a.status)}</td></tr>`).join('');
+} catch (e) { /* static fallback stays */ }
+
+// "Signal" mode: render the figures as a 1-bit Bayer-dithered radio signal.
+const btn = $('#signal');
+btn.addEventListener('click', async () => {
+  const on = btn.getAttribute('aria-pressed') !== 'true';
+  btn.setAttribute('aria-pressed', String(on));
+  btn.textContent = on ? 'Signal: dithered' : 'Signal: clean';
+  for (const frame of $$('.frame')) {
+    let c = frame.querySelector('canvas');
+    const img = frame.querySelector('img');
+    if (!on) { c?.remove(); continue; }
+    if (!c) { c = document.createElement('canvas'); c.setAttribute('aria-hidden', 'true'); frame.append(c); }
+    await drawDithered(c, img.currentSrc || img.src, {width: 190, contrast: 1.4}).catch(() => c.remove());
+  }
+});
+</script>
+</body>
+</html>

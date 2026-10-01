@@ -1,0 +1,513 @@
+{
+ "source": "Low_Poly_US_Soldier (purchased asset; see assets/REGISTER.md)",
+ "generated": "2026-10-01",
+ "units": "node scale 0.01 on Armature (cm source); height ~1.85 m after scale",
+ "triangles": 8646,
+ "bones": [
+  "root",
+  "pelvis",
+  "thigh_r",
+  "thigh_twist_01_r",
+  "thigh_twist_02_r",
+  "calf_r",
+  "foot_r",
+  "ball_r",
+  "spine_01",
+  "spine_02",
+  "spine_03",
+  "spine_04",
+  "neck_01",
+  "neck_02",
+  "neck_03",
+  "head",
+  "clavicle_r",
+  "upperarm_r",
+  "upperarm_twist_01_r",
+  "upperarm_twist_02_r",
+  "lowerarm_r",
+  "lowerarm_twist_01_r",
+  "lowerarm_twist_02_r",
+  "hand_r",
+  "middle_metacarpal_r",
+  "middle_01_r",
+  "middle_02_r",
+  "middle_03_r",
+  "index_metacarpal_r",
+  "index_01_r",
+  "index_02_r",
+  "index_03_r",
+  "thumb_01_r",
+  "thumb_02_r",
+  "thumb_03_r",
+  "ring_metacarpal_r",
+  "ring_01_r",
+  "ring_02_r",
+  "ring_03_r",
+  "pinky_metacarpal_r",
+  "pinky_01_r",
+  "pinky_02_r",
+  "pinky_03_r",
+  "clavicle_l",
+  "upperarm_l",
+  "upperarm_twist_01_l",
+  "upperarm_twist_02_l",
+  "lowerarm_l",
+  "lowerarm_twist_01_l",
+  "lowerarm_twist_02_l",
+  "hand_l",
+  "middle_metacarpal_l",
+  "middle_01_l",
+  "middle_02_l",
+  "middle_03_l",
+  "index_metacarpal_l",
+  "index_01_l",
+  "index_02_l",
+  "index_03_l",
+  "thumb_01_l",
+  "thumb_02_l",
+  "thumb_03_l",
+  "ring_metacarpal_l",
+  "ring_01_l",
+  "ring_02_l",
+  "ring_03_l",
+  "pinky_metacarpal_l",
+  "pinky_01_l",
+  "pinky_02_l",
+  "pinky_03_l",
+  "thigh_l",
+  "thigh_twist_01_l",
+  "thigh_twist_02_l",
+  "calf_l",
+  "foot_l",
+  "ball_l",
+  "ik_foot_root",
+  "ik_foot_l",
+  "ik_foot_r",
+  "ik_hand_root",
+  "ik_hand_gun",
+  "ik_hand_l",
+  "ik_hand_r"
+ ],
+ "meshes": [
+  {
+   "node": "SK_Backpack",
+   "triangles": 648,
+   "materials": [
+    "M_Backpack",
+    "M_Backpack_Strap"
+   ]
+  },
+  {
+   "node": "SK_Belly_Pouches",
+   "triangles": 156,
+   "materials": [
+    "M_Pouch"
+   ]
+  },
+  {
+   "node": "SK_Belt",
+   "triangles": 578,
+   "materials": [
+    "M_Pouch",
+    "M_Hip_Guard",
+    "M_Pouch_Strap"
+   ]
+  },
+  {
+   "node": "SK_Body",
+   "triangles": 1382,
+   "materials": [
+    "M_Top_Fabric",
+    "M_Body_Armor"
+   ]
+  },
+  {
+   "node": "SK_Chest_Pouches",
+   "triangles": 104,
+   "materials": [
+    "M_Pouch"
+   ]
+  },
+  {
+   "node": "SK_Elbow_Guard_L",
+   "triangles": 208,
+   "materials": [
+    "M_Elbow_Pad_Fabric",
+    "M_Elbow_Pad_Metal"
+   ]
+  },
+  {
+   "node": "SK_Elbow_Guard_R",
+   "triangles": 208,
+   "materials": [
+    "M_Elbow_Pad_Fabric",
+    "M_Elbow_Pad_Metal"
+   ]
+  },
+  {
+   "node": "SK_Eyeball",
+   "triangles": 112,
+   "materials": [
+    "M_Eye_Iris",
+    "M_Eyeball"
+   ]
+  },
+  {
+   "node": "SK_Face",
+   "triangles": 246,
+   "materials": [
+    "M_Head"
+   ]
+  },
+  {
+   "node": "SK_Glass",
+   "triangles": 40,
+   "materials": [
+    "M_Glass"
+   ]
+  },
+  {
+   "node": "SK_Gloves",
+   "triangles": 1176,
+   "materials": [
+    "M_Glove",
+    "M_Glove_Strap"
+   ]
+  },
+  {
+   "node": "SK_Helmet",
+   "triangles": 806,
+   "materials": [
+    "M_Helmet_Frame",
+    "M_Helmet",
+    "M_Helmet_Headphone",
+    "M_Mask_Strap"
+   ]
+  },
+  {
+   "node": "SK_Helmet_Scope",
+   "triangles": 220,
+   "materials": [
+    "M_Helmet_Scope"
+   ]
+  },
+  {
+   "node": "SK_Leg_Guard_L",
+   "triangles": 234,
+   "materials": [
+    "M_Leg_Guard_Fabric",
+    "M_Leg_Guard_Metal"
+   ]
+  },
+  {
+   "node": "SK_Leg_Guard_R",
+   "triangles": 234,
+   "materials": [
+    "M_Leg_Guard_Fabric",
+    "M_Leg_Guard_Metal"
+   ]
+  },
+  {
+   "node": "SK_Leg_Holster_L",
+   "triangles": 404,
+   "materials": [
+    "M_Leg_Holster",
+    "M_Pouch",
+    "M_Pouch_Strap"
+   ]
+  },
+  {
+   "node": "SK_Leg_Holster_R",
+   "triangles": 300,
+   "materials": [
+    "M_Leg_Holster",
+    "M_Pouch",
+    "M_Pouch_Strap"
+   ]
+  },
+  {
+   "node": "SK_Legs",
+   "triangles": 702,
+   "materials": [
+    "M_Fabric_Bottom",
+    "M_Belt"
+   ]
+  },
+  {
+   "node": "SK_Mask",
+   "triangles": 456,
+   "materials": [
+    "M_Mask"
+   ]
+  },
+  {
+   "node": "SK_Shoes",
+   "triangles": 328,
+   "materials": [
+    "M_Shoe",
+    "M_Shoe_Sole"
+   ]
+  },
+  {
+   "node": "SK_Shoulder_Pouches",
+   "triangles": 104,
+   "materials": [
+    "M_Pouch"
+   ]
+  }
+ ],
+ "materials": [
+  {
+   "name": "M_Backpack",
+   "baseColor": [
+    0.088,
+    0.133,
+    0.045
+   ],
+   "textured": false
+  },
+  {
+   "name": "M_Backpack_Strap",
+   "baseColor": [
+    0.032,
+    0.023,
+    0.015
+   ],
+   "textured": false
+  },
+  {
+   "name": "M_Pouch",
+   "baseColor": [
+    0.156,
+    0.16,
+    0.057
+   ],
+   "textured": false
+  },
+  {
+   "name": "M_Hip_Guard",
+   "baseColor": [
+    0.05,
+    0.035,
+    0.017
+   ],
+   "textured": false
+  },
+  {
+   "name": "M_Pouch_Strap",
+   "baseColor": [
+    0.055,
+    0.034,
+    0.012
+   ],
+   "textured": false
+  },
+  {
+   "name": "M_Top_Fabric",
+   "baseColor": [
+    1,
+    1,
+    1
+   ],
+   "textured": true
+  },
+  {
+   "name": "M_Body_Armor",
+   "baseColor": [
+    0.006,
+    0.004,
+    0.003
+   ],
+   "textured": false
+  },
+  {
+   "name": "M_Elbow_Pad_Fabric",
+   "baseColor": [
+    0.007,
+    0.006,
+    0.004
+   ],
+   "textured": false
+  },
+  {
+   "name": "M_Elbow_Pad_Metal",
+   "baseColor": [
+    0.054,
+    0.049,
+    0.041
+   ],
+   "textured": false
+  },
+  {
+   "name": "M_Eye_Iris",
+   "baseColor": [
+    0.008,
+    0.006,
+    0.005
+   ],
+   "textured": false
+  },
+  {
+   "name": "M_Eyeball",
+   "baseColor": [
+    0.137,
+    0.118,
+    0.102
+   ],
+   "textured": false
+  },
+  {
+   "name": "M_Head",
+   "baseColor": [
+    0.269,
+    0.159,
+    0.119
+   ],
+   "textured": false
+  },
+  {
+   "name": "M_Glass",
+   "baseColor": [
+    0.004,
+    0.004,
+    0.004
+   ],
+   "textured": false
+  },
+  {
+   "name": "M_Glove",
+   "baseColor": [
+    0.006,
+    0.006,
+    0.006
+   ],
+   "textured": false
+  },
+  {
+   "name": "M_Glove_Strap",
+   "baseColor": [
+    0.133,
+    0.093,
+    0.063
+   ],
+   "textured": false
+  },
+  {
+   "name": "M_Helmet_Frame",
+   "baseColor": [
+    0.012,
+    0.01,
+    0.008
+   ],
+   "textured": false
+  },
+  {
+   "name": "M_Helmet",
+   "baseColor": [
+    0.07,
+    0.049,
+    0.032
+   ],
+   "textured": false
+  },
+  {
+   "name": "M_Helmet_Headphone",
+   "baseColor": [
+    0.028,
+    0.028,
+    0.028
+   ],
+   "textured": false
+  },
+  {
+   "name": "M_Mask_Strap",
+   "baseColor": [
+    0.133,
+    0.093,
+    0.063
+   ],
+   "textured": false
+  },
+  {
+   "name": "M_Helmet_Scope",
+   "baseColor": [
+    0.009,
+    0.009,
+    0.009
+   ],
+   "textured": false
+  },
+  {
+   "name": "M_Leg_Guard_Fabric",
+   "baseColor": [
+    0.003,
+    0.003,
+    0.002
+   ],
+   "textured": false
+  },
+  {
+   "name": "M_Leg_Guard_Metal",
+   "baseColor": [
+    0.059,
+    0.059,
+    0.059
+   ],
+   "textured": false
+  },
+  {
+   "name": "M_Leg_Holster",
+   "baseColor": [
+    0.028,
+    0.019,
+    0.009
+   ],
+   "textured": false
+  },
+  {
+   "name": "M_Fabric_Bottom",
+   "baseColor": [
+    1,
+    1,
+    1
+   ],
+   "textured": true
+  },
+  {
+   "name": "M_Belt",
+   "baseColor": [
+    0.003,
+    0.002,
+    0.002
+   ],
+   "textured": false
+  },
+  {
+   "name": "M_Mask",
+   "baseColor": [
+    0.004,
+    0.004,
+    0.004
+   ],
+   "textured": false
+  },
+  {
+   "name": "M_Shoe",
+   "baseColor": [
+    0.006,
+    0.004,
+    0.003
+   ],
+   "textured": false
+  },
+  {
+   "name": "M_Shoe_Sole",
+   "baseColor": [
+    0.001,
+    0.001,
+    0.001
+   ],
+   "textured": false
+  }
+ ]
+}

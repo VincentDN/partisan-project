@@ -1,7 +1,10 @@
+node_modules/
+build/
+_site/
 .DS_Store
 Thumbs.db
-node_modules/
 *.log
-
-# Local secrets for `wrangler pages dev`
-.dev.vars
+assets-incoming/
+*.blend
+*.blend1
+*.fbx

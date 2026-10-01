@@ -1,0 +1,1074 @@
+{
+ "version": 1,
+ "units": {
+  "BU": "Budget Unit = 1% of one 5-hour usage window on the weaker $20 plan (calibrate: docs/agent-ops/README.md section 3)",
+  "sizes": {
+   "XS": 3,
+   "S": 8,
+   "M": 20
+  },
+  "rule": "No packet larger than M. Anything bigger is an epic and must be split before it is started."
+ },
+ "milestones": {
+  "M0": {
+   "name": "Foundation",
+   "version": "0.3.0"
+  },
+  "M1": {
+   "name": "Gun modder: real parts, three weapons",
+   "version": "0.4.0"
+  },
+  "M2": {
+   "name": "Operator roster: Recon, Insurgent, Enforcer",
+   "version": "0.5.0"
+  },
+  "M3": {
+   "name": "Integration and sharing",
+   "version": "0.6.0"
+  },
+  "M4": {
+   "name": "Weapon roster 2: modern and WW2",
+   "version": "0.7.0"
+  },
+  "M5": {
+   "name": "Production acceptance",
+   "version": "1.0.0"
+  },
+  "TD": {
+   "name": "Tech debt (fill windows)",
+   "version": null
+  },
+  "D": {
+   "name": "Design docs",
+   "version": null
+  },
+  "H27": {
+   "name": "2027 horizon",
+   "version": null
+  }
+ },
+ "packets": [
+  {
+   "id": "WP-F1",
+   "title": "Restructure into the PARP layout; migrate from vincentdenil-site",
+   "track": "Foundation",
+   "milestone": "M0",
+   "size": "M",
+   "bu": 20,
+   "status": "done",
+   "deps": [],
+   "agent": "any",
+   "needs": [],
+   "inputs": [],
+   "acceptance": "Repo has workbench/, operator/, viewer/, docs/, shared/, vendor/, assets/, tools/, tests/; site repo no longer hosts the project."
+  },
+  {
+   "id": "WP-F2",
+   "title": "Remove firing, range drill, bench-hand animation, advanced-animation experiment and the procedural operator",
+   "track": "Foundation",
+   "milestone": "M0",
+   "size": "M",
+   "bu": 20,
+   "status": "done",
+   "deps": [],
+   "agent": "any",
+   "needs": [],
+   "inputs": [],
+   "acceptance": "No code path for test fire, recoil kick, reload, drill, bench hands or the code-built operator remains."
+  },
+  {
+   "id": "WP-F3",
+   "title": "Agent-ops: work-packet system, calibration, handoff protocol and tooling",
+   "track": "Agent-ops",
+   "milestone": "M0",
+   "size": "M",
+   "bu": 20,
+   "status": "done",
+   "deps": [],
+   "agent": "any",
+   "needs": [],
+   "inputs": [],
+   "acceptance": "docs/agent-ops/, packets.json, tools/agent/* and tests exist; next-packet returns a packet that fits a given budget."
+  },
+  {
+   "id": "WP-F4",
+   "title": "Master roadmap, design-doc one-pager, moodboard and Nokia-style index",
+   "track": "Docs",
+   "milestone": "M0",
+   "size": "M",
+   "bu": 20,
+   "status": "done",
+   "deps": [],
+   "agent": "any",
+   "needs": [],
+   "inputs": [],
+   "acceptance": "docs/master-roadmap.md, docs/game-design-master-doc.html, docs/moodboard/, index.html shipped."
+  },
+  {
+   "id": "WP-F5",
+   "title": "Operator Customiser v1: Base Operator ingest, equipment slots, colour zones, 5 hero poses, 3 idles",
+   "track": "Characters",
+   "milestone": "M0",
+   "size": "M",
+   "bu": 20,
+   "status": "done",
+   "deps": [],
+   "agent": "any",
+   "needs": [],
+   "inputs": [],
+   "acceptance": "operator/ loads the purchased soldier, 21 modular meshes, pose and idle data driven, URL-shareable looks."
+  },
+  {
+   "id": "WP-F6",
+   "title": "Asset register, licence policy and import tooling (bpy + glTF-Transform)",
+   "track": "Assets",
+   "milestone": "M0",
+   "size": "S",
+   "bu": 8,
+   "status": "done",
+   "deps": [],
+   "agent": "any",
+   "needs": [],
+   "inputs": [],
+   "acceptance": "assets/register.json audited by tests; import-asset.py, optimize-glb.mjs, register.mjs work."
+  },
+  {
+   "id": "WP-F7",
+   "title": "GitHub Pages workflow, allowlist site build, link checker, dev server",
+   "track": "Foundation",
+   "milestone": "M0",
+   "size": "S",
+   "bu": 8,
+   "status": "done",
+   "deps": [],
+   "agent": "any",
+   "needs": [],
+   "inputs": [],
+   "acceptance": ".github/workflows/pages.yml builds _site, runs tests + checks, deploys on main."
+  },
+  {
+   "id": "WP-F8",
+   "title": "Owner: enable Pages (Settings > Pages > Source: GitHub Actions), merge the branch to main, confirm licences (purchased pack redistribution, music rights)",
+   "track": "Foundation",
+   "milestone": "M0",
+   "size": "XS",
+   "bu": 3,
+   "status": "ready",
+   "deps": [],
+   "agent": "human",
+   "needs": [
+    "human"
+   ],
+   "inputs": [
+    "docs/adr/0003-pages-deploy.md",
+    "assets/register.json"
+   ],
+   "acceptance": "https://vincentdn.github.io/partisan-project/ loads the index; owner has written a yes/no on each \"TERMS TO BE CONFIRMED\" note in the register."
+  },
+  {
+   "id": "WP-F9",
+   "title": "Browser smoke tests (Playwright) for index, workbench, operator, viewer, in CI",
+   "track": "Quality",
+   "milestone": "M0",
+   "size": "S",
+   "bu": 8,
+   "status": "done",
+   "deps": [],
+   "agent": "any",
+   "needs": [],
+   "inputs": [],
+   "acceptance": "tests/e2e/smoke.mjs passes locally and runs as a CI job."
+  },
+  {
+   "id": "WP-F10",
+   "title": "Verify the live Pages deployment; fix any base-path problem",
+   "track": "Foundation",
+   "milestone": "M0",
+   "size": "XS",
+   "bu": 3,
+   "status": "blocked",
+   "deps": [
+    "WP-F8"
+   ],
+   "agent": "any",
+   "needs": [
+    "browser"
+   ],
+   "inputs": [],
+   "acceptance": "Live URL passes the same smoke test: npm run test:e2e -- --url <live url>."
+  },
+  {
+   "id": "WP-A1",
+   "title": "Owner: download the CC0 weapon packs into assets-incoming/ and screenshot each licence page",
+   "track": "Weapons",
+   "milestone": "M1",
+   "size": "XS",
+   "bu": 3,
+   "status": "ready",
+   "deps": [],
+   "agent": "human",
+   "needs": [
+    "human",
+    "net"
+   ],
+   "inputs": [
+    "assets/register.json (pipeline section lists the candidate packs)"
+   ],
+   "acceptance": "assets-incoming/ holds the byzmod3d Low Poly Weapon Pack and the chilly-durango Low Poly Firearms pack; licence text saved beside each as LICENSE.txt."
+  },
+  {
+   "id": "WP-A2",
+   "title": "Import and normalise attachment parts (magazine, muzzle device, optic) from the CC0 packs",
+   "track": "Weapons",
+   "milestone": "M1",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-A1"
+   ],
+   "agent": "any",
+   "needs": [
+    "bpy"
+   ],
+   "inputs": [
+    "tools/assets/import-asset.py",
+    "tools/assets/optimize-glb.mjs",
+    "tools/assets/register.mjs"
+   ],
+   "acceptance": "Three GLBs under assets/models/attachments/, each <= 2,500 triangles, registered with licence and author; viewer/ shows them with status real."
+  },
+  {
+   "id": "WP-A3",
+   "title": "Wire real parts through glb() for magazines, one muzzle device and one optic",
+   "track": "Weapons",
+   "milestone": "M1",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-A2"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "workbench/attachments.js",
+    "workbench/models.js",
+    "workbench/stats.js"
+   ],
+   "acceptance": "Those options render real geometry on both rifles, mount at the right socket, keep their stats and compatibility rules; Stage-1 exit criterion met."
+  },
+  {
+   "id": "WP-A4",
+   "title": "Generalise finishes/camo to real-asset material names",
+   "track": "Weapons",
+   "milestone": "M1",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-A3"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "workbench/rifle-finishes.js",
+    "workbench/attachments.js"
+   ],
+   "acceptance": "Finish swatches recolour real attachments; unit test lists the material names each finish target recolours."
+  },
+  {
+   "id": "WP-A5",
+   "title": "Convert remaining attachment families to real parts (foregrip, grip, stock, side rail, suppressor, brake)",
+   "track": "Weapons",
+   "milestone": "M1",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-A3"
+   ],
+   "agent": "any",
+   "needs": [
+    "bpy"
+   ],
+   "inputs": [],
+   "acceptance": "No code-built primitive remains in the library except those register-listed as placeholder with a reason."
+  },
+  {
+   "id": "WP-A6",
+   "title": "Rail footprints: generalise rail length, pitch and footprints so incompatible placements cannot overlap",
+   "track": "Weapons",
+   "milestone": "M1",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-A3"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "workbench/models.js",
+    "workbench/stats.js"
+   ],
+   "acceptance": "Overlap is impossible by construction; tests assert no two slots on one rail overlap across all rail offsets."
+  },
+  {
+   "id": "WP-A7",
+   "title": "New slots: sling mount, charging handle, trigger, dust-cover rail",
+   "track": "Weapons",
+   "milestone": "M1",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-A6"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [],
+   "acceptance": "Four slots with options, camera framing, stats deltas and rules; presets still valid."
+  },
+  {
+   "id": "WP-A8",
+   "title": "Stat consistency pass: ergonomics, recoil, mass, length, ADS, sound signature, hover deltas for every option",
+   "track": "Weapons",
+   "milestone": "M1",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-A5"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [],
+   "acceptance": "Every option declares all stats; a test fails if one is missing; values labelled illustrative."
+  },
+  {
+   "id": "WP-A9",
+   "title": "G3A3: verify licence (owner), import, models.js entry (parts, sockets, defaults, factory options)",
+   "track": "Weapons",
+   "milestone": "M1",
+   "size": "M",
+   "bu": 20,
+   "status": "blocked",
+   "deps": [
+    "WP-A1"
+   ],
+   "agent": "any",
+   "needs": [
+    "human",
+    "bpy"
+   ],
+   "inputs": [
+    "assets/register.json pipeline item wpn-g3a3"
+   ],
+   "acceptance": "Third rifle selectable in the Workbench, all slots mount, presets work; licence recorded in the register."
+  },
+  {
+   "id": "WP-A10",
+   "title": "Weapon-depth exit tests: >=3 weapons, visible compatibility reasons, hover deltas, presets, regression",
+   "track": "Weapons",
+   "milestone": "M1",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-A9",
+    "WP-A7",
+    "WP-A8"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [],
+   "acceptance": "Workbench exit gate from the legacy roadmap section 3 is green in tests/."
+  },
+  {
+   "id": "WP-A11",
+   "title": "Handling sounds from cleared CC0 recordings (optional upgrade over synthesis)",
+   "track": "Audio",
+   "milestone": "M1",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [],
+   "agent": "any",
+   "needs": [
+    "net",
+    "human"
+   ],
+   "inputs": [
+    "docs/adr/0004-audio-provenance.md",
+    "workbench/mech.js"
+   ],
+   "acceptance": "Recordings registered with licence; same mech.js call interface; synth fallback kept."
+  },
+  {
+   "id": "WP-C1",
+   "title": "Skeleton contract: document the shared 83-bone rig, add a test that poses/idles run on any base with the same bone names",
+   "track": "Characters",
+   "milestone": "M2",
+   "size": "S",
+   "bu": 8,
+   "status": "ready",
+   "deps": [],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "operator/rig.js",
+    "operator/poses.json",
+    "assets/models/operators/base-operator.manifest.json"
+   ],
+   "acceptance": "docs/engineering/skeleton-contract.md + tests/rig.test.mjs cover pose portability."
+  },
+  {
+   "id": "WP-C2",
+   "title": "Recon: hood and scarf meshes skinned to the Base skeleton (bpy), plate-carrier variant",
+   "track": "Characters",
+   "milestone": "M2",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-C1"
+   ],
+   "agent": "any",
+   "needs": [
+    "bpy",
+    "browser"
+   ],
+   "inputs": [
+    "docs/moodboard/recon-character-sheet.jpg",
+    "docs/moodboard/recon-turnaround.jpg",
+    "operator/config.js"
+   ],
+   "acceptance": "Recon renders in the customiser, <= 12,000 triangles total, silhouette matches the turnaround at front/side/back; no clipping in the 5 poses."
+  },
+  {
+   "id": "WP-C3",
+   "title": "Recon: textures, palette, patches (MP-O tag, shield), gear props (radio, carabiner, canister)",
+   "track": "Characters",
+   "milestone": "M2",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-C2"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/moodboard/recon-insignia-props.jpg"
+   ],
+   "acceptance": "Recon is visually signed off against recon-hero-pose.jpg by the owner."
+  },
+  {
+   "id": "WP-C4",
+   "title": "Roster switcher: data-driven per-base slot and zone configs",
+   "track": "Characters",
+   "milestone": "M2",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-C1"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "operator/config.js",
+    "operator/operator.js"
+   ],
+   "acceptance": "Switching base reloads slots/zones/poses from data; URL carries the base; Base Operator behaviour unchanged."
+  },
+  {
+   "id": "WP-C5",
+   "title": "Insurgent: plaid shirt, shemagh, bare head, AK-pattern kit built from Base parts plus new meshes",
+   "track": "Characters",
+   "milestone": "M2",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-C4"
+   ],
+   "agent": "any",
+   "needs": [
+    "bpy"
+   ],
+   "inputs": [
+    "docs/moodboard/keyframe-1-nvg-plaid.jpg",
+    "docs/moodboard/keyframe-2-firefight.jpg"
+   ],
+   "acceptance": "Insurgent selectable; reads as the keyframe-1 operator at hero distance; owner sign-off."
+  },
+  {
+   "id": "WP-C6",
+   "title": "Enforcer: black kit, bold pouches, NVG helmet variant",
+   "track": "Characters",
+   "milestone": "M2",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-C4"
+   ],
+   "agent": "any",
+   "needs": [
+    "bpy"
+   ],
+   "inputs": [
+    "docs/moodboard/keyframe-2-firefight.jpg"
+   ],
+   "acceptance": "Enforcer selectable; reads as the keyframe-2 foreground operator; owner sign-off."
+  },
+  {
+   "id": "WP-C7",
+   "title": "Insignia and patch system (decals on sleeve/chest/helmet, faction flags)",
+   "track": "Characters",
+   "milestone": "M2",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-C4",
+    "WP-D3"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [],
+   "acceptance": "Patch slots with at least 6 designs; decals follow the skin without z-fighting."
+  },
+  {
+   "id": "WP-C8",
+   "title": "Pose library expansion: crouch, kneel, sit, salute, sling carry, rifle-on-shoulder",
+   "track": "Characters",
+   "milestone": "M2",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-C1"
+   ],
+   "agent": "any",
+   "needs": [
+    "browser"
+   ],
+   "inputs": [],
+   "acceptance": ">= 10 poses; none clip on any base; each has a documented camera."
+  },
+  {
+   "id": "WP-C9",
+   "title": "Idle polish: blink, scarf/strap secondary motion, head-follow of the camera (reduced-motion safe)",
+   "track": "Characters",
+   "milestone": "M2",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-C1"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [],
+   "acceptance": "Idle shows life without foot sliding; reduced motion disables all idle; frame-time cost < 0.5 ms."
+  },
+  {
+   "id": "WP-C10",
+   "title": "Face, hair and beard options for bare-head looks",
+   "track": "Characters",
+   "milestone": "M2",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-C4"
+   ],
+   "agent": "any",
+   "needs": [
+    "bpy"
+   ],
+   "inputs": [],
+   "acceptance": ">= 4 hairstyles, 3 facial-hair options, skin-tone safe; triangle budget respected."
+  },
+  {
+   "id": "WP-I1",
+   "title": "Shared loadout state: carry the Workbench build into the Operator Customiser (URL + localStorage)",
+   "track": "Integration",
+   "milestone": "M3",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-C4"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "workbench/viewer.js",
+    "operator/operator.js"
+   ],
+   "acceptance": "Opening the Operator from a Workbench build shows that exact rifle build (attachments, finish) in the operator pose."
+  },
+  {
+   "id": "WP-I2",
+   "title": "Per-weapon grip contact data and pose-fit for every supported weapon/stock combination",
+   "track": "Integration",
+   "milestone": "M3",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-I1",
+    "WP-A10"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "tools/pose-fit.mjs"
+   ],
+   "acceptance": "Hero and low-ready poses look right with each weapon; contact table in data, reviewed visually."
+  },
+  {
+   "id": "WP-I3",
+   "title": "Versioned compact loadout codes (base64url) with backward compatibility for old AK hashes",
+   "track": "Integration",
+   "milestone": "M3",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-I1"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [],
+   "acceptance": "Round-trip tests: weapon, operator, pose, finishes; legacy hashes still load."
+  },
+  {
+   "id": "WP-I4",
+   "title": "Combined share card (operator + weapon + stats) and photo-mode extras",
+   "track": "Integration",
+   "milestone": "M3",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-I3"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [],
+   "acceptance": "PNG export includes branding, build summary and the link."
+  },
+  {
+   "id": "WP-A12",
+   "title": "M16 and modernised M16",
+   "track": "Weapons",
+   "milestone": "M4",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-A10"
+   ],
+   "agent": "any",
+   "needs": [
+    "bpy",
+    "net"
+   ],
+   "inputs": [],
+   "acceptance": "Selectable; CC0/CC BY base geometry; modern furniture options."
+  },
+  {
+   "id": "WP-A13",
+   "title": "Mk14 EBR (licence verify per candidate)",
+   "track": "Weapons",
+   "milestone": "M4",
+   "size": "M",
+   "bu": 20,
+   "status": "blocked",
+   "deps": [
+    "WP-A10"
+   ],
+   "agent": "any",
+   "needs": [
+    "human",
+    "bpy",
+    "net"
+   ],
+   "inputs": [],
+   "acceptance": "Cleared model shipped or the item is closed as \"no free source\"."
+  },
+  {
+   "id": "WP-A14",
+   "title": "Modernised RPK (D_U catalogue, else kitbash from AK-74M/AK-15K)",
+   "track": "Weapons",
+   "milestone": "M4",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-A10"
+   ],
+   "agent": "any",
+   "needs": [
+    "bpy"
+   ],
+   "inputs": [
+    "docs/moodboard/"
+   ],
+   "acceptance": "RPK with KPOS-style stock, M-LOK handguard, back-up sights + red dot, polymer mag, per owner reference photo."
+  },
+  {
+   "id": "WP-A15",
+   "title": "SIG Spear: owner decision (pay / placeholder), then implement",
+   "track": "Weapons",
+   "milestone": "M4",
+   "size": "S",
+   "bu": 8,
+   "status": "blocked",
+   "deps": [
+    "WP-A10"
+   ],
+   "agent": "human",
+   "needs": [
+    "human"
+   ],
+   "inputs": [],
+   "acceptance": "Decision recorded in register; if placeholder, clearly labelled."
+  },
+  {
+   "id": "WP-A16",
+   "title": "STG44 modernised kitbash (CC0 base)",
+   "track": "Weapons",
+   "milestone": "M4",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-A10"
+   ],
+   "agent": "any",
+   "needs": [
+    "bpy",
+    "net"
+   ],
+   "inputs": [],
+   "acceptance": "Real base geometry with modern furniture."
+  },
+  {
+   "id": "WP-A17",
+   "title": "PPSh-41 modernised kitbash (licence verify)",
+   "track": "Weapons",
+   "milestone": "M4",
+   "size": "M",
+   "bu": 20,
+   "status": "blocked",
+   "deps": [
+    "WP-A10"
+   ],
+   "agent": "any",
+   "needs": [
+    "human",
+    "bpy",
+    "net"
+   ],
+   "inputs": [],
+   "acceptance": "As A16."
+  },
+  {
+   "id": "WP-A18",
+   "title": "Bren and Chauchat: confirm sources only",
+   "track": "Weapons",
+   "milestone": "M4",
+   "size": "XS",
+   "bu": 3,
+   "status": "blocked",
+   "deps": [
+    "WP-A10"
+   ],
+   "agent": "human",
+   "needs": [
+    "human",
+    "net"
+   ],
+   "inputs": [],
+   "acceptance": "Source (or commission quote) recorded in the register for each."
+  },
+  {
+   "id": "WP-Q1",
+   "title": "Accessibility audit across all demos (keyboard, focus, contrast, reduced motion, colour-independent deltas, captions)",
+   "track": "Quality",
+   "milestone": "M5",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [],
+   "agent": "any",
+   "needs": [],
+   "inputs": [],
+   "acceptance": "WCAG 2.2 AA checklist in docs/engineering/standards.md passes; axe-core run clean in e2e."
+  },
+  {
+   "id": "WP-Q2",
+   "title": "Performance acceptance: desktop 60 fps and a mid-range phone 30 fps, cold/warm load, memory under repeated actions",
+   "track": "Quality",
+   "milestone": "M5",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [],
+   "agent": "any",
+   "needs": [
+    "human"
+   ],
+   "inputs": [],
+   "acceptance": "Numbers recorded per device in docs/engineering/performance.md; budgets enforced in CI where measurable."
+  },
+  {
+   "id": "WP-Q3",
+   "title": "Credits page generated from the asset register; licence audit as a CI gate",
+   "track": "Quality",
+   "milestone": "M5",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-F8"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [],
+   "acceptance": "Credits section renders every attribution_required asset; CI fails on unregistered or unapproved assets (already enforced by tests)."
+  },
+  {
+   "id": "WP-Q4",
+   "title": "Short guided first run across demos (preset > part > stat; look > pose)",
+   "track": "Quality",
+   "milestone": "M5",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [],
+   "agent": "any",
+   "needs": [],
+   "inputs": [],
+   "acceptance": "One dismissible tour; remembered per browser."
+  },
+  {
+   "id": "WP-Q5",
+   "title": "Release checklist and v1.0.0 tag for the 2026 demo",
+   "track": "Quality",
+   "milestone": "M5",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-Q1",
+    "WP-Q2",
+    "WP-Q3"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [],
+   "acceptance": "docs/engineering/release-checklist.md complete; CHANGELOG updated; tag pushed."
+  },
+  {
+   "id": "WP-T1",
+   "title": "Fold the Workbench viewer into shared/stage.js and shared/music-ui.js; split viewer.js into state/ui/camera/photo modules",
+   "track": "Tech debt",
+   "milestone": "TD",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "workbench/viewer.js",
+    "shared/stage.js",
+    "shared/music-ui.js"
+   ],
+   "acceptance": "Behaviour identical (e2e + a manual diff of the hash codes); viewer.js < 300 lines."
+  },
+  {
+   "id": "WP-T2",
+   "title": "Formatter + linter (Prettier, ESLint) and reformat the dense legacy modules",
+   "track": "Tech debt",
+   "milestone": "TD",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [],
+   "agent": "any",
+   "needs": [],
+   "inputs": [],
+   "acceptance": "npm run lint passes in CI; no behaviour change."
+  },
+  {
+   "id": "WP-T3",
+   "title": "Type-check with JSDoc + tsc --checkJs (no build step)",
+   "track": "Tech debt",
+   "milestone": "TD",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-T2"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [],
+   "acceptance": "npm run typecheck passes in CI."
+  },
+  {
+   "id": "WP-T4",
+   "title": "Unit tests for stats, compatibility rules and Workbench hash codes",
+   "track": "Tech debt",
+   "milestone": "TD",
+   "size": "S",
+   "bu": 8,
+   "status": "ready",
+   "deps": [],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "workbench/stats.js",
+    "workbench/models.js"
+   ],
+   "acceptance": "tests/workbench.test.mjs: rules, deltas and hash round-trip."
+  },
+  {
+   "id": "WP-D1",
+   "title": "Owner decision: setting canon (Yantis / WW2044 prologue vs the modern low-poly operator look) for the demos",
+   "track": "Design",
+   "milestone": "D",
+   "size": "XS",
+   "bu": 3,
+   "status": "ready",
+   "deps": [],
+   "agent": "human",
+   "needs": [
+    "human"
+   ],
+   "inputs": [
+    "docs/game-design-master-doc.html (section \"Open decisions\")"
+   ],
+   "acceptance": "A one-paragraph decision in docs/adr/0008-setting-canon.md."
+  },
+  {
+   "id": "WP-D2",
+   "title": "Design doc expansion: core loop, progression, feature matrix, AI summary linking the earlier AI compendium",
+   "track": "Design",
+   "milestone": "D",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-D1"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [],
+   "acceptance": "New sections on the one-pager; each claim traces to a source doc."
+  },
+  {
+   "id": "WP-D3",
+   "title": "Faction insignia and flag set (Free State flag, patches, armbands)",
+   "track": "Design",
+   "milestone": "D",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-D1"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [],
+   "acceptance": "SVG set in assets/img/insignia/ with licences original."
+  },
+  {
+   "id": "WP-D4",
+   "title": "Audio direction one-pager (music, foley, UI sounds, provenance rules)",
+   "track": "Design",
+   "milestone": "D",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [],
+   "agent": "any",
+   "needs": [],
+   "inputs": [],
+   "acceptance": "docs/audio-direction.md."
+  },
+  {
+   "id": "WP-D5",
+   "title": "UI/UX style guide: the Nokia/DOS language across all demos",
+   "track": "Design",
+   "milestone": "D",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [],
+   "agent": "any",
+   "needs": [],
+   "inputs": [],
+   "acceptance": "docs/ui-style-guide.md with tokens; demos adopt shared/ui tokens."
+  },
+  {
+   "id": "WP-E1",
+   "title": "Environment demo A: source a CC0 low-poly ruin/barrier kit",
+   "track": "Environment",
+   "milestone": "H27",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [],
+   "agent": "any",
+   "needs": [
+    "net",
+    "human"
+   ],
+   "inputs": [],
+   "acceptance": "Kit registered with licences."
+  },
+  {
+   "id": "WP-E2",
+   "title": "Environment demo B: ruined-checkpoint diorama viewer with weather and haze",
+   "track": "Environment",
+   "milestone": "H27",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-E1",
+    "WP-Q5"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [],
+   "acceptance": "Third demo module linked from the index."
+  },
+  {
+   "id": "WP-E3",
+   "title": "AI demo: belief-model visualiser derived from the AI compendium",
+   "track": "AI",
+   "milestone": "H27",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-D2",
+    "WP-Q5"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [],
+   "acceptance": "One squad, one terrace; belief and morale made visible."
+  }
+ ]
+}

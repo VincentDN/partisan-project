@@ -1,0 +1,513 @@
+{
+ "version": 1,
+ "skeleton": "ue5-mannequin-83",
+ "note": "Rotations are degrees in CHARACTER space [x pitch, y turn, z roll] applied on top of the A-pose rest. Character faces +Z, its left is +X. Hanging limbs: x<0 swings forward, z>0 (right side) / z<0 (left side) brings the arm toward the body.",
+ "poses": {
+  "relaxed": {
+   "label": "Relaxed",
+   "detail": "Weight easy on one leg, arms loose.",
+   "bones": {
+    "upperarm_r": [
+     -4,
+     0,
+     20
+    ],
+    "lowerarm_r": [
+     -14,
+     0,
+     0
+    ],
+    "upperarm_l": [
+     -4,
+     0,
+     -20
+    ],
+    "lowerarm_l": [
+     -14,
+     0,
+     0
+    ],
+    "thigh_r": [
+     -2,
+     0,
+     3
+    ],
+    "thigh_l": [
+     2,
+     0,
+     -1
+    ],
+    "calf_l": [
+     4,
+     0,
+     0
+    ],
+    "pelvis": [
+     0,
+     0,
+     1.5
+    ],
+    "spine_02": [
+     0,
+     0,
+     -1
+    ],
+    "head": [
+     0,
+     6,
+     0
+    ]
+   },
+   "curl": {
+    "r": 0.35,
+    "l": 0.35
+   }
+  },
+  "hero": {
+   "label": "Hero \u00b7 rifle up",
+   "detail": "The character-sheet hero pose: rifle held upright at the right side, weight on the back foot.",
+   "bones": {
+    "upperarm_r": [
+     -26,
+     0,
+     10
+    ],
+    "lowerarm_r": [
+     -120,
+     0,
+     0
+    ],
+    "hand_r": [
+     0,
+     -10,
+     0
+    ],
+    "upperarm_l": [
+     -2,
+     0,
+     -14
+    ],
+    "lowerarm_l": [
+     -8,
+     0,
+     0
+    ],
+    "thigh_r": [
+     -5,
+     0,
+     5
+    ],
+    "calf_r": [
+     6,
+     0,
+     0
+    ],
+    "thigh_l": [
+     4,
+     0,
+     -3
+    ],
+    "pelvis": [
+     0,
+     -6,
+     2
+    ],
+    "spine_03": [
+     0,
+     8,
+     -1
+    ],
+    "neck_01": [
+     0,
+     4,
+     0
+    ],
+    "head": [
+     2,
+     8,
+     0
+    ]
+   },
+   "curl": {
+    "r": 0.9,
+    "l": 0.45
+   },
+   "weapon": {
+    "hand": "r",
+    "rotation": [
+     0,
+     0,
+     90
+    ],
+    "offset": [
+     0,
+     0.0,
+     0.02
+    ]
+   }
+  },
+  "ready": {
+   "label": "Low ready",
+   "detail": "Rifle across the body, muzzle down and forward.",
+   "bones": {
+    "upperarm_r": [
+     6,
+     36,
+     36
+    ],
+    "lowerarm_r": [
+     -57,
+     0,
+     0
+    ],
+    "upperarm_l": [
+     -31,
+     -6,
+     -57
+    ],
+    "lowerarm_l": [
+     5,
+     0,
+     0
+    ],
+    "spine_02": [
+     -3,
+     0,
+     0
+    ],
+    "head": [
+     6,
+     0,
+     0
+    ]
+   },
+   "curl": {
+    "r": 0.8,
+    "l": 0.8
+   },
+   "weapon": {
+    "hand": "r",
+    "rotation": [
+     0,
+     -55,
+     -8
+    ],
+    "offset": [
+     0,
+     0.0,
+     0.0
+    ]
+   }
+  },
+  "comms": {
+   "label": "Radio check",
+   "detail": "Hand at the shoulder radio.",
+   "bones": {
+    "upperarm_r": [
+     -30,
+     0,
+     18
+    ],
+    "lowerarm_r": [
+     -118,
+     0,
+     0
+    ],
+    "upperarm_l": [
+     -4,
+     0,
+     -20
+    ],
+    "lowerarm_l": [
+     -14,
+     0,
+     0
+    ],
+    "head": [
+     2,
+     -10,
+     3
+    ]
+   },
+   "curl": {
+    "r": 0.5,
+    "l": 0.35
+   }
+  },
+  "overwatch": {
+   "label": "Overwatch",
+   "detail": "Thumbs in the vest, scanning.",
+   "bones": {
+    "upperarm_r": [
+     4,
+     0,
+     34
+    ],
+    "lowerarm_r": [
+     -60,
+     0,
+     0
+    ],
+    "upperarm_l": [
+     4,
+     0,
+     -34
+    ],
+    "lowerarm_l": [
+     -60,
+     0,
+     0
+    ],
+    "thigh_r": [
+     0,
+     0,
+     6
+    ],
+    "thigh_l": [
+     0,
+     0,
+     -6
+    ],
+    "head": [
+     -2,
+     0,
+     0
+    ]
+   },
+   "curl": {
+    "r": 0.6,
+    "l": 0.6
+   }
+  }
+ },
+ "idles": {
+  "calm": {
+   "label": "Calm breathing",
+   "layers": [
+    {
+     "bone": "spine_02",
+     "axis": "x",
+     "amp": 0.5,
+     "hz": 0.24
+    },
+    {
+     "bone": "spine_03",
+     "axis": "x",
+     "amp": 0.6,
+     "hz": 0.24,
+     "phase": 0.04
+    },
+    {
+     "bone": "spine_04",
+     "axis": "x",
+     "amp": 0.5,
+     "hz": 0.24,
+     "phase": 0.08
+    },
+    {
+     "bone": "clavicle_r",
+     "axis": "z",
+     "amp": 0.9,
+     "hz": 0.24,
+     "phase": 0.1
+    },
+    {
+     "bone": "clavicle_l",
+     "axis": "z",
+     "amp": -0.9,
+     "hz": 0.24,
+     "phase": 0.1
+    },
+    {
+     "bone": "neck_01",
+     "axis": "x",
+     "amp": -0.5,
+     "hz": 0.24,
+     "phase": 0.12
+    },
+    {
+     "bone": "head",
+     "axis": "y",
+     "amp": 4,
+     "hz": 0.045
+    },
+    {
+     "bone": "head",
+     "axis": "x",
+     "amp": 1.2,
+     "hz": 0.071,
+     "phase": 0.3
+    },
+    {
+     "bone": "pelvis",
+     "axis": "z",
+     "amp": 0.9,
+     "hz": 0.05
+    },
+    {
+     "bone": "spine_01",
+     "axis": "z",
+     "amp": -0.7,
+     "hz": 0.05
+    }
+   ]
+  },
+  "alert": {
+   "label": "Alert \u00b7 scanning",
+   "layers": [
+    {
+     "bone": "spine_02",
+     "axis": "x",
+     "amp": 0.6,
+     "hz": 0.34
+    },
+    {
+     "bone": "spine_03",
+     "axis": "x",
+     "amp": 0.7,
+     "hz": 0.34,
+     "phase": 0.04
+    },
+    {
+     "bone": "clavicle_r",
+     "axis": "z",
+     "amp": 1.1,
+     "hz": 0.34,
+     "phase": 0.1
+    },
+    {
+     "bone": "clavicle_l",
+     "axis": "z",
+     "amp": -1.1,
+     "hz": 0.34,
+     "phase": 0.1
+    },
+    {
+     "bone": "head",
+     "axis": "y",
+     "amp": 24,
+     "hz": 0.07
+    },
+    {
+     "bone": "neck_01",
+     "axis": "y",
+     "amp": 8,
+     "hz": 0.07,
+     "phase": -0.02
+    },
+    {
+     "bone": "spine_04",
+     "axis": "y",
+     "amp": 4,
+     "hz": 0.07,
+     "phase": -0.04
+    },
+    {
+     "bone": "head",
+     "axis": "x",
+     "amp": 2,
+     "hz": 0.11,
+     "phase": 0.2
+    },
+    {
+     "bone": "pelvis",
+     "axis": "y",
+     "amp": 2,
+     "hz": 0.07,
+     "phase": -0.06
+    }
+   ]
+  },
+  "weary": {
+   "label": "Weary \u00b7 heavy breath",
+   "layers": [
+    {
+     "bone": "spine_02",
+     "axis": "x",
+     "amp": 1.2,
+     "hz": 0.19,
+     "offset": 3
+    },
+    {
+     "bone": "spine_03",
+     "axis": "x",
+     "amp": 1.4,
+     "hz": 0.19,
+     "phase": 0.05,
+     "offset": 4
+    },
+    {
+     "bone": "spine_04",
+     "axis": "x",
+     "amp": 1.0,
+     "hz": 0.19,
+     "phase": 0.1,
+     "offset": 2
+    },
+    {
+     "bone": "clavicle_r",
+     "axis": "z",
+     "amp": 2.2,
+     "hz": 0.19,
+     "phase": 0.1,
+     "offset": 2
+    },
+    {
+     "bone": "clavicle_l",
+     "axis": "z",
+     "amp": -2.2,
+     "hz": 0.19,
+     "phase": 0.1,
+     "offset": -2
+    },
+    {
+     "bone": "neck_01",
+     "axis": "x",
+     "amp": 1,
+     "hz": 0.19,
+     "offset": 5
+    },
+    {
+     "bone": "head",
+     "axis": "x",
+     "amp": 1.5,
+     "hz": 0.19,
+     "phase": 0.15,
+     "offset": 4
+    },
+    {
+     "bone": "head",
+     "axis": "z",
+     "amp": 2.5,
+     "hz": 0.03
+    },
+    {
+     "bone": "pelvis",
+     "axis": "z",
+     "amp": 2.6,
+     "hz": 0.04
+    },
+    {
+     "bone": "spine_01",
+     "axis": "z",
+     "amp": -2.2,
+     "hz": 0.04
+    },
+    {
+     "bone": "upperarm_r",
+     "axis": "z",
+     "amp": 1.2,
+     "hz": 0.19,
+     "phase": 0.1
+    },
+    {
+     "bone": "upperarm_l",
+     "axis": "z",
+     "amp": -1.2,
+     "hz": 0.19,
+     "phase": 0.1
+    }
+   ]
+  }
+ }
+}

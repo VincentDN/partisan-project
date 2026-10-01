@@ -1,3 +1,0 @@
-# PARTISAN is an internal working document. Nothing here is public.
-User-agent: *
-Disallow: /

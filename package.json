@@ -1,0 +1,26 @@
+{
+  "name": "partisan-project",
+  "version": "0.3.0",
+  "private": true,
+  "type": "module",
+  "description": "PARP — Partisan Project: an interactive game design document made of playable demos.",
+  "scripts": {
+    "serve": "node tools/serve.mjs",
+    "build": "node tools/build-site.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "check": "node tools/check-site.mjs",
+    "assets:operator": "node tools/assets/optimize-operator.mjs",
+    "test:e2e": "node tests/e2e/smoke.mjs",
+    "contact-sheet": "node tests/e2e/contact-sheet.mjs"
+  },
+  "devDependencies": {
+    "@gltf-transform/core": "^4.1.0",
+    "@gltf-transform/extensions": "^4.1.0",
+    "@gltf-transform/functions": "^4.1.0",
+    "marked": "^14.1.0",
+    "meshoptimizer": "^0.22.0",
+    "playwright-core": "^1.48.0",
+    "sharp": "^0.35.5",
+    "three": "^0.169.0"
+  }
+}

@@ -1,0 +1,304 @@
+{
+ "version": 1,
+ "policy": "CC0 or CC BY 4.0 only for downloaded assets, unless the owner records an explicit exception here. Every shipped file under assets/ must be listed in `assets`.",
+ "assets": [
+  {
+   "id": "base-operator",
+   "label": "Base Operator",
+   "path": "assets/models/operators/base-operator.glb",
+   "kind": "character",
+   "status": "real",
+   "license": "Purchased asset (commercial licence) \u2014 TERMS TO BE CONFIRMED by the owner before wide promotion",
+   "author": "(purchased pack \"Low_Poly_US_Soldier\")",
+   "source": "Owner purchase; see docs/art-direction.md",
+   "attribution_required": false,
+   "budget": {
+    "triangles": 9000
+   },
+   "notes": "8,646 tris, 21 modular skinned meshes, 83-bone UE5-style skeleton, no animation clips shipped. Raw .blend/.fbx are NOT stored in this repo (tools/assets/export-operator.py rebuilds the GLB from the owner's copy). Public redistribution of the processed GLB depends on the pack licence: owner to confirm."
+  },
+  {
+   "id": "ak-74m-zenitco",
+   "label": "AK-74M Zenitco",
+   "path": "assets/models/weapons/ak-74m-zenitco.glb",
+   "kind": "weapon",
+   "status": "real",
+   "license": "CC BY 4.0",
+   "author": "D_U",
+   "source": "https://sketchfab.com/3d-models/low-poly-ak-74m-zenitco-35ad8e37a513453cbbbd04064fa5fb79",
+   "attribution_required": true,
+   "budget": {
+    "triangles": 30000
+   },
+   "notes": "Loose rounds and spare magazines stripped (tools/assets/strip-loose-parts.mjs)."
+  },
+  {
+   "id": "ak-15k",
+   "label": "AK-15K",
+   "path": "assets/models/weapons/ak-15k.glb",
+   "kind": "weapon",
+   "status": "real",
+   "license": "CC BY 4.0",
+   "author": "D_U",
+   "source": "https://sketchfab.com/3d-models/low-poly-ak-15-k-68725380dd654391bb6b751e888e2c44",
+   "attribution_required": true,
+   "budget": {
+    "triangles": 30000
+   },
+   "notes": "Loose rounds and spare magazines stripped."
+  },
+  {
+   "id": "hdr-quarry",
+   "label": "Quarry 01 (HDR)",
+   "path": "assets/lighting/quarry_01_1k.hdr",
+   "kind": "lighting",
+   "status": "real",
+   "license": "CC0",
+   "author": "Poly Haven",
+   "source": "https://polyhaven.com/a/quarry_01",
+   "attribution_required": false
+  },
+  {
+   "id": "hdr-venice",
+   "label": "Venice Sunset (HDR)",
+   "path": "assets/lighting/venice_sunset_1k.hdr",
+   "kind": "lighting",
+   "status": "real",
+   "license": "CC0",
+   "author": "Poly Haven",
+   "source": "https://polyhaven.com/a/venice_sunset",
+   "attribution_required": false
+  },
+  {
+   "id": "hdr-studio",
+   "label": "Studio (HDR)",
+   "path": "assets/lighting/studio.hdr",
+   "kind": "lighting",
+   "status": "real",
+   "license": "Original (CC0 by the project)",
+   "author": "PARP",
+   "source": "tools/assets/generate-studio-hdr.py",
+   "attribution_required": false
+  },
+  {
+   "id": "music-duce",
+   "label": "The Duce Puts On His Uniform",
+   "path": "assets/audio/duce-uniform.mp3",
+   "kind": "music",
+   "status": "real",
+   "license": "Supplied by the project owner; recorded as rights-cleared in the earlier README",
+   "author": "(1940 Greek war song, recording supplied by owner)",
+   "source": "Owner",
+   "attribution_required": false,
+   "notes": "Owner to re-confirm recording rights before the Pages site is promoted."
+  },
+  {
+   "id": "music-abdulena",
+   "label": "Abdulena",
+   "path": "assets/audio/abdulena.mp3",
+   "kind": "music",
+   "status": "real",
+   "license": "Supplied by the project owner",
+   "author": "(supplied by owner)",
+   "source": "Owner",
+   "attribution_required": false,
+   "notes": "Owner to re-confirm recording rights before the Pages site is promoted."
+  }
+ ],
+ "pipeline": [
+  {
+   "id": "att-optics",
+   "label": "Optics (red dot, micro dot, holographic, 4x scope)",
+   "slot": "optic",
+   "status": "placeholder",
+   "target": "Real CC0 optic meshes",
+   "candidates": [
+    "byzmod3d Low Poly Weapon Pack (OpenGameArt, CC0)",
+    "chilly-durango Low Poly Firearms (itch.io, CC0) as geometry reference"
+   ],
+   "blocked_by": "Sandbox network blocks OpenGameArt/itch.io; owner downloads into assets-incoming/ then runs tools/assets/import-asset.py"
+  },
+  {
+   "id": "att-muzzle",
+   "label": "Muzzle devices (DTK-1, AK-74 brake, compensator, suppressor)",
+   "slot": "muzzle",
+   "status": "placeholder",
+   "target": "Real CC0 muzzle meshes",
+   "candidates": [
+    "byzmod3d Low Poly Weapon Pack (CC0)"
+   ],
+   "blocked_by": "same"
+  },
+  {
+   "id": "att-foregrips",
+   "label": "Foregrips (vertical, angled, hand stop)",
+   "slot": "foregrip",
+   "status": "placeholder",
+   "target": "Real CC0 foregrip meshes",
+   "candidates": [
+    "byzmod3d pack",
+    "chilly-durango pack (reference)"
+   ],
+   "blocked_by": "same"
+  },
+  {
+   "id": "att-magazines",
+   "label": "Magazines (30, 45, 60, drum)",
+   "slot": "magazine",
+   "status": "placeholder",
+   "target": "Real CC0 magazine meshes (WP-A1 exit: at least the magazine)",
+   "candidates": [
+    "byzmod3d pack"
+   ],
+   "blocked_by": "same"
+  },
+  {
+   "id": "att-grips-stocks",
+   "label": "Pistol grips, stocks, side-rail light/laser",
+   "slot": "grip/stock/side",
+   "status": "placeholder",
+   "target": "Real CC0 meshes",
+   "candidates": [
+    "byzmod3d pack",
+    "chilly-durango pack"
+   ],
+   "blocked_by": "same"
+  },
+  {
+   "id": "wpn-g3a3",
+   "label": "G3A3",
+   "status": "pending",
+   "target": "Third rifle, Stage 1",
+   "candidates": [
+    "3DCADBrowser G3A3 (licence: verify)",
+    "Sketchfab \"G3\"/\"CETME\" CC0/CC BY substitute"
+   ],
+   "blocked_by": "licence check + network"
+  },
+  {
+   "id": "wpn-m16",
+   "label": "M16 / modernized M16",
+   "status": "pending",
+   "target": "Stage 2",
+   "candidates": [
+    "byzmod3d pack m16.obj (CC0)",
+    "Gintoki1234 M16 A4 (CC BY 4.0)"
+   ],
+   "blocked_by": "network"
+  },
+  {
+   "id": "wpn-rpk",
+   "label": "Modernized RPK",
+   "status": "pending",
+   "target": "Stage 2",
+   "candidates": [
+    "D_U Sketchfab catalogue (CC BY 4.0, matches current art style)"
+   ],
+   "blocked_by": "network; no confirmed free source"
+  },
+  {
+   "id": "wpn-mk14",
+   "label": "Mk14 EBR",
+   "status": "pending",
+   "target": "Stage 2",
+   "candidates": [
+    "notcplkerry (licence: verify)",
+    "samanthacford Low Poly MK14 (licence: verify)"
+   ],
+   "blocked_by": "licence check + network"
+  },
+  {
+   "id": "wpn-spear",
+   "label": "SIG Spear (MCX-SPEAR)",
+   "status": "pending",
+   "target": "Stage 2",
+   "candidates": [
+    "none free found; paid options exist (owner decision)"
+   ],
+   "blocked_by": "no free source: needs a paid-asset decision or a code-built placeholder"
+  },
+  {
+   "id": "wpn-stg44",
+   "label": "STG44 (modernized)",
+   "status": "pending",
+   "target": "Stage 3",
+   "candidates": [
+    "byzmod3d pack stg44.obj (CC0)"
+   ],
+   "blocked_by": "network"
+  },
+  {
+   "id": "wpn-ppsh",
+   "label": "PPSh-41 (modernized)",
+   "status": "pending",
+   "target": "Stage 3",
+   "candidates": [
+    "victorcstr mini pack of WW2 weapons (licence: verify)"
+   ],
+   "blocked_by": "licence check + network"
+  },
+  {
+   "id": "wpn-bren",
+   "label": "Bren (modernized)",
+   "status": "pending",
+   "target": "Stage 3: source only",
+   "candidates": [
+    "bigmack WWII Mega Gun Pack",
+    "jimhatama World Wars Weapons Pack",
+    "marmok1932 Soviet Weapons Pack (none confirmed)"
+   ],
+   "blocked_by": "no confirmed source"
+  },
+  {
+   "id": "wpn-chauchat",
+   "label": "Chauchat (modernized)",
+   "status": "pending",
+   "target": "Stage 3: source only",
+   "candidates": [
+    "none surfaced; likely commission or from-scratch build"
+   ],
+   "blocked_by": "no confirmed source"
+  },
+  {
+   "id": "audio-foley",
+   "label": "Handling foley (CC0 recordings)",
+   "status": "pending",
+   "target": "Replace synthesised handling sounds with cleared CC0 recordings",
+   "candidates": [
+    "freesound.org CC0 search",
+    "Kenney/Sonniss GDC bundles (check licence)"
+   ],
+   "blocked_by": "network; earlier recorded bank removed for provenance (ADR 0004)"
+  },
+  {
+   "id": "operator-recon",
+   "label": "Recon operator",
+   "status": "pending",
+   "target": "Hooded recon from moodboard sheet v01-09",
+   "candidates": [
+    "in-house build on the Base Operator skeleton"
+   ],
+   "blocked_by": "art production (WP-C2)"
+  },
+  {
+   "id": "operator-insurgent",
+   "label": "Insurgent operator",
+   "status": "pending",
+   "target": "From moodboard keyframe 2",
+   "candidates": [
+    "in-house build"
+   ],
+   "blocked_by": "art production (WP-C3)"
+  },
+  {
+   "id": "operator-enforcer",
+   "label": "Enforcer operator",
+   "status": "pending",
+   "target": "From moodboard keyframe 1",
+   "candidates": [
+    "in-house build"
+   ],
+   "blocked_by": "art production (WP-C4)"
+  }
+ ]
+}

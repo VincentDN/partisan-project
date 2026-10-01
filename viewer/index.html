@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><meta name="seo_hidden" content="true"><title>PARP · Asset Viewer</title><link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../shared/panel-ui.css"><link rel="stylesheet" href="../shared/viewer-loader.css">
+<script type="importmap">{"imports":{"three":"../vendor/three/build/three.module.min.js","three/addons/":"../vendor/three/examples/jsm/"}}</script></head>
+<body><header><span class="addr">//partisan-project/viewer/</span><nav><a href="../workbench/">Weapon Workbench</a> <a href="../operator/">Operator Customiser</a> <a href="../">← PARP index</a></nav></header><main><div id="stage" tabindex="0" aria-label="3D asset preview. Drag to orbit, scroll to zoom."><div id="status" class="viewer-loading" role="status" aria-live="polite"><span class="viewer-spinner" aria-hidden="true"></span><span class="sr-only">Loading…</span></div><div class="hint">DRAG TO ORBIT · ALT-DRAG TO TURN THE LIGHTS · ?model=assets/models/… OR PICK FROM THE REGISTER</div></div>
+<aside><div class="eyebrow">PARP · ASSET VIEWER</div><h1>Model<br>inspector.</h1>
+<p>QA tool for the asset pipeline: loads any registered GLB and reports triangles, meshes, materials, bones and animations against the budgets, so a new CC0 import can be checked before it reaches a demo.</p>
+<h2>REGISTER</h2><div id="models" class="tools" role="group" aria-label="Registered models"></div>
+<h2>REPORT</h2><div id="report" class="note" aria-live="polite">Pick a model.</div>
+<h2>VIEW</h2><div class="tools"><button id="spin" aria-pressed="false">Turntable</button><button id="wire" aria-pressed="false">Wireframe</button><button id="bones" aria-pressed="false">Skeleton</button></div>
+<h2>LIGHTING</h2><div class="tools" role="group" aria-label="Environment"><button data-env="studio" aria-pressed="false">Studio</button><button data-env="outdoor" aria-pressed="false">Outdoor</button><button data-env="sunset" aria-pressed="false">Sunset</button><button id="backdrop" aria-pressed="false">Backdrop</button></div><label class="slider"><span>Light rotation</span><output id="light-angle">255°</output><input id="light-rotation" type="range" min="0" max="360" step="1" value="255"></label>
+</aside></main><noscript><p>This interactive preview requires JavaScript and WebGL.</p></noscript><script type="module" src="viewer.js"></script></body></html>
