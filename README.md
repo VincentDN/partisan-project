@@ -12,6 +12,7 @@ casual-friendly resistance shooter. Live site (after the one-time Pages setup in
 | Asset Viewer | Inspect registered GLBs against triangle and licence budgets | [`viewer/`](viewer/) |
 | Design document | In-universe one-pager: pillars, dispatches, operators, moodboard, specs, credits | [`docs/game-design-master-doc.html`](docs/game-design-master-doc.html) |
 | Master roadmap | Milestones and ~60 work packets sized for $20 AI plans | [`docs/master-roadmap.md`](docs/master-roadmap.md) |
+| Owner to-do | What only you can do (Pages, licences, decisions) | [`docs/owner-todo.md`](docs/owner-todo.md) |
 
 ## Run it
 
