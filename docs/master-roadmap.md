@@ -136,7 +136,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | **M0** Foundation | v0.3.0 | 8/10 | 130 BU | 95% |
 | **M1** Gun modder: real parts, three weapons | v0.4.0 | 3/11 | 143 BU | 34% |
 | **M2** Operator roster: Recon, Insurgent, Enforcer | v0.5.0 | 9/11 | 172 BU | 84% |
-| **M3** Integration and sharing | v0.6.0 | 2/4 | 56 BU | 50% |
+| **M3** Integration and sharing | v0.6.0 | 3/4 | 56 BU | 64% |
 | **M4** Weapon roster 2: modern and WW2 | v0.7.0 | 0/7 | 111 BU | 0% |
 | **M5** Production acceptance | v1.0.0 | 2/6 | 67 BU | 42% |
 | **TD** Tech debt (fill windows) | — | 4/4 | 44 BU | 100% |
@@ -197,7 +197,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-I1` | Shared loadout state: carry the Workbench build into the Operator Customiser (URL + localStorage) | M (20) | done | — | `WP-C4` |
 | `WP-I2` | Per-weapon grip contact data and pose-fit for every supported weapon/stock combination | M (20) | planned | — | `WP-I1`, `WP-A10` |
 | `WP-I3` | Versioned loadout codes (P1.<base64url>) with backward compatibility for old AK hashes | S (8) | done | — | `WP-I1` |
-| `WP-I4` | Combined share card (operator + weapon + stats) and photo-mode extras | S (8) | planned | — | `WP-I3` |
+| `WP-I4` | Combined share card (operator + weapon + stats) and photo-mode extras | S (8) | done | — | `WP-I3` |
 
 ### M4 · Weapon roster 2: modern and WW2
 

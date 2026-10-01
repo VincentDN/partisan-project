@@ -140,6 +140,18 @@ await check('operator: Insurgent and Enforcer load; plaid paints the shirt torso
   }
 });
 
+await check('operator: the share card downloads a PNG with the carried weapon', async () => {
+  const page = await open(browser, server.url + 'operator/');
+  await page.waitForSelector('#slots .slot', {timeout: 60000});
+  await page.evaluate(() => window.PARP_OPERATOR.set('weapon', 'ak74m'));
+  await page.waitForFunction(() => window.PARP_OPERATOR.weapon, null, {timeout: 60000});
+  const [download] = await Promise.all([page.waitForEvent('download'), page.locator('#card').click()]);
+  assert.match(download.suggestedFilename(), /^parp-.*-card\.png$/);
+  if (process.env.CARD_OUT) await download.saveAs(process.env.CARD_OUT);
+  noProblems(page);
+  await page.close();
+});
+
 await check('operator: idle animation moves bones; reduced motion freezes them', async () => {
   const page = await open(browser, server.url + 'operator/#idle=alert', {reducedMotion: 'no-preference'});
   await page.waitForFunction(() => window.PARP_OPERATOR?.ready, null, {timeout: 60000});

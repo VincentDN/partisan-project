@@ -6,6 +6,7 @@
 import * as T from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
+import {shareCardDataUrl} from './share-card.js';
 import {startTour} from '../shared/tour.js';
 import {createStage, reduceMotion} from '../shared/stage.js';
 import {bindMusicUI} from '../shared/music-ui.js';
@@ -448,6 +449,22 @@ $('#share').onclick = async e => {
   setTimeout(() => {
     button.textContent = 'Copy look link';
   }, 1600);
+};
+$('#card').onclick = () => {
+  renderer.render(scene, camera);
+  const equipment = base.slots
+    .map(sl => ({label: sl.label, choice: sl.options.find(o => o.id === state[sl.id])?.label}))
+    .filter(e => e.choice && !(weapon && e.label === 'Carried weapon'));
+  const a = document.createElement('a');
+  a.download = `parp-${base.id}-card.png`;
+  a.href = shareCardDataUrl({
+    canvas: renderer.domElement,
+    base,
+    poseLabel: poseData.poses[state.pose].label,
+    equipment,
+    rifle: weapon?.rifle,
+  });
+  a.click();
 };
 $('#photo').onclick = () => {
   renderer.render(scene, camera);

@@ -651,7 +651,7 @@
    "milestone": "M3",
    "size": "S",
    "bu": 8,
-   "status": "planned",
+   "status": "done",
    "deps": [
     "WP-I3"
    ],
