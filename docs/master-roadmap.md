@@ -140,7 +140,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | **M4** Weapon roster 2: modern and WW2 | v0.7.0 | 0/7 | 111 BU | 0% |
 | **M5** Production acceptance | v1.0.0 | 1/6 | 67 BU | 30% |
 | **TD** Tech debt (fill windows) | — | 4/4 | 44 BU | 100% |
-| **D** Design docs | — | 0/5 | 59 BU | 0% |
+| **D** Design docs | — | 1/5 | 59 BU | 14% |
 | **H27** 2027 horizon | — | 0/3 | 48 BU | 0% |
 
 ### M0 · Foundation
@@ -238,7 +238,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-D1` | Owner decision: setting canon (Yantis / WW2044 prologue vs the modern low-poly operator look) for the demos | XS (3) | ready | owner | — |
 | `WP-D2` | Design doc expansion: core loop, progression, feature matrix, AI summary linking the earlier AI compendium | M (20) | planned | — | `WP-D1` |
 | `WP-D3` | Faction insignia and flag set (Free State flag, patches, armbands) | M (20) | planned | — | `WP-D1` |
-| `WP-D4` | Audio direction one-pager (music, foley, UI sounds, provenance rules) | S (8) | planned | — | — |
+| `WP-D4` | Audio direction one-pager (music, foley, UI sounds, provenance rules) | S (8) | done | — | — |
 | `WP-D5` | UI/UX style guide: the Nokia/DOS language across all demos | S (8) | planned | — | — |
 
 ### H27 · 2027 horizon
