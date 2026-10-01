@@ -4,12 +4,17 @@
 //        node strip-loose-parts.mjs low-poly_ak-15_k.glb ../model/ak-15k.glb
 import {NodeIO} from '@gltf-transform/core';
 import {prune} from '@gltf-transform/functions';
-const [input,output]=process.argv.slice(2);
-const io=new NodeIO(),doc=await io.read(input);
-const loose=[
- '54539_4','54539 case_5','ak74 30rnd empty mag (polymer)_7',// AK-74M Zenitco
- '76239_11','76239 case_12','akm 30rnd epmty mag (polymer)_13'// AK-15K (source spelling)
+const [input, output] = process.argv.slice(2);
+const io = new NodeIO(),
+  doc = await io.read(input);
+const loose = [
+  '54539_4',
+  '54539 case_5',
+  'ak74 30rnd empty mag (polymer)_7', // AK-74M Zenitco
+  '76239_11',
+  '76239 case_12',
+  'akm 30rnd epmty mag (polymer)_13', // AK-15K (source spelling)
 ];
-for(const node of doc.getRoot().listNodes())if(loose.includes(node.getName()))node.dispose();
+for (const node of doc.getRoot().listNodes()) if (loose.includes(node.getName())) node.dispose();
 await doc.transform(prune());
-await io.write(output,doc);
+await io.write(output, doc);

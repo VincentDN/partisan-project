@@ -24,6 +24,8 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 - **Sleeve patches** (`patches-pack.glb`): six designs (star roundel, mountain shield, MP-O tag, tricolour placeholder, medic cross, chevrons) on either sleeve; Recon wears the shield and the MP-O tag, Insurgent the star.
 
+- **Tooling**: ESLint 9 flat config, Prettier (JS formatted across the legacy modules), `tsc --checkJs` on the typed core modules; all three run in CI before the tests.
+
 ### Fixed
 - Optimiser no longer merges materials (it had fused the top and trousers camo and two strap materials); packs keep UVs for runtime textures.
 - Helmet and other multi-primitive parts now toggle correctly.

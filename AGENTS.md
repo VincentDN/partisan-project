@@ -33,7 +33,9 @@ npm ci                      install dev tools (build/test only; the site itself 
 npm test                    unit + site-build + asset-register + plan-consistency tests (must stay green)
 npm run serve               http://localhost:8123/
 npm run build && npm run check      build _site/ from the allowlist and verify every link
+npm run lint | format:check | typecheck     ESLint, Prettier (140 cols, single quotes), tsc --checkJs on the typed modules (all in CI)
 npm run test:e2e            headless browser smoke test (needs Chromium; CHROMIUM=/path/to/chrome)
+npm run test:a11y          axe-core WCAG audit of every page
 node tools/agent/…          next-packet | handoff | usage | roadmap-table | codemap
 ```
 

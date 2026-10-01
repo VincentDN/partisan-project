@@ -14,7 +14,8 @@ import fs from 'node:fs';
 const input = process.argv[2] || 'build/base-operator.raw.glb';
 const output = process.argv[3] || 'assets/models/operators/base-operator.glb';
 
-await MeshoptEncoder.ready; await MeshoptDecoder.ready;
+await MeshoptEncoder.ready;
+await MeshoptDecoder.ready;
 const io = new NodeIO()
   .registerExtensions([EXTMeshoptCompression, KHRMaterialsSpecular, KHRMaterialsIOR])
   .registerDependencies({'meshopt.encoder': MeshoptEncoder, 'meshopt.decoder': MeshoptDecoder});
@@ -31,7 +32,7 @@ for (const node of root.listNodes()) {
 // grey gloves), so convert: linear = srgbToLinear(0.8 * blenderValue). Verified against the FBX
 // hex colours (e.g. M_Pouch 0.54 -> #6e6f43, M_Head 0.694 -> #8e6f61). Textured materials
 // (camo top and trousers) keep their texture untouched.
-const srgbToLinear = c => c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+const srgbToLinear = c => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
 for (const m of root.listMaterials()) {
   if (!m.getBaseColorTexture()) {
     const [r, g, b, a] = m.getBaseColorFactor();
@@ -41,25 +42,44 @@ for (const m of root.listMaterials()) {
   // The pack ships Blender's specular/IOR extras; flat-shaded low poly does not need them.
   for (const ext of [KHRMaterialsSpecular, KHRMaterialsIOR]) m.setExtension(ext.EXTENSION_NAME, null);
 }
-await doc.transform(prune(), dedup({propertyTypes: [PropertyType.ACCESSOR, PropertyType.MESH, PropertyType.TEXTURE]}), meshopt({encoder: MeshoptEncoder, level: 'medium'}));
+await doc.transform(
+  prune(),
+  dedup({propertyTypes: [PropertyType.ACCESSOR, PropertyType.MESH, PropertyType.TEXTURE]}),
+  meshopt({encoder: MeshoptEncoder, level: 'medium'}),
+);
 for (const ext of root.listExtensionsUsed()) if (ext.extensionName !== 'EXT_meshopt_compression') ext.dispose();
 
 fs.mkdirSync(output.replace(/[^/]+$/, ''), {recursive: true});
 await io.write(output, doc);
 
-const meshes = root.listNodes().filter(n => n.getMesh()).map(n => {
-  const prims = n.getMesh().listPrimitives();
-  const tris = prims.reduce((s, p) => s + (p.getIndices()?.getCount() ?? p.getAttribute('POSITION').getCount()) / 3, 0);
-  return {node: n.getName(), triangles: tris, materials: [...new Set(prims.map(p => p.getMaterial()?.getName()))]};
-});
+const meshes = root
+  .listNodes()
+  .filter(n => n.getMesh())
+  .map(n => {
+    const prims = n.getMesh().listPrimitives();
+    const tris = prims.reduce((s, p) => s + (p.getIndices()?.getCount() ?? p.getAttribute('POSITION').getCount()) / 3, 0);
+    return {node: n.getName(), triangles: tris, materials: [...new Set(prims.map(p => p.getMaterial()?.getName()))]};
+  });
 const manifest = {
   source: 'Low_Poly_US_Soldier (purchased asset; see assets/REGISTER.md)',
   generated: new Date().toISOString().slice(0, 10),
   units: 'node scale 0.01 on Armature (cm source); height ~1.85 m after scale',
   triangles: meshes.reduce((s, m) => s + m.triangles, 0),
-  bones: root.listSkins()[0].listJoints().map(j => j.getName()),
+  bones: root
+    .listSkins()[0]
+    .listJoints()
+    .map(j => j.getName()),
   meshes,
-  materials: root.listMaterials().map(m => ({name: m.getName(), baseColor: m.getBaseColorFactor().slice(0, 3).map(v => +v.toFixed(3)), textured: !!m.getBaseColorTexture()})),
+  materials: root.listMaterials().map(m => ({
+    name: m.getName(),
+    baseColor: m
+      .getBaseColorFactor()
+      .slice(0, 3)
+      .map(v => +v.toFixed(3)),
+    textured: !!m.getBaseColorTexture(),
+  })),
 };
 fs.writeFileSync(output.replace(/\.glb$/, '.manifest.json'), JSON.stringify(manifest, null, 1) + '\n');
-console.log(`${output}: ${(fs.statSync(output).size / 1024).toFixed(0)} KB, ${manifest.triangles} triangles, ${manifest.bones.length} bones, ${meshes.length} meshes`);
+console.log(
+  `${output}: ${(fs.statSync(output).size / 1024).toFixed(0)} KB, ${manifest.triangles} triangles, ${manifest.bones.length} bones, ${meshes.length} meshes`,
+);

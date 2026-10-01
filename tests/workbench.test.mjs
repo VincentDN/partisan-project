@@ -7,30 +7,49 @@ import {STATS, MODIFIERS, RULES, computeStats, blockedBy} from '../workbench/sta
 import {parseLegacy, toLegacy, decode, encode} from '../shared/loadout.js';
 
 const optionsOf = (config, slotId) => {
-  const conf = config.slots[slotId], lib = SLOTS.find(s => s.id === slotId).library;
-  return [...conf.factory, ...conf.library.map(e => { const o = typeof e === 'string' ? {id: e} : e; return {...lib.find(l => l.id === o.id), ...o}; })];
+  const conf = config.slots[slotId],
+    lib = SLOTS.find(s => s.id === slotId).library;
+  return [
+    ...conf.factory,
+    ...conf.library.map(e => {
+      const o = typeof e === 'string' ? {id: e} : e;
+      return {...lib.find(l => l.id === o.id), ...o};
+    }),
+  ];
 };
 
 for (const [rifleId, config] of Object.entries(MODELS)) {
   test(`[${rifleId}] every option of every slot has a stat modifier entry (possibly empty) and a label`, () => {
-    for (const slotId of Object.keys(config.slots)) for (const o of optionsOf(config, slotId)) {
-      assert.ok(o.label, `${slotId}/${o.id}: label`);
-      if (!['rk9', 'factory'].includes(o.id) && slotId !== 'stock' && slotId !== 'muzzle') assert.ok(MODIFIERS[slotId], `${slotId}: no MODIFIERS section`);
-      assert.ok(slotId === 'grip' || MODIFIERS[slotId]?.[o.id] !== undefined || o.id === 'factory', `${slotId}/${o.id}: no entry in MODIFIERS (use {} for "no effect")`);
-    }
+    for (const slotId of Object.keys(config.slots))
+      for (const o of optionsOf(config, slotId)) {
+        assert.ok(o.label, `${slotId}/${o.id}: label`);
+        if (!['rk9', 'factory'].includes(o.id) && slotId !== 'stock' && slotId !== 'muzzle')
+          assert.ok(MODIFIERS[slotId], `${slotId}: no MODIFIERS section`);
+        assert.ok(
+          slotId === 'grip' || MODIFIERS[slotId]?.[o.id] !== undefined || o.id === 'factory',
+          `${slotId}/${o.id}: no entry in MODIFIERS (use {} for "no effect")`,
+        );
+      }
   });
   test(`[${rifleId}] weights: every option that adds geometry declares grams`, () => {
-    for (const slotId of Object.keys(config.slots)) for (const o of optionsOf(config, slotId)) {
-      const adds = !['none', 'bare'].includes(o.id);
-      if (adds && slotId !== 'side') assert.ok(typeof o.grams === 'number' || o.original, `${slotId}/${o.id}: grams`);
-    }
+    for (const slotId of Object.keys(config.slots))
+      for (const o of optionsOf(config, slotId)) {
+        const adds = !['none', 'bare'].includes(o.id);
+        if (adds && slotId !== 'side') assert.ok(typeof o.grams === 'number' || o.original, `${slotId}/${o.id}: grams`);
+      }
   });
   test(`[${rifleId}] computed stats always stay within 0..100 across every combination`, () => {
     const slots = Object.keys(config.slots);
     const opts = slots.map(s => optionsOf(config, s));
     let n = 0;
     const walk = (i, chosen) => {
-      if (i === slots.length) { n++; const out = computeStats(config.stats, Object.fromEntries(slots.map((s, k) => [s, chosen[k]]))); for (const st of STATS) assert.ok(out[st.id] >= 0 && out[st.id] <= 100, `${st.id}=${out[st.id]}`); assert.ok(out.rounds >= 0); return; }
+      if (i === slots.length) {
+        n++;
+        const out = computeStats(config.stats, Object.fromEntries(slots.map((s, k) => [s, chosen[k]])));
+        for (const st of STATS) assert.ok(out[st.id] >= 0 && out[st.id] <= 100, `${st.id}=${out[st.id]}`);
+        assert.ok(out.rounds >= 0);
+        return;
+      }
       for (const o of opts[i]) walk(i + 1, [...chosen, o]);
     };
     walk(0, []);
@@ -47,14 +66,18 @@ test('rules: symmetric (forward and reverse), every blocked pair names a reason,
   for (const rule of RULES) {
     assert.ok(rule.reason && rule.reason.length > 10, 'reason');
     const [[whenSlot, whenId]] = Object.entries(rule.when);
-    for (const [slot, ids] of Object.entries(rule.block)) for (const id of ids) {
-      assert.equal(blockedBy({[whenSlot]: whenId}, slot, id), rule, `forward ${whenSlot}=${whenId} blocks ${slot}=${id}`);
-      assert.equal(blockedBy({[slot]: id}, whenSlot, whenId), rule, `reverse ${slot}=${id} blocks ${whenSlot}=${whenId}`);
-    }
+    for (const [slot, ids] of Object.entries(rule.block))
+      for (const id of ids) {
+        assert.equal(blockedBy({[whenSlot]: whenId}, slot, id), rule, `forward ${whenSlot}=${whenId} blocks ${slot}=${id}`);
+        assert.equal(blockedBy({[slot]: id}, whenSlot, whenId), rule, `reverse ${slot}=${id} blocks ${whenSlot}=${whenId}`);
+      }
   }
   for (const config of Object.values(MODELS)) {
-    const defaults = Object.fromEntries(Object.keys(config.slots).map(s => [s, config.defaults?.build?.[s] ?? config.slots[s].factory[0].id]));
-    for (const [slot, id] of Object.entries(defaults)) assert.equal(blockedBy(defaults, slot, id), null, `default ${slot}=${id} is blocked by its own build`);
+    const defaults = Object.fromEntries(
+      Object.keys(config.slots).map(s => [s, config.defaults?.build?.[s] ?? config.slots[s].factory[0].id]),
+    );
+    for (const [slot, id] of Object.entries(defaults))
+      assert.equal(blockedBy(defaults, slot, id), null, `default ${slot}=${id} is blocked by its own build`);
   }
 });
 
@@ -67,6 +90,14 @@ test('rules reference options that exist on at least one rifle', () => {
 });
 
 test('presets from the Workbench parse as loadouts and survive the P1 code', () => {
-  const presets = ['rifle=ak15k&foregrip=stop&handguard-finish=od&foregrip-finish=od', 'rifle=ak15k&muzzle=brake&optic=holo&magazine=60&stock=collapsed', 'optic=scope&foregrip=angled&handguard-finish=desert'];
-  for (const p of presets) { const l = parseLegacy(p); assert.deepEqual(decode(encode(l)), l); assert.deepEqual(parseLegacy(toLegacy(l)), l); }
+  const presets = [
+    'rifle=ak15k&foregrip=stop&handguard-finish=od&foregrip-finish=od',
+    'rifle=ak15k&muzzle=brake&optic=holo&magazine=60&stock=collapsed',
+    'optic=scope&foregrip=angled&handguard-finish=desert',
+  ];
+  for (const p of presets) {
+    const l = parseLegacy(p);
+    assert.deepEqual(decode(encode(l)), l);
+    assert.deepEqual(parseLegacy(toLegacy(l)), l);
+  }
 });

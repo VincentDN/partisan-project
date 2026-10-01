@@ -5,8 +5,10 @@
 import {soundLayer} from './sound-layer.js';
 
 export function bindMusicUI() {
-  const sound = soundLayer(), prefs = sound.prefs;
-  const toggle = document.querySelector('#music-toggle'), volume = document.querySelector('#music-volume');
+  const sound = soundLayer(),
+    prefs = sound.prefs;
+  const toggle = document.querySelector('#music-toggle'),
+    volume = document.querySelector('#music-volume');
   const FADE = 1.5;
   const show = () => {
     toggle?.setAttribute('aria-pressed', String(prefs.on));
@@ -15,13 +17,24 @@ export function bindMusicUI() {
     const level = document.querySelector('#music-level');
     if (level) level.textContent = Math.round(prefs.volume * 100) + '%';
   };
-  const save = () => { sound.save(); sound.changed(); };
+  const save = () => {
+    sound.save();
+    sound.changed();
+  };
   show();
   let unsubscribe = sound.subscribe(show);
   addEventListener('pagehide', () => unsubscribe());
-  addEventListener('pageshow', e => { if (e.persisted) { unsubscribe = sound.subscribe(show); show(); } });
+  addEventListener('pageshow', e => {
+    if (e.persisted) {
+      unsubscribe = sound.subscribe(show);
+      show();
+    }
+  });
 
-  const stopWaiting = () => { removeEventListener('pointerdown', firstGesture, true); removeEventListener('keydown', firstGesture, true); };
+  const stopWaiting = () => {
+    removeEventListener('pointerdown', firstGesture, true);
+    removeEventListener('keydown', firstGesture, true);
+  };
   function firstGesture(e) {
     if (e.target === toggle || e.target.closest?.('[data-track]')) return;
     stopWaiting();
@@ -29,20 +42,40 @@ export function bindMusicUI() {
   }
   addEventListener('pointerdown', firstGesture, true);
   addEventListener('keydown', firstGesture, true);
-  if (prefs.on) sound.start(FADE).then(playing => { if (playing) stopWaiting(); });
+  if (prefs.on)
+    sound.start(FADE).then(playing => {
+      if (playing) stopWaiting();
+    });
 
-  if (toggle) toggle.onclick = () => {
-    // Music "on" but still blocked by autoplay policy: the button starts it rather than switching it off.
-    if (prefs.on && !sound.music.audible()) { stopWaiting(); sound.start(FADE); return; }
-    prefs.on = !prefs.on;
-    prefs.on ? sound.start(0.4) : sound.stop();
-    stopWaiting(); save(); show();
-  };
-  for (const b of document.querySelectorAll('[data-track]')) b.onclick = () => {
-    sound.setTrack(b.dataset.track);
-    if (!prefs.on) { prefs.on = true; sound.start(0.4); }
-    save(); show();
-  };
-  if (volume) volume.oninput = () => { sound.setVolume(Number(volume.value) / 100); save(); show(); };
+  if (toggle)
+    toggle.onclick = () => {
+      // Music "on" but still blocked by autoplay policy: the button starts it rather than switching it off.
+      if (prefs.on && !sound.music.audible()) {
+        stopWaiting();
+        sound.start(FADE);
+        return;
+      }
+      prefs.on = !prefs.on;
+      prefs.on ? sound.start(0.4) : sound.stop();
+      stopWaiting();
+      save();
+      show();
+    };
+  for (const b of document.querySelectorAll('[data-track]'))
+    b.onclick = () => {
+      sound.setTrack(b.dataset.track);
+      if (!prefs.on) {
+        prefs.on = true;
+        sound.start(0.4);
+      }
+      save();
+      show();
+    };
+  if (volume)
+    volume.oninput = () => {
+      sound.setVolume(Number(volume.value) / 100);
+      save();
+      show();
+    };
   return sound;
 }

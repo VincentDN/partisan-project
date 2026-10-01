@@ -1,3 +1,4 @@
+/* global axe */
 // Accessibility audit with axe-core (WCAG 2.0/2.1/2.2 A and AA rules) on every page and key states.
 //   npm run test:a11y         exit 1 on any serious/critical violation; moderate/minor are listed as warnings
 import fs from 'node:fs';
@@ -6,8 +7,12 @@ import {execFileSync} from 'node:child_process';
 import {launch, open, startServer} from './browser.mjs';
 
 const axeSource = fs.readFileSync(createRequire(import.meta.url).resolve('axe-core/axe.min.js'), 'utf8');
-if (!process.env.ROOT) { execFileSync('node', ['tools/build-site.mjs', '_site'], {stdio: 'ignore'}); process.env.ROOT = '_site'; }
-const server = await startServer(8196), browser = await launch();
+if (!process.env.ROOT) {
+  execFileSync('node', ['tools/build-site.mjs', '_site'], {stdio: 'ignore'});
+  process.env.ROOT = '_site';
+}
+const server = await startServer(8196),
+  browser = await launch();
 const pages = [
   ['index (splash)', '', async p => p.waitForFunction(() => window.PARP_INDEX?.ready)],
   ['index (menu)', '#menu', async p => p.waitForFunction(() => window.PARP_INDEX?.ready)],
@@ -21,16 +26,30 @@ const pages = [
 let failures = 0;
 for (const [name, path, ready] of pages) {
   const page = await open(browser, server.url + (path.startsWith('#') ? path : path), {reducedMotion: 'reduce'});
-  if (path === '#menu') { await page.goto(server.url + '#menu'); }
-  await ready(page); await page.waitForTimeout(600);
+  if (path === '#menu') {
+    await page.goto(server.url + '#menu');
+  }
+  await ready(page);
+  await page.waitForTimeout(600);
   await page.addScriptTag({content: axeSource});
-  const result = await page.evaluate(() => axe.run(document, {runOnly: {type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice']}, resultTypes: ['violations']}));
+  const result = await page.evaluate(() =>
+    axe.run(document, {
+      runOnly: {type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice']},
+      resultTypes: ['violations'],
+    }),
+  );
   const serious = result.violations.filter(v => ['serious', 'critical'].includes(v.impact));
   const minor = result.violations.filter(v => !['serious', 'critical'].includes(v.impact));
   console.log(`${serious.length ? 'FAIL' : 'ok  '} ${name}: ${serious.length} serious/critical, ${minor.length} other`);
-  for (const v of serious) { failures++; console.log(`   [${v.impact}] ${v.id}: ${v.help} (${v.nodes.length} nodes)\n      e.g. ${v.nodes[0].target.join(' ')} :: ${(v.nodes[0].failureSummary || '').split('\n').slice(0, 2).join(' | ')}`); }
+  for (const v of serious) {
+    failures++;
+    console.log(
+      `   [${v.impact}] ${v.id}: ${v.help} (${v.nodes.length} nodes)\n      e.g. ${v.nodes[0].target.join(' ')} :: ${(v.nodes[0].failureSummary || '').split('\n').slice(0, 2).join(' | ')}`,
+    );
+  }
   for (const v of minor) console.log(`   (${v.impact}) ${v.id}: ${v.help} (${v.nodes.length} nodes) e.g. ${v.nodes[0].target.join(' ')}`);
   await page.close();
 }
-await browser.close(); server.stop();
+await browser.close();
+server.stop();
 process.exit(failures ? 1 : 0);

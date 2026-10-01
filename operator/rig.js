@@ -18,20 +18,34 @@ const DEG = Math.PI / 180;
 const AXES = {x: 0, y: 1, z: 2};
 // Finger bones that curl with the `curl` macro, per hand: [bone, degrees at curl = 1].
 const FINGER_CURL = [
-  ['index_01', 62], ['index_02', 78], ['index_03', 52],
-  ['middle_01', 66], ['middle_02', 82], ['middle_03', 54],
-  ['ring_01', 70], ['ring_02', 84], ['ring_03', 52],
-  ['pinky_01', 72], ['pinky_02', 86], ['pinky_03', 50],
+  ['index_01', 62],
+  ['index_02', 78],
+  ['index_03', 52],
+  ['middle_01', 66],
+  ['middle_02', 82],
+  ['middle_03', 54],
+  ['ring_01', 70],
+  ['ring_02', 84],
+  ['ring_03', 52],
+  ['pinky_01', 72],
+  ['pinky_02', 86],
+  ['pinky_03', 50],
 ];
-const THUMB_CURL = [['thumb_01', 18, 'y'], ['thumb_02', 34, 'z'], ['thumb_03', 40, 'z']];
+const THUMB_CURL = [
+  ['thumb_01', 18, 'y'],
+  ['thumb_02', 34, 'z'],
+  ['thumb_03', 40, 'z'],
+];
 
 /**
  * Blink schedule: true while the eyes should be closed at time t (seconds). Deterministic, so tests and
  * screenshots are repeatable. A blink is 0.13 s roughly every 3.4 s, jittered; every fifth cycle blinks twice.
  */
 export function blinkAt(t) {
-  const PERIOD = 3.4, k = Math.floor(t / PERIOD), local = t - k * PERIOD;
-  const jitter = ((Math.imul(k + 1, 2654435761) >>> 0) % 1000) / 1000;      // 0..1, stable per cycle
+  const PERIOD = 3.4,
+    k = Math.floor(t / PERIOD),
+    local = t - k * PERIOD;
+  const jitter = ((Math.imul(k + 1, 2654435761) >>> 0) % 1000) / 1000; // 0..1, stable per cycle
   const start = 0.6 + jitter * 2.0;
   const closed = x => x >= 0 && x < 0.13;
   return closed(local - start) || (k % 5 === 4 && closed(local - start - 0.26));
@@ -49,19 +63,21 @@ export class Rig {
     this.data = data;
     this.bones = new Map();
     root.updateMatrixWorld(true);
-    root.traverse(o => { if (o.isBone) this.bones.set(o.name, o); });
+    root.traverse(o => {
+      if (/** @type {any} */ (o).isBone) this.bones.set(o.name, o);
+    });
     this.order = [...this.bones.keys()]; // traverse() visits parents before children
     this.rest = new Map();
     for (const [name, bone] of this.bones) {
       const world = bone.getWorldQuaternion(new T.Quaternion());
       this.rest.set(name, {local: bone.quaternion.clone(), world, worldInv: world.clone().invert()});
     }
-    this.current = {};          // blended base deltas: {bone: [x,y,z]}
+    this.current = {}; // blended base deltas: {bone: [x,y,z]}
     this.target = {};
     this.blend = 1;
     this.poseId = null;
-    this.look = {yaw: 0, pitch: 0};   // degrees the head turns toward the camera (set by the page each frame)
-    this.lower = 0;             // metres the whole body is lowered (crouch, kneel); blended like the bone deltas
+    this.look = {yaw: 0, pitch: 0}; // degrees the head turns toward the camera (set by the page each frame)
+    this.lower = 0; // metres the whole body is lowered (crouch, kneel); blended like the bone deltas
     this.targetLower = 0;
     this._r = new T.Quaternion();
     this._e = new T.Euler();
@@ -75,10 +91,10 @@ export class Rig {
       const c = pose.curl?.[side];
       if (!c) continue;
       const sign = side === 'r' ? 1 : -1; // fingers close toward the palm: +z on the right hand, -z on the left
-      for (const [b, deg] of FINGER_CURL) out[`${b}_${side}`] = [0, 0, sign * deg * c];
+      for (const [b, deg] of FINGER_CURL) out[`${b}_${side}`] = [0, 0, sign * Number(deg) * c];
       for (const [b, deg, axis] of THUMB_CURL) {
         const v = [0, 0, 0];
-        v[AXES[axis]] = sign * deg * c;
+        v[AXES[axis]] = sign * Number(deg) * c;
         out[`${b}_${side}`] = v;
       }
     }
@@ -92,8 +108,16 @@ export class Rig {
     this.poseId = id;
     this.target = Rig.expand(pose);
     this.targetLower = pose.lower || 0;
-    if (seconds <= 0) { this.current = structuredClone(this.target); this.lower = this.targetLower; this.blend = 1; }
-    else { this.from = structuredClone(this.current); this.fromLower = this.lower; this.blend = 0; this.blendSeconds = seconds; }
+    if (seconds <= 0) {
+      this.current = structuredClone(this.target);
+      this.lower = this.targetLower;
+      this.blend = 1;
+    } else {
+      this.from = structuredClone(this.current);
+      this.fromLower = this.lower;
+      this.blend = 0;
+      this.blendSeconds = seconds;
+    }
   }
 
   /** Idle layer sum for one bone at time t: {x,y,z} degrees. Pure function of (idle, bone, t). */
@@ -121,23 +145,36 @@ export class Rig {
       this.lower = this.fromLower + (this.targetLower - this.fromLower) * k;
       this.current = {};
       for (const n of names) {
-        const a = this.from?.[n] || [0, 0, 0], b = this.target[n] || [0, 0, 0];
+        const a = this.from?.[n] || [0, 0, 0],
+          b = this.target[n] || [0, 0, 0];
         this.current[n] = [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k, a[2] + (b[2] - a[2]) * k];
       }
     }
     const idle = idleId ? this.data.idles[idleId] : null;
     const look = lookDeltas(this.look.yaw, this.look.pitch);
     for (const name of this.order) {
-      const bone = this.bones.get(name), rest = this.rest.get(name);
+      const bone = this.bones.get(name),
+        rest = this.rest.get(name);
       const base = this.current[name];
-      let x = base?.[0] || 0, y = base?.[1] || 0, z = base?.[2] || 0;
+      let x = base?.[0] || 0,
+        y = base?.[1] || 0,
+        z = base?.[2] || 0;
       if (idle && idleScale) {
         const i = Rig.idleDelta(idle, name, t);
-        x += i[0] * idleScale; y += i[1] * idleScale; z += i[2] * idleScale;
+        x += i[0] * idleScale;
+        y += i[1] * idleScale;
+        z += i[2] * idleScale;
       }
       const l = look[name];
-      if (l) { x += l[0]; y += l[1]; z += l[2]; }
-      if (!x && !y && !z) { bone.quaternion.copy(rest.local); continue; }
+      if (l) {
+        x += l[0];
+        y += l[1];
+        z += l[2];
+      }
+      if (!x && !y && !z) {
+        bone.quaternion.copy(rest.local);
+        continue;
+      }
       this._r.setFromEuler(this._e.set(x * DEG, y * DEG, z * DEG, 'XYZ'));
       bone.quaternion.copy(rest.local).multiply(rest.worldInv).multiply(this._r).multiply(rest.world);
     }

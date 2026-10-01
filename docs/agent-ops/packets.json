@@ -898,7 +898,7 @@
    "milestone": "TD",
    "size": "S",
    "bu": 8,
-   "status": "planned",
+   "status": "done",
    "deps": [],
    "agent": "any",
    "needs": [],
@@ -912,7 +912,7 @@
    "milestone": "TD",
    "size": "S",
    "bu": 8,
-   "status": "planned",
+   "status": "done",
    "deps": [
     "WP-T2"
    ],

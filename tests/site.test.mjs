@@ -14,12 +14,38 @@ test('site builds and every link, import and import-map target resolves', () => 
 });
 test('internal documents and raw sources are not published', () => {
   const published = f => fs.existsSync(path.join(out, f));
-  for (const f of ['docs/agent-ops', 'docs/adr', 'docs/archive', 'docs/ai', 'tools', 'tests', 'package.json', 'AGENTS.md', 'assets-incoming', 'build']) assert.ok(!published(f), `${f} must not be published`);
-  for (const f of ['index.html', 'docs/game-design-master-doc.html', 'docs/master-roadmap.html', 'docs/packets.json', 'workbench/index.html', 'operator/index.html', 'viewer/index.html', '.nojekyll']) assert.ok(published(f), `${f} must be published`);
+  for (const f of [
+    'docs/agent-ops',
+    'docs/adr',
+    'docs/archive',
+    'docs/ai',
+    'tools',
+    'tests',
+    'package.json',
+    'AGENTS.md',
+    'assets-incoming',
+    'build',
+  ])
+    assert.ok(!published(f), `${f} must not be published`);
+  for (const f of [
+    'index.html',
+    'docs/game-design-master-doc.html',
+    'docs/master-roadmap.html',
+    'docs/packets.json',
+    'workbench/index.html',
+    'operator/index.html',
+    'viewer/index.html',
+    '.nojekyll',
+  ])
+    assert.ok(published(f), `${f} must be published`);
 });
 test('no published .md, .blend or .fbx files', () => {
-  const walk = d => fs.readdirSync(d, {withFileTypes: true}).flatMap(e => e.isDirectory() ? walk(path.join(d, e.name)) : [path.join(d, e.name)]);
-  assert.deepEqual(walk(out).filter(f => /\.(md|blend|fbx)$/i.test(f)), []);
+  const walk = d =>
+    fs.readdirSync(d, {withFileTypes: true}).flatMap(e => (e.isDirectory() ? walk(path.join(d, e.name)) : [path.join(d, e.name)]));
+  assert.deepEqual(
+    walk(out).filter(f => /\.(md|blend|fbx)$/i.test(f)),
+    [],
+  );
 });
 test('roadmap HTML links to the repo for documents and to the site for demos', () => {
   const html = fs.readFileSync(path.join(out, 'docs/master-roadmap.html'), 'utf8');
@@ -30,7 +56,10 @@ test('roadmap HTML links to the repo for documents and to the site for demos', (
 test('version is consistent across VERSION, index, design doc and package.json', () => {
   const v = fs.readFileSync('VERSION', 'utf8').trim();
   assert.match(fs.readFileSync('index.html', 'utf8'), new RegExp(`PARP_VERSION="${v.replace(/\./g, '\\.')}"`));
-  assert.match(fs.readFileSync('docs/game-design-master-doc.html', 'utf8'), new RegExp(`name="version" content="${v.replace(/\./g, '\\.')}"`));
+  assert.match(
+    fs.readFileSync('docs/game-design-master-doc.html', 'utf8'),
+    new RegExp(`name="version" content="${v.replace(/\./g, '\\.')}"`),
+  );
   assert.equal(JSON.parse(fs.readFileSync('package.json', 'utf8')).version, v);
   assert.match(fs.readFileSync('CHANGELOG.md', 'utf8'), new RegExp(`## \\[${v.replace(/\./g, '\\.')}\\]`));
 });

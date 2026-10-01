@@ -1,0 +1,12 @@
+vendor/
+node_modules/
+_site/
+build/
+docs/archive/
+docs/moodboard/
+*.glb
+*.json
+*.md
+*.html
+*.css
+package-lock.json

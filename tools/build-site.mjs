@@ -11,9 +11,21 @@ const REPO = 'https://github.com/VincentDN/partisan-project';
 const version = fs.readFileSync('VERSION', 'utf8').trim();
 
 const ALLOW = [
-  'index.html', 'assets/css', 'assets/js', 'assets/img', 'assets/audio', 'assets/lighting', 'assets/models',
-  'assets/register.json', 'shared', 'vendor', 'workbench', 'operator', 'viewer',
-  'docs/game-design-master-doc.html', 'docs/moodboard',
+  'index.html',
+  'assets/css',
+  'assets/js',
+  'assets/img',
+  'assets/audio',
+  'assets/lighting',
+  'assets/models',
+  'assets/register.json',
+  'shared',
+  'vendor',
+  'workbench',
+  'operator',
+  'viewer',
+  'docs/game-design-master-doc.html',
+  'docs/moodboard',
 ];
 const SKIP_FILES = [/\.manifest\.json$/, /\.md$/, /\.test\.m?js$/, /\.DS_Store$/];
 
@@ -23,7 +35,10 @@ function copy(rel) {
   const src = path.resolve(rel);
   if (!fs.existsSync(src)) throw new Error(`allowlisted path missing: ${rel}`);
   const stat = fs.statSync(src);
-  if (stat.isDirectory()) { for (const e of fs.readdirSync(src)) copy(path.join(rel, e)); return; }
+  if (stat.isDirectory()) {
+    for (const e of fs.readdirSync(src)) copy(path.join(rel, e));
+    return;
+  }
   if (SKIP_FILES.some(re => re.test(rel))) return;
   const dest = path.join(out, rel);
   fs.mkdirSync(path.dirname(dest), {recursive: true});
@@ -36,7 +51,8 @@ fs.copyFileSync('docs/agent-ops/packets.json', path.join(out, 'docs/packets.json
 
 // Render the master roadmap (Markdown) to HTML inside the same shell as the design doc.
 const md = fs.readFileSync('docs/master-roadmap.md', 'utf8');
-const html = marked.parse(md, {gfm: true})
+const html = marked
+  .parse(md, {gfm: true})
   // relative links to repo documents become GitHub links; the roadmap itself and the site stay relative
   .replace(/href="(?!https?:|#|mailto:)([^"]+?)"/g, (m, href) => {
     if (/^(\.\/)?master-roadmap\.md$/.test(href)) return 'href="master-roadmap.html"';
@@ -65,6 +81,9 @@ blockquote{margin:1em 0;padding:.4em 1em;border-left:3px solid var(--accent);bac
 `;
 fs.writeFileSync(path.join(out, 'docs/master-roadmap.html'), page);
 fs.writeFileSync(path.join(out, '.nojekyll'), '');
-fs.writeFileSync(path.join(out, '404.html'), `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>PARP · 404</title><body style="background:#0d100c;color:#c8d4a8;font:16px monospace;display:grid;place-items:center;height:100vh;margin:0"><p>SIGNAL LOST. <a style="color:#ef8f39" href="./">Back to the PARP index</a></p></body>`);
+fs.writeFileSync(
+  path.join(out, '404.html'),
+  `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>PARP · 404</title><body style="background:#0d100c;color:#c8d4a8;font:16px monospace;display:grid;place-items:center;height:100vh;margin:0"><p>SIGNAL LOST. <a style="color:#ef8f39" href="./">Back to the PARP index</a></p></body>`,
+);
 const count = d => fs.readdirSync(d, {withFileTypes: true}).reduce((n, e) => n + (e.isDirectory() ? count(path.join(d, e.name)) : 1), 0);
 console.log(`built ${out}: ${count(out)} files`);

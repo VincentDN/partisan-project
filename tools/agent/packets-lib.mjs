@@ -9,7 +9,8 @@ export const load = (file = FILE) => JSON.parse(fs.readFileSync(file, 'utf8'));
 
 /** Structural problems. An empty array means the plan is sound. */
 export function validate(data) {
-  const problems = [], ids = new Set();
+  const problems = [],
+    ids = new Set();
   for (const p of data.packets) {
     if (ids.has(p.id)) problems.push(`${p.id}: duplicate id`);
     ids.add(p.id);
@@ -22,13 +23,18 @@ export function validate(data) {
   const byId = new Map(data.packets.map(p => [p.id, p]));
   for (const p of data.packets) {
     for (const d of p.deps) if (!byId.has(d)) problems.push(`${p.id}: unknown dependency ${d}`);
-    if (p.status === 'done') for (const d of p.deps) if (byId.get(d) && byId.get(d).status !== 'done') problems.push(`${p.id}: done but depends on unfinished ${d}`);
+    if (p.status === 'done')
+      for (const d of p.deps)
+        if (byId.get(d) && byId.get(d).status !== 'done') problems.push(`${p.id}: done but depends on unfinished ${d}`);
   }
   // cycle check (DFS)
   const state = new Map();
   const visit = (id, trail) => {
     if (state.get(id) === 2) return;
-    if (state.get(id) === 1) { problems.push(`dependency cycle: ${[...trail, id].join(' > ')}`); return; }
+    if (state.get(id) === 1) {
+      problems.push(`dependency cycle: ${[...trail, id].join(' > ')}`);
+      return;
+    }
     state.set(id, 1);
     for (const d of byId.get(id)?.deps || []) if (byId.has(d)) visit(d, [...trail, id]);
     state.set(id, 2);
@@ -54,8 +60,13 @@ export function next(data, {budget = 20, agent = 'any', can = ['browser', 'bpy',
     .filter(p => p.bu <= budget)
     .filter(p => p.agent === 'any' || p.agent === agent)
     .filter(p => p.agent !== 'human' && p.needs.every(n => n !== 'human' && caps.has(n)))
-    .sort((a, b) => MILESTONE_ORDER.indexOf(a.milestone) - MILESTONE_ORDER.indexOf(b.milestone)
-      || (a.status === 'ready' ? 0 : 1) - (b.status === 'ready' ? 0 : 1) || b.bu - a.bu || a.id.localeCompare(b.id));
+    .sort(
+      (a, b) =>
+        MILESTONE_ORDER.indexOf(a.milestone) - MILESTONE_ORDER.indexOf(b.milestone) ||
+        (a.status === 'ready' ? 0 : 1) - (b.status === 'ready' ? 0 : 1) ||
+        b.bu - a.bu ||
+        a.id.localeCompare(b.id),
+    );
 }
 
 export function progress(data) {
@@ -63,8 +74,9 @@ export function progress(data) {
   for (const [id, m] of Object.entries(data.milestones)) {
     const ps = data.packets.filter(p => p.milestone === id);
     if (!ps.length) continue;
-    const total = ps.reduce((s, p) => s + p.bu, 0), done = ps.filter(isDone).reduce((s, p) => s + p.bu, 0);
-    out[id] = {...m, packets: ps.length, done: ps.filter(isDone).length, bu: total, buDone: done, pct: Math.round(done / total * 100)};
+    const total = ps.reduce((s, p) => s + p.bu, 0),
+      done = ps.filter(isDone).reduce((s, p) => s + p.bu, 0);
+    out[id] = {...m, packets: ps.length, done: ps.filter(isDone).length, bu: total, buDone: done, pct: Math.round((done / total) * 100)};
   }
   return out;
 }
@@ -73,12 +85,22 @@ export function toMarkdown(data) {
   const prog = progress(data);
   const lines = [];
   lines.push('| Milestone | Target | Packets | Budget | Progress |', '|---|---|---|---|---|');
-  for (const [id, p] of Object.entries(prog)) lines.push(`| **${id}** ${p.name} | ${p.version ? 'v' + p.version : '—'} | ${p.done}/${p.packets} | ${p.bu} BU | ${p.pct}% |`);
+  for (const [id, p] of Object.entries(prog))
+    lines.push(`| **${id}** ${p.name} | ${p.version ? 'v' + p.version : '—'} | ${p.done}/${p.packets} | ${p.bu} BU | ${p.pct}% |`);
   for (const id of MILESTONE_ORDER) {
     const ps = data.packets.filter(p => p.milestone === id);
     if (!ps.length) continue;
-    lines.push('', `### ${id} · ${data.milestones[id].name}`, '', '| ID | Packet | Size | Status | Needs | Depends on |', '|---|---|---|---|---|---|');
-    for (const p of ps) lines.push(`| \`${p.id}\` | ${p.title} | ${p.size} (${p.bu}) | ${p.status} | ${[p.agent === 'human' ? 'owner' : '', ...p.needs.filter(n => n !== 'human')].filter(Boolean).join(', ') || '—'} | ${p.deps.map(d => '`' + d + '`').join(', ') || '—'} |`);
+    lines.push(
+      '',
+      `### ${id} · ${data.milestones[id].name}`,
+      '',
+      '| ID | Packet | Size | Status | Needs | Depends on |',
+      '|---|---|---|---|---|---|',
+    );
+    for (const p of ps)
+      lines.push(
+        `| \`${p.id}\` | ${p.title} | ${p.size} (${p.bu}) | ${p.status} | ${[p.agent === 'human' ? 'owner' : '', ...p.needs.filter(n => n !== 'human')].filter(Boolean).join(', ') || '—'} | ${p.deps.map(d => '`' + d + '`').join(', ') || '—'} |`,
+      );
   }
   return lines.join('\n');
 }

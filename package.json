@@ -12,17 +12,28 @@
     "assets:operator": "node tools/assets/optimize-operator.mjs",
     "test:e2e": "node tests/e2e/smoke.mjs",
     "contact-sheet": "node tests/e2e/contact-sheet.mjs",
-    "test:a11y": "node tests/e2e/a11y.mjs"
+    "test:a11y": "node tests/e2e/a11y.mjs",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "tsc -p ."
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.5",
     "@gltf-transform/core": "^4.1.0",
     "@gltf-transform/extensions": "^4.1.0",
     "@gltf-transform/functions": "^4.1.0",
+    "@types/node": "^26.6.3",
+    "@types/three": "^0.169.0",
     "axe-core": "^4.13.0",
+    "eslint": "^9.39.5",
+    "globals": "^17.13.0",
     "marked": "^14.1.0",
     "meshoptimizer": "^0.22.0",
     "playwright-core": "^1.48.0",
+    "prettier": "^3.9.9",
     "sharp": "^0.35.5",
-    "three": "^0.169.0"
+    "three": "^0.169.0",
+    "typescript": "^7.0.2"
   }
 }

@@ -8,7 +8,7 @@
 
 export const CODE_VERSION = 'P1';
 const empty = () => ({rifle: 'ak74m', build: {}, offsets: {}, finish: {}, wear: 0});
-const RESERVED = new Set(['rifle', 'wear', 'mode', 'pose']);   // 'mode' and 'pose' were part of the retired Field screens: ignored
+const RESERVED = new Set(['rifle', 'wear', 'mode', 'pose']); // 'mode' and 'pose' were part of the retired Field screens: ignored
 
 /** Parse the Workbench URL hash (with or without the leading #). Unknown keys become slot choices; consumers validate them. */
 export function parseLegacy(hash) {
@@ -17,8 +17,13 @@ export function parseLegacy(hash) {
     if (k === 'rifle') out.rifle = v;
     else if (k === 'wear') out.wear = Math.min(100, Math.max(0, Math.round(Number(v)) || 0));
     else if (k.endsWith('-finish')) out.finish[k.slice(0, -7)] = v;
-    else if (RESERVED.has(k) || k.startsWith('o.')) continue;       // retired operator keys (o.headgear=…) are dropped
-    else { const [option, mm] = v.split('@'); out.build[k] = option; if (mm !== undefined && Number.isFinite(Number(mm)) && Number(mm) !== 0) out.offsets[k] = Math.round(Number(mm)); }
+    else if (RESERVED.has(k) || k.startsWith('o.'))
+      continue; // retired operator keys (o.headgear=…) are dropped
+    else {
+      const [option, mm] = v.split('@');
+      out.build[k] = option;
+      if (mm !== undefined && Number.isFinite(Number(mm)) && Number(mm) !== 0) out.offsets[k] = Math.round(Number(mm));
+    }
   }
   return out;
 }
@@ -34,13 +39,23 @@ export function toLegacy(l) {
 }
 
 const b64 = {
-  enc: s => btoa(unescape(encodeURIComponent(s))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''),
+  enc: s =>
+    btoa(unescape(encodeURIComponent(s)))
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/, ''),
   dec: s => decodeURIComponent(escape(atob(s.replace(/-/g, '+').replace(/_/g, '/') + '==='.slice((s.length + 3) % 4)))),
 };
 
 /** Versioned token. Compact keys: r rifle, b build, o offsets (mm), f finishes, w wear. */
 export function encode(l) {
-  const c = {r: l.rifle, b: l.build, ...(Object.keys(l.offsets).length ? {o: l.offsets} : {}), ...(Object.keys(l.finish).length ? {f: l.finish} : {}), ...(l.wear ? {w: l.wear} : {})};
+  const c = {
+    r: l.rifle,
+    b: l.build,
+    ...(Object.keys(l.offsets).length ? {o: l.offsets} : {}),
+    ...(Object.keys(l.finish).length ? {f: l.finish} : {}),
+    ...(l.wear ? {w: l.wear} : {}),
+  };
   return `${CODE_VERSION}.${b64.enc(JSON.stringify(c))}`;
 }
 
@@ -51,12 +66,20 @@ export function decode(text) {
   const hash = t.includes('#') ? t.slice(t.indexOf('#') + 1) : t;
   const m = hash.match(/^(P\d+)\.([A-Za-z0-9_-]+)$/);
   if (m) {
-    if (m[1] !== CODE_VERSION) return null;                           // a newer app made this code
+    if (m[1] !== CODE_VERSION) return null; // a newer app made this code
     try {
       const c = JSON.parse(b64.dec(m[2]));
       if (typeof c.r !== 'string' || typeof c.b !== 'object' || c.b === null) return null;
-      return {rifle: c.r, build: {...c.b}, offsets: {...(c.o || {})}, finish: {...(c.f || {})}, wear: Math.min(100, Math.max(0, Number(c.w) || 0))};
-    } catch { return null; }
+      return {
+        rifle: c.r,
+        build: {...c.b},
+        offsets: {...(c.o || {})},
+        finish: {...(c.f || {})},
+        wear: Math.min(100, Math.max(0, Number(c.w) || 0)),
+      };
+    } catch {
+      return null;
+    }
   }
   return hash.includes('=') ? parseLegacy(hash) : null;
 }

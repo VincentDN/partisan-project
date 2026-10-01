@@ -6,9 +6,11 @@ import {soundLayer} from '../../shared/sound-layer.js';
 import {ITEMS} from './items.js';
 
 const $ = s => document.querySelector(s);
-const screen = $('.screen'), content = $('#content');
+const screen = $('.screen'),
+  content = $('#content');
 const sound = soundLayer();
-let index = 0, mode = 'splash';
+let index = 0,
+  mode = 'splash';
 
 const clock = () => new Date().toLocaleTimeString('en-GB', {hour: '2-digit', minute: '2-digit'});
 function chrome(titleLeft, titleRight) {
@@ -17,19 +19,37 @@ function chrome(titleLeft, titleRight) {
 }
 const softkeys = (l, r) => `<div class="softkeys"><span id="sk-l">${l}</span><span id="sk-r">${r}</span></div>`;
 
-function soundLabel() { return `Sound: ${sound.prefs.on ? 'ON' : 'OFF'}`; }
+function soundLabel() {
+  return `Sound: ${sound.prefs.on ? 'ON' : 'OFF'}`;
+}
 
 function renderSplash() {
   mode = 'splash';
-  content.innerHTML = chrome('PARP', 'v' + window.PARP_VERSION) + `<div class="splash boot"><div><canvas id="dither" aria-label="Dithered concept art of two low-poly operators" role="img"></canvas><h1>PARP</h1><p>PARTISAN PROJECT</p><p class="blink">PRESS ANY KEY</p></div></div>` + softkeys('MENU', '');
+  content.innerHTML =
+    chrome('PARP', 'v' + window.PARP_VERSION) +
+    `<div class="splash boot"><div><canvas id="dither" aria-label="Dithered concept art of two low-poly operators" role="img"></canvas><h1>PARP</h1><p>PARTISAN PROJECT</p><p class="blink">PRESS ANY KEY</p></div></div>` +
+    softkeys('MENU', '');
   drawDithered($('#dither'), './docs/moodboard/keyframe-2-firefight.jpg', {width: 132, contrast: 1.45, bias: -0.04}).catch(() => {});
 }
 function renderMenu() {
   mode = 'menu';
-  const rows = ITEMS.map((it, i) => `<li><a href="${it.href || '#'}" ${it.href && /^https?:/.test(it.href) ? 'rel="noopener"' : ''} data-i="${i}" ${i === index ? 'aria-current="true"' : ''}><span class="n">${i + 1}</span><span class="ic" aria-hidden="true">${it.icon || ''}</span><span>${it.action === 'sound' ? soundLabel() : it.label}</span></a></li>`).join('');
-  content.innerHTML = chrome('MAIN MENU', `${index + 1}/${ITEMS.length}`) + `<ul class="menu" id="menu" aria-label="PARP index">${rows}</ul><div class="help" id="help" aria-live="polite"></div>` + softkeys('SELECT', 'EXIT');
+  const rows = ITEMS.map(
+    (it, i) =>
+      `<li><a href="${it.href || '#'}" ${it.href && /^https?:/.test(it.href) ? 'rel="noopener"' : ''} data-i="${i}" ${i === index ? 'aria-current="true"' : ''}><span class="n">${i + 1}</span><span class="ic" aria-hidden="true">${it.icon || ''}</span><span>${it.action === 'sound' ? soundLabel() : it.label}</span></a></li>`,
+  ).join('');
+  content.innerHTML =
+    chrome('MAIN MENU', `${index + 1}/${ITEMS.length}`) +
+    `<ul class="menu" id="menu" aria-label="PARP index">${rows}</ul><div class="help" id="help" aria-live="polite"></div>` +
+    softkeys('SELECT', 'EXIT');
   for (const a of content.querySelectorAll('.menu a')) {
-    a.addEventListener('click', e => { const i = +a.dataset.i; if (ITEMS[i].action) { e.preventDefault(); index = i; activate(); } });
+    a.addEventListener('click', e => {
+      const i = +a.dataset.i;
+      if (ITEMS[i].action) {
+        e.preventDefault();
+        index = i;
+        activate();
+      }
+    });
     a.addEventListener('mouseenter', () => select(+a.dataset.i, false));
     a.addEventListener('focus', () => select(+a.dataset.i, false));
   }
@@ -42,57 +62,107 @@ function select(i, scroll = true) {
   const cur = content.querySelector(`.menu a[data-i="${index}"]`);
   cur.setAttribute('aria-current', 'true');
   $('#help').textContent = ITEMS[index].help;
-  const t = content.querySelector('.title span:last-child'); if (t) t.textContent = `${index + 1}/${ITEMS.length}`;
+  const t = content.querySelector('.title span:last-child');
+  if (t) t.textContent = `${index + 1}/${ITEMS.length}`;
   if (scroll) cur.scrollIntoView({block: 'nearest'});
 }
 function renderAbout() {
   mode = 'about';
-  content.innerHTML = chrome('ABOUT', '') + `<div class="about"><p><b>PARP</b> v${window.PARP_VERSION}<br>Partisan Project: an interactive game design document made of playable demos.</p>
+  content.innerHTML =
+    chrome('ABOUT', '') +
+    `<div class="about"><p><b>PARP</b> v${window.PARP_VERSION}<br>Partisan Project: an interactive game design document made of playable demos.</p>
   <p>Demos: Weapon Workbench, Operator Modder, Asset Viewer.<br>Docs: Game Design Doc, Master Roadmap.</p>
   <p>Source: <a href="https://github.com/VincentDN/partisan-project" rel="noopener">github.com/VincentDN/partisan-project</a><br>By Atelier Vincent De Nil BV.</p>
-  <p>Third-party credits and licences: <a href="./docs/game-design-master-doc.html#credits">design doc, credits</a>.</p></div>` + softkeys('', 'BACK');
+  <p>Third-party credits and licences: <a href="./docs/game-design-master-doc.html#credits">design doc, credits</a>.</p></div>` +
+    softkeys('', 'BACK');
 }
 function activate() {
   if (mode === 'splash') return renderMenu();
   if (mode === 'about') return renderMenu();
   const it = ITEMS[index];
   if (it.action === 'sound') {
-    sound.prefs.on = !sound.prefs.on; sound.save(); sound.changed();
+    sound.prefs.on = !sound.prefs.on;
+    sound.save();
+    sound.changed();
     sound.prefs.on ? sound.start(0.4) : sound.stop();
-    const label = content.querySelector(`.menu a[data-i="${index}"] span:last-child`); if (label) label.textContent = soundLabel();
+    const label = content.querySelector(`.menu a[data-i="${index}"] span:last-child`);
+    if (label) label.textContent = soundLabel();
     return;
   }
   if (it.action === 'about') return renderAbout();
   if (it.href) location.href = it.href;
 }
-function back() { if (mode === 'about') renderMenu(); else if (mode === 'menu') renderSplash(); }
+function back() {
+  if (mode === 'about') renderMenu();
+  else if (mode === 'menu') renderSplash();
+}
 
 // Input: keyboard, soft keys, d-pad, number pad.
 function press(k) {
-  if (mode === 'splash') { renderMenu(); return; }
+  if (mode === 'splash') {
+    renderMenu();
+    return;
+  }
   if (k === 'up') mode === 'menu' && select(index - 1);
   else if (k === 'down') mode === 'menu' && select(index + 1);
   else if (k === 'select') activate();
   else if (k === 'back') back();
-  else if (/^[1-9]$/.test(k) && mode === 'menu' && ITEMS[+k - 1]) { select(+k - 1); activate(); }
+  else if (/^[1-9]$/.test(k) && mode === 'menu' && ITEMS[+k - 1]) {
+    select(+k - 1);
+    activate();
+  }
 }
 addEventListener('keydown', e => {
   if (e.ctrlKey || e.metaKey || e.altKey) return;
-  const map = {ArrowUp: 'up', ArrowDown: 'down', Enter: 'select', ArrowRight: 'select', Escape: 'back', Backspace: 'back', ArrowLeft: 'back'};
+  const map = {
+    ArrowUp: 'up',
+    ArrowDown: 'down',
+    Enter: 'select',
+    ArrowRight: 'select',
+    Escape: 'back',
+    Backspace: 'back',
+    ArrowLeft: 'back',
+  };
   const k = map[e.key] || (/^[1-9]$/.test(e.key) ? e.key : null);
-  if (!k) { if (mode === 'splash') press('select'); return; }
+  if (!k) {
+    if (mode === 'splash') press('select');
+    return;
+  }
   if (e.key === 'Enter' && document.activeElement?.closest('.menu a') && mode === 'menu') return; // let the focused link navigate
-  e.preventDefault(); press(k);
+  e.preventDefault();
+  press(k);
 });
 for (const b of document.querySelectorAll('[data-key]')) b.addEventListener('click', () => press(b.dataset.key));
 $('#soft-l').addEventListener('click', () => press('select'));
 $('#soft-r').addEventListener('click', () => press('back'));
-screen.addEventListener('click', e => { if (mode === 'splash') press('select'); });
+screen.addEventListener('click', e => {
+  if (mode === 'splash') press('select');
+});
 
 // Music follows the shared preference (autoplay is blocked until a first gesture).
-addEventListener('pointerdown', () => { if (sound.prefs.on) sound.start(1.5); }, {once: true, capture: true});
-addEventListener('keydown', () => { if (sound.prefs.on) sound.start(1.5); }, {once: true, capture: true});
+addEventListener(
+  'pointerdown',
+  () => {
+    if (sound.prefs.on) sound.start(1.5);
+  },
+  {once: true, capture: true},
+);
+addEventListener(
+  'keydown',
+  () => {
+    if (sound.prefs.on) sound.start(1.5);
+  },
+  {once: true, capture: true},
+);
 
 renderSplash();
 if (location.hash === '#menu') renderMenu();
-window.PARP_INDEX = {ready: true, get mode() { return mode; }, get index() { return index; }};
+window.PARP_INDEX = {
+  ready: true,
+  get mode() {
+    return mode;
+  },
+  get index() {
+    return index;
+  },
+};

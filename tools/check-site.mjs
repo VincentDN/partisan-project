@@ -5,7 +5,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 const dir = path.resolve(process.argv[2] || '_site');
 const problems = [];
-const walk = d => fs.readdirSync(d, {withFileTypes: true}).flatMap(e => e.isDirectory() ? walk(path.join(d, e.name)) : [path.join(d, e.name)]);
+const walk = d =>
+  fs.readdirSync(d, {withFileTypes: true}).flatMap(e => (e.isDirectory() ? walk(path.join(d, e.name)) : [path.join(d, e.name)]));
 const files = walk(dir);
 const exists = p => fs.existsSync(p) && (!fs.statSync(p).isDirectory() || fs.existsSync(path.join(p, 'index.html')));
 
@@ -14,19 +15,29 @@ for (const f of files.filter(f => f.endsWith('.html'))) {
   const html = fs.readFileSync(f, 'utf8');
   if (!/<title>[^<]+<\/title>/.test(html)) problems.push(`${rel}: missing <title>`);
   if (!/name="viewport"/.test(html)) problems.push(`${rel}: missing viewport meta`);
-  const markup = html.replace(/<script(?![^>]*importmap)[^>]*>[\s\S]*?<\/script>/g, m => m.replace(/(?:href|src)=/g, 'data-x=')).replace(/<script(?![^>]*(?:importmap|src=))[^>]*>[\s\S]*?<\/script>/g, '');
+  const markup = html
+    .replace(/<script(?![^>]*importmap)[^>]*>[\s\S]*?<\/script>/g, m => m.replace(/(?:href|src)=/g, 'data-x='))
+    .replace(/<script(?![^>]*(?:importmap|src=))[^>]*>[\s\S]*?<\/script>/g, '');
   for (const m of markup.matchAll(/(?:href|src)="([^"]+)"/g)) {
     const url = m[1];
     if (/^(#|mailto:|data:|javascript:)/.test(url)) continue;
-    if (/^https?:/.test(url)) { if (/\.(js|css|mjs)(\?|$)/.test(url) && !/github\.com|vincentdenil\.com/.test(url)) problems.push(`${rel}: external script/style ${url}`); continue; }
-    if (url.startsWith('/')) { problems.push(`${rel}: root-absolute URL ${url} (breaks under a project base path)`); continue; }
+    if (/^https?:/.test(url)) {
+      if (/\.(js|css|mjs)(\?|$)/.test(url) && !/github\.com|vincentdenil\.com/.test(url))
+        problems.push(`${rel}: external script/style ${url}`);
+      continue;
+    }
+    if (url.startsWith('/')) {
+      problems.push(`${rel}: root-absolute URL ${url} (breaks under a project base path)`);
+      continue;
+    }
     const target = path.resolve(path.dirname(f), url.split('#')[0].split('?')[0]);
     if (url.split('#')[0] && !exists(target)) problems.push(`${rel}: broken link ${url}`);
   }
-  for (const m of html.matchAll(/"imports":\s*(\{[^}]*\})/g)) for (const v of Object.values(JSON.parse(m[1]))) {
-    if (/^https?:|^\//.test(v)) problems.push(`${rel}: importmap target ${v} must be relative and local`);
-    else if (!fs.existsSync(path.resolve(path.dirname(f), v))) problems.push(`${rel}: importmap target missing ${v}`);
-  }
+  for (const m of html.matchAll(/"imports":\s*(\{[^}]*\})/g))
+    for (const v of Object.values(JSON.parse(m[1]))) {
+      if (/^https?:|^\//.test(v)) problems.push(`${rel}: importmap target ${v} must be relative and local`);
+      else if (!fs.existsSync(path.resolve(path.dirname(f), v))) problems.push(`${rel}: importmap target missing ${v}`);
+    }
 }
 // JS modules: static relative imports must resolve.
 for (const f of files.filter(f => /\.(m?js)$/.test(f) && !f.includes(`${path.sep}vendor${path.sep}`))) {

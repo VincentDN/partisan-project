@@ -9,15 +9,42 @@ const data = load();
 test('packets.json is structurally valid (no L packets, no cycles, known deps)', () => assert.deepEqual(validate(data), []));
 test('validate rejects an L-sized packet and a cycle', () => {
   const bad = structuredClone(data);
-  bad.packets.push({id: 'X', title: 't', track: 't', milestone: 'M0', size: 'L', bu: 50, status: 'planned', deps: ['Y'], agent: 'any', needs: [], acceptance: 'a'},
-                   {id: 'Y', title: 't', track: 't', milestone: 'M0', size: 'S', bu: 8, status: 'planned', deps: ['X'], agent: 'any', needs: [], acceptance: 'a'});
+  bad.packets.push(
+    {
+      id: 'X',
+      title: 't',
+      track: 't',
+      milestone: 'M0',
+      size: 'L',
+      bu: 50,
+      status: 'planned',
+      deps: ['Y'],
+      agent: 'any',
+      needs: [],
+      acceptance: 'a',
+    },
+    {
+      id: 'Y',
+      title: 't',
+      track: 't',
+      milestone: 'M0',
+      size: 'S',
+      bu: 8,
+      status: 'planned',
+      deps: ['X'],
+      agent: 'any',
+      needs: [],
+      acceptance: 'a',
+    },
+  );
   const p = validate(bad).join('\n');
-  assert.match(p, /must be XS, S or M/); assert.match(p, /cycle/);
+  assert.match(p, /must be XS, S or M/);
+  assert.match(p, /cycle/);
 });
 test('next() respects budget, capabilities and dependencies', () => {
   for (const budget of [3, 8, 20]) for (const p of next(data, {budget})) assert.ok(p.bu <= budget);
   const none = next(data, {budget: 20, can: []});
-  assert.ok(none.every(p => p.needs.every(n => n === 'human' ? false : false) || p.needs.length === 0));
+  assert.ok(none.every(p => p.needs.every(n => (n === 'human' ? false : false)) || p.needs.length === 0));
   const ids = new Set(available(data).map(p => p.id));
   for (const p of data.packets) if (p.status === 'blocked') assert.ok(!ids.has(p.id));
   const doneIds = new Set(data.packets.filter(p => p.status === 'done').map(p => p.id));
@@ -29,7 +56,10 @@ test('a window with 3 BU left still gets work (burn-down) or an explicit empty l
 });
 test('human-only packets are never offered to agents', () => assert.ok(next(data, {budget: 20}).every(p => p.agent !== 'human')));
 test('M0 is fully done except the owner actions', () => {
-  const open = data.packets.filter(p => p.milestone === 'M0' && p.status !== 'done').map(p => p.id).sort();
+  const open = data.packets
+    .filter(p => p.milestone === 'M0' && p.status !== 'done')
+    .map(p => p.id)
+    .sort();
   assert.deepEqual(open, ['WP-F10', 'WP-F8']);
   assert.ok(progress(data).M0.pct >= 80);
 });
