@@ -3,9 +3,11 @@ import * as T from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
 import {createStage} from '../shared/stage.js';
+import {mountTopBar} from '../shared/topbar.js';
 import {summarise} from './report.js';
 
 const $ = s => document.querySelector(s);
+mountTopBar({title: 'Asset Viewer', scene: 'viewer'});
 const stage = await createStage($('#stage'), {environment: 'studio', backdrop: false, floorSize: 10});
 const register = await (await fetch('../assets/register.json')).json();
 const loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);

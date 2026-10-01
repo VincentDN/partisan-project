@@ -12,6 +12,9 @@ const version = fs.readFileSync('VERSION', 'utf8').trim();
 
 const ALLOW = [
   'index.html',
+  'shell.js',
+  'intro',
+  'menu',
   'assets/css',
   'assets/js',
   'assets/img',
@@ -69,7 +72,7 @@ const page = `<!doctype html>
 <style>
 :root{color-scheme:dark;--bg:#0d100c;--panel:#161b13;--line:#2c3526;--text:#e6e9dc;--dim:#98a487;--accent:#ef8f39;--olive:#c8d4a8}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}
-header{position:sticky;top:0;background:#0d100cf2;border-bottom:1px solid var(--line);padding:10px 20px;display:flex;gap:18px;flex-wrap:wrap;justify-content:space-between;font:12px/1.4 ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;z-index:5}
+header{position:sticky;top:var(--topbar,40px);background:#0d100cf2;border-bottom:1px solid var(--line);padding:10px 20px;display:flex;gap:18px;flex-wrap:wrap;justify-content:space-between;font:12px/1.4 ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;z-index:5}
 header a{color:var(--olive)}main{max-width:980px;margin:0 auto;padding:28px 20px 80px}
 h1,h2,h3{line-height:1.2;color:#fff}h1{font-size:2rem;margin-top:.4em}h2{margin-top:2.4em;padding-top:.6em;border-top:1px solid var(--line);font-size:1.45rem}h3{margin-top:1.8em;font-size:1.1rem;color:var(--olive)}
 a{color:#9fd0e6}code{font:.88em ui-monospace,monospace;background:#1d241a;padding:.1em .35em;border-radius:3px}pre{background:#10150e;padding:14px;overflow:auto;border:1px solid var(--line);border-radius:6px}pre code{background:none;padding:0}
@@ -77,8 +80,9 @@ table{border-collapse:collapse;width:100%;font-size:.88rem;display:block;overflo
 blockquote{margin:1em 0;padding:.4em 1em;border-left:3px solid var(--accent);background:#161b13;color:var(--dim)}hr{border:0;border-top:1px solid var(--line)}img{max-width:100%}
 @media(max-width:640px){main{padding:18px 16px 60px}h1{font-size:1.6rem}}
 </style></head><body>
-<header><span>PARP master roadmap · v${version}</span><nav><a href="game-design-master-doc.html">Design doc</a> · <a href="../">Index</a> · <a href="${REPO}">Source</a></nav></header>
-<main>${html}</main></body></html>
+<header><span>PARP master roadmap · v${version}</span><nav><a href="${REPO}">Source</a></nav></header>
+<main>${html}</main>
+<script type="module">import {mountTopBar} from '../shared/topbar.js';mountTopBar({title: 'Master roadmap', scene: 'viewer', sticky: true, replaceHeader: false});</script></body></html>
 `;
 fs.writeFileSync(path.join(out, 'docs/master-roadmap.html'), page);
 fs.writeFileSync(path.join(out, '.nojekyll'), '');

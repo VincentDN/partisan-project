@@ -2,7 +2,7 @@ import {installCamo as installRifleCamo, applyFinishState} from './rifle-finishe
 import {loadRifle as loadRifleInstance, applySlotState} from './rifle-instance.js';
 import * as T from 'three';
 import {startTour} from '../shared/tour.js';
-import {bindMusicUI} from '../shared/music-ui.js';
+import {mountTopBar} from '../shared/topbar.js';
 import {createStage} from '../shared/stage.js';
 import {renderStatsPanel} from './stats-panel.js';
 import {savePhoto, saveCard} from './export.js';
@@ -24,7 +24,7 @@ const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const FRAME_LENGTH = 0.943;
 
 // Background music, volume and track: shared with every PARP module (shared/music-ui.js).
-bindMusicUI();
+mountTopBar({title: 'Weapon Workbench', scene: 'viewer'});
 
 const stageEl = document.querySelector('#stage'),
   status = document.querySelector('#status'),

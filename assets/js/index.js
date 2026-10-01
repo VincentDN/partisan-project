@@ -17,7 +17,8 @@ function chrome(titleLeft, titleRight) {
   return `<div class="status"><span class="bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>PARP</span><span>${clock()}<span class="batt" aria-hidden="true"><b></b></span></span></div>
   <div class="title"><span>${titleLeft}</span><span>${titleRight || ''}</span></div>`;
 }
-const softkeys = (l, r) => `<div class="softkeys"><span id="sk-l">${l}</span><span id="sk-r">${r}</span></div>`;
+const softkeys = (l, r) =>
+  `<div class="softkeys"><button id="sk-l" data-key="select"${l ? '' : ' hidden'}>${l}</button><button id="sk-r" data-key="back"${r ? '' : ' hidden'}>${r}</button></div>`;
 
 function soundLabel() {
   return `Sound: ${sound.prefs.on ? 'ON' : 'OFF'}`;
@@ -27,9 +28,9 @@ function renderSplash() {
   mode = 'splash';
   content.innerHTML =
     chrome('PARP', 'v' + window.PARP_VERSION) +
-    `<div class="splash boot"><div><canvas id="dither" aria-label="Dithered concept art of two low-poly operators" role="img"></canvas><h1>PARP</h1><p>PARTISAN PROJECT</p><p class="blink">PRESS ANY KEY</p></div></div>` +
+    `<div class="splash boot"><canvas id="dither" aria-label="Dithered concept art of two low-poly operators" role="img"></canvas><div class="cap"><h1>PARP</h1><p>PARTISAN PROJECT <span class="blink">· PRESS ANY KEY</span></p></div></div>` +
     softkeys('MENU', '');
-  drawDithered($('#dither'), './docs/moodboard/keyframe-2-firefight.jpg', {width: 132, contrast: 1.45, bias: -0.04}).catch(() => {});
+  drawDithered($('#dither'), '../docs/moodboard/keyframe-2-firefight.jpg', {width: 200, contrast: 1.45, bias: -0.04}).catch(() => {});
 }
 function renderMenu() {
   mode = 'menu';
@@ -71,9 +72,9 @@ function renderAbout() {
   content.innerHTML =
     chrome('ABOUT', '') +
     `<div class="about"><p><b>PARP</b> v${window.PARP_VERSION}<br>Partisan Project: an interactive game design document made of playable demos.</p>
-  <p>Demos: Weapon Workbench, Operator Modder, Asset Viewer.<br>Docs: Game Design Doc, Master Roadmap.</p>
+  <p>Demos: Weapon Workbench, Operator Modder, Bench Lab, Asset Viewer.<br>Docs: Game Design Doc, Master Roadmap.</p>
   <p>Source: <a href="https://github.com/VincentDN/partisan-project" rel="noopener">github.com/VincentDN/partisan-project</a><br>By Atelier Vincent De Nil BV.</p>
-  <p>Third-party credits and licences: <a href="./docs/game-design-master-doc.html#credits">design doc, credits</a>.</p></div>` +
+  <p>Third-party credits and licences: <a href="../docs/game-design-master-doc.html#credits">design doc, credits</a>.</p></div>` +
     softkeys('', 'BACK');
 }
 function activate() {
@@ -90,7 +91,7 @@ function activate() {
     return;
   }
   if (it.action === 'about') return renderAbout();
-  if (it.href) location.href = it.href;
+  if (it.href) (/^https?:/.test(it.href) ? window.top : window).location.href = it.href; // outbound links leave the frame
 }
 function back() {
   if (mode === 'about') renderMenu();
@@ -132,9 +133,11 @@ addEventListener('keydown', e => {
   e.preventDefault();
   press(k);
 });
-for (const b of document.querySelectorAll('[data-key]')) b.addEventListener('click', () => press(b.dataset.key));
-$('#soft-l').addEventListener('click', () => press('select'));
-$('#soft-r').addEventListener('click', () => press('back'));
+// Soft keys are re-created with each screen, so listen once on the screen.
+content.addEventListener('click', e => {
+  const k = e.target.closest?.('[data-key]');
+  if (k) press(k.dataset.key);
+});
 screen.addEventListener('click', e => {
   if (mode === 'splash') press('select');
 });

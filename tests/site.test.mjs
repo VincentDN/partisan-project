@@ -29,6 +29,9 @@ test('internal documents and raw sources are not published', () => {
     assert.ok(!published(f), `${f} must not be published`);
   for (const f of [
     'index.html',
+    'shell.js',
+    'intro/index.html',
+    'menu/index.html',
     'docs/game-design-master-doc.html',
     'docs/master-roadmap.html',
     'docs/packets.json',
@@ -51,12 +54,12 @@ test('no published .md, .blend or .fbx files', () => {
 test('roadmap HTML links to the repo for documents and to the site for demos', () => {
   const html = fs.readFileSync(path.join(out, 'docs/master-roadmap.html'), 'utf8');
   assert.match(html, /github\.com\/VincentDN\/partisan-project\/blob\/main\/docs\/agent-ops\/README\.md/);
-  assert.match(html, /href="\.\.\/"|href="\.\.\/workbench\/"/);
+  assert.match(html, /href="\.\.\/workbench\/"|topbar\.js/);
 });
 
 test('version is consistent across VERSION, index, design doc and package.json', () => {
   const v = fs.readFileSync('VERSION', 'utf8').trim();
-  assert.match(fs.readFileSync('index.html', 'utf8'), new RegExp(`PARP_VERSION="${v.replace(/\./g, '\\.')}"`));
+  assert.match(fs.readFileSync('menu/index.html', 'utf8'), new RegExp(`PARP_VERSION="${v.replace(/\./g, '\\.')}"`));
   assert.match(
     fs.readFileSync('docs/game-design-master-doc.html', 'utf8'),
     new RegExp(`name="version" content="${v.replace(/\./g, '\\.')}"`),

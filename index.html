@@ -1,27 +1,12 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="robots" content="noindex"><meta name="seo_hidden" content="true"><meta name="theme-color" content="#0d100c"><meta name="version" content="0.3.1">
+<meta name="robots" content="noindex"><meta name="seo_hidden" content="true"><meta name="theme-color" content="#07090a">
 <title>PARP · Partisan Project</title><link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="assets/css/nokia.css">
-<script>window.PARP_VERSION="0.3.1"</script></head>
-<body>
-<main class="phone">
-  <h1 class="sr-only">PARP: Partisan Project index</h1>
-  <div class="brand"><span>PARP</span><small>Partisan Project</small></div>
-  <div class="lcd"><div class="screen lit" id="screen"><div id="content" style="display:flex;flex-direction:column;height:100%"></div></div></div>
-  <div class="keys">
-    <div class="nav"><button class="key soft" id="soft-l" aria-label="Select">Select</button>
-      <div class="pad" role="group" aria-label="Navigation"><button class="u" data-key="up" aria-label="Up">▲</button><button class="d" data-key="down" aria-label="Down">▼</button><button class="l" data-key="back" aria-label="Back">◀</button><button class="r" data-key="select" aria-label="Select">▶</button></div>
-      <button class="key soft" id="soft-r" aria-label="Back">Back</button></div>
-    <div class="num" role="group" aria-label="Number keys, 1 to 9 open the matching menu entry">
-      <button class="key" data-key="1">1<small>WRK</small></button><button class="key" data-key="2">2<small>OPR</small></button><button class="key" data-key="3">3<small>VWR</small></button>
-      <button class="key" data-key="4">4<small>GDD</small></button><button class="key" data-key="5">5<small>MAP</small></button><button class="key" data-key="6">6<small>MOOD</small></button>
-      <button class="key" data-key="7">7<small>SND</small></button><button class="key" data-key="8">8<small>ABT</small></button><button class="key" data-key="9">9<small>AVDN</small></button>
-    </div>
-  </div>
-  <div class="stencil" aria-hidden="true">RADIO SET MK I</div>
-  <p class="foot">↑ ↓ MOVE · ENTER SELECT · 1–9 JUMP · ESC BACK</p>
-</main>
-<noscript><nav class="foot"><a href="workbench/">Workbench</a> · <a href="operator/">Operator</a> · <a href="viewer/">Viewer</a> · <a href="docs/game-design-master-doc.html">Design doc</a> · <a href="docs/master-roadmap.html">Roadmap</a></nav></noscript>
-<script type="module" src="assets/js/index.js"></script>
+<style>html,body{height:100%;margin:0;background:#07090a;overflow:hidden}iframe{display:block;width:100%;height:100%;border:0}</style>
+</head><body>
+<!-- Shell: owns the sound layer (shared/sound-layer.js) and shows every other page in one frame, so the music
+     plays on while you move between the opening scene, the index, the demos and the documents. -->
+<iframe id="view" title="Partisan Project" allow="autoplay; fullscreen; gamepad" allowfullscreen></iframe>
+<noscript><nav style="color:#c8d4a8;font:14px monospace;padding:16px"><a href="intro/">Opening scene</a> · <a href="menu/">Index</a> · <a href="workbench/">Workbench</a> · <a href="operator/">Operator</a> · <a href="bench/">Bench Lab</a> · <a href="viewer/">Viewer</a> · <a href="docs/game-design-master-doc.html">Design doc</a> · <a href="docs/master-roadmap.html">Roadmap</a></nav></noscript>
+<script type="module" src="shell.js"></script>
 </body></html>

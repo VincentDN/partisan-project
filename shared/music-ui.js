@@ -2,11 +2,14 @@
 //   #music-toggle (♪ button), [data-track] buttons, #music-volume slider, #music-level readout.
 // Music starts on by default at a low volume; where the browser blocks autoplay it starts on the
 // first click or key press. The choice persists per browser (sound-layer.js).
+import './frame.js';
 import {soundLayer} from './sound-layer.js';
 
-export function bindMusicUI() {
+/** @param {{scene?: 'bench' | 'viewer'}} [options] bench: the music comes out of the old radio with the camp around it; viewer: clean. */
+export function bindMusicUI({scene = 'viewer'} = {}) {
   const sound = soundLayer(),
     prefs = sound.prefs;
+  sound.scene(scene);
   const toggle = document.querySelector('#music-toggle'),
     volume = document.querySelector('#music-volume');
   const FADE = 1.5;

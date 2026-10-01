@@ -5,7 +5,7 @@ import * as T from 'three';
 import {solveTwoBone} from './ik.js';
 
 const UPPER = 0.4,
-  FORE = 0.38;
+  FORE = 0.38; // defaults; a scene can pass its own lengths
 
 function box(w, h, d, y, parent, material) {
   const m = new T.Mesh(new T.BoxGeometry(w, h, d), material);
@@ -53,7 +53,9 @@ function poseHand(h, curl, pinch) {
 
 export class Arms {
   /** @param {{R: number[], L: number[]}} shoulders world positions @param {number} sleeveColor */
-  constructor(shoulders, sleeveColor = 0x55603f) {
+  constructor(shoulders, sleeveColor = 0x55603f, {upper: upperLength = UPPER, fore: foreLength = FORE, thickness = 1} = {}) {
+    this.upper = upperLength;
+    this.fore = foreLength;
     this.group = new T.Group();
     this.group.name = 'arms';
     const sleeve = new T.MeshStandardMaterial({color: sleeveColor, roughness: 0.9, flatShading: true}),
@@ -61,8 +63,8 @@ export class Arms {
       skin = new T.MeshStandardMaterial({color: 0xba8c69, roughness: 0.8, flatShading: true});
     this.side = {};
     for (const s of ['R', 'L']) {
-      const upper = new T.Mesh(new T.BoxGeometry(0.085, UPPER, 0.085), sleeve),
-        fore = new T.Mesh(new T.BoxGeometry(0.07, FORE, 0.07), sleeve),
+      const upper = new T.Mesh(new T.BoxGeometry(0.085 * thickness, upperLength, 0.085 * thickness), sleeve),
+        fore = new T.Mesh(new T.BoxGeometry(0.07 * thickness, foreLength, 0.07 * thickness), sleeve),
         hand = buildHand(s, skin, glove);
       for (const m of [upper, fore]) {
         m.castShadow = m.receiveShadow = true;
@@ -82,7 +84,7 @@ export class Arms {
     // The operator leans toward the work: the shoulder follows the target a little along x.
     a.shoulder.x = a.home.x + (target.x - a.home.x) * lean;
     const pole = new T.Vector3(s === 'R' ? 0.6 : -0.6, -1, -0.2);
-    const ik = solveTwoBone(a.shoulder, target, UPPER, FORE, pole);
+    const ik = solveTwoBone(a.shoulder, target, this.upper, this.fore, pole);
     a.error = ik.clamped ? target.distanceTo(ik.wrist) : 0;
     const place = (mesh, from, to) => {
       mesh.position.copy(from).add(to).multiplyScalar(0.5);

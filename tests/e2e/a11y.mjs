@@ -14,8 +14,9 @@ if (!process.env.ROOT) {
 const server = await startServer(8196),
   browser = await launch();
 const pages = [
-  ['index (splash)', '', async p => p.waitForFunction(() => window.PARP_INDEX?.ready)],
-  ['index (menu)', '#menu', async p => p.waitForFunction(() => window.PARP_INDEX?.ready)],
+  ['opening scene', 'intro/', async p => p.waitForFunction(() => window.PARP_INTRO?.ready, null, {timeout: 90000})],
+  ['index (splash)', 'menu/', async p => p.waitForFunction(() => window.PARP_INDEX?.ready && window.PARP_MENU?.ready)],
+  ['index (menu)', 'menu/#menu', async p => p.waitForFunction(() => window.PARP_INDEX?.ready && window.PARP_MENU?.ready)],
   ['workbench', 'workbench/', async p => p.waitForSelector('#build .slot', {timeout: 60000})],
   ['operator', 'operator/', async p => p.waitForFunction(() => window.PARP_OPERATOR?.ready, null, {timeout: 60000})],
   ['operator (recon)', 'operator/#base=recon', async p => p.waitForFunction(() => window.PARP_OPERATOR?.ready, null, {timeout: 60000})],

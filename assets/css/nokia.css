@@ -9,21 +9,18 @@
 }
 *{box-sizing:border-box}
 html,body{height:100%}
-body{margin:0;display:grid;place-items:center;padding:18px 12px;background:#0d100c;color:var(--stencil);
-  font:14px/1.4 ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;
-  background-image:linear-gradient(45deg,#ffffff06 25%,transparent 25% 75%,#ffffff06 75%),linear-gradient(45deg,#ffffff06 25%,transparent 25% 75%,#ffffff06 75%);
-  background-size:4px 4px;background-position:0 0,2px 2px}
-.phone{width:min(360px,94vw);padding:22px 20px 24px;border-radius:38px 38px 46px 46px;
-  background:linear-gradient(160deg,var(--body-hi),var(--body) 40%,var(--body-lo));
-  box-shadow:inset 0 2px 0 #ffffff1a,inset 0 -3px 0 #0008,0 24px 60px #000c,0 0 0 2px #0a0c09;position:relative}
-.phone::before{content:"";position:absolute;left:50%;top:9px;width:54px;height:5px;border-radius:3px;background:#0a0c09;transform:translateX(-50%);box-shadow:inset 0 1px 0 #000}
-.brand{display:flex;justify-content:space-between;align-items:baseline;margin:6px 4px 10px;letter-spacing:.32em;font-weight:700;font-size:12px;color:var(--stencil);text-transform:uppercase}
-.brand small{letter-spacing:.12em;font-weight:400;color:#8b9a77;font-size:10px}
-/* The LCD */
-.lcd{position:relative;border-radius:10px;padding:8px;background:#0c100a;box-shadow:inset 0 0 0 2px #000,inset 0 4px 10px #000}
-.screen{position:relative;height:300px;overflow:hidden;background:var(--lcd-1);color:var(--lcd-0);border-radius:3px;display:flex;flex-direction:column;
+body{margin:0;background:#0d100c;color:var(--stencil);overflow:hidden;
+  font:14px/1.4 ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace}
+/* The scene (the workbench table with the phone lying on it) is drawn behind; the LCD is a flat element that menu.js
+   lays exactly over the phone's screen with a matrix3d. Without WebGL (body.flat) it simply sits centred. */
+#stage{position:fixed;inset:var(--topbar,40px) 0 0 0}
+#stage canvas{display:block;width:100%;height:100%}
+.lcd-frame{position:fixed;left:0;top:var(--topbar,40px);width:360px;height:300px;margin:0;transform-origin:0 0;z-index:5}
+body.flat .lcd-frame{left:50%;top:calc(50% + var(--topbar,40px)/2);margin:-150px 0 0 -180px;width:360px;height:300px;box-shadow:0 0 0 3px #000,0 20px 60px #000c}
+.screen{position:relative;width:100%;height:100%;overflow:hidden;background:var(--lcd-1);color:var(--lcd-0);display:flex;flex-direction:column;
   font-weight:700;text-transform:uppercase;letter-spacing:.04em;font-size:13px;
   background-image:radial-gradient(circle at 50% 40%,var(--lcd-2),var(--lcd-1) 75%)}
+#content{display:flex;flex-direction:column;height:100%}
 .screen.lit{filter:brightness(1.06)}
 /* pixel grid + scanline-ish dither over everything on the LCD */
 .screen::after{content:"";position:absolute;inset:0;pointer-events:none;mix-blend-mode:multiply;opacity:.5;
@@ -32,9 +29,10 @@ body{margin:0;display:grid;place-items:center;padding:18px 12px;background:#0d10
 .bars{display:inline-flex;align-items:flex-end;gap:1px;height:10px}.bars i{width:3px;background:var(--lcd-0)}.bars i:nth-child(1){height:3px}.bars i:nth-child(2){height:5px}.bars i:nth-child(3){height:7px}.bars i:nth-child(4){height:10px}
 .batt{display:inline-block;width:18px;height:9px;border:2px solid var(--lcd-0);position:relative;margin-left:5px;vertical-align:-1px}.batt::after{content:"";position:absolute;right:-5px;top:1px;width:3px;height:3px;background:var(--lcd-0)}.batt b{display:block;height:100%;width:70%;background:var(--lcd-0)}
 .title{padding:4px 7px;background:var(--lcd-0);color:var(--lcd-1);display:flex;justify-content:space-between;font-size:12px}
-.splash{flex:1;display:grid;place-items:center;text-align:center;padding:6px}
-.splash canvas{width:100%;max-width:300px;image-rendering:pixelated;border:2px solid var(--lcd-0)}
-.splash h1{margin:6px 0 0;font-size:18px;letter-spacing:.3em}.splash p{margin:2px 0 0;font-size:11px}
+.splash{flex:1;min-height:0;position:relative;display:flex;flex-direction:column;text-align:center}
+.splash canvas{flex:1;min-height:0;width:100%;height:100%;object-fit:cover;image-rendering:pixelated;display:block}
+.splash .cap{background:var(--lcd-0);color:var(--lcd-1);padding:5px 6px 6px}
+.splash h1{margin:0;font-size:18px;letter-spacing:.3em}.splash p{margin:2px 0 0;font-size:11px}
 .menu{flex:1;overflow:auto;margin:0;padding:0;list-style:none;scrollbar-width:none}
 .menu::-webkit-scrollbar{display:none}
 .menu a{display:flex;gap:8px;align-items:center;padding:5px 7px;color:inherit;text-decoration:none;border-bottom:1px dotted #16200f66}
@@ -44,28 +42,16 @@ body{margin:0;display:grid;place-items:center;padding:18px 12px;background:#0d10
   background-image:linear-gradient(45deg,#ffffff14 25%,transparent 25% 75%,#ffffff14 75%),linear-gradient(45deg,#ffffff14 25%,transparent 25% 75%,#ffffff14 75%);background-size:4px 4px;background-position:0 0,2px 2px}
 .menu a:focus-visible{outline:none}
 .help{min-height:44px;padding:5px 7px;border-top:2px solid var(--lcd-0);font-size:11px;font-weight:400;text-transform:none;letter-spacing:0}
-.softkeys{display:flex;justify-content:space-between;padding:3px 7px;border-top:2px solid var(--lcd-0);font-size:12px}
+.softkeys{display:flex;justify-content:space-between;border-top:2px solid var(--lcd-0);font-size:12px}
+.softkeys button{font:inherit;letter-spacing:inherit;text-transform:inherit;color:inherit;background:none;border:0;padding:4px 9px;cursor:pointer;min-height:24px}
+.softkeys button:hover,.softkeys button:focus-visible{background:var(--lcd-0);color:var(--lcd-1);outline:none}
 .about{padding:8px 9px;overflow:auto;flex:1;font-weight:400;text-transform:none;letter-spacing:0;font-size:12px}.about b{text-transform:uppercase}
 .about a{color:inherit}
-/* Keypad */
-.keys{display:grid;gap:10px;margin-top:16px}
-.nav{display:grid;grid-template-columns:1fr 84px 1fr;align-items:center;gap:10px}
-.soft{height:34px;border-radius:17px}
-.pad{position:relative;height:84px;border-radius:50%;background:radial-gradient(circle at 40% 30%,#5a6652,#232820);box-shadow:inset 0 1px 0 #fff3,0 3px 0 #0b0d0a;display:grid;place-items:center}
-.pad button{position:absolute;background:transparent;border:0;color:var(--stencil);font-size:12px;width:30px;height:28px;padding:0;cursor:pointer}
-.pad .u{top:0;left:27px}.pad .d{bottom:0;left:27px}.pad .l{left:0;top:28px}.pad .r{right:0;top:28px}
-.key{font:700 13px/1 ui-monospace,monospace;color:var(--stencil);background:linear-gradient(#444d3d,#2b3126);border:0;border-radius:9px;height:34px;box-shadow:inset 0 1px 0 #fff2,0 3px 0 #0b0d0a;cursor:pointer;text-transform:uppercase}
-.key:active{transform:translateY(2px);box-shadow:inset 0 1px 0 #fff2,0 1px 0 #0b0d0a}
-.key:focus-visible,.pad button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.num{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.num .key small{display:block;font-size:8px;font-weight:400;color:#95a483;letter-spacing:.1em}
-.foot{margin:14px 4px 0;font-size:10px;color:#7d8c6b;text-align:center;letter-spacing:.08em}
+.foot{position:fixed;left:0;right:0;bottom:8px;margin:0;z-index:6;font-size:10px;color:#9aa88a;text-align:center;letter-spacing:.08em;text-shadow:0 1px 6px #000}
 .foot a{color:inherit}
-.stencil{position:absolute;right:16px;bottom:8px;font-size:9px;letter-spacing:.3em;color:#ffffff22;transform:rotate(-2deg)}
 @media (prefers-reduced-motion:no-preference){
   .boot{animation:boot .9s steps(8) both}
   @keyframes boot{from{filter:brightness(.4) contrast(1.6)}to{filter:none}}
   .blink{animation:blink 1s steps(2) infinite}@keyframes blink{50%{opacity:0}}
 }
-@media (max-width:380px){.screen{height:270px}}
 .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}

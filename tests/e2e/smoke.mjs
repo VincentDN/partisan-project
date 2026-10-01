@@ -30,9 +30,15 @@ const noProblems = page =>
     [],
   );
 
-await check('index: splash, menu, number key navigates', async () => {
-  const page = await open(browser, server.url);
-  await page.waitForFunction(() => window.PARP_INDEX?.ready);
+await check('index: the Nokia screen lies on the table, splash, menu, number key navigates', async () => {
+  const page = await open(browser, server.url + 'menu/');
+  await page.waitForFunction(() => window.PARP_INDEX?.ready && window.PARP_MENU?.ready);
+  assert.equal(await page.evaluate(() => window.PARP_MENU.flat ?? false), false, 'WebGL scene is behind the screen');
+  assert.match(
+    await page.locator('#lcd-frame').evaluate(e => e.style.transform),
+    /^matrix3d\(/,
+    'LCD is laid on the phone with a projective transform',
+  );
   assert.equal(await page.evaluate(() => window.PARP_INDEX.mode), 'splash');
   await page.keyboard.press('Enter');
   assert.equal(await page.evaluate(() => window.PARP_INDEX.mode), 'menu');
@@ -42,6 +48,34 @@ await check('index: splash, menu, number key navigates', async () => {
   await Promise.all([page.waitForURL(/operator\/?$/), page.keyboard.press('2')]);
   noProblems(page);
   await page.close();
+});
+
+await check('opening scene: the table, the rifle, four buttons; the shell keeps one sound layer across pages', async () => {
+  const page = await open(browser, server.url + 'intro/');
+  await page.waitForFunction(() => window.PARP_INTRO?.ready, null, {timeout: 90000});
+  const labels = await page.locator('.actions a').allInnerTexts();
+  assert.deepEqual(
+    labels.map(l => l.replace(/\s+E$/, '').trim()),
+    ['Customize this weapon', 'PARTISAN project index', 'Read Game Design Doc', 'Load Advanced animations test'],
+  );
+  assert.equal(await page.locator('.pbar a[href$="menu/"]').count(), 1, 'top bar has INDEX');
+  assert.equal(await page.locator('.pbar a[href$="game-design-master-doc.html"]').count(), 1, 'top bar has DESIGN DOC');
+  assert.equal(await page.locator('.pbar #music-toggle').count(), 1, 'music player is in the top bar');
+  noProblems(page);
+  await page.close();
+  // The shell: pages open inside one frame that owns the sound layer, and the address follows the frame.
+  const shell = await open(browser, server.url);
+  await shell.waitForFunction(() => document.querySelector('#view')?.contentWindow?.PARP_INTRO?.ready, null, {timeout: 90000});
+  const same = () =>
+    shell.evaluate(() => document.querySelector('#view').contentWindow.parent.parpSound === window.parpSound && !!window.parpSound);
+  assert.equal(await same(), true, 'the shell owns the sound layer');
+  const frame = shell.frameLocator('#view');
+  await frame.locator('.pbar a[href$="menu/"]').click();
+  await shell.waitForFunction(() => document.querySelector('#view').contentWindow.location.pathname.endsWith('/menu/'));
+  await shell.waitForFunction(() => document.querySelector('#view').contentWindow.PARP_INDEX?.ready);
+  assert.equal(await same(), true, 'the same sound layer after navigating');
+  await shell.waitForFunction(() => location.search.includes('p=menu'), null, {timeout: 5000});
+  await shell.close();
 });
 
 await check('operator: loads, equipment toggles, zones are independent, hash round-trips, poses and weapon', async () => {

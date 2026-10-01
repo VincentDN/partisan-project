@@ -4,6 +4,13 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 ## [0.3.1] · 2026-10-01
 
+### Changed (site structure)
+- **Opening scene restored** (`intro/`): the old workbench table, your saved rifle, the old radio tuning in, the FIA flag. Buttons bottom left: Customize this weapon, PARTISAN project index, Read Game Design Doc, Load Advanced animations test (Bench Lab). Arms are the Bench Lab IK arms; the code-built operator stays retired.
+- **The music plays through the whole site**: `index.html` is now a shell that owns the sound layer and shows every page in one frame (ADR 0010). The radio and camp sound (`shared/bench-audio.js`) plays on the scene and the index, the clean track elsewhere.
+- **One top bar on every page** (`shared/topbar.js`): Nokia LCD strip with INDEX and DESIGN DOC buttons and the music player (on/off, three tracks, volume). It replaces the per-page headers and music panels.
+- **The Nokia index lies on the workbench table** (`menu/`): a close-up of a phone on the table with the live LCD laid over its screen by a projective transform (`shared/homography.js`). The phone body and keypad are gone from the HTML; the dithered key art is full width.
+- Favicon inverted: dark green glyph on a bright green LCD card, 1px dark border and a dithered drop shadow.
+
 ### Performance
 - **Idle render throttle** (`shared/stage.js`): a still scene renders at 8 fps instead of 60; any input, camera move or `stage.wake()` restores full rate; demos declare self-animation with `stage.setAnimated()`. Big battery and heat win on phones.
 - **Half-size HDR environments** (512x256, `tools/assets/downscale-hdr.py`) are loaded on phones and coarse pointers: about a quarter of the bytes and GPU memory (Operator page 1.79 to 1.07 MB).

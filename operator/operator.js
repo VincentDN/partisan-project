@@ -9,7 +9,7 @@ import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
 import {shareCardDataUrl} from './share-card.js';
 import {startTour} from '../shared/tour.js';
 import {createStage, reduceMotion} from '../shared/stage.js';
-import {bindMusicUI} from '../shared/music-ui.js';
+import {mountTopBar} from '../shared/topbar.js';
 import {camoFor, FABRIC} from '../shared/camo.js';
 import {Rig, blinkAt} from './rig.js';
 import {PALETTES, CAMO_IDS, VIEWS, HERO_AZIMUTH, TRIANGLE_BUDGET, ROSTER, BASES, DEFAULT_BASE, defaultsFor} from './config.js';
@@ -20,7 +20,7 @@ import {encode, decode, parseLegacy} from '../shared/loadout.js';
 
 const $ = s => document.querySelector(s);
 const status = $('#status');
-bindMusicUI();
+mountTopBar({title: 'Operator Customiser', scene: 'viewer'});
 
 const stage = await createStage($('#stage'), {
   environment: 'outdoor',

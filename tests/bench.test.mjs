@@ -148,3 +148,42 @@ test('two-bone IK keeps bone lengths, reaches reachable targets and clamps unrea
   const far = solveTwoBone(s, v(3, 0, 3), 0.4, 0.38, v(0, -1, 0));
   assert.ok(far.clamped && far.reach <= 0.78);
 });
+
+import {homography, apply, toMatrix3d, quadTransform} from '../shared/homography.js';
+test('homography maps the rectangle onto the quad and keeps straight lines straight', () => {
+  const src = [
+      [0, 0],
+      [360, 0],
+      [360, 300],
+      [0, 300],
+    ],
+    dst = [
+      [120, 80],
+      [510, 60],
+      [560, 400],
+      [90, 380],
+    ];
+  const H = homography(src, dst);
+  src.forEach((p, i) => {
+    const q = apply(H, p);
+    assert.ok(Math.hypot(q[0] - dst[i][0], q[1] - dst[i][1]) < 1e-6, `corner ${i}`);
+  });
+  // The centre of the rectangle lands inside the quad, and the midpoint of an edge stays on that edge's image line.
+  const c = apply(H, [180, 150]);
+  assert.ok(c[0] > 90 && c[0] < 560 && c[1] > 60 && c[1] < 400);
+  const m = apply(H, [180, 0]),
+    a = dst[0],
+    b = dst[1];
+  const cross = (m[0] - a[0]) * (b[1] - a[1]) - (m[1] - a[1]) * (b[0] - a[0]);
+  assert.ok(Math.abs(cross) < 1e-4);
+  assert.match(quadTransform(360, 300, dst), /^matrix3d\((-?[\d.e+-]+,){15}-?[\d.e+-]+\)$/);
+  assert.equal(toMatrix3d([1, 0, 0, 0, 1, 0, 0, 0, 1]), 'matrix3d(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1)');
+  assert.throws(() =>
+    homography(src, [
+      [0, 0],
+      [0, 0],
+      [0, 0],
+      [0, 0],
+    ]),
+  );
+});

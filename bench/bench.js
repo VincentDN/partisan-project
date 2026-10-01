@@ -2,12 +2,12 @@
 // adds a choreographed task (reach, take off, tray, fetch, fit) with two IK arms. No firing.
 import * as T from 'three';
 import {createStage, reduceMotion} from '../shared/stage.js';
-import {bindMusicUI} from '../shared/music-ui.js';
+import {mountTopBar} from '../shared/topbar.js';
 import {startTour} from '../shared/tour.js';
-import {decode, encode, toLegacy, parseLegacy} from '../shared/loadout.js';
-import {MODELS, DEFAULT_MODEL, RAIL_OF} from '../workbench/models.js';
+import {encode, toLegacy} from '../shared/loadout.js';
+import {RAIL_OF} from '../workbench/models.js';
 import {loadRifle, applySlotState} from '../workbench/rifle-instance.js';
-import {applyLoadout, emptyLoadout, installCamo} from '../workbench/apply-loadout.js';
+import {applyLoadout, emptyLoadout, installCamo, savedLoadout} from '../workbench/apply-loadout.js';
 import {resolve} from '../workbench/rails.js';
 import {blockedBy} from '../workbench/stats.js';
 import * as mech from '../workbench/mech.js';
@@ -31,7 +31,7 @@ let rifle,
   ghosts = null,
   soundsOn = true;
 
-bindMusicUI();
+mountTopBar({title: 'Bench Lab (experiment)', scene: 'bench'});
 const play = fn => soundsOn && fn();
 
 // ---------- Build persistence (shared with the Workbench and the Operator Customiser) ----------
@@ -47,17 +47,6 @@ function persist() {
     localStorage.setItem('parp-loadout', legacy);
   } catch {}
 }
-function startLoadout() {
-  let text = location.hash;
-  if (!text.replace('#', '')) {
-    try {
-      text = localStorage.getItem('parp-loadout') || '';
-    } catch {}
-  }
-  const l = decode(text) || parseLegacy('');
-  return MODELS[l.rifle] ? l : {...l, rifle: DEFAULT_MODEL};
-}
-
 // ---------- Rifle ----------
 async function mount(l) {
   statusEl.hidden = false;
@@ -353,7 +342,7 @@ try {
   stage.scene.add(benchProps.group);
   arms = new Arms({R: [0.22, 0.46, -0.78], L: [-0.22, 0.46, -0.78]});
   stage.scene.add(arms.group);
-  await mount(startLoadout());
+  await mount(savedLoadout());
   parkArms();
   stage.setAnimated(() => actions.busy);
   stage.onFrame(() => actions.tick());
