@@ -240,6 +240,11 @@ await check('workbench: the guided tour steps through, is remembered, and the st
   const page = await open(browser, server.url + 'workbench/');
   await page.waitForSelector('#build .slot', {timeout: 60000});
   await page.waitForSelector('#stats .bar', {timeout: 10000});
+  assert.equal(
+    await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()),
+    '#ef8f39',
+    'shared/tokens.css loaded through panel-ui.css',
+  );
   assert.equal(await page.locator('#first-run').isVisible(), true, 'tour shows on first visit');
   assert.match(await page.locator('#first-run').innerText(), /1 \/ 3/);
   await page.locator('#first-run button', {hasText: 'Next'}).click();

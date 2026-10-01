@@ -1009,7 +1009,7 @@
    "milestone": "D",
    "size": "S",
    "bu": 8,
-   "status": "planned",
+   "status": "done",
    "deps": [],
    "agent": "any",
    "needs": [],

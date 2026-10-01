@@ -5,10 +5,10 @@ Small on purpose. Read this first, then `AGENTS.md`. Plan and sizes: [`README.md
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-01 17:44 UTC · agent · (no packet) · partial**
+**2026-10-01 17:47 UTC · agent · (no packet) · partial**
 
-- Branch `claude/friendly-dijkstra-4ky9w6` at `46e5284`; **8 uncommitted file(s)** (commit before stopping): M CHANGELOG.md,  M docs/CODEMAP.md,  M docs/agent-ops/packets.json,  M docs/master-roadmap.md,  M operator/index.html,  M operator/operator.js.
-- Last commits: 46e5284 WP-Q4: guided first-run tour; restore Workbench stats panel · 52dd06f WP-D4: audio direction one-pager · 7c8e760 WP-C11: spring-based secondary motion on the operator idle
+- Branch `claude/friendly-dijkstra-4ky9w6` at `f3f1562`; **8 uncommitted file(s)** (commit before stopping): M CHANGELOG.md,  M docs/CODEMAP.md,  M docs/agent-ops/packets.json,  M docs/master-roadmap.md,  M shared/panel-ui.css,  M tests/e2e/smoke.mjs.
+- Last commits: f3f1562 WP-I4: combined operator + weapon share card · 46e5284 WP-Q4: guided first-run tour; restore Workbench stats panel · 52dd06f WP-D4: audio direction one-pager
 - What happened: (write one or two sentences)
 - Next step: (name the exact next action, file and command)
 <!-- handoff:end -->
