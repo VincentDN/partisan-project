@@ -48,9 +48,9 @@ Colours are sampled from the references (k-means on the images, then curated by 
 | Operator | Built from | Status |
 |---|---|---|
 | **Base Operator** | Purchased pack, unmodified silhouette, recolourable | **Live** (v0.3.0) |
-| **Recon** | Hooded mask, houndstooth scarf, plate carrier + admin pouch, patches, radio, carabiner | Planned (`WP-C2`, `WP-C3`) |
-| **Insurgent** | Plaid shirt, shemagh, bare head or beanie, AK kit, minimal rig | Planned (`WP-C5`) |
-| **Enforcer** | Black kit, bold belt pouches, NVG helmet, modern rifle | Planned (`WP-C6`) |
+| **Recon** | Hood over the balaclava, houndstooth scarf, plate carrier, chest radio; patches and carabiner still to add | **Live v1** (`WP-C2` done; `WP-C3` patches/props + sign-off open) |
+| **Insurgent** | Plaid shirt (generated fabric on a new torso shirt), shemagh, knit beanie, AK kit, minimal rig | **Live v1** (`WP-C5` done; owner sign-off open) |
+| **Enforcer** | Black kit, bold belt pouches, beanie / NVG helmet, shemagh, modern rifle | **Live v1** (`WP-C6` done: Base parts in black plus the headwear pack; owner sign-off open) |
 
 Mapping from keyframes to roster names is the agent's proposal; the owner confirms it in `WP-C2`/`C5`/`C6` sign-off.
 The *Base Operator* style presets in the customiser (Recon-/Insurgent-/Enforcer-style) are placeholders that show

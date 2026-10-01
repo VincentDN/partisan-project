@@ -96,7 +96,7 @@ export const PALETTES = {
   fabric: [['olive', 'Olive', '#4b5a3a'], ['khaki', 'Khaki', '#a08c62'], ['tan', 'Tan', '#8c7350'], ['black', 'Black', '#23262b'], ['grey', 'Grey', '#63676b'], ['navy', 'Navy', '#2a3348']],
 };
 // Generated camo patterns (shared/camo.js) offered on textured zones, plus 'original' (the pack's own camo).
-export const CAMO_IDS = ['woodland', 'desert', 'urban', 'flora'];
+export const CAMO_IDS = ['woodland', 'desert', 'urban', 'flora', 'recon', 'plaidGreen', 'plaidBrown'];
 
 export const VIEWS = {
   full:  {label: 'Full',  target: [0, 0.92, 0], distance: 3.5, height: 0.9},
@@ -110,12 +110,8 @@ export const HERO_AZIMUTH = 24; // degrees, front-right three-quarter: the hero 
 // Triangle budget for the finished roster (docs/art-direction.md): operator + equipment.
 export const TRIANGLE_BUDGET = 15000;
 
-// Roadmap roster entries that are not modelled yet: shown locked, built from the moodboard sheets.
-export const PLANNED = [
-  {id: 'recon',     label: 'Recon',         status: 'planned', note: 'Hooded, scarf, plate carrier: see docs/moodboard (Recon sheet v01-09).'},
-  {id: 'insurgent', label: 'Insurgent',     status: 'planned', note: 'Plaid shirt, shemagh, G3-pattern rifle: keyframe 1 and the AK rifleman in keyframe 2.'},
-  {id: 'enforcer',  label: 'Enforcer',      status: 'planned', note: 'Black kit, bold pouches, modern rifle: the foreground operator of keyframe 2.'},
-];
+// Roadmap roster entries that are not modelled yet: shown locked ({id, label, status: 'planned', note}).
+export const PLANNED = [];
 
 // Looks assembled from Base Operator parts, hinting at the planned roster.
 export const PRESETS = [
@@ -128,9 +124,81 @@ export const PRESETS = [
 // A base = one skinned character on the shared skeleton (docs/engineering/skeleton-contract.md) plus the
 // equipment slots, colour zones and looks that fit it. Adding Recon/Insurgent/Enforcer = adding an entry.
 export const DEFAULT_BASE = 'base';
-export const BASES = {
-  base: {id: 'base', label: 'Base Operator', model: '../assets/models/operators/base-operator.glb', parts: PARTS, slots: SLOTS, zones: ZONES, presets: PRESETS, status: 'available'},
+// ---- Recon: the Base Operator skeleton and meshes plus the Recon pack (hood, houndstooth scarf, chest radio) ----
+const RECON_PARTS = {
+  ...PARTS,
+  hood:  {nodes: ['SK_Recon_Hood']},
+  scarf: {nodes: ['SK_Recon_Scarf']},
+  radio: {nodes: ['SK_Recon_Radio']},
 };
+const bySlot = (id, patch) => SLOTS.map(s => s.id !== id ? s : {...s, ...patch});
+const RECON_SLOTS = [
+  {id: 'head', label: 'Headgear', camera: 'head', default: 'hood', options: [
+    {id: 'hood',   label: 'Hood',           show: on('hood')},
+    {id: 'nvg',    label: 'Helmet + NVG',   show: on('helmet', 'nvg')},
+    {id: 'helmet', label: 'Helmet',         show: on('helmet')},
+    {id: 'bare',   label: 'Bare head',      show: on()},
+  ]},
+  {id: 'neck', label: 'Scarf', camera: 'head', default: 'on', options: [
+    {id: 'on',  label: 'Houndstooth scarf', show: on('scarf')},
+    {id: 'off', label: 'None',              show: on()},
+  ]},
+  {id: 'radio', label: 'Chest radio', camera: 'torso', default: 'on', options: [
+    {id: 'on',  label: 'Radio', show: on('radio')},
+    {id: 'off', label: 'None',  show: on()},
+  ]},
+  ...bySlot('comms', {default: 'off'}).filter(s => s.id === 'comms'),
+  ...['face', 'armor', 'rig', 'belt'].map(id => SLOTS.find(s => s.id === id)),
+  ...bySlot('pack', {default: 'off'}).filter(s => s.id === 'pack'),
+  ...bySlot('holsters', {default: 'right'}).filter(s => s.id === 'holsters'),
+  ...SLOTS.filter(s => s.id === 'guards'),
+  ...bySlot('weapon', {default: 'ak15k'}).filter(s => s.id === 'weapon'),
+];
+const RECON_ZONES = [
+  ...ZONES.map(z => ({top: {...z, default: 'recon'}, pants: {...z, default: 'recon'}, armor: {...z, default: 'olive'}, helmet: {...z, default: 'olive'}, gear: {...z, default: 'olive'}, gloves: {...z, default: 'olive'}}[z.id] || z)),
+  {id: 'hood',  label: 'Hood',   materials: ['M_Hood'],  textured: true, camera: 'head', default: 'recon',    palette: 'gear'},
+  {id: 'scarf', label: 'Scarf',  materials: ['M_Scarf'], textured: true, camera: 'head', default: 'original', palette: 'fabric'},
+];
+const RECON_PRESETS = [
+  {id: 'recon',  label: 'Recon (sheet)', state: {}},
+  {id: 'ghost',  label: 'Pale hood',     state: {'z.hood': 'urban', 'z.top': 'urban', 'z.pants': 'urban', 'z.armor': 'grey', 'z.gear': 'grey', pack: 'on', holsters: 'none'}},
+  {id: 'desert', label: 'Desert recon',  state: {'z.hood': 'desert', 'z.top': 'desert', 'z.pants': 'desert', 'z.armor': 'tan', 'z.gear': 'brown', 'z.scarf': 'sand'}},
+];
+
+export const BASES = {
+  base: {id: 'base', label: 'Base Operator', model: '../assets/models/operators/base-operator.glb', packs: ['../assets/models/operators/core-pack.glb'], parts: PARTS, slots: SLOTS, zones: ZONES, presets: PRESETS, defaults: {}, status: 'available'},
+  recon: {id: 'recon', label: 'Recon', model: '../assets/models/operators/base-operator.glb', packs: ['../assets/models/operators/core-pack.glb', '../assets/models/operators/recon-pack.glb'], parts: RECON_PARTS, slots: RECON_SLOTS, zones: RECON_ZONES, presets: RECON_PRESETS, defaults: {pose: 'hero'}, status: 'available'},
+};
+// ---- Insurgent and Enforcer: both wear the headwear pack (knit beanie, shemagh); Enforcer is otherwise Base parts in black ----
+const HEADWEAR_PARTS = {...PARTS, beanie: {nodes: ['SK_Ins_Beanie']}, shemagh: {nodes: ['SK_Ins_Shemagh']}};
+const headSlot = def => ({id: 'head', label: 'Headgear', camera: 'head', default: def, options: [
+  {id: 'beanie', label: 'Knit beanie', show: on('beanie')}, {id: 'nvg', label: 'Helmet + NVG', show: on('helmet', 'nvg')},
+  {id: 'helmet', label: 'Helmet', show: on('helmet')}, {id: 'bare', label: 'Bare head', show: on()}]});
+const faceSlot = def => ({id: 'face', label: 'Face', camera: 'head', default: def, options: [
+  {id: 'shemagh', label: 'Shemagh', show: on('shemagh')}, {id: 'mask', label: 'Mask', show: on('mask')},
+  {id: 'visor', label: 'Visor', show: on('visor')}, {id: 'both', label: 'Mask + visor', show: on('mask', 'visor')}, {id: 'bare', label: 'Bare face', show: on()}]});
+const variantSlots = (head, face, defaults) => SLOTS.map(s => {
+  const slot = s.id === 'head' ? headSlot(head) : s.id === 'face' ? faceSlot(face) : s;
+  return defaults[s.id] ? {...slot, default: defaults[s.id]} : slot;
+});
+const variantZones = (defaults, extra = []) => [...ZONES.map(z => defaults[z.id] ? {...z, default: defaults[z.id]} : z), ...extra];
+const HEADWEAR_ZONES = [
+  {id: 'beanie',  label: 'Beanie',  materials: ['M_Beanie'],  camera: 'head', default: 'original', palette: 'dark'},
+  {id: 'shemagh', label: 'Shemagh', materials: ['M_Shemagh'], textured: true, camera: 'head', default: 'original', palette: 'fabric'},
+];
+const INSURGENT_SLOTS = variantSlots('beanie', 'shemagh', {comms: 'off', armor: 'soft', rig: 'mags', belt: 'on', pack: 'off', holsters: 'none', guards: 'none', weapon: 'ak74m'});
+const ENFORCER_SLOTS = variantSlots('beanie', 'shemagh', {comms: 'off', armor: 'plates', rig: 'full', belt: 'on', pack: 'off', holsters: 'both', guards: 'both', weapon: 'ak15k'});
+
+BASES.insurgent = {id: 'insurgent', label: 'Insurgent', model: BASES.base.model, packs: ['../assets/models/operators/core-pack.glb', '../assets/models/operators/insurgent-pack.glb'], parts: HEADWEAR_PARTS,
+  slots: INSURGENT_SLOTS, zones: variantZones({top: 'plaidGreen', pants: 'khaki', gear: 'brown', gloves: 'brown'}, HEADWEAR_ZONES),
+  presets: [{id: 'insurgent', label: 'Keyframe 1', state: {}}, {id: 'brown', label: 'Brown plaid', state: {'z.top': 'plaidBrown', 'z.pants': 'olive', 'z.shemagh': 'khaki'}},
+            {id: 'ak', label: 'AK rifleman', state: {'z.top': 'tan', 'z.pants': 'olive', 'z.gear': 'olive', rig: 'full', armor: 'plates', 'z.armor': 'olive', head: 'bare', face: 'shemagh'}}],
+  defaults: {pose: 'ready'}, status: 'available'};
+BASES.enforcer = {id: 'enforcer', label: 'Enforcer', model: BASES.base.model, packs: ['../assets/models/operators/core-pack.glb', '../assets/models/operators/insurgent-pack.glb'], parts: HEADWEAR_PARTS,
+  slots: ENFORCER_SLOTS, zones: variantZones({top: 'black', pants: 'black', armor: 'black', helmet: 'tan', gear: 'olive', gloves: 'black', boots: 'black'}, HEADWEAR_ZONES),
+  presets: [{id: 'enforcer', label: 'Keyframe 2', state: {}}, {id: 'nvg', label: 'NVG night', state: {head: 'nvg', face: 'both', 'z.helmet': 'black', 'z.gear': 'black'}}, {id: 'tan', label: 'Tan kit', state: {'z.top': 'tan', 'z.pants': 'tan', 'z.armor': 'brown', 'z.gear': 'brown'}}],
+  defaults: {pose: 'hero'}, status: 'available'};
+
 export const ROSTER = [...Object.values(BASES).map(b => ({id: b.id, label: b.label, status: b.status})), ...PLANNED.filter(p => !BASES[p.id])];
 
 /** Default state for a base: every slot and zone at its default, plus pose and idle. */
@@ -139,4 +207,5 @@ export const defaultsFor = base => ({
   ...Object.fromEntries(base.slots.map(s => [s.id, s.default])),
   ...Object.fromEntries(base.zones.map(z => [`z.${z.id}`, z.default])),
   pose: 'relaxed', idle: 'calm',
+  ...base.defaults,
 });

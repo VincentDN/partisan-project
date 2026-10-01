@@ -2,6 +2,17 @@
 
 Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer; `VERSION` and `index.html` change together.
 
+## [0.3.1] · 2026-10-01
+
+### Added
+- **Recon, Insurgent, Enforcer** (v1) in the Operator Customiser as roster bases: original extension packs (hood, houndstooth scarf, chest radio; knit beanie, shemagh) bound to the Base Operator skeleton by bone name, plus a shirt torso pack so "Uniform only" no longer shows a hollow chest.
+- Generated plaid and Recon camo fabrics; `tools/assets/blender_common.py`, `build-*-pack.py`, `optimize-pack.mjs`.
+- `docs/engineering/skeleton-contract.md`, skeleton-contract and per-base tests, Recon/Insurgent/Enforcer browser tests.
+
+### Fixed
+- Optimiser no longer merges materials (it had fused the top and trousers camo and two strap materials); packs keep UVs for runtime textures.
+- Helmet and other multi-primitive parts now toggle correctly.
+
 ## [0.3.0] · 2026-10-01 · "Foundation"
 
 ### Added

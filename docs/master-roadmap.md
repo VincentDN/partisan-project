@@ -30,11 +30,11 @@ Everything else (environment diorama, AI belief-model visualiser) is the 2027 ho
 |---|---|
 | Home | PARP index browser (1-bit LCD, dither, keypad), design document, this roadmap, moodboard |
 | Repository | Moved out of the portfolio site into `partisan-project`; buildless static site; three.js vendored; Pages workflow (needs one owner click, `WP-F8`) |
-| Operator Customiser | **Live v1**: the purchased soldier (8,646 tris, 83 bones) as *Base Operator*; 10 equipment slots, 8 colour zones, 5 hero poses, 3 idle animations, shareable URL looks, optional carried rifle as a prop |
+| Operator Customiser | **Live**: four operators on one skeleton, *Base*, *Recon*, *Insurgent*, *Enforcer* (extension packs bound to the purchased soldier's rig by bone name); 10+ equipment slots, 8–10 colour zones per base, 5 hero poses, 3 idle animations, shareable URL looks, optional carried rifle as a prop |
 | Weapon Workbench | **Live**: AK-74M and AK-15K, 7 slot families with rails, stats and hover deltas, rules, presets, finishes, camo, wear, photo and loadout card |
 | Asset Viewer | **Live**: inspects registered GLBs against budgets |
 | Removed | Test fire, recoil, reload, range drill, bench scene with hands, Advanced animations experiment, code-built operator, recorded foley (provenance) |
-| Not done | Real CC0 attachments and extra weapons (the build sandbox cannot reach OpenGameArt, itch.io, Sketchfab: see §5), Recon / Insurgent / Enforcer models |
+| Not done | Real CC0 attachments and extra weapons (the build sandbox cannot reach OpenGameArt, itch.io, Sketchfab: see §5); roster patches/props and owner art sign-off |
 
 ## 3. Instruction log (what the owner asked for on 1 October 2026, and where it landed)
 
@@ -63,7 +63,7 @@ Dates are **targets, not commitments**; capacity is measured in windows, not wee
 |---|---|---|---|
 | **M0 Foundation** v0.3.0 | 1 Oct 2026 | Restructure, removals, Operator Customiser v1, docs, Pages workflow | Owner enables Pages; live smoke test (WP-F8, WP-F10) |
 | **M1 Gun modder** v0.4.0 | mid Nov 2026 | Real CC0 attachments; G3A3 as third rifle; rail footprints; new slots; stat consistency | ≥ 3 weapons, visible compatibility reasons, hover deltas, presets, no code-built primitive left unregistered |
-| **M2 Operator roster** v0.5.0 | mid Dec 2026 | Recon, Insurgent, Enforcer on the shared skeleton; roster switcher; patches; more poses; idle polish; hair/face | Each operator signed off against its moodboard reference; ≤ 15 k triangles; no clipping in all poses |
+| **M2 Operator roster** v0.5.0 | mid Dec 2026 | Recon, Insurgent, Enforcer on the shared skeleton; roster switcher; patches; more poses; idle polish; hair/face | Each operator signed off against its moodboard reference; ≤ 15 k triangles; no clipping in all poses. *v1 of Recon, Insurgent and Enforcer is live (v0.3.1); sign-off, patches and more poses remain* |
 | **M3 Integration** v0.6.0 | Jan 2027 | Workbench build carried onto the operator; per-weapon grip data; versioned share codes; combined share card | Round-trip of weapon + operator + pose through a link, including legacy AK hashes |
 | **M4 Roster 2** v0.7.0 | Q1 2027 | M16, Mk14, RPK, Spear (decision), STG44, PPSh; Bren and Chauchat sources | Each item shipped as real geometry or recorded as "no free source" |
 | **M5 Production** v1.0.0 | Q2 2027 | Accessibility, performance, credits, guided first run, release | Checklist in `engineering/standards.md` |
@@ -99,13 +99,12 @@ and the import path (`import-asset.py` → `optimize-glb.mjs` → `register.mjs 
 
 ### 5.2 Characters (Operator Customiser)
 
-Done: Base Operator; slots (headgear, headset, face, body armour, chest rig, belt, backpack, holsters, pads, carried
+Done: Base Operator **plus Recon, Insurgent and Enforcer v1** (original extension packs: hood, houndstooth scarf, chest radio, knit beanie, shemagh, a shirt torso, generated plaid and recon camo); slots (headgear, headset, face, body armour, chest rig, belt, backpack, holsters, pads, carried
 weapon); colour zones (top, trousers, armour, helmet, gear, gloves, boots, skin) with the pack's own camo plus four
 generated camos; five poses (Relaxed, Hero rifle-up, Low ready, Radio check, Overwatch); three idles (Calm,
 Alert scanning, Weary); URL looks; photo export; triangle/draw-call readout against budget.
 
-Next: skeleton contract (`WP-C1`) → roster switcher (`WP-C4`) → Recon (`C2/C3`), Insurgent (`C5`), Enforcer (`C6`) →
-patches (`C7`), poses (`C8`), idle polish (`C9`), faces/hair (`C10`).
+Next: patches and props (`C3`, `C7`), more poses (`C8`), idle polish (`C9`), faces/hair (`C10`), owner sign-off of the three roster operators.
 
 *Pose model.* Poses and idles are JSON in character-space degrees applied over the rest pose, so they work on any base
 that shares the 83-bone skeleton. `tools/pose-fit.mjs` solves arm angles to hit a hand target (e.g. a rifle grip) and
@@ -137,7 +136,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 |---|---|---|---|---|
 | **M0** Foundation | v0.3.0 | 8/10 | 130 BU | 95% |
 | **M1** Gun modder: real parts, three weapons | v0.4.0 | 0/11 | 143 BU | 0% |
-| **M2** Operator roster: Recon, Insurgent, Enforcer | v0.5.0 | 2/10 | 164 BU | 10% |
+| **M2** Operator roster: Recon, Insurgent, Enforcer | v0.5.0 | 5/10 | 164 BU | 46% |
 | **M3** Integration and sharing | v0.6.0 | 0/4 | 56 BU | 0% |
 | **M4** Weapon roster 2: modern and WW2 | v0.7.0 | 0/7 | 111 BU | 0% |
 | **M5** Production acceptance | v1.0.0 | 0/5 | 64 BU | 0% |
@@ -181,11 +180,11 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | ID | Packet | Size | Status | Needs | Depends on |
 |---|---|---|---|---|---|
 | `WP-C1` | Skeleton contract: document the shared 83-bone rig, add a test that poses/idles run on any base with the same bone names | S (8) | done | — | — |
-| `WP-C2` | Recon: hood and scarf meshes skinned to the Base skeleton (bpy), plate-carrier variant | M (20) | planned | bpy, browser | `WP-C1` |
+| `WP-C2` | Recon: hood and scarf meshes skinned to the Base skeleton (bpy), plate-carrier variant | M (20) | done | bpy, browser | `WP-C1` |
 | `WP-C3` | Recon: textures, palette, patches (MP-O tag, shield), gear props (radio, carabiner, canister) | S (8) | planned | — | `WP-C2` |
 | `WP-C4` | Roster switcher: data-driven per-base slot and zone configs | S (8) | done | — | `WP-C1` |
-| `WP-C5` | Insurgent: plaid shirt, shemagh, bare head, AK-pattern kit built from Base parts plus new meshes | M (20) | planned | bpy | `WP-C4` |
-| `WP-C6` | Enforcer: black kit, bold pouches, NVG helmet variant | M (20) | planned | bpy | `WP-C4` |
+| `WP-C5` | Insurgent: plaid shirt, shemagh, bare head, AK-pattern kit built from Base parts plus new meshes | M (20) | done | bpy | `WP-C4` |
+| `WP-C6` | Enforcer: black kit, bold pouches, NVG helmet variant | M (20) | done | bpy | `WP-C4` |
 | `WP-C7` | Insignia and patch system (decals on sleeve/chest/helmet, faction flags) | M (20) | planned | — | `WP-C4`, `WP-D3` |
 | `WP-C8` | Pose library expansion: crouch, kneel, sit, salute, sling carry, rifle-on-shoulder | M (20) | planned | browser | `WP-C1` |
 | `WP-C9` | Idle polish: blink, scarf/strap secondary motion, head-follow of the camera (reduced-motion safe) | M (20) | planned | — | `WP-C1` |

@@ -5,11 +5,12 @@ Small on purpose. Read this first, then `AGENTS.md`. Plan and sizes: [`README.md
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-01 · claude · WP-F1..F7 (restructure session) · done**
+**2026-10-01 16:50 UTC · claude · WP-C1/C2/C4/C5/C6 · done**
 
-- Branch `claude/friendly-dijkstra-4ky9w6`; all M0 packets are done except the owner actions `WP-F8` / `WP-F10`.
-- What happened: project migrated from vincentdenil-site into this repo, firing / hand-animation / procedural operator removed, Operator Customiser v1 built on the purchased soldier, asset register + import tooling, Nokia-style index, design doc, master roadmap, Pages workflow. Real CC0 downloads (OpenGameArt, itch.io, Sketchfab) were NOT possible from the build sandbox (network policy), so attachments are still code-built placeholders.
-- Next step: owner does `WP-F8` (enable Pages, merge, confirm licences) and `WP-A1` (download CC0 packs into `assets-incoming/`); then `WP-A2`.
+- Branch `claude/friendly-dijkstra-4ky9w6` at `f1edae0`; **31 uncommitted file(s)** (commit before stopping): M CHANGELOG.md,  M VERSION,  M assets/REGISTER.md,  M assets/js/items.js,  M assets/register.json,  M docs/CODEMAP.md.
+- Last commits: f1edae0 feat(WP-C1,WP-C4): skeleton contract and data-driven roster switcher · 34cccd4 feat(WP-F1..F7): Partisan Project (PARP) v0.3.0 foundation · caded09 Agent briefings
+- What happened: Skeleton contract, roster switcher, and v1 of Recon, Insurgent, Enforcer (extension packs bound by bone name, core shirt pack, plaid/recon camo). Tests 56/56, smoke green.
+- Next step: Owner: WP-F8, WP-A1, WP-D1. Agents: WP-C8 poses, WP-C9 idle polish, WP-C3/C7 patches, WP-T4 workbench tests, then WP-T1.
 <!-- handoff:end -->
 
 ## Active this week

@@ -55,7 +55,7 @@ await check('operator: loads, equipment toggles, zones are independent, hash rou
   // roster switching keeps working (reload the same base) and resets looks to the base defaults
   await page.evaluate(() => window.PARP_OPERATOR.switchBase('base'));
   assert.equal(await page.evaluate(() => window.PARP_OPERATOR.state.head), 'nvg');
-  assert.equal(await page.locator('#roster button[aria-disabled="true"]').count(), 3, 'Recon, Insurgent, Enforcer are shown as planned');
+  assert.equal(await page.locator('#roster button').count(), 4, 'Base, Recon, Insurgent, Enforcer in the roster');
   // pose + weapon prop
   await page.evaluate(() => { window.PARP_OPERATOR.set('weapon', 'ak74m'); window.PARP_OPERATOR.set('pose', 'hero'); });
   await page.waitForFunction(() => window.PARP_OPERATOR.weapon, null, {timeout: 60000});
@@ -67,6 +67,35 @@ await check('operator: loads, equipment toggles, zones are independent, hash rou
   assert.ok(+tris.replace(/,/g, '') <= 15000, 'triangles ' + tris);
   noProblems(page);
   await page.close();
+});
+
+await check('operator: Recon base (extension pack bound to the shared skeleton) loads and responds', async () => {
+  const page = await open(browser, server.url + 'operator/#base=recon');
+  await page.waitForFunction(() => window.PARP_OPERATOR?.ready, null, {timeout: 60000});
+  assert.equal(await page.evaluate(() => window.PARP_OPERATOR.base.id), 'recon');
+  const vis = mat => page.evaluate(n => window.PARP_OPERATOR.meshes.filter(m => m.material.name === n).some(m => m.visible), mat);
+  assert.equal(await vis('M_Hood'), true); assert.equal(await vis('M_Scarf'), true); assert.equal(await vis('M_Helmet'), false);
+  const bound = await page.evaluate(() => { const o = window.PARP_OPERATOR; const hood = o.meshes.find(m => m.material.name === 'M_Hood'); return hood.isSkinnedMesh && hood.skeleton.bones.every(b => o.rig.bones.get(b.name) === b); });
+  assert.equal(bound, true, 'pack meshes are bound to the base skeleton, not a copy');
+  await page.evaluate(() => window.PARP_OPERATOR.set('neck', 'off'));
+  assert.equal(await vis('M_Scarf'), false);
+  assert.match(await page.evaluate(() => location.hash), /base=recon/);
+  await page.evaluate(() => window.PARP_OPERATOR.switchBase('base'));
+  assert.equal(await vis('M_Hood'), false);
+  noProblems(page);
+  await page.close();
+});
+
+await check('operator: Insurgent and Enforcer load; plaid paints the shirt torso as well as the sleeves', async () => {
+  for (const base of ['insurgent', 'enforcer']) {
+    const page = await open(browser, server.url + 'operator/#base=' + base);
+    await page.waitForFunction(() => window.PARP_OPERATOR?.ready, null, {timeout: 60000});
+    const r = await page.evaluate(() => { const o = window.PARP_OPERATOR; const tops = o.meshes.filter(m => m.material.name === 'M_Top_Fabric'); return {n: tops.length, shared: tops.every(m => m.material === tops[0].material), hasUV: tops.every(m => !!m.geometry.attributes.uv), beanie: o.meshes.some(m => m.material.name === 'M_Beanie' && m.visible)}; });
+    assert.ok(r.n >= 2 && r.shared && r.hasUV, `${base}: torso shirt shares the top material and has UVs ${JSON.stringify(r)}`);
+    assert.equal(r.beanie, true, `${base}: beanie visible by default`);
+    noProblems(page);
+    await page.close();
+  }
 });
 
 await check('operator: idle animation moves bones; reduced motion freezes them', async () => {

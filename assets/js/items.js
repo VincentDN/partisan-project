@@ -3,7 +3,7 @@
 const px = bits => `<svg viewBox="0 0 5 5" width="12" height="12" shape-rendering="crispEdges" fill="currentColor">${[...bits].map((c, i) => c === '1' ? `<rect x="${i % 5}" y="${Math.floor(i / 5)}" width="1" height="1"/>` : '').join('')}</svg>`;
 export const ITEMS = [
   {label: 'Weapon Workbench', href: './workbench/', icon: px('0111011111111100100001000'), help: 'Demo. Swap parts, finishes and wear on AK rifles. Presets, stats, photo mode.'},
-  {label: 'Operator Modder', href: './operator/', icon: px('0111001110111110101001010'), help: 'Demo. Dress and pose the Base Operator. Hero poses, idles, colour zones.'},
+  {label: 'Operator Modder', href: './operator/', icon: px('0111001110111110101001010'), help: 'Demo. Demo. Four operators: dress, repaint and pose them. Hero poses, idles.'},
   {label: 'Asset Viewer', href: './viewer/', icon: px('1111110001101011000111111'), help: 'Tool. Inspect any registered model against its triangle budget and licence.'},
   {label: 'Game Design Doc', href: './docs/game-design-master-doc.html', icon: px('1111110001111111000111111'), help: 'In-universe one-pager: pillars, features, moodboard, status.'},
   {label: 'Master Roadmap', href: './docs/master-roadmap.html', icon: px('1000001000110001101111111'), help: 'Work packets sized for $20 AI plans, dependencies and exit gates.'},

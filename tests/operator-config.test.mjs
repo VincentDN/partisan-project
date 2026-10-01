@@ -2,7 +2,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import {PARTS, SLOTS, ZONES, PALETTES, VIEWS, TRIANGLE_BUDGET, PRESETS, ROSTER} from '../operator/config.js';
+import {PARTS, SLOTS, ZONES, PALETTES, VIEWS, TRIANGLE_BUDGET, PRESETS, ROSTER, BASES, defaultsFor} from '../operator/config.js';
 
 const manifest = JSON.parse(fs.readFileSync('assets/models/operators/base-operator.manifest.json', 'utf8'));
 const nodes = new Map(manifest.meshes.map(m => [m.node, m]));
@@ -63,3 +63,38 @@ test('default look fits the triangle budget with the largest equipment on', () =
   assert.ok(total <= TRIANGLE_BUDGET);
   assert.ok(ROSTER.some(r => r.status === 'available'));
 });
+
+// ---- every roster base: model + packs on the shared skeleton, parts and zones resolve ----
+const manifestOf = url => JSON.parse(fs.readFileSync(url.replace('../', '').replace('.glb', '.manifest.json'), 'utf8'));
+for (const base of Object.values(BASES)) {
+  const models = [base.model, ...base.packs].map(manifestOf);
+  const allNodes = new Map(models.flatMap(m => m.meshes.map(x => [x.node, x])));
+  const allMaterials = new Set(models.flatMap(m => m.materials.map(x => x.name)));
+  const triangles = models.reduce((n, m) => n + m.triangles, 0);
+
+  test(`[${base.id}] within the triangle budget with every equipment slot on`, () => assert.ok(triangles <= TRIANGLE_BUDGET, `${triangles} > ${TRIANGLE_BUDGET}`));
+  test(`[${base.id}] packs use only bones of the base skeleton`, () => {
+    const bones = new Set(models[0].bones);
+    for (const m of models.slice(1)) for (const b of m.bones) assert.ok(bones.has(b), `pack bone ${b} missing from base skeleton`);
+  });
+  test(`[${base.id}] parts, slots, zones and looks all resolve`, () => {
+    for (const [id, part] of Object.entries(base.parts)) {
+      for (const n of part.nodes) assert.ok(allNodes.has(n), `${id}: node ${n}`);
+      for (const mat of part.materials || []) assert.ok(part.nodes.some(n => allNodes.get(n).materials.includes(mat)), `${id}: material ${mat}`);
+    }
+    for (const s of base.slots) {
+      assert.ok(s.options.some(o => o.id === s.default), `${s.id}: default`);
+      for (const o of s.options) for (const p of o.show) assert.ok(base.parts[p], `${s.id}/${o.id}: part ${p}`);
+    }
+    for (const z of base.zones) { assert.ok(PALETTES[z.palette], z.id); for (const m of z.materials) assert.ok(allMaterials.has(m), `${z.id}: ${m}`); }
+    for (const p of base.presets) for (const [k, v] of Object.entries(p.state)) {
+      if (k.startsWith('z.')) assert.ok(base.zones.find(z => z.id === k.slice(2)), `${p.id}: zone ${k}`);
+      else assert.ok(base.slots.find(s => s.id === k)?.options.some(o => o.id === v), `${p.id}: ${k}=${v}`);
+    }
+    assert.ok(Object.keys(defaultsFor(base)).length >= base.slots.length + base.zones.length);
+  });
+  test(`[${base.id}] a part is never controlled by two slots`, () => {
+    const owner = new Map();
+    for (const s of base.slots) for (const o of s.options) for (const p of o.show) { if (owner.has(p) && owner.get(p) !== s.id) assert.fail(`${p}: ${owner.get(p)} and ${s.id}`); owner.set(p, s.id); }
+  });
+}

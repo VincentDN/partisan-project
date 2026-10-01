@@ -26,3 +26,11 @@ test('roadmap HTML links to the repo for documents and to the site for demos', (
   assert.match(html, /github\.com\/VincentDN\/partisan-project\/blob\/main\/docs\/agent-ops\/README\.md/);
   assert.match(html, /href="\.\.\/"|href="\.\.\/workbench\/"/);
 });
+
+test('version is consistent across VERSION, index, design doc and package.json', () => {
+  const v = fs.readFileSync('VERSION', 'utf8').trim();
+  assert.match(fs.readFileSync('index.html', 'utf8'), new RegExp(`PARP_VERSION="${v.replace(/\./g, '\\.')}"`));
+  assert.match(fs.readFileSync('docs/game-design-master-doc.html', 'utf8'), new RegExp(`name="version" content="${v.replace(/\./g, '\\.')}"`));
+  assert.equal(JSON.parse(fs.readFileSync('package.json', 'utf8')).version, v);
+  assert.match(fs.readFileSync('CHANGELOG.md', 'utf8'), new RegExp(`## \\[${v.replace(/\./g, '\\.')}\\]`));
+});
