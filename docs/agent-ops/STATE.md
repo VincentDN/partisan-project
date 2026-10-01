@@ -5,10 +5,10 @@ Small on purpose. Read this first, then `AGENTS.md`. Plan and sizes: [`README.md
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-01 19:08 UTC · agent · (no packet) · partial**
+**2026-10-01 19:11 UTC · agent · (no packet) · partial**
 
-- Branch `claude/friendly-dijkstra-4ky9w6` at `885c0a3`; **16 uncommitted file(s)** (commit before stopping): M CHANGELOG.md,  M README.md,  M assets/js/items.js,  M docs/CODEMAP.md,  M docs/adr/README.md,  M docs/agent-ops/packets.json.
-- Last commits: 885c0a3 Fix next-packet test for an exhausted roadmap · 380cad4 Add owner to-do checklist · 040cc35 WP-C3 blocked on owner sign-off
+- Branch `claude/friendly-dijkstra-4ky9w6` at `6116293`; **2 uncommitted file(s)** (commit before stopping): M docs/CODEMAP.md, ?? tests/e2e/bench-sheet.mjs.
+- Last commits: 6116293 Bench Lab: advanced workbench animations return as an opt-in demo; rename owner to-do to vincent-todo · 885c0a3 Fix next-packet test for an exhausted roadmap · 380cad4 Add owner to-do checklist
 - What happened: (write one or two sentences)
 - Next step: (name the exact next action, file and command)
 <!-- handoff:end -->
