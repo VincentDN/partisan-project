@@ -136,6 +136,21 @@ export async function createStage(container, opts = {}) {
   addEventListener('pointerup', () => { if (lightDrag) { lightDrag = null; controls.enabled = true; } });
   renderer.domElement.addEventListener('pointerdown', () => { cameraMove = null; });
 
+  // Keyboard camera (WCAG 2.1.1): arrows orbit, + / - zoom, Home resets the azimuth. The stage container must be focusable (tabindex=0).
+  container.addEventListener('keydown', e => {
+    if (e.target !== container || e.ctrlKey || e.metaKey || e.altKey) return;
+    const v = camera.position.clone().sub(controls.target);
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') v.applyAxisAngle(up, e.key === 'ArrowLeft' ? 0.1 : -0.1);
+    else if (e.key === 'ArrowUp' || e.key === 'ArrowDown') v.applyAxisAngle(new T.Vector3(1, 0, 0).applyQuaternion(camera.quaternion).setY(0).normalize(), e.key === 'ArrowUp' ? 0.1 : -0.1);
+    else if (e.key === '+' || e.key === '=') v.multiplyScalar(0.9);
+    else if (e.key === '-') v.multiplyScalar(1.1);
+    else return;
+    e.preventDefault();
+    cameraMove = null;
+    camera.position.copy(controls.target).add(v);
+    controls.update();
+  });
+
   /** Glide the camera to look at `target` from `position` (instant under reduced motion). */
   function moveCamera(target, position, seconds = 0.45) {
     if (reduceMotion) { controls.target.copy(target); camera.position.copy(position); controls.update(); return; }

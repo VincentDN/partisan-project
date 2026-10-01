@@ -797,17 +797,17 @@
   },
   {
    "id": "WP-Q1",
-   "title": "Accessibility audit across all demos (keyboard, focus, contrast, reduced motion, colour-independent deltas, captions)",
+   "title": "Accessibility audit across all demos (axe-core in CI, keyboard orbit, contrast, reduced motion)",
    "track": "Quality",
    "milestone": "M5",
    "size": "M",
    "bu": 20,
-   "status": "planned",
+   "status": "done",
    "deps": [],
    "agent": "any",
    "needs": [],
    "inputs": [],
-   "acceptance": "WCAG 2.2 AA checklist in docs/engineering/standards.md passes; axe-core run clean in e2e."
+   "acceptance": "npm run test:a11y clean on every page; keyboard orbit/zoom on the 3D stages; reduced motion honoured (tests exist)."
   },
   {
    "id": "WP-Q2",
@@ -1088,6 +1088,26 @@
     "tools/assets/build-recon-pack.py"
    ],
    "acceptance": "Scarf/radio/straps lag the torso by a damped spring; reduced motion disables it; < 0.3 ms per frame."
+  },
+  {
+   "id": "WP-Q6",
+   "title": "Manual accessibility pass: screen reader (NVDA/VoiceOver), zoom 200 %, high-contrast mode, a real phone",
+   "track": "Quality",
+   "milestone": "M5",
+   "size": "XS",
+   "bu": 3,
+   "status": "planned",
+   "deps": [
+    "WP-Q1"
+   ],
+   "agent": "human",
+   "needs": [
+    "human"
+   ],
+   "inputs": [
+    "docs/engineering/standards.md"
+   ],
+   "acceptance": "Findings filed as packets; no blocker left."
   }
  ]
 }

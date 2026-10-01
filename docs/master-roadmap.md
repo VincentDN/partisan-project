@@ -138,12 +138,12 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | **M2** Operator roster: Recon, Insurgent, Enforcer | v0.5.0 | 7/11 | 172 BU | 67% |
 | **M3** Integration and sharing | v0.6.0 | 2/4 | 56 BU | 50% |
 | **M4** Weapon roster 2: modern and WW2 | v0.7.0 | 0/7 | 111 BU | 0% |
-| **M5** Production acceptance | v1.0.0 | 0/5 | 64 BU | 0% |
+| **M5** Production acceptance | v1.0.0 | 1/6 | 67 BU | 30% |
 | **TD** Tech debt (fill windows) | — | 1/4 | 44 BU | 18% |
 | **D** Design docs | — | 0/5 | 59 BU | 0% |
 | **H27** 2027 horizon | — | 0/3 | 48 BU | 0% |
 
-#### M0 · Foundation
+### M0 · Foundation
 
 | ID | Packet | Size | Status | Needs | Depends on |
 |---|---|---|---|---|---|
@@ -158,7 +158,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-F9` | Browser smoke tests (Playwright) for index, workbench, operator, viewer, in CI | S (8) | done | — | — |
 | `WP-F10` | Verify the live Pages deployment; fix any base-path problem | XS (3) | blocked | browser | `WP-F8` |
 
-#### M1 · Gun modder: real parts, three weapons
+### M1 · Gun modder: real parts, three weapons
 
 | ID | Packet | Size | Status | Needs | Depends on |
 |---|---|---|---|---|---|
@@ -174,7 +174,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-A10` | Weapon-depth exit tests: >=3 weapons, visible compatibility reasons, hover deltas, presets, regression | S (8) | planned | — | `WP-A9`, `WP-A7`, `WP-A8` |
 | `WP-A11` | Handling sounds from cleared CC0 recordings (optional upgrade over synthesis) | M (20) | planned | net | — |
 
-#### M2 · Operator roster: Recon, Insurgent, Enforcer
+### M2 · Operator roster: Recon, Insurgent, Enforcer
 
 | ID | Packet | Size | Status | Needs | Depends on |
 |---|---|---|---|---|---|
@@ -190,7 +190,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-C10` | More hairstyles and facial-hair options for bare-head looks | M (20) | planned | bpy | `WP-C4` |
 | `WP-C11` | Secondary motion: scarf drape and strap follow-through on the idle | S (8) | planned | bpy, browser | `WP-C9` |
 
-#### M3 · Integration and sharing
+### M3 · Integration and sharing
 
 | ID | Packet | Size | Status | Needs | Depends on |
 |---|---|---|---|---|---|
@@ -199,7 +199,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-I3` | Versioned loadout codes (P1.<base64url>) with backward compatibility for old AK hashes | S (8) | done | — | `WP-I1` |
 | `WP-I4` | Combined share card (operator + weapon + stats) and photo-mode extras | S (8) | planned | — | `WP-I3` |
 
-#### M4 · Weapon roster 2: modern and WW2
+### M4 · Weapon roster 2: modern and WW2
 
 | ID | Packet | Size | Status | Needs | Depends on |
 |---|---|---|---|---|---|
@@ -211,17 +211,18 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-A17` | PPSh-41 modernised kitbash (licence verify) | M (20) | blocked | bpy, net | `WP-A10` |
 | `WP-A18` | Bren and Chauchat: confirm sources only | XS (3) | blocked | owner, net | `WP-A10` |
 
-#### M5 · Production acceptance
+### M5 · Production acceptance
 
 | ID | Packet | Size | Status | Needs | Depends on |
 |---|---|---|---|---|---|
-| `WP-Q1` | Accessibility audit across all demos (keyboard, focus, contrast, reduced motion, colour-independent deltas, captions) | M (20) | planned | — | — |
+| `WP-Q1` | Accessibility audit across all demos (axe-core in CI, keyboard orbit, contrast, reduced motion) | M (20) | done | — | — |
 | `WP-Q2` | Performance acceptance: desktop 60 fps and a mid-range phone 30 fps, cold/warm load, memory under repeated actions | M (20) | planned | — | — |
 | `WP-Q3` | Credits page generated from the asset register; licence audit as a CI gate | S (8) | planned | — | `WP-F8` |
 | `WP-Q4` | Short guided first run across demos (preset > part > stat; look > pose) | S (8) | planned | — | — |
 | `WP-Q5` | Release checklist and v1.0.0 tag for the 2026 demo | S (8) | planned | — | `WP-Q1`, `WP-Q2`, `WP-Q3` |
+| `WP-Q6` | Manual accessibility pass: screen reader (NVDA/VoiceOver), zoom 200 %, high-contrast mode, a real phone | XS (3) | planned | owner | `WP-Q1` |
 
-#### TD · Tech debt (fill windows)
+### TD · Tech debt (fill windows)
 
 | ID | Packet | Size | Status | Needs | Depends on |
 |---|---|---|---|---|---|
@@ -230,7 +231,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-T3` | Type-check with JSDoc + tsc --checkJs (no build step) | S (8) | planned | — | `WP-T2` |
 | `WP-T4` | Unit tests for stats, compatibility rules and Workbench hash codes | S (8) | done | — | — |
 
-#### D · Design docs
+### D · Design docs
 
 | ID | Packet | Size | Status | Needs | Depends on |
 |---|---|---|---|---|---|
@@ -240,7 +241,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-D4` | Audio direction one-pager (music, foley, UI sounds, provenance rules) | S (8) | planned | — | — |
 | `WP-D5` | UI/UX style guide: the Nokia/DOS language across all demos | S (8) | planned | — | — |
 
-#### H27 · 2027 horizon
+### H27 · 2027 horizon
 
 | ID | Packet | Size | Status | Needs | Depends on |
 |---|---|---|---|---|---|

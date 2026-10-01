@@ -20,6 +20,8 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 - **New slots**: back-up sight (flip-up), top rail (removable on the AK-74M, with a rule that blocks optics without it), trigger, charging handle, sling swivel and two-point sling.
 - Workbench tests (`tests/workbench.test.mjs`, `tests/rails.test.mjs`): stat coverage, rule symmetry, exhaustive rail combinations.
 
+- **Accessibility**: axe-core audit (`npm run test:a11y`, in CI) clean on every page; 3D stages are keyboard-operable; index d-pad targets enlarged, page headings and landmarks fixed.
+
 ### Fixed
 - Optimiser no longer merges materials (it had fused the top and trousers camo and two strap materials); packs keep UVs for runtime textures.
 - Helmet and other multi-primitive parts now toggle correctly.

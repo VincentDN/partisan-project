@@ -49,11 +49,11 @@ body{margin:0;display:grid;place-items:center;padding:18px 12px;background:#0d10
 .about a{color:inherit}
 /* Keypad */
 .keys{display:grid;gap:10px;margin-top:16px}
-.nav{display:grid;grid-template-columns:1fr 62px 1fr;align-items:center;gap:10px}
+.nav{display:grid;grid-template-columns:1fr 84px 1fr;align-items:center;gap:10px}
 .soft{height:34px;border-radius:17px}
-.pad{position:relative;height:62px;border-radius:50%;background:radial-gradient(circle at 40% 30%,#5a6652,#232820);box-shadow:inset 0 1px 0 #fff3,0 3px 0 #0b0d0a;display:grid;place-items:center}
-.pad button{position:absolute;background:transparent;border:0;color:var(--stencil);font-size:12px;width:26px;height:22px;padding:0;cursor:pointer}
-.pad .u{top:2px;left:18px}.pad .d{bottom:2px;left:18px}.pad .l{left:2px;top:19px}.pad .r{right:2px;top:19px}
+.pad{position:relative;height:84px;border-radius:50%;background:radial-gradient(circle at 40% 30%,#5a6652,#232820);box-shadow:inset 0 1px 0 #fff3,0 3px 0 #0b0d0a;display:grid;place-items:center}
+.pad button{position:absolute;background:transparent;border:0;color:var(--stencil);font-size:12px;width:30px;height:28px;padding:0;cursor:pointer}
+.pad .u{top:0;left:27px}.pad .d{bottom:0;left:27px}.pad .l{left:0;top:28px}.pad .r{right:0;top:28px}
 .key{font:700 13px/1 ui-monospace,monospace;color:var(--stencil);background:linear-gradient(#444d3d,#2b3126);border:0;border-radius:9px;height:34px;box-shadow:inset 0 1px 0 #fff2,0 3px 0 #0b0d0a;cursor:pointer;text-transform:uppercase}
 .key:active{transform:translateY(2px);box-shadow:inset 0 1px 0 #fff2,0 1px 0 #0b0d0a}
 .key:focus-visible,.pad button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}

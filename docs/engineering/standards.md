@@ -34,7 +34,7 @@ The bar this project holds itself to. Items marked ▢ are not yet enforced auto
 ## 4. Accessibility (target WCAG 2.2 AA)
 
 Keyboard operation of every control; visible focus; `aria-pressed` on toggles; live regions for status; text contrast ≥ 4.5:1;
-colour is never the only carrier of a stat change (arrows and numbers accompany colour); `prefers-reduced-motion` honoured; touch targets ≥ 44 px on coarse pointers. Audit: `WP-Q1`.
+colour is never the only carrier of a stat change (arrows and numbers accompany colour); `prefers-reduced-motion` honoured; touch targets ≥ 44 px on coarse pointers. Automated audit: `npm run test:a11y` (axe-core, WCAG 2.0/2.1/2.2 A+AA and best-practice rules, every page; serious/critical fail the build) runs in CI; the 3D stages are keyboard-operable (arrows orbit, +/- zoom). Manual screen-reader and real-device checks: `WP-Q6`.
 
 ## 5. Testing
 

@@ -128,6 +128,22 @@ await check('operator: carries the Workbench build (P1 code) onto the character'
   await other.close(); await page.close();
 });
 
+await check('operator and viewer: the 3D stage is operable by keyboard (arrows orbit, +/- zoom)', async () => {
+  for (const [path, ready] of [['operator/', () => window.PARP_OPERATOR?.ready], ['viewer/', () => window.PARP_VIEWER?.ready]]) {
+    const page = await open(browser, server.url + path);
+    await page.waitForFunction(ready, null, {timeout: 60000});
+    await page.focus('#stage');
+    const probe = await page.evaluate(() => ({operator: !!window.PARP_OPERATOR}));
+    if (probe.operator) {
+      const read = () => page.evaluate(() => window.PARP_OPERATOR.stage.camera.position.toArray());
+      const a = await read(); await page.keyboard.press('ArrowLeft'); await page.keyboard.press('+');
+      const b = await read();
+      assert.ok(a.some((v, i) => Math.abs(v - b[i]) > 0.01), 'camera moved on arrow key');
+    } else assert.equal(await page.evaluate(() => document.querySelector('#stage').getAttribute('tabindex')), '0');
+    await page.close();
+  }
+});
+
 await check('operator: eyelids exist (hidden until a blink) and the head follows the camera', async () => {
   const page = await open(browser, server.url + 'operator/#idle=off', {reducedMotion: 'no-preference'});
   await page.waitForFunction(() => window.PARP_OPERATOR?.ready, null, {timeout: 60000});

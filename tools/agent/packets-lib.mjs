@@ -77,7 +77,7 @@ export function toMarkdown(data) {
   for (const id of MILESTONE_ORDER) {
     const ps = data.packets.filter(p => p.milestone === id);
     if (!ps.length) continue;
-    lines.push('', `#### ${id} · ${data.milestones[id].name}`, '', '| ID | Packet | Size | Status | Needs | Depends on |', '|---|---|---|---|---|---|');
+    lines.push('', `### ${id} · ${data.milestones[id].name}`, '', '| ID | Packet | Size | Status | Needs | Depends on |', '|---|---|---|---|---|---|');
     for (const p of ps) lines.push(`| \`${p.id}\` | ${p.title} | ${p.size} (${p.bu}) | ${p.status} | ${[p.agent === 'human' ? 'owner' : '', ...p.needs.filter(n => n !== 'human')].filter(Boolean).join(', ') || '—'} | ${p.deps.map(d => '`' + d + '`').join(', ') || '—'} |`);
   }
   return lines.join('\n');
