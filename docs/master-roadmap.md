@@ -137,7 +137,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 |---|---|---|---|---|
 | **M0** Foundation | v0.3.0 | 8/10 | 130 BU | 95% |
 | **M1** Gun modder: real parts, three weapons | v0.4.0 | 0/11 | 143 BU | 0% |
-| **M2** Operator roster: Recon, Insurgent, Enforcer | v0.5.0 | 0/10 | 164 BU | 0% |
+| **M2** Operator roster: Recon, Insurgent, Enforcer | v0.5.0 | 2/10 | 164 BU | 10% |
 | **M3** Integration and sharing | v0.6.0 | 0/4 | 56 BU | 0% |
 | **M4** Weapon roster 2: modern and WW2 | v0.7.0 | 0/7 | 111 BU | 0% |
 | **M5** Production acceptance | v1.0.0 | 0/5 | 64 BU | 0% |
@@ -180,10 +180,10 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 
 | ID | Packet | Size | Status | Needs | Depends on |
 |---|---|---|---|---|---|
-| `WP-C1` | Skeleton contract: document the shared 83-bone rig, add a test that poses/idles run on any base with the same bone names | S (8) | ready | — | — |
+| `WP-C1` | Skeleton contract: document the shared 83-bone rig, add a test that poses/idles run on any base with the same bone names | S (8) | done | — | — |
 | `WP-C2` | Recon: hood and scarf meshes skinned to the Base skeleton (bpy), plate-carrier variant | M (20) | planned | bpy, browser | `WP-C1` |
 | `WP-C3` | Recon: textures, palette, patches (MP-O tag, shield), gear props (radio, carabiner, canister) | S (8) | planned | — | `WP-C2` |
-| `WP-C4` | Roster switcher: data-driven per-base slot and zone configs | S (8) | planned | — | `WP-C1` |
+| `WP-C4` | Roster switcher: data-driven per-base slot and zone configs | S (8) | done | — | `WP-C1` |
 | `WP-C5` | Insurgent: plaid shirt, shemagh, bare head, AK-pattern kit built from Base parts plus new meshes | M (20) | planned | bpy | `WP-C4` |
 | `WP-C6` | Enforcer: black kit, bold pouches, NVG helmet variant | M (20) | planned | bpy | `WP-C4` |
 | `WP-C7` | Insignia and patch system (decals on sleeve/chest/helmet, faction flags) | M (20) | planned | — | `WP-C4`, `WP-D3` |

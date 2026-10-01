@@ -110,9 +110,8 @@ export const HERO_AZIMUTH = 24; // degrees, front-right three-quarter: the hero 
 // Triangle budget for the finished roster (docs/art-direction.md): operator + equipment.
 export const TRIANGLE_BUDGET = 15000;
 
-// Roadmap roster shown as locked entries: they are built from the moodboard sheets, not yet modelled.
-export const ROSTER = [
-  {id: 'base',      label: 'Base Operator', status: 'available'},
+// Roadmap roster entries that are not modelled yet: shown locked, built from the moodboard sheets.
+export const PLANNED = [
   {id: 'recon',     label: 'Recon',         status: 'planned', note: 'Hooded, scarf, plate carrier: see docs/moodboard (Recon sheet v01-09).'},
   {id: 'insurgent', label: 'Insurgent',     status: 'planned', note: 'Plaid shirt, shemagh, G3-pattern rifle: keyframe 1 and the AK rifleman in keyframe 2.'},
   {id: 'enforcer',  label: 'Enforcer',      status: 'planned', note: 'Black kit, bold pouches, modern rifle: the foreground operator of keyframe 2.'},
@@ -125,3 +124,19 @@ export const PRESETS = [
   {id: 'insurgent', label: 'Insurgent-style', state: {head: 'bare', comms: 'off', face: 'mask', armor: 'soft', rig: 'mags', belt: 'on', pack: 'off', holsters: 'none', guards: 'none', weapon: 'ak74m', 'z.top': 'flora', 'z.pants': 'khaki', 'z.gear': 'brown'}},
   {id: 'enforcer',  label: 'Enforcer-style', state: {head: 'nvg', comms: 'on', face: 'both', armor: 'plates', rig: 'full', pack: 'off', holsters: 'both', guards: 'both', weapon: 'ak15k', 'z.top': 'black', 'z.pants': 'black', 'z.armor': 'black', 'z.gear': 'olive', 'z.helmet': 'tan'}},
 ];
+
+// A base = one skinned character on the shared skeleton (docs/engineering/skeleton-contract.md) plus the
+// equipment slots, colour zones and looks that fit it. Adding Recon/Insurgent/Enforcer = adding an entry.
+export const DEFAULT_BASE = 'base';
+export const BASES = {
+  base: {id: 'base', label: 'Base Operator', model: '../assets/models/operators/base-operator.glb', parts: PARTS, slots: SLOTS, zones: ZONES, presets: PRESETS, status: 'available'},
+};
+export const ROSTER = [...Object.values(BASES).map(b => ({id: b.id, label: b.label, status: b.status})), ...PLANNED.filter(p => !BASES[p.id])];
+
+/** Default state for a base: every slot and zone at its default, plus pose and idle. */
+export const defaultsFor = base => ({
+  base: base.id,
+  ...Object.fromEntries(base.slots.map(s => [s.id, s.default])),
+  ...Object.fromEntries(base.zones.map(z => [`z.${z.id}`, z.default])),
+  pose: 'relaxed', idle: 'calm',
+});

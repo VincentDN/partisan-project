@@ -52,10 +52,14 @@ await check('operator: loads, equipment toggles, zones are independent, hash rou
   // reload restores
   await page.reload(); await page.waitForFunction(() => window.PARP_OPERATOR?.ready, null, {timeout: 60000});
   assert.equal(await page.evaluate(() => window.PARP_OPERATOR.state.head), 'bare');
+  // roster switching keeps working (reload the same base) and resets looks to the base defaults
+  await page.evaluate(() => window.PARP_OPERATOR.switchBase('base'));
+  assert.equal(await page.evaluate(() => window.PARP_OPERATOR.state.head), 'nvg');
+  assert.equal(await page.locator('#roster button[aria-disabled="true"]').count(), 3, 'Recon, Insurgent, Enforcer are shown as planned');
   // pose + weapon prop
   await page.evaluate(() => { window.PARP_OPERATOR.set('weapon', 'ak74m'); window.PARP_OPERATOR.set('pose', 'hero'); });
   await page.waitForFunction(() => window.PARP_OPERATOR.weapon, null, {timeout: 60000});
-  await page.waitForTimeout(400);
+  await page.waitForFunction(() => window.PARP_OPERATOR.pivot.visible, null, {timeout: 30000}); // a frame has placed the prop
   const hand = await page.evaluate(() => { const o = window.PARP_OPERATOR; const h = o.rig.bones.get('hand_r').getWorldPosition(new o.stage.T.Vector3()); const w = o.pivot.getWorldPosition(new o.stage.T.Vector3()); return h.distanceTo(w); });
   assert.ok(hand < 0.05, `rifle pivot follows the right hand (distance ${hand})`);
   // triangle readout within budget

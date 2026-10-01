@@ -412,7 +412,7 @@
    "milestone": "M2",
    "size": "S",
    "bu": 8,
-   "status": "ready",
+   "status": "done",
    "deps": [],
    "agent": "any",
    "needs": [],
@@ -471,7 +471,7 @@
    "milestone": "M2",
    "size": "S",
    "bu": 8,
-   "status": "planned",
+   "status": "done",
    "deps": [
     "WP-C1"
    ],
