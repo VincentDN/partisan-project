@@ -1,6 +1,6 @@
-# 0004 · Handling sounds are synthesised
+# 0004 · Handling sounds are synthesised (superseded by 0009)
 
-**Status** accepted · 2026-10-01
+**Status** superseded by 0009 · 2026-10-01
 
 **Context.** The earlier workbench shipped 542 foley cuts under a "CC0 foley" label, but its own README says the cuts were classified from the audio of a YouTube video of a commercial game (The Last of Us Part II), and a git-ignored "placeholder" bank came from the same source. That provenance cannot support a public deployment.
 

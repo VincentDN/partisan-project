@@ -12,3 +12,4 @@ One short file per decision that would be expensive to rediscover. Format: Conte
 | [0006](0006-agent-ops.md) | Work packets, budget units and handoffs for two $20 plans |
 | [0007](0007-asset-register.md) | Asset register and licence policy |
 | [0008](0008-bench-lab.md) | Bench Lab: the advanced workbench animations return as an opt-in experiment (amends 0005) |
+| [0009](0009-foley-restored.md) | Recorded handling foley restored (owner-cleared); supersedes 0004 for handling sounds |

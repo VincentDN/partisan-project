@@ -9,11 +9,11 @@ One page. Audio supports the tone in [art-direction.md](art-direction.md): lived
 - New tracks join `shared/music.js` `TRACKS` **only** once they are in the asset register with a licence line (see Provenance).
 
 ## UI and handling sounds
-- Synthesised with Web Audio (`shared/sfx.js`): short clicks, latches and mechanical handling noises through one shared compressor. No samples to license.
+- Handling sounds: the recorded bank in `assets/audio/foley/` (42 owner-cleared takes, ADR 0009) plays through `workbench/mech.js`; the Web Audio synthesis (same file, shared bus in `shared/sfx.js`) is the fallback while the bank loads or if it is missing.
 - Under 150 ms, no pitch sweeps upward (no "reward" sounds). Quieter than the music bed.
 - **No weapon-fire audio.** Firing was removed in v0.3 and stays out of scope; the demos are about building, not shooting.
 
-## Foley (2026-27 wish list)
+## More foley (2026-27 wish list)
 Fabric rustle on pose change, buckle and velcro on equipment toggles, magazine seat on attachment swap. Recorded or CC0 only (Freesound CC0, Sonniss GDC bundles with written terms); each file gets a register row first.
 
 ## Accessibility

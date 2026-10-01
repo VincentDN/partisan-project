@@ -11,13 +11,140 @@
 // Heavier parts (by grams) seat lower and louder.
 import {audio} from '../shared/sfx.js';
 
-// Sound policy (PARP v0.3): every handling sound is synthesised live. The earlier recorded-foley
-// bank was removed because its provenance could not be shown (see docs/adr/0004-audio-provenance.md).
-// Replace with cleared CC0 recordings through the asset pipeline, keeping this same call interface.
+// Sound policy: recorded foley plays when loaded; the synthesis below is the fallback and the offline voice
+// (docs/adr/0009-foley-restored.md).
 export const ENABLED = true;
 
 const rand = (a, b) => a + Math.random() * (b - a),
   jit = (v, amount = 0.04) => v * (1 + rand(-amount, amount));
+
+// ---------- Recorded foley ----------
+// The 42-take handling bank (6 per class: click, clunk, ratchet, slide, hit, handle, long) restored from the
+// earlier workbench, where it shipped and was checked and cleared by the owner (docs/adr/0009-foley-restored.md,
+// assets/audio/foley/). Fetched lazily on the first handling sound, ~1.5 MB. Until it has loaded, or if a fetch
+// fails, the synthesis below plays, so every call site behaves the same either way.
+const FOLEY_URL = new URL('../assets/audio/foley/', import.meta.url);
+const at = () => audio().ctx.currentTime + 0.01;
+// Play a random take of `cls` from `lib` at time t; returns when it ends (t if there is no take).
+function sample(lib, cls, t, gain = 1) {
+  const list = lib?.[cls];
+  if (!list?.length) return t;
+  const {ctx, out} = audio(),
+    buf = list[Math.floor(Math.random() * list.length)],
+    src = ctx.createBufferSource(),
+    g = ctx.createGain();
+  src.buffer = buf;
+  src.playbackRate.value = jit(1, 0.03);
+  g.gain.value = gain * 0.88;
+  src.connect(g).connect(out);
+  src.start(t);
+  return t + buf.duration / src.playbackRate.value;
+}
+function bank(lib) {
+  const s = (cls, t, gain) => sample(lib(), cls, t, gain);
+  const b = {
+    clunk: (w = 0.5) => {
+      s('clunk', at(), 0.7 + 0.3 * w);
+    },
+    latch: () => {
+      s('click', at());
+    },
+    railSlide: () => s('slide', at()),
+    railStep: () => {
+      s('click', at(), 0.8);
+    },
+    magazine: (w = 0.4, {out = true, in: seat = true} = {}) => {
+      let t = at();
+      if (out) t = s('click', t) + 0.15;
+      if (seat) s('click', s('clunk', t) - 0.02);
+    },
+    charge: () => {
+      s('long', at());
+    },
+    handle: (i = 0.5) => {
+      s('handle', at(), 0.5 + 0.5 * i);
+    },
+    setDown: () => {
+      s('hit', at());
+    },
+    file: () => {
+      s('slide', at(), 0.6);
+    },
+    tap: () => {
+      s('hit', at(), 0.5);
+    },
+    fit: (slot, option, previous) => {
+      const off = !option.grams && /^(none|bare)$/.test(option.id);
+      let t = at();
+      switch (slot) {
+        case 'muzzle':
+          if (previous && !/^(bare|none)$/.test(previous.id)) t = s('ratchet', t) + 0.1;
+          if (!off) s('clunk', s('ratchet', t) - 0.03);
+          break;
+        case 'optic':
+        case 'foregrip':
+        case 'side':
+          if (off) {
+            s('slide', s('click', t));
+            break;
+          }
+          s('click', s('slide', t) - 0.02);
+          break;
+        case 'magazine':
+          b.magazine(0.5, {out: !!previous && previous.id !== 'none', in: !off});
+          break;
+        case 'grip':
+          s('clunk', s('ratchet', t));
+          break;
+        case 'stock':
+          if (off) {
+            s('slide', s('click', t));
+            break;
+          }
+          s('click', s('clunk', s('slide', t) - 0.03));
+          break;
+        default:
+          s('clunk', t);
+      }
+    },
+  };
+  return b;
+}
+async function loadBank(base) {
+  const res = await fetch(new URL('manifest.json', base));
+  if (!res.ok) return null;
+  const manifest = await res.json(),
+    {ctx} = audio(),
+    loaded = {};
+  await Promise.all(
+    Object.entries(manifest).map(async ([cls, files]) => {
+      loaded[cls] = (
+        await Promise.all(
+          files.map(f =>
+            fetch(new URL(`${cls}/${f}`, base))
+              .then(r => r.arrayBuffer())
+              .then(b => ctx.decodeAudioData(b))
+              .catch(() => null),
+          ),
+        )
+      ).filter(Boolean);
+    }),
+  );
+  return loaded;
+}
+let foley = null,
+  foleyLoad = null;
+const FOLEY = bank(() => foley);
+/** True once the recorded bank has loaded (tests; the sound calls never need it). */
+export const foleyLoaded = () => !!foley;
+/** The recorded bank once loaded (starting its fetch on first use), else null so callers fall through to synthesis. */
+function active() {
+  if (foley) return FOLEY;
+  foleyLoad ??= loadBank(FOLEY_URL)
+    .then(b => (foley = b))
+    .catch(() => {});
+  return null;
+}
 let room = null;
 function bus() {
   const {ctx, out, noise} = audio();
@@ -147,6 +274,8 @@ const heft = grams => Math.min(1, Math.max(0, (grams || 150) / 900));
 
 // A part seating home: transient, low body thump and the steel ringing briefly.
 export function clunk(weight = 0.5, t = now(), pan = 0) {
+  const b = active();
+  if (b) return b.clunk(...arguments);
   if (!ENABLED) return;
   transient(t, {freq: 1500, type: 'lowpass', gain: 0.35 + 0.25 * weight, decay: 0.02, pan});
   thump(t, {from: 150 - 50 * weight, to: 48, gain: 0.36 + 0.32 * weight, decay: 0.14 + 0.1 * weight, pan});
@@ -164,6 +293,8 @@ export function clunk(weight = 0.5, t = now(), pan = 0) {
 }
 // A spring latch snapping shut: sharp, bright and short.
 export function latch(t = now(), pan = 0) {
+  const b = active();
+  if (b) return b.latch(...arguments);
   if (!ENABLED) return;
   tick(t, {pitch: jit(1), gain: 0.3, pan});
   ring(t + 0.004, {
@@ -179,6 +310,8 @@ export function latch(t = now(), pan = 0) {
 }
 // Sliding along a rail, clicking over the rail slots, then clamping.
 export function railSlide(t = now(), {slots = 3, dur = 0.22, pan = 0} = {}) {
+  const b = active();
+  if (b) return b.railSlide(...arguments);
   if (!ENABLED) return;
   scrape(t, {dur, from: 1400, to: 2400, gain: 0.1, pan});
   for (let i = 1; i <= slots; i++) tick(t + (dur * i) / (slots + 1), {pitch: jit(0.9, 0.06), gain: 0.13, pan});
@@ -186,6 +319,8 @@ export function railSlide(t = now(), {slots = 3, dur = 0.22, pan = 0} = {}) {
 }
 // One rail slot: a firm detent, slightly different each time.
 export function railStep(dir = 1) {
+  const b = active();
+  if (b) return b.railStep(...arguments);
   if (!ENABLED) return;
   const t = now();
   scrape(t, {dur: 0.07, from: dir > 0 ? 1800 : 2400, to: dir > 0 ? 2400 : 1800, gain: 0.06});
@@ -209,6 +344,8 @@ function screw(t, {n = 4, pan = 0} = {}) {
 }
 // Magazine: release paddle, the old mag coming out, the new one rocked in and latched.
 export function magazine(weight = 0.4, {out = true, in: seat = true} = {}) {
+  const b = active();
+  if (b) return b.magazine(...arguments);
   if (!ENABLED) return;
   let t = now();
   if (out) {
@@ -224,6 +361,8 @@ export function magazine(weight = 0.4, {out = true, in: seat = true} = {}) {
 }
 // Charging handle: pulled to the rear against the spring, released, the bolt slamming home.
 export function charge() {
+  const b = active();
+  if (b) return b.charge(...arguments);
   if (!ENABLED) return;
   const t = now();
   tick(t, {pitch: 0.8, gain: 0.2});
@@ -251,6 +390,8 @@ export function charge() {
 }
 // Picking the rifle up or turning it in the hands: sling swivel and parts settling. Quiet.
 export function handle(intensity = 0.5) {
+  const b = active();
+  if (b) return b.handle(...arguments);
   if (!ENABLED) return;
   const t = now(),
     n = 1 + Math.round(rand(0, 2) * intensity);
@@ -260,6 +401,8 @@ export function handle(intensity = 0.5) {
 }
 // The rifle set down on the bench: wood knock, body thump, a small rattle.
 export function setDown() {
+  const b = active();
+  if (b) return b.setDown(...arguments);
   if (!ENABLED) return;
   const t = now();
   thump(t, {from: 110, to: 45, gain: 0.7, decay: 0.22});
@@ -276,11 +419,15 @@ export function setDown() {
 }
 // A file drawn across the steel (wear): gritty scrape.
 export function file() {
+  const b = active();
+  if (b) return b.file(...arguments);
   if (!ENABLED) return;
   scrape(now(), {dur: rand(0.08, 0.13), from: 3500, to: 2600, gain: 0.16, q: 1.2});
 }
 // Finish: a light tap as the part is turned under the brush.
 export function tap() {
+  const b = active();
+  if (b) return b.tap(...arguments);
   if (!ENABLED) return;
   const t = now();
   tick(t, {pitch: 0.7, gain: 0.12});
@@ -289,6 +436,8 @@ export function tap() {
 
 // Fitting a part to a slot (or taking it off). Each slot has its own mechanism.
 export function fit(slot, option, previous) {
+  const b = active();
+  if (b) return b.fit(...arguments);
   if (!ENABLED) return;
   const off = !option.grams && /^(none|bare)$/.test(option.id),
     w = heft(option.grams || previous?.grams);

@@ -33,7 +33,7 @@ Everything else (environment diorama, AI belief-model visualiser) is the 2027 ho
 | Operator Customiser | **Live**: four operators on one skeleton, *Base*, *Recon*, *Insurgent*, *Enforcer* (extension packs bound to the purchased soldier's rig by bone name); 10+ equipment slots, 8–10 colour zones per base, 5 hero poses, 3 idle animations, shareable URL looks, optional carried rifle as a prop |
 | Weapon Workbench | **Live**: AK-74M and AK-15K, 12 slots on three rails that cannot overlap (back-up sight, trigger, charging handle, sling…), stats and hover deltas, rules, presets, finishes, camo, wear, photo and loadout card |
 | Asset Viewer | **Live**: inspects registered GLBs against budgets |
-| Removed | Test fire, recoil, reload, range drill, bench scene with hands, Advanced animations experiment (returned as the opt-in Bench Lab, ADR 0008), code-built operator, recorded foley (provenance) |
+| Removed | Test fire, recoil, reload, range drill, bench scene with hands, Advanced animations experiment (returned as the opt-in Bench Lab, ADR 0008), code-built operator |
 | Not done | Real CC0 attachments and extra weapons (the build sandbox cannot reach OpenGameArt, itch.io, Sketchfab: see §5); roster patches/props and owner art sign-off |
 
 ## 3. Instruction log (what the owner asked for on 1 October 2026, and where it landed)

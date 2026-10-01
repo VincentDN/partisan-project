@@ -283,6 +283,20 @@ await check('bench: Skip fits the part, Cancel before the commit changes nothing
   await instant.close();
 });
 
+await check('workbench sounds: the recorded foley bank loads after the first handling sound', async () => {
+  const page = await open(browser, server.url + 'workbench/');
+  await page.waitForSelector('#build .slot', {timeout: 60000});
+  const loaded = await page.evaluate(async () => {
+    const m = await import('../workbench/mech.js');
+    m.latch();
+    for (let i = 0; i < 100 && !m.foleyLoaded(); i++) await new Promise(r => setTimeout(r, 100));
+    return m.foleyLoaded();
+  });
+  assert.equal(loaded, true);
+  noProblems(page);
+  await page.close();
+});
+
 await check('workbench: loads, swapping a part writes the hash, both rifles load', async () => {
   const page = await open(browser, server.url + 'workbench/');
   await page.waitForSelector('#build .slot', {timeout: 60000});

@@ -5,6 +5,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 ## [0.3.1] · 2026-10-01
 
 ### Added
+- **Recorded handling foley restored** (ADR 0009): the 42-take bank from the earlier workbench (`assets/audio/foley/`, about 1.5 MB), owner-cleared and registered take by take. `workbench/mech.js` plays it once loaded and falls back to the synthesised sounds; Workbench, Customiser and Bench Lab all use it.
 - **Bench Lab** (`bench/`, WP-X1, ADR 0008): the advanced workbench animations return as an opt-in experiment. Pick a part and two IK arms take the old one off, set it in the tray, fetch the new one and fit it, with Skip, Cancel, Quick changes, a review mode (`?review=1`) and synthesised handling sounds. No firing.
 
 ### Changed

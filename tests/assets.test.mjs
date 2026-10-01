@@ -29,7 +29,7 @@ test('no raw purchased sources or ripped audio ship in the repository tree', () 
       if (['node_modules', '.git', '_site', 'build', 'assets-incoming'].includes(e.name)) return;
       const p = `${d}/${e.name}`;
       if (e.isDirectory()) walk(p);
-      else if (/\.(blend|fbx)$/i.test(e.name) || /sfx\/(cuts|reels)/.test(p)) bad.push(p);
+      else if (/\.(blend|fbx)$/i.test(e.name) || /(^|\/)sfx\/(cuts|reels)/.test(p)) bad.push(p);
     });
   walk('.');
   assert.deepEqual(bad, []);
