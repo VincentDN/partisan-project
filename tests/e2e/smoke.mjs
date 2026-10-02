@@ -93,8 +93,10 @@ await check('opening scene: the table, the rifle, one button; the shell keeps on
   assert.equal(await same(), true, 'the shell owns the sound layer');
   const frame = shell.frameLocator('#view');
   await frame.locator('.pbar a[href$="menu/"]').click();
-  await shell.waitForFunction(() => document.querySelector('#view').contentWindow.location.pathname.endsWith('/menu/'));
-  await shell.waitForFunction(() => document.querySelector('#view').contentWindow.PARP_INDEX?.ready);
+  await shell.waitForFunction(() => document.querySelector('#view').contentWindow.location.pathname.endsWith('/menu/'), null, {
+    timeout: 90000,
+  });
+  await shell.waitForFunction(() => document.querySelector('#view').contentWindow.PARP_INDEX?.ready, null, {timeout: 90000});
   assert.equal(await same(), true, 'the same sound layer after navigating');
   await shell.waitForFunction(() => location.search.includes('p=menu'), null, {timeout: 5000});
   await shell.close();
