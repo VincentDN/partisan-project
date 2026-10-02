@@ -476,18 +476,18 @@ $('#photo').onclick = () => {
   const g = out.getContext('2d'),
     scale = src.width / 1400;
   const grad = g.createRadialGradient(out.width / 2, out.height * 0.42, 0, out.width / 2, out.height * 0.42, out.width * 0.7);
-  grad.addColorStop(0, '#3a454b');
-  grad.addColorStop(1, '#1b2226');
+  grad.addColorStop(0, '#46563a');
+  grad.addColorStop(1, '#1e2717');
   g.fillStyle = grad;
   g.fillRect(0, 0, out.width, out.height);
   g.drawImage(src, 0, 0);
   const bar = Math.round(64 * scale);
-  g.fillStyle = '#0f1417d9';
+  g.fillStyle = '#12170fd9';
   g.fillRect(0, out.height - bar, out.width, bar);
   g.fillStyle = '#ef8f39';
   g.font = `600 ${Math.round(22 * scale)}px ui-monospace,monospace`;
   g.fillText('Partisan Project', Math.round(24 * scale), out.height - bar / 2 + Math.round(8 * scale));
-  g.fillStyle = '#eceeea';
+  g.fillStyle = '#dbe5c3';
   g.font = `${Math.round(18 * scale)}px system-ui,sans-serif`;
   g.fillText(
     `${base.label} · ${poseData.poses[state.pose].label} · ${new Date().toISOString().slice(0, 10)}`,

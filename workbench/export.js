@@ -12,8 +12,8 @@ export function saveCard({renderer, scene, camera, rifle, buildBox}) {
   out.height = H;
   const g = out.getContext('2d');
   const grad = g.createLinearGradient(0, 0, 0, H);
-  grad.addColorStop(0, '#3a454b');
-  grad.addColorStop(1, '#1b2226');
+  grad.addColorStop(0, '#46563a');
+  grad.addColorStop(1, '#1e2717');
   g.fillStyle = grad;
   g.fillRect(0, 0, W - panel, H);
   // Cover-fit the render into the picture area.
@@ -23,42 +23,42 @@ export function saveCard({renderer, scene, camera, rifle, buildBox}) {
     sw = area / scale,
     sh = H / scale;
   g.drawImage(src, (src.width - sw) / 2, (src.height - sh) / 2, sw, sh, 0, 0, area, H);
-  g.fillStyle = '#161d21';
+  g.fillStyle = '#192013';
   g.fillRect(area, 0, panel, H);
   g.fillStyle = '#ef8f39';
   g.fillRect(area, 0, 4, H);
   const x = area + 44;
   let y = 70;
-  const text = (t, size, color = '#eceeea', weight = 400, font = 'system-ui,sans-serif') => {
+  const text = (t, size, color = '#dbe5c3', weight = 400, font = 'system-ui,sans-serif') => {
     g.fillStyle = color;
     g.font = `${weight} ${size}px ${font}`;
     g.fillText(t, x, y);
   };
   text('PARTISAN PROJECT · WEAPON WORKBENCH', 16, '#ef8f39', 600, 'ui-monospace,monospace');
   y += 48;
-  text(rifle.config.title, 34, '#eceeea', 650);
+  text(rifle.config.title, 34, '#dbe5c3', 650);
   y += 34;
   const summary = buildSummary(rifle, rifle.build);
   text(
     `${Math.round((buildBox.max.x - buildBox.min.x) * 1000)} mm · ${(summary.grams / 1000).toFixed(2)} kg · ${summary.rounds} rds`,
     17,
-    '#9aa9b0',
+    '#98a97e',
   );
   y += 36;
   for (const stat of STATS) {
-    text(stat.label, 15, '#9aa9b0');
-    g.fillStyle = '#eceeea';
+    text(stat.label, 15, '#98a97e');
+    g.fillStyle = '#dbe5c3';
     g.font = '600 15px ui-monospace,monospace';
     g.fillText(String(summary[stat.id]), x + panel - 110, y);
     y += 10;
     g.fillStyle = '#ffffff18';
     g.fillRect(x, y, panel - 88, 6);
-    g.fillStyle = '#c9cfd2';
+    g.fillStyle = '#c0cfa6';
     g.fillRect(x, y, ((panel - 88) * summary[stat.id]) / 100, 6);
     y += 26;
   }
   y += 8;
-  text('BUILD', 13, '#9aa9b0', 600, 'ui-monospace,monospace');
+  text('BUILD', 13, '#98a97e', 600, 'ui-monospace,monospace');
   y += 26;
   for (const slot of Object.values(rifle.slots)) {
     const o = slot.options.find(o => o.id === rifle.build[slot.spec.id]);
@@ -84,18 +84,18 @@ export function savePhoto({renderer, scene, camera, rifle}) {
     scale = src.width / 1400;
   // The stage's own CSS backdrop isn't in the WebGL canvas, so paint a matching base first.
   const grad = g.createRadialGradient(out.width / 2, out.height * 0.42, 0, out.width / 2, out.height * 0.42, out.width * 0.7);
-  grad.addColorStop(0, '#3a454b');
-  grad.addColorStop(1, '#1b2226');
+  grad.addColorStop(0, '#46563a');
+  grad.addColorStop(1, '#1e2717');
   g.fillStyle = grad;
   g.fillRect(0, 0, out.width, out.height);
   g.drawImage(src, 0, 0);
   const bar = Math.round(64 * scale);
-  g.fillStyle = '#0f1417d9';
+  g.fillStyle = '#12170fd9';
   g.fillRect(0, out.height - bar, out.width, bar);
   g.fillStyle = '#ef8f39';
   g.font = `600 ${Math.round(22 * scale)}px ui-monospace,monospace`;
   g.fillText('Partisan Project', Math.round(24 * scale), out.height - bar / 2 + Math.round(8 * scale));
-  g.fillStyle = '#eceeea';
+  g.fillStyle = '#dbe5c3';
   g.font = `${Math.round(18 * scale)}px system-ui,sans-serif`;
   g.fillText(
     `${rifle.config.title} · ${new Date().toISOString().slice(0, 10)}`,

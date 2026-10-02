@@ -1,11 +1,11 @@
 /* Partisan Project design tokens, shared by every tool page (see docs/ui-style-guide.md). */
 :root {
   color-scheme: dark;
-  --bg: #0f1417;
-  --panel: #161d21;
-  --line: #b4c4cc26;
-  --text: #eceeea;
-  --dim: #9aa9b0;
+  --bg: #12170f;
+  --panel: #192013;
+  --line: #9fb18433;
+  --text: #dbe5c3;
+  --dim: #98a97e;
   --accent: #ef8f39;
   --good: #7fbf7f;
   --bad: #d96b5b;

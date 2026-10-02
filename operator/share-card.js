@@ -21,21 +21,21 @@ export function shareCardDataUrl({canvas, base, poseLabel, equipment, rifle}) {
   out.height = H;
   const g = out.getContext('2d');
   const grad = g.createLinearGradient(0, 0, 0, H);
-  grad.addColorStop(0, '#3a454b');
-  grad.addColorStop(1, '#1b2226');
+  grad.addColorStop(0, '#46563a');
+  grad.addColorStop(1, '#1e2717');
   g.fillStyle = grad;
   g.fillRect(0, 0, area, H);
   const scale = Math.max(area / canvas.width, H / canvas.height),
     sw = area / scale,
     sh = H / scale;
   g.drawImage(canvas, (canvas.width - sw) / 2, (canvas.height - sh) / 2, sw, sh, 0, 0, area, H);
-  g.fillStyle = '#161d21';
+  g.fillStyle = '#192013';
   g.fillRect(area, 0, panel, H);
   g.fillStyle = '#ef8f39';
   g.fillRect(area, 0, 4, H);
   const x = area + 44;
   let y = 66;
-  const text = (t, size, color = '#eceeea', weight = 400, font = 'system-ui,sans-serif', dx = 0) => {
+  const text = (t, size, color = '#dbe5c3', weight = 400, font = 'system-ui,sans-serif', dx = 0) => {
     g.fillStyle = color;
     g.font = `${weight} ${size}px ${font}`;
     g.fillText(t, x + dx, y);
@@ -43,11 +43,11 @@ export function shareCardDataUrl({canvas, base, poseLabel, equipment, rifle}) {
   const mono = 'ui-monospace,monospace';
   text('PARTISAN PROJECT · OPERATOR CUSTOMISER', 16, '#ef8f39', 600, mono);
   y += 46;
-  text(base.label, 34, '#eceeea', 650);
+  text(base.label, 34, '#dbe5c3', 650);
   y += 30;
-  text(poseLabel, 17, '#9aa9b0');
+  text(poseLabel, 17, '#98a97e');
   y += 34;
-  text('LOOK', 13, '#9aa9b0', 600, mono);
+  text('LOOK', 13, '#98a97e', 600, mono);
   y += 24;
   for (const e of equipment) {
     text(`${e.label}: ${e.choice}`, 15);
@@ -56,19 +56,19 @@ export function shareCardDataUrl({canvas, base, poseLabel, equipment, rifle}) {
   if (rifle) {
     const s = buildSummary(rifle, rifle.build);
     y += 14;
-    text('CARRIED WEAPON', 13, '#9aa9b0', 600, mono);
+    text('CARRIED WEAPON', 13, '#98a97e', 600, mono);
     y += 26;
-    text(rifle.config.title, 21, '#eceeea', 600);
+    text(rifle.config.title, 21, '#dbe5c3', 600);
     y += 22;
-    text(`${(s.grams / 1000).toFixed(2)} kg · ${s.rounds} rds`, 14, '#9aa9b0');
+    text(`${(s.grams / 1000).toFixed(2)} kg · ${s.rounds} rds`, 14, '#98a97e');
     y += 24;
     for (const stat of STATS) {
-      text(stat.label, 13, '#9aa9b0');
-      text(String(s[stat.id]), 13, '#eceeea', 600, mono, panel - 130);
+      text(stat.label, 13, '#98a97e');
+      text(String(s[stat.id]), 13, '#dbe5c3', 600, mono, panel - 130);
       y += 8;
       g.fillStyle = '#ffffff18';
       g.fillRect(x, y, panel - 88, 5);
-      g.fillStyle = '#c9cfd2';
+      g.fillStyle = '#c0cfa6';
       g.fillRect(x, y, ((panel - 88) * s[stat.id]) / 100, 5);
       y += 20;
     }
