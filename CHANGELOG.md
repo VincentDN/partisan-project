@@ -22,6 +22,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 - **Hands on the rifle**: `operator/grip.js` solves both arms onto the carried rifle each frame (two-bone IK, hand aligned to the grip). Weapon poses place the rifle in body space (`hold`, `muzzle`, `up`). The hero pose follows the moodboard. Also new: *Hero · both hands* and *Port arms* (replaces *Shoulder arms*). Low ready, high ready, crouch and kneel are reworked.
 - `outbound/` (files for the owner, starting with the weapon sounds package) and `inbound/` (files from the owner). Neither is deployed.
 
+### Removed (round 6)
+- **Chiptune cover on the Nokia index** (deprecated: it did not hold up in use). The index plays the recording like every other page. Removed: the cover's player code (variant crossfade, lockstep sync), the `npm run test:audio` check and its CI step. `duce-chiptune.mp3` moved to `outbound/`, so it no longer ships; the generator `tools/audio/chiptune-duce.py` stays for a later attempt.
+
 ### Changed (round 6)
 - The Base Operator defaults to plain olive fabric; the pack camo stays selectable as *Original camo*.
 - Tool-page sidebars, share cards and the style guide use Nokia greens instead of blue-grey.

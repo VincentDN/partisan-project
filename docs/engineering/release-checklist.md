@@ -6,13 +6,13 @@ Credits and licences are out of scope (see ADR 0012).
 ## Automated
 - [ ] `npx prettier --check .`, `npx eslint .`, `npm run typecheck`
 - [ ] `npm test` (unit, plan, site build)
-- [ ] `tests/e2e/smoke.mjs`, `tests/e2e/a11y.mjs`, `npm run test:audio`
+- [ ] `tests/e2e/smoke.mjs`, `tests/e2e/a11y.mjs`
 - [ ] Pages deploy green on `main`
 
 ## Manual
 - [ ] Every page loads under `/partisan-project/` with relative URLs only
 - [ ] Every page keeps `noindex, nofollow` and `seo_hidden`
-- [ ] Music continues across pages; chiptune crossfade on the Nokia index
+- [ ] Music continues across pages without restarting
 - [ ] Workbench: three rifles, share code round trip, reset
 - [ ] Operator customiser: poses, idles, share link
 - [ ] Phone check: touch, orientation, idle frame rate

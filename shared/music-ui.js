@@ -5,12 +5,11 @@
 import './frame.js';
 import {soundLayer} from './sound-layer.js';
 
-/** @param {{scene?: 'bench' | 'viewer', variant?: 'original' | 'chip'}} [options] bench: the music comes out of the old radio with the camp around it; viewer: clean. */
-export function bindMusicUI({scene = 'viewer', variant = 'original'} = {}) {
+/** @param {{scene?: 'bench' | 'viewer'}} [options] bench: the music comes out of the old radio with the camp around it; viewer: clean. */
+export function bindMusicUI({scene = 'viewer'} = {}) {
   const sound = soundLayer(),
     prefs = sound.prefs;
   sound.scene(scene);
-  sound.variant(variant);
   const toggle = document.querySelector('#music-toggle'),
     volume = document.querySelector('#music-volume');
   const FADE = 1.5;

@@ -11,14 +11,13 @@ const root = new URL('../', import.meta.url);
 const href = path => new URL(path, root).href;
 
 /**
- * @param {{title?: string, scene?: 'bench'|'viewer', variant?: 'original'|'chip', current?: 'index'|'doc'|'intro'|string, overlay?: boolean, sticky?: boolean, replaceHeader?: boolean, light?: boolean}} [opts]
+ * @param {{title?: string, scene?: 'bench'|'viewer', current?: 'index'|'doc'|'intro'|string, overlay?: boolean, sticky?: boolean, replaceHeader?: boolean, light?: boolean}} [opts]
  *   light: the pale-green version, for the game design doc whose own bar is already dark
  *   current: which button is the page you are on (shown pressed instead of a link)
  */
 export function mountTopBar({
   title = '',
   scene = 'viewer',
-  variant = 'original',
   current = '',
   overlay = false,
   sticky = false,
@@ -79,7 +78,7 @@ export function mountTopBar({
       trigger.focus();
     }
   });
-  const sound = bindMusicUI({scene, variant});
+  const sound = bindMusicUI({scene});
   // The trigger shows whether the music is on.
   const mirror = () => (bar.dataset.music = sound.prefs.on ? 'on' : 'off');
   mirror();
