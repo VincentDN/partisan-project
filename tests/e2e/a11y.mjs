@@ -14,13 +14,23 @@ if (!process.env.ROOT) {
 const server = await startServer(8196),
   browser = await launch();
 const pages = [
-  ['opening scene', 'intro/', async p => p.waitForFunction(() => window.PARP_INTRO?.ready, null, {timeout: 90000})],
+  [
+    'opening scene',
+    'intro/',
+    async p =>
+      p.waitForFunction(() => document.querySelector('#start') && !document.querySelector('#start').disabled, null, {timeout: 90000}),
+  ],
   ['index (splash)', 'menu/', async p => p.waitForFunction(() => window.PARP_INDEX?.ready && window.PARP_MENU?.ready)],
   ['index (menu)', 'menu/#menu', async p => p.waitForFunction(() => window.PARP_INDEX?.ready && window.PARP_MENU?.ready)],
   ['workbench', 'workbench/', async p => p.waitForSelector('#build .slot', {timeout: 60000})],
   ['operator', 'operator/', async p => p.waitForFunction(() => window.PARP_OPERATOR?.ready, null, {timeout: 60000})],
   ['operator (recon)', 'operator/#base=recon', async p => p.waitForFunction(() => window.PARP_OPERATOR?.ready, null, {timeout: 60000})],
-  ['bench', 'bench/', async p => p.waitForFunction(() => window.PARP_BENCH?.ready, null, {timeout: 90000})],
+  [
+    'advanced animations',
+    'intro/advanced.html',
+    async p =>
+      p.waitForFunction(() => document.querySelector('#start') && !document.querySelector('#start').disabled, null, {timeout: 90000}),
+  ],
   ['viewer', 'viewer/', async p => p.waitForFunction(() => window.PARP_VIEWER?.ready, null, {timeout: 60000})],
   ['design document', 'docs/game-design-master-doc.html', async p => p.waitForSelector('#milestones .ms')],
   ['master roadmap', 'docs/master-roadmap.html', async p => p.waitForSelector('main h1')],

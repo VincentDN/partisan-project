@@ -52,8 +52,16 @@ await check('index: the Nokia screen lies on the table, splash, menu, number key
 
 await check('opening scene: the table, the rifle, one button; the shell keeps one sound layer across pages', async () => {
   const page = await open(browser, server.url + 'intro/');
-  await page.waitForFunction(() => window.PARP_INTRO?.ready, null, {timeout: 90000});
-  const labels = await page.locator('.actions a').allInnerTexts();
+  await page.waitForFunction(
+    () => {
+      const b = document.querySelector('#start');
+      return !!b && !b.disabled;
+    },
+    null,
+    {timeout: 90000},
+  );
+  const labels = await page.locator('#start').allInnerTexts();
+  assert.equal(await page.locator('.prompt a, .prompt button').count(), 1, 'one action on the scene');
   assert.deepEqual(
     labels.map(l => l.replace(/\s+E$/, '').trim().toLowerCase()),
     ['customize this weapon'],
@@ -71,7 +79,14 @@ await check('opening scene: the table, the rifle, one button; the shell keeps on
   await page.close();
   // The shell: pages open inside one frame that owns the sound layer, and the address follows the frame.
   const shell = await open(browser, server.url);
-  await shell.waitForFunction(() => document.querySelector('#view')?.contentWindow?.PARP_INTRO?.ready, null, {timeout: 90000});
+  await shell.waitForFunction(
+    () => {
+      const b = document.querySelector('#view')?.contentDocument?.querySelector('#start');
+      return !!b && !b.disabled;
+    },
+    null,
+    {timeout: 90000},
+  );
   const same = () =>
     shell.evaluate(() => document.querySelector('#view').contentWindow.parent.parpSound === window.parpSound && !!window.parpSound);
   assert.equal(await same(), true, 'the shell owns the sound layer');
@@ -294,35 +309,6 @@ await check('workbench: the guided tour steps through, is remembered, and the st
   assert.equal(await page.evaluate(() => localStorage.getItem('parp-tour-workbench')), '1');
   noProblems(page);
   await page.close();
-});
-
-await check('bench: Skip fits the part, Cancel before the commit changes nothing, reduced motion is instant', async () => {
-  const page = await open(browser, server.url + 'bench/', {reducedMotion: 'no-preference'});
-  await page.waitForFunction(() => window.PARP_BENCH?.ready, null, {timeout: 90000});
-  await page.evaluate(() => (document.querySelector('#first-run').hidden = true));
-  const optic = () => page.evaluate(() => window.PARP_BENCH.rifle.build.optic);
-  const before = await optic();
-  // A frozen clock keeps the task before its commit however slow the software renderer is.
-  await page.evaluate(() => (window.PARP_BENCH.actions.now = () => 0));
-  await page.evaluate(() => window.PARP_BENCH.change('optic', 'scope'));
-  assert.equal(await page.evaluate(() => window.PARP_BENCH.actions.busy), true);
-  assert.equal(await page.locator('#skip').isEnabled(), true);
-  await page.locator('#cancel').click();
-  assert.equal(await optic(), before, 'cancel before the commit leaves the build alone');
-  assert.equal(await page.evaluate(() => window.PARP_BENCH.ghosts), null, 'presentation copies are removed');
-  await page.evaluate(() => window.PARP_BENCH.change('optic', 'scope'));
-  await page.locator('#skip').click();
-  assert.equal(await optic(), 'scope');
-  assert.match(await page.evaluate(() => location.hash), /optic=scope/);
-  assert.equal(await page.evaluate(() => window.PARP_BENCH.rifle.slots.optic.container.visible), true);
-  noProblems(page);
-  await page.close();
-  const instant = await open(browser, server.url + 'bench/');
-  await instant.waitForFunction(() => window.PARP_BENCH?.ready, null, {timeout: 90000});
-  await instant.evaluate(() => window.PARP_BENCH.change('muzzle', 'comp'));
-  assert.equal(await instant.evaluate(() => window.PARP_BENCH.actions.busy), false);
-  assert.equal(await instant.evaluate(() => window.PARP_BENCH.rifle.build.muzzle), 'comp');
-  await instant.close();
 });
 
 await check('workbench sounds: the recorded foley bank loads after the first handling sound', async () => {

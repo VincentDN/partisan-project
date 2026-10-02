@@ -38,7 +38,7 @@ export function mountTopBar({
     current === id
       ? `<a class="${cls}" aria-current="page" ${attrs}>${label}</a>`
       : `<a class="${cls}" href="${href(path)}" ${attrs}>${label}</a>`;
-  // A plain lambda: a long stroke and a short leg.
+  // The lambda (same shape as the favicon).
   const lambda =
     '<svg viewBox="0 0 32 32" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="square"><path d="M8 5 25 27M17.4 16.8 8 27"/></svg>';
   bar.innerHTML =

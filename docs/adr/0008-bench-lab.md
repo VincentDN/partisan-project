@@ -13,3 +13,5 @@
 **Consequences.** `bench/` is allowlisted in the Pages build and covered by unit tests (timeline, motion, IK), a browser test and the accessibility audit. Visual quality (grip contacts per option, hand anatomy) is tracked as separate packets rather than claimed done.
 
 **Update 2026-10-02.** At the owner's request the earlier code-built operator and its articulated hands are restored for Bench Lab and the opening scene (`shared/legacy-operator/`, `bench/legacy-arms.js`). The new Base Operator is used only by the Operator Customiser. `bench/hands.js` remains as a lighter alternative with the same interface.
+
+**Update 2 · 2026-10-02 · superseded.** Bench Lab (`bench/`) is removed. The original opening scene and advanced-animations test from vincentdenil-site are restored verbatim in `intro/` (ADR 0011), wired to the current customiser and the shared music player.

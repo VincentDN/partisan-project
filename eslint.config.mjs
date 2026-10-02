@@ -3,10 +3,21 @@ import js from '@eslint/js';
 import globals from 'globals';
 
 export default [
-  {ignores: ['vendor/**', 'node_modules/**', '_site/**', 'build/**', 'assets-incoming/**', 'docs/archive/**']},
+  {
+    ignores: [
+      'vendor/**',
+      'node_modules/**',
+      '_site/**',
+      'build/**',
+      'assets-incoming/**',
+      'docs/archive/**',
+      'intro/**',
+      'tests/legacy/**',
+    ],
+  },
   js.configs.recommended,
   {
-    files: ['shell.js', 'intro/**', 'menu/**', 'workbench/**', 'bench/**', 'operator/**', 'viewer/**', 'shared/**', 'assets/js/**'],
+    files: ['shell.js', 'menu/**', 'workbench/**', 'operator/**', 'viewer/**', 'shared/**', 'assets/js/**'],
     languageOptions: {ecmaVersion: 2023, sourceType: 'module', globals: {...globals.browser}},
     rules: {
       'no-unused-vars': ['warn', {args: 'none', caughtErrors: 'none'}],

@@ -10,3 +10,5 @@ docs/moodboard/
 *.html
 *.css
 package-lock.json
+intro/
+tests/legacy/

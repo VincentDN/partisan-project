@@ -1,48 +1,39 @@
-/* The Partisan Project top bar: a thin strip of Nokia LCD gone dark (dark green base, pale-green ink), after the design document's
-   bar, with a little scanline and a dithered edge. `.pbar.light` is the pale-green version used on the game design doc,
-   whose own bar is already dark. */
-:root{--topbar:28px}
-.pbar{--ink:#c8d4a8;--ink-dim:#8d9b74;--base:#141a11;--base-hi:#1b2318;--line:#2c3526;--lit:#9fb184;--lit-ink:#16200f;
-  position:relative;z-index:50;height:var(--topbar);display:flex;align-items:stretch;box-sizing:border-box;
-  background:linear-gradient(var(--base-hi),var(--base));color:var(--ink);border-bottom:1px solid var(--line);
-  font:600 10.5px/1 ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;text-transform:uppercase;letter-spacing:.12em;user-select:none}
-.pbar.light{--ink:#16200f;--ink-dim:#3b4a2c;--base:#9fb184;--base-hi:#b5c79a;--line:#16200f;--lit:#16200f;--lit-ink:#b5c79a}
-/* LCD pixel grid over the strip, and a dithered lower edge. */
-.pbar::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
-  background-image:linear-gradient(#0000002e 1px,transparent 1px),linear-gradient(90deg,#00000018 1px,transparent 1px);background-size:3px 3px}
-.pbar.light::before{mix-blend-mode:multiply;opacity:.35}
-.pbar::after{content:"";position:absolute;left:0;right:0;bottom:-3px;height:2px;pointer-events:none;
-  background:repeating-conic-gradient(var(--line) 0 25%,transparent 0 50%) 0 0/2px 2px;opacity:.7}
-.pbar.overlay{position:absolute;inset:0 0 auto 0}
-.pbar.sticky{position:sticky;top:0}
-.pbar a,.pbar button{font:inherit;letter-spacing:inherit;text-transform:inherit;color:var(--ink-dim);text-decoration:none;background:none;border:0;
-  padding:0 11px;display:flex;align-items:center;gap:6px;cursor:pointer;position:relative;z-index:1}
-.pbar a:hover,.pbar button:hover,.pbar a:focus-visible,.pbar button:focus-visible{background:var(--lit);color:var(--lit-ink);outline:none}
-.pbar [aria-current=page]{color:var(--ink);cursor:default;box-shadow:inset 0 -2px 0 var(--ink)}
-.pbar [aria-current=page]:hover{background:none;color:var(--ink)}
-.pbar .brand{color:var(--ink);padding:0 12px 0 10px;gap:7px;letter-spacing:.2em;border-right:1px solid var(--line)}
-.pbar .brand svg{width:13px;height:13px;flex:none}
+/* The Partisan Project top bar: the subtle, text-only, transparent header of the original workbench pages, in Nokia
+   green. No boxes, no fills: pale-green mono text, a soft green highlight under the pointer and on the current page. */
+:root{--topbar:30px}
+.pbar{--ink:#c8d4a8;--ink-dim:#8d9b74;--glow:rgba(159,177,132,.16);--glow-line:#9fb184;
+  position:relative;z-index:50;height:var(--topbar);display:flex;align-items:center;gap:2px;box-sizing:border-box;padding:0 14px;
+  background:transparent;color:var(--ink);font:11px/1.5 ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;letter-spacing:.1em;text-transform:uppercase;user-select:none}
+/* Over a scene (the opening scene) the bar fades in from the top edge, as on the original page. */
+.pbar.overlay{position:absolute;inset:0 0 auto 0;background:linear-gradient(#000a,transparent)}
+.pbar.sticky{position:sticky;top:0;background:linear-gradient(#0d100cf2,#0d100cc0)}
+.pbar a,.pbar button{font:inherit;letter-spacing:inherit;text-transform:inherit;color:var(--ink-dim);text-decoration:none;background:none;border:0;border-radius:2px;
+  padding:3px 9px;display:flex;align-items:center;gap:7px;cursor:pointer}
+.pbar a:hover,.pbar button:hover,.pbar a:focus-visible,.pbar button:focus-visible{background:var(--glow);color:var(--ink);outline:none;box-shadow:inset 0 -1px 0 var(--glow-line)}
+.pbar [aria-current=page]{color:var(--ink);cursor:default;background:var(--glow)}
+.pbar .brand{color:var(--ink);padding-left:0;letter-spacing:.16em;margin-right:8px}
+.pbar .brand svg{width:12px;height:12px;flex:none}
 .pbar .spacer{flex:1}
 /* Music: one small button; the player drops down from it. */
-.pbar .music-wrap{position:relative;display:flex;border-left:1px solid var(--line)}
-.pbar #music-menu{padding:0 11px;gap:7px}
-.pbar #music-menu .dot{width:6px;height:6px;background:currentColor;opacity:.35}
+.pbar .music-wrap{position:relative;display:flex}
+.pbar #music-menu{gap:7px}
+.pbar #music-menu .dot{width:5px;height:5px;background:currentColor;opacity:.35}
 .pbar[data-music=on] #music-menu .dot{opacity:1;animation:pbar-pulse 1.6s steps(2) infinite}
-.pbar #music-menu[aria-expanded=true]{background:var(--lit);color:var(--lit-ink)}
-.pbar .player{position:absolute;right:0;top:100%;width:230px;margin-top:3px;padding:10px;z-index:60;display:grid;gap:8px;
-  background:var(--base-hi);border:1px solid var(--ink-dim);box-shadow:0 8px 0 -4px #0008,3px 3px 0 #000a;text-transform:none;letter-spacing:.04em;font-weight:400}
+.pbar #music-menu[aria-expanded=true]{background:var(--glow);color:var(--ink)}
+.pbar .player{position:absolute;right:0;top:100%;width:230px;margin-top:4px;padding:10px;z-index:60;display:grid;gap:8px;
+  background:#0d100cf2;border:1px solid #2c3526;border-radius:3px;box-shadow:0 8px 24px #000a;text-transform:none;letter-spacing:.04em}
 .pbar .player[hidden]{display:none}
 .pbar .player .row{display:flex;gap:6px;align-items:center}
-.pbar .player button{border:1px solid var(--line);padding:5px 8px;min-height:24px;justify-content:center;text-transform:uppercase;letter-spacing:.1em;flex:1;font-size:10px}
-.pbar .player button[aria-pressed=true]{background:var(--lit);color:var(--lit-ink);border-color:var(--lit)}
+.pbar .player button{border:1px solid #2c3526;padding:5px 8px;min-height:24px;justify-content:center;text-transform:uppercase;letter-spacing:.1em;flex:1;font-size:10px}
+.pbar .player button[aria-pressed=true]{background:var(--glow);color:var(--ink);border-color:var(--glow-line)}
 .pbar .player #music-toggle[aria-pressed=false]{text-decoration:line-through}
 .pbar .player .tracks{display:grid;gap:4px}
 .pbar .player .tracks button{justify-content:flex-start;text-align:left;text-transform:none;letter-spacing:.02em;font-size:11px}
 .pbar .player label{display:flex;gap:8px;align-items:center;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-dim)}
-.pbar .player input{flex:1;accent-color:var(--lit);height:16px;min-width:0}
+.pbar .player input{flex:1;accent-color:var(--glow-line);height:16px;min-width:0}
 .pbar .player output{min-width:3.2ch;text-align:right;color:var(--ink)}
 .pbar .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 .pbar .short{display:none}
 @keyframes pbar-pulse{50%{opacity:.35}}
 @media (prefers-reduced-motion:reduce){.pbar[data-music=on] #music-menu .dot{animation:none}}
-@media (max-width:560px){.pbar .long{display:none}.pbar .short{display:inline}.pbar a,.pbar button{padding:0 8px}.pbar .brand .name{display:none}.pbar .brand{padding:0 9px}}
+@media (max-width:560px){.pbar{padding:0 8px}.pbar .long{display:none}.pbar .short{display:inline}.pbar a,.pbar button{padding:3px 6px}.pbar .brand .name{display:none}.pbar .brand{margin-right:2px}}

@@ -136,7 +136,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | **M0** Foundation | v0.3.0 | 8/10 | 130 BU | 95% |
 | **M1** Gun modder: real parts, three weapons | v0.4.0 | 3/11 | 143 BU | 34% |
 | **M2** Operator roster: Recon, Insurgent, Enforcer | v0.5.0 | 10/11 | 172 BU | 95% |
-| **M3** Integration and sharing | v0.6.0 | 4/8 | 112 BU | 50% |
+| **M3** Integration and sharing | v0.6.0 | 4/6 | 96 BU | 58% |
 | **M4** Weapon roster 2: modern and WW2 | v0.7.0 | 0/7 | 111 BU | 0% |
 | **M5** Production acceptance | v1.0.0 | 2/6 | 67 BU | 42% |
 | **TD** Tech debt (fill windows) | — | 4/4 | 44 BU | 100% |
@@ -198,10 +198,8 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-I2` | Per-weapon grip contact data and pose-fit for every supported weapon/stock combination | M (20) | planned | — | `WP-I1`, `WP-A10` |
 | `WP-I3` | Versioned loadout codes (P1.<base64url>) with backward compatibility for old AK hashes | S (8) | done | — | `WP-I1` |
 | `WP-I4` | Combined share card (operator + weapon + stats) and photo-mode extras | S (8) | done | — | `WP-I3` |
-| `WP-X1` | Bench Lab v1: staged part changes with IK arms, tray, Skip/Cancel, review mode, synth handling sounds | M (20) | done | browser | — |
-| `WP-X2` | Bench Lab: per-option grip contacts and hand silhouettes; review every slot extreme with a contact sheet | M (20) | planned | browser | `WP-X1` |
-| `WP-X3` | Bench Lab: bench atmosphere (lamp, radio playing the music, camp ambience) and camera shots per family | S (8) | planned | browser | `WP-X1` |
-| `WP-X4` | Bench Lab: performance and device pass (60 fps desktop, 30 fps mid phone) and handling-sound listening review | S (8) | planned | browser | `WP-X1` |
+| `WP-X1` | Original opening scene and advanced-animations test restored verbatim from vincentdenil-site (intro/), wired to the current customiser and the shared music player | M (20) | done | browser | — |
+| `WP-X2` | Advanced animations: contact, sound and device review (the original prototype's open gates) | M (20) | planned | browser | `WP-X1` |
 
 ### M4 · Weapon roster 2: modern and WW2
 

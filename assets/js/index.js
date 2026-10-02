@@ -75,7 +75,7 @@ function renderAbout() {
   content.innerHTML =
     chrome('ABOUT', '') +
     `<div class="about"><p><b>Partisan Project</b> v${window.PARP_VERSION}<br>Partisan Project: an interactive game design document made of playable demos.</p>
-  <p>Demos: Weapon Workbench, Operator Modder, Bench Lab, Asset Viewer.<br>Docs: Game Design Doc, Master Roadmap.</p>
+  <p>Demos: Weapon Workbench, Operator Modder, Advanced animations, Asset Viewer.<br>Docs: Game Design Doc, Master Roadmap.</p>
   <p>Source: <a href="https://github.com/VincentDN/partisan-project" rel="noopener">github.com/VincentDN/partisan-project</a><br>By Atelier Vincent De Nil BV.</p>
   <p>Third-party credits and licences: <a href="../docs/game-design-master-doc.html#credits">design doc, credits</a>.</p></div>` +
     softkeys('', 'BACK');

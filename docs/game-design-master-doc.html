@@ -247,7 +247,7 @@ footer a{color:var(--olive)}
 <script type="module">
 import {drawDithered} from '../assets/js/dither.js';
 import {mountTopBar} from '../shared/topbar.js';
-mountTopBar({title: 'Game design doc', scene: 'viewer', current: 'doc', sticky: true, replaceHeader: false, light: true});
+mountTopBar({title: 'Game design doc', scene: 'viewer', current: 'doc', sticky: true, replaceHeader: false});
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 

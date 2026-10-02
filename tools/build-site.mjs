@@ -25,7 +25,6 @@ const ALLOW = [
   'shared',
   'vendor',
   'workbench',
-  'bench',
   'operator',
   'viewer',
   'docs/game-design-master-doc.html',

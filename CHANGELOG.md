@@ -4,6 +4,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 ## [0.3.1] · 2026-10-01
 
+### Changed (round 3)
+- **Original opening scene and advanced animations restored verbatim** (`intro/`, ADR 0011): the code from vincentdenil-site, with its own operator, hands and bench timeline, wired to the current weapon customiser and the shared top bar and music player. One orange button on the scene: *Customize this weapon*. The rebuilt scene and Bench Lab are removed; the index lists "Advanced animations".
+
 ### Changed (round 2)
 - **Top bar v2**: thinner (28 px), smaller type, dark-green base with pale-green ink and a little LCD scanline and dithered edge; the game design doc keeps the pale-green version. Left: a plain lambda with "Partisan Project" (tooltip "Return to home", goes to the opening scene). Buttons: INDEX and GAME DESIGN DOC only. The music player is a small drop-down (on/off, three tracks, volume) from one ♪ button.
 - **Favicon** is now the lambda (dark green on bright green, 1px border, dithered shadow).
