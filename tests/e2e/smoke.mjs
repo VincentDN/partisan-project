@@ -63,7 +63,7 @@ await check('opening scene: the table, the rifle, one button; the shell keeps on
   const labels = await page.locator('#start').allInnerTexts();
   assert.equal(await page.locator('.prompt a, .prompt button').count(), 1, 'one action on the scene');
   assert.deepEqual(
-    labels.map(l => l.replace(/\s+E$/, '').trim().toLowerCase()),
+    labels.map(l => l.replace(/\s*E$/, '').trim().toLowerCase()),
     ['customize this weapon'],
     'the orange button is the only action; the rest is in the top bar',
   );
