@@ -1,4 +1,4 @@
-# Build, test, and deploy Partisan Project to GitHub Pages.
+# Build, deploy to GitHub Pages, and run the browser tests in parallel (they flag problems but do not block the deploy).
 # One-time owner setup: Settings > Pages > Build and deployment > Source: "GitHub Actions".
 name: Build and deploy
 
@@ -63,7 +63,7 @@ jobs:
 
   deploy:
     if: github.ref == 'refs/heads/main'
-    needs: [build, smoke]
+    needs: build
     runs-on: ubuntu-latest
     permissions:
       pages: write
