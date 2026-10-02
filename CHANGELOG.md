@@ -4,6 +4,10 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 ## [0.3.1] · 2026-10-01
 
+### Changed (round 5)
+- **Chiptune cover of *The Duce Puts On His Uniform*** (`assets/audio/duce-chiptune.mp3`, `tools/audio/chiptune-duce.py`), the same length and beat grid as the recording. The Nokia index switches the player to it with an equal-power crossfade; other pages fade back to the recording; the two never restart (`Music.setVariant`, `sound.variant`). `npm run test:audio` (also in CI) checks sync and the handover.
+- Nokia index blips are 50% louder.
+
 ### Changed (round 4)
 - **Index**: opens straight on the menu (the "press any key" splash is gone); the camera follows the mouse 60% less; new **1. Weapon Workbench** (the opening scene) and the former 1 is now **2. Weapon Modder**.
 

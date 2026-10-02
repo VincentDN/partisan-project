@@ -6,7 +6,8 @@ import {mountTopBar} from '../shared/topbar.js';
 import {buildBenchScene, TABLE} from '../shared/bench-scene.js';
 import {quadTransform} from '../shared/homography.js';
 
-mountTopBar({title: 'Index', scene: 'bench', current: 'index'});
+// On the Nokia the music turns into its chiptune cover, in step with the recording; leaving the page fades back.
+mountTopBar({title: 'Index', scene: 'bench', variant: 'chip', current: 'index'});
 
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const small = matchMedia('(max-width: 780px), (pointer: coarse)').matches;

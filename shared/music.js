@@ -182,7 +182,14 @@ const LOOKAHEAD = 3;
 // gain, so volume and fades are shared. The file only downloads once music starts. File paths
 // resolve from this module, so other pages (the workbench intro) can play them too.
 export const TRACKS = [
-  {id: 'duce', label: 'The Duce Puts On His Uniform', src: new URL('../assets/audio/duce-uniform.mp3', import.meta.url).href},
+  {
+    id: 'duce',
+    label: 'The Duce Puts On His Uniform',
+    src: new URL('../assets/audio/duce-uniform.mp3', import.meta.url).href,
+    // A chiptune cover rendered to the recording's own beat grid and length (tools/audio/chiptune-duce.py). The player
+    // runs both in lockstep and crossfades between them.
+    chip: new URL('../assets/audio/duce-chiptune.mp3', import.meta.url).href,
+  },
   {id: 'abdulena', label: 'Abdulena', src: new URL('../assets/audio/abdulena.mp3', import.meta.url).href},
   {id: 'ambient', label: 'Ambient loop'},
 ];
@@ -209,6 +216,8 @@ export class Music {
     this.playing = false;
     this.track = TRACKS[0].id;
     this.route = route;
+    this.variant = 'original'; // 'original' | 'chip': which version of a track that has both is heard
+    this.chipReady = false;
   }
   setup() {
     if (this.ctx) return;
@@ -216,6 +225,11 @@ export class Music {
     this.master = this.ctx.createGain();
     this.master.gain.value = 0;
     this.master.connect(this.route?.(this.ctx) || this.ctx.destination);
+    this.mainGain = this.ctx.createGain(); // the recording
+    this.mainGain.connect(this.master);
+    this.chipGain = this.ctx.createGain(); // the chiptune cover
+    this.chipGain.gain.value = 0;
+    this.chipGain.connect(this.master);
     this.graph = createGraph(this.ctx, this.master);
     this.bar = 0;
     this.next = this.ctx.currentTime + 0.1;
@@ -231,14 +245,18 @@ export class Music {
         this.audio = new Audio();
         this.audio.loop = true;
         this.audio.preload = 'none';
-        this.ctx.createMediaElementSource(this.audio).connect(this.master);
+        this.ctx.createMediaElementSource(this.audio).connect(this.mainGain);
       }
       if (this.audio.src !== src) {
         this.audio.src = src;
         resumeFrom(this.audio, this.track);
       }
+      this.prepareChip();
       return this.audio.play().then(
-        () => true,
+        () => {
+          if (this.variant === 'chip') this.startChip();
+          return true;
+        },
         () => false,
       ); // false: blocked until a user gesture
     } else {
@@ -253,8 +271,116 @@ export class Music {
       return Promise.resolve(true);
     }
   }
+  // ---- The chiptune version of a track: kept in lockstep with the recording, crossfaded on request ----
+  chipSrc() {
+    return TRACKS.find(t => t.id === this.track)?.chip;
+  }
+  prepareChip() {
+    const src = this.chipSrc();
+    if (!src) {
+      if (this.chipAudio) {
+        this.chipAudio.pause();
+        this.chipAudio.removeAttribute('src');
+      }
+      this.chipReady = false;
+      return;
+    }
+    if (!this.chipAudio) {
+      this.chipAudio = new Audio();
+      this.chipAudio.loop = true;
+      this.ctx.createMediaElementSource(this.chipAudio).connect(this.chipGain);
+    }
+    if (this.chipAudio.src !== src) {
+      this.chipAudio.src = src;
+      this.chipAudio.preload = this.variant === 'chip' ? 'auto' : 'metadata';
+      this.chipReady = false;
+    }
+  }
+  /** Bring the cover in under the recording: same position, then wait until it is locked before fading it in. */
+  async startChip() {
+    this.prepareChip();
+    const a = this.audio,
+      c = this.chipAudio;
+    if (!a || !c || !c.src || a.paused) return;
+    this.chipReady = false;
+    c.preload = 'auto';
+    c.playbackRate = 1;
+    try {
+      c.currentTime = a.currentTime + 0.06;
+    } catch {}
+    await c.play().catch(() => {});
+    clearInterval(this.syncTimer);
+    this.syncTimer = setInterval(() => this.syncChip(), 250);
+  }
+  // Keep the cover on the recording's clock: gentle rate nudges for small drift, a seek for a big one.
+  syncChip() {
+    const a = this.audio,
+      c = this.chipAudio;
+    if (!a || !c || a.paused || c.paused) return;
+    const len = a.duration || 0;
+    let drift = c.currentTime - a.currentTime;
+    if (len && Math.abs(drift) > len / 2) drift -= Math.sign(drift) * len; // one of them has just looped
+    const d = Math.abs(drift);
+    if (d > 0.25) {
+      c.currentTime = a.currentTime + 0.06; // the cover takes a moment to start after a seek
+      c.playbackRate = 1;
+      this.chipReady = false;
+    } else if (d > 0.012) {
+      c.playbackRate = 1 - Math.max(-0.05, Math.min(0.05, drift * 1.5)); // behind: speed up a touch; ahead: slow down
+      if (d > 0.08) this.chipReady = false;
+    } else {
+      c.playbackRate = 1;
+    }
+    // Locked enough (30 ms is inaudible between two different timbres) to fade in.
+    if (!this.chipReady && d <= 0.03) {
+      this.chipReady = true;
+      this.applyMix(1.2);
+    }
+  }
+  /** 'original' or 'chip'. Crossfades (equal power) when the track has a cover and it is locked in; otherwise takes effect as soon as it can. */
+  setVariant(name, seconds = 1.6) {
+    this.variant = name === 'chip' ? 'chip' : 'original';
+    if (!this.ctx) return;
+    if (this.variant === 'chip' && this.playing && this.chipSrc() && (!this.chipAudio || this.chipAudio.paused)) this.startChip();
+    this.applyMix(seconds);
+  }
+  applyMix(seconds) {
+    if (!this.ctx || !this.mainGain) return;
+    const toChip = this.variant === 'chip' && this.chipReady ? 1 : 0;
+    const now = this.ctx.currentTime;
+    const curve = (from, to, rising) => {
+      const n = 64,
+        arr = new Float32Array(n);
+      for (let i = 0; i < n; i++) {
+        const k = (from + (to - from) * (i / (n - 1))) * (Math.PI / 2);
+        arr[i] = rising ? Math.sin(k) : Math.cos(k);
+      }
+      return arr;
+    };
+    const from = this._mix ?? 0;
+    this._mix = toChip;
+    const ramp = (g, rising) => {
+      g.cancelScheduledValues(now);
+      if (from === toChip) g.setValueAtTime(rising ? toChip : 1 - toChip, now);
+      else g.setValueCurveAtTime(curve(from, toChip, rising), now, Math.max(0.05, seconds));
+    };
+    ramp(this.mainGain.gain, false);
+    ramp(this.chipGain.gain, true);
+  }
   halt() {
     this.audio?.pause();
+    this.chipAudio?.pause();
+    this.chipReady = false;
+    clearInterval(this.syncTimer);
+    this.syncTimer = null;
+    if (this.mainGain) {
+      // Stopped: back to the recording alone, so the next start is never silent while the cover locks in.
+      this._mix = 0;
+      this.mainGain.gain.cancelScheduledValues(0);
+      this.mainGain.gain.value = 1;
+      this.chipGain.gain.cancelScheduledValues(0);
+      this.chipGain.gain.value = 0;
+    }
     clearInterval(this.timer);
     this.timer = null;
   }

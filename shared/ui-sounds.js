@@ -12,7 +12,9 @@ const enabled = () => {
 };
 
 /** One square-wave note: `freq` Hz for `dur` seconds from `t`, with a fast attack and an exponential decay. */
+const LEVEL = 1.5; // blip level relative to the first mix (+50%)
 function note(ctx, out, freq, t, dur, gain = 0.07, type = 'square') {
+  gain *= LEVEL;
   const osc = ctx.createOscillator(),
     g = ctx.createGain(),
     lp = ctx.createBiquadFilter();

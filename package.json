@@ -12,6 +12,7 @@
     "assets:operator": "node tools/assets/optimize-operator.mjs",
     "test:e2e": "node tests/e2e/smoke.mjs",
     "contact-sheet": "node tests/e2e/contact-sheet.mjs",
+    "test:audio": "node tests/e2e/chip-sync.mjs",
     "test:a11y": "node tests/e2e/a11y.mjs",
     "lint": "eslint .",
     "format": "prettier --write .",

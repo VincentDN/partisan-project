@@ -92,6 +92,11 @@ function createLayer() {
       music.setVolume(v * (ducked ? 0.6 : 1));
       mix(0.3);
     },
+    // Which version of the track is heard where it has two: 'chip' (the chiptune cover) or 'original'. The shell's layer
+    // lives across pages, so moving between a page that asks for 'chip' and one that doesn't is a smooth crossfade.
+    variant(name, seconds) {
+      music.setVariant(name, seconds);
+    },
     duck(on) {
       ducked = !!on;
       music.setVolume(prefs.volume * (ducked ? 0.6 : 1));

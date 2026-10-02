@@ -21,5 +21,7 @@ Things only the project owner can do. Agents cannot, or must not, do these. The 
 
 - [ ] **WP-X1, Bench Lab look.** Open `bench/`, fit a few parts and tell an agent what looks wrong (hand poses, camera, tray). Mark which handling sounds you like.
 
+- [ ] **Listen to the chiptune cover** (the index plays it). It was transcribed automatically from the recording, so tell an agent which sections have wrong notes or a wrong feel.
+
 ## Whenever convenient
 - [ ] **WP-Q6, manual accessibility pass.** Screen reader (NVDA or VoiceOver), 200 % zoom, high-contrast mode, a real phone.

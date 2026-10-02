@@ -5,10 +5,10 @@ Small on purpose. Read this first, then `AGENTS.md`. Plan and sizes: [`README.md
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-02 11:30 UTC · agent · (no packet) · partial**
+**2026-10-02 12:04 UTC · agent · (no packet) · partial**
 
-- Branch `claude/friendly-dijkstra-4ky9w6` at `82279fe`; **7 uncommitted file(s)** (commit before stopping): M CHANGELOG.md,  M assets/css/nokia.css,  M assets/js/index.js,  M assets/js/items.js,  M menu/menu.js,  M tests/e2e/a11y.mjs.
-- Last commits: 82279fe Fix test label match and add role=img to the scene stage (tests running) · a23fd67 Original opening scene and advanced animations, text-only green top bar, HL2 lambda favicon (tests running) · 00bf496 Hide the whole site from search: stronger robots meta on every page, seo_hidden on 404, test
+- Branch `claude/friendly-dijkstra-4ky9w6` at `0aa2c3f`; **17 uncommitted file(s)** (commit before stopping): M .github/workflows/pages.yml,  M CHANGELOG.md,  M assets/REGISTER.md,  M assets/register.json,  M docs/CODEMAP.md,  M docs/audio-direction.md.
+- Last commits: 0aa2c3f Index: straight to the menu, 60% less camera drift, Weapon Workbench as 1 and Weapon Modder as 2 (tests running) · 82279fe Fix test label match and add role=img to the scene stage (tests running) · a23fd67 Original opening scene and advanced animations, text-only green top bar, HL2 lambda favicon (tests running)
 - What happened: (write one or two sentences)
 - Next step: (name the exact next action, file and command)
 <!-- handoff:end -->
