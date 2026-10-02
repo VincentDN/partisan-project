@@ -55,13 +55,13 @@ test('a window with 3 BU left still gets work (burn-down) or an explicit empty l
   assert.ok(Array.isArray(small));
 });
 test('human-only packets are never offered to agents', () => assert.ok(next(data, {budget: 20}).every(p => p.agent !== 'human')));
-test('M0 is fully done except the owner actions', () => {
+test('M0 (foundation) is done', () => {
   const open = data.packets
     .filter(p => p.milestone === 'M0' && p.status !== 'done')
     .map(p => p.id)
     .sort();
-  assert.deepEqual(open, ['WP-F10', 'WP-F8']);
-  assert.ok(progress(data).M0.pct >= 80);
+  assert.deepEqual(open, []);
+  assert.equal(progress(data).M0.pct, 100);
 });
 test('master-roadmap.md packet table is in sync with packets.json', () => {
   const md = fs.readFileSync('docs/master-roadmap.md', 'utf8');
