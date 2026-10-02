@@ -50,13 +50,14 @@ await check('index: the Nokia screen lies on the table, splash, menu, number key
   await page.close();
 });
 
-await check('opening scene: the table, the rifle, four buttons; the shell keeps one sound layer across pages', async () => {
+await check('opening scene: the table, the rifle, one button; the shell keeps one sound layer across pages', async () => {
   const page = await open(browser, server.url + 'intro/');
   await page.waitForFunction(() => window.PARP_INTRO?.ready, null, {timeout: 90000});
   const labels = await page.locator('.actions a').allInnerTexts();
   assert.deepEqual(
     labels.map(l => l.replace(/\s+E$/, '').trim().toLowerCase()),
-    ['customize this weapon', 'partisan project index', 'read game design doc', 'load advanced animations test'],
+    ['customize this weapon'],
+    'the orange button is the only action; the rest is in the top bar',
   );
   assert.equal(await page.locator('.pbar a[href$="menu/"]').count(), 1, 'top bar has INDEX');
   assert.equal(await page.locator('.pbar a[href$="game-design-master-doc.html"]').count(), 1, 'top bar has GAME DESIGN DOC');

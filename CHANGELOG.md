@@ -12,7 +12,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 - **The earlier operator is back** in the opening scene and in Bench Lab (`shared/legacy-operator/`, `bench/legacy-arms.js`), with its articulated hands; the Operator Customiser keeps the new Base Operator.
 
 ### Changed (site structure)
-- **Opening scene restored** (`intro/`): the old workbench table, your saved rifle, the old radio tuning in, the FIA flag. Buttons bottom left: Customize this weapon, PARTISAN project index, Read Game Design Doc, Load Advanced animations test (Bench Lab). Arms are the Bench Lab IK arms; the code-built operator stays retired.
+- **Opening scene restored** (`intro/`): the old workbench table, your saved rifle, the old radio tuning in, the FIA flag. One orange button bottom left: Customize this weapon (the index and the game design doc are in the top bar; Bench Lab is on the index). Arms are the Bench Lab IK arms; the code-built operator stays retired.
 - **The music plays through the whole site**: `index.html` is now a shell that owns the sound layer and shows every page in one frame (ADR 0010). The radio and camp sound (`shared/bench-audio.js`) plays on the scene and the index, the clean track elsewhere.
 - **One top bar on every page** (`shared/topbar.js`): Nokia LCD strip with INDEX and DESIGN DOC buttons and the music player (on/off, three tracks, volume). It replaces the per-page headers and music panels.
 - **The Nokia index lies on the workbench table** (`menu/`): a close-up of a phone on the table with the live LCD laid over its screen by a projective transform (`shared/homography.js`). The phone body and keypad are gone from the HTML; the dithered key art is full width.
