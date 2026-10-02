@@ -27,6 +27,7 @@ const ALLOW = [
   'workbench',
   'operator',
   'viewer',
+  'convoy',
   'docs/game-design-master-doc.html',
   'docs/moodboard',
 ];

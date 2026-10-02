@@ -395,6 +395,36 @@ await check('art style lab: every style renders over the operator and switching 
   await page.close();
 });
 
+await check('convoy ambush: the convoy drives, the ambush springs, soldiers dismount and call out', async () => {
+  const page = await open(browser, server.url + 'convoy/?seed=7&ai');
+  await page.waitForFunction(() => window.PARP_CONVOY?.ready, null, {timeout: 60000});
+  await page.locator('#start').click();
+  // fast-forward the simulation until the lead vehicle stops at the roadblock, then open fire on it
+  await page.evaluate(() => {
+    const {sim} = window.PARP_CONVOY;
+    while (!sim.vehicles[0].stopped && sim.time < 60) sim.step(1 / 60, {});
+    const v = sim.vehicles[1];
+    for (let i = 0; i < 60; i++) sim.step(1 / 60, {ax: v.x, az: v.z, fire: true});
+    for (let i = 0; i < 60 * 4; i++) sim.step(1 / 60, {});
+  });
+  const r = await page.evaluate(() => {
+    const {sim} = window.PARP_CONVOY;
+    return {
+      alarm: sim.alarm,
+      dismounted: sim.units.filter(u => u.side === 'army' && u.state !== 'mounted').length,
+      callouts: sim.callouts.length,
+    };
+  });
+  assert.equal(r.alarm, true, 'the ambush is sprung');
+  assert.equal(r.dismounted, 8, 'every soldier dismounted');
+  assert.ok(r.callouts >= 3, `the army calls out (${r.callouts})`);
+  await page.waitForTimeout(500);
+  assert.ok((await page.locator('#comms li').count()) >= 3, 'callouts reach the comms log');
+  assert.ok((await page.locator('#labels .state').count()) >= 1, 'AI view labels soldier states');
+  noProblems(page);
+  await page.close();
+});
+
 await check('viewer: lists registered models and reports triangles and licence', async () => {
   const page = await open(browser, server.url + 'viewer/');
   await page.waitForFunction(() => window.PARP_VIEWER?.ready, null, {timeout: 60000});

@@ -174,10 +174,13 @@ void main() { vec4 outColor = vec4(0.0); ${body} gl_FragColor = outColor; }`,
   };
 }
 
-const INK = (width, crease, ink = 'vec3(0.06, 0.07, 0.05)') => `
+const INK = (width, crease, ink = 'vec3(0.06, 0.07, 0.05)', saturate = 1) => `
   vec4 c = texture2D(tColor, vUv);
   float e = edge(${width.toFixed(1)}, ${crease.toFixed(2)});
-  outColor = vec4(mix(display(c.rgb), ${ink}, e), max(c.a, e));`;
+  vec3 d = display(c.rgb);
+  d = mix(vec3(dot(d, vec3(0.299, 0.587, 0.114))), d, ${saturate.toFixed(2)});
+  outColor = vec4(mix(d, ${ink}, e), max(c.a, e));`;
+const CEL_RAMP = gradient([0.55, 1]);
 
 // ---------- the styles ----------
 export const STYLES = [
@@ -196,6 +199,14 @@ export const STYLES = [
     fill: 1.8,
     material: o => new T.MeshToonMaterial({...keep(o), gradientMap: TOON_RAMP, flatShading: true}),
     pass: () => makePass(INK(2, 0.5), {normals: true}),
+  },
+  {
+    id: 'cel',
+    label: 'Cel shaded',
+    detail: 'Two hard tones (lit or shadow), bright flat colour, thick black outlines and a touch more saturation.',
+    fill: 2.4,
+    material: o => new T.MeshToonMaterial({...keep(o), gradientMap: CEL_RAMP, flatShading: false}),
+    pass: () => makePass(INK(3, 0.4, 'vec3(0.03, 0.03, 0.03)', 1.25), {normals: true}),
   },
   {
     id: 'clay',

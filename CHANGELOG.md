@@ -5,6 +5,14 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 ## [0.3.1] · 2026-10-01
 
 ### Added (round 6)
+- **Convoy Ambush** (`convoy/`, index entry 5): a top-down shooter and test bed for the enemy AI.
+  - Scenario: you and two partisans ambush an eight-man army convoy that a log roadblock stops under your ridge.
+  - Beliefs: soldiers act on what they believe (seen, heard, told over the radio), with error and fading confidence.
+  - Callouts: they shout what they do, and the callouts share those beliefs with the squad.
+  - Behaviour: dismount away from the threat, take cover, suppress where they think you are, get pinned, flank on the sergeant's order, search last-known positions and fall back after heavy losses.
+  - The AI view shows each soldier's beliefs, view and state. The enemy awareness setting changes perception and comms, never health or aim.
+  - The simulation is pure and seeded (`convoy/sim.js`, `convoy/ai.js`), with unit tests in `tests/convoy.test.mjs`.
+- Art Style Lab: **Cel shaded** style (two hard tones, bright flat colour, thick outlines).
 - **Art Style Lab** (`operator/?lab`, index entry 4). It switches the operator and its rifle between art styles: Lit low-poly, Toon cel, Toon + ink, Clay study, Silhouette test, Nokia LCD, PS1 retro and Night vision. Styles are data in `shared/art-styles.js`: material swaps plus screen-space passes through the new `stage.setRender` hook. The chosen style is kept in the address (`?lab=<id>`).
 - **Hands on the rifle**: `operator/grip.js` solves both arms onto the carried rifle each frame (two-bone IK, hand aligned to the grip). Weapon poses place the rifle in body space (`hold`, `muzzle`, `up`). The hero pose follows the moodboard. Also new: *Hero · both hands* and *Port arms* (replaces *Shoulder arms*). Low ready, high ready, crouch and kneel are reworked.
 - `outbound/` (files for the owner, starting with the weapon sounds package) and `inbound/` (files from the owner). Neither is deployed.

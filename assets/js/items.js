@@ -28,6 +28,12 @@ export const ITEMS = [
     help: 'Try art styles and shaders on the operator: toon, ink, clay, Nokia LCD, PS1, night vision.',
   },
   {
+    label: 'Convoy Ambush',
+    href: '../convoy/',
+    icon: px('0000011110111111111101010'),
+    help: 'Top-down ambush on an army convoy. A test bed for the enemy AI: beliefs, callouts, flanking.',
+  },
+  {
     label: 'Advanced animations',
     href: '../intro/advanced.html',
     icon: px('1111101010111110101011111'),

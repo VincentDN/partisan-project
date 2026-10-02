@@ -17,7 +17,7 @@ export default [
   },
   js.configs.recommended,
   {
-    files: ['shell.js', 'menu/**', 'workbench/**', 'operator/**', 'viewer/**', 'shared/**', 'assets/js/**'],
+    files: ['shell.js', 'menu/**', 'workbench/**', 'operator/**', 'viewer/**', 'convoy/**', 'shared/**', 'assets/js/**'],
     languageOptions: {ecmaVersion: 2023, sourceType: 'module', globals: {...globals.browser}},
     rules: {
       'no-unused-vars': ['warn', {args: 'none', caughtErrors: 'none'}],

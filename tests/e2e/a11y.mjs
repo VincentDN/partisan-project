@@ -24,6 +24,7 @@ const pages = [
   ['workbench', 'workbench/', async p => p.waitForSelector('#build .slot', {timeout: 60000})],
   ['operator', 'operator/', async p => p.waitForFunction(() => window.PARP_OPERATOR?.ready, null, {timeout: 60000})],
   ['operator (recon)', 'operator/#base=recon', async p => p.waitForFunction(() => window.PARP_OPERATOR?.ready, null, {timeout: 60000})],
+  ['convoy ambush', 'convoy/', async p => p.waitForFunction(() => window.PARP_CONVOY?.ready, null, {timeout: 60000})],
   [
     'advanced animations',
     'intro/advanced.html',
