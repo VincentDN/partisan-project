@@ -199,7 +199,7 @@
   },
   {
    "id": "WP-A1",
-   "title": "Owner: download the CC0 weapon packs into assets-incoming/",
+   "title": "Fetch the chosen Sketchfab sources into assets-incoming/ (node tools/assets/sketchfab-fetch.mjs, needs SKETCHFAB_TOKEN)",
    "track": "Weapons",
    "milestone": "M1",
    "size": "XS",
@@ -212,7 +212,8 @@
     "net"
    ],
    "inputs": [
-    "assets/register.json (pipeline section lists the candidate packs)"
+    "assets/register.json (pipeline section lists the candidate packs)",
+    "tools/assets/sketchfab-sources.json"
    ],
    "acceptance": "assets-incoming/ holds the byzmod3d Low Poly Weapon Pack and the chilly-durango Low Poly Firearms pack.txt."
   },
@@ -234,7 +235,8 @@
    "inputs": [
     "tools/assets/import-asset.py",
     "tools/assets/optimize-glb.mjs",
-    "tools/assets/register.mjs"
+    "tools/assets/register.mjs",
+    "tools/assets/sketchfab-sources.json"
    ],
    "acceptance": "Three GLBs under assets/models/attachments/, each <= 2,500 triangles, registered; viewer/ shows them with status real."
   },
@@ -252,6 +254,7 @@
    "agent": "any",
    "needs": [],
    "inputs": [
+    "tools/assets/sketchfab-sources.json",
     "workbench/attachments.js",
     "workbench/models.js",
     "workbench/stats.js"
@@ -292,7 +295,9 @@
    "needs": [
     "bpy"
    ],
-   "inputs": [],
+   "inputs": [
+    "tools/assets/sketchfab-sources.json"
+   ],
    "acceptance": "No code-built primitive remains in the library except those register-listed as placeholder with a reason."
   },
   {
@@ -344,12 +349,12 @@
   },
   {
    "id": "WP-A9",
-   "title": "G3A3: import, models.js entry (parts, sockets, defaults, factory options)",
+   "title": "G3A3: import D_U low-poly HK G3 (+ .308 drum, bipod, Z-24 scope), models.js entry",
    "track": "Weapons",
    "milestone": "M1",
    "size": "M",
    "bu": 20,
-   "status": "blocked",
+   "status": "ready",
    "deps": [
     "WP-A1"
    ],
@@ -359,7 +364,8 @@
     "bpy"
    ],
    "inputs": [
-    "assets/register.json pipeline item wpn-g3a3"
+    "assets/register.json pipeline item wpn-g3a3",
+    "tools/assets/sketchfab-sources.json"
    ],
    "acceptance": "Third rifle selectable in the Workbench, all slots mount, presets work."
   },
@@ -449,14 +455,15 @@
    "milestone": "M2",
    "size": "S",
    "bu": 8,
-   "status": "blocked",
+   "status": "planned",
    "deps": [
     "WP-C2"
    ],
    "agent": "any",
    "needs": [],
    "inputs": [
-    "docs/moodboard/recon-insignia-props.jpg"
+    "docs/moodboard/recon-insignia-props.jpg",
+    "tools/assets/sketchfab-sources.json"
    ],
    "acceptance": "Recon is visually signed off against recon-hero-pose.jpg by the owner.",
    "notes": "Patches (MP-O tag, shield) shipped with WP-C7. Chest radio exists. Remaining: carabiner, canister, owner sign-off."
@@ -662,41 +669,41 @@
   },
   {
    "id": "WP-A12",
-   "title": "M16 and modernised M16",
+   "title": "M16: import TastyTony Low-Poly M16, models.js entry",
    "track": "Weapons",
    "milestone": "M4",
    "size": "M",
    "bu": 20,
-   "status": "planned",
-   "deps": [
-    "WP-A10"
-   ],
+   "status": "ready",
+   "deps": [],
    "agent": "any",
    "needs": [
     "bpy",
     "net"
    ],
-   "inputs": [],
+   "inputs": [
+    "tools/assets/sketchfab-sources.json"
+   ],
    "acceptance": "Selectable; CC0/CC BY base geometry; modern furniture options."
   },
   {
    "id": "WP-A13",
-   "title": "Mk14 EBR: pick a source, import",
+   "title": "Mk14 EBR: import TastyTony Low-Poly Mk14 EBR, models.js entry",
    "track": "Weapons",
    "milestone": "M4",
    "size": "M",
    "bu": 20,
-   "status": "blocked",
-   "deps": [
-    "WP-A10"
-   ],
+   "status": "ready",
+   "deps": [],
    "agent": "any",
    "needs": [
     "human",
     "bpy",
     "net"
    ],
-   "inputs": [],
+   "inputs": [
+    "tools/assets/sketchfab-sources.json"
+   ],
    "acceptance": "Cleared model shipped or the item is closed as \"no free source\"."
   },
   {
@@ -719,78 +726,78 @@
   },
   {
    "id": "WP-A15",
-   "title": "SIG Spear: owner decision (pay / placeholder), then implement",
+   "title": "SIG Spear: import D_U low-poly SIG MCX Spear (free download, no purchase)",
    "track": "Weapons",
    "milestone": "M4",
    "size": "S",
    "bu": 8,
-   "status": "blocked",
-   "deps": [
-    "WP-A10"
-   ],
+   "status": "ready",
+   "deps": [],
    "agent": "human",
    "needs": [
     "human"
    ],
-   "inputs": [],
+   "inputs": [
+    "tools/assets/sketchfab-sources.json"
+   ],
    "acceptance": "Decision recorded in register; if placeholder, clearly labelled."
   },
   {
    "id": "WP-A16",
-   "title": "STG44 modernised kitbash (CC0 base)",
+   "title": "StG 44 modernised: D_U low-poly Stg44 as the base",
    "track": "Weapons",
    "milestone": "M4",
    "size": "M",
    "bu": 20,
-   "status": "planned",
-   "deps": [
-    "WP-A10"
-   ],
+   "status": "ready",
+   "deps": [],
    "agent": "any",
    "needs": [
     "bpy",
     "net"
    ],
-   "inputs": [],
+   "inputs": [
+    "tools/assets/sketchfab-sources.json"
+   ],
    "acceptance": "Real base geometry with modern furniture."
   },
   {
    "id": "WP-A17",
-   "title": "PPSh-41 modernised kitbash",
+   "title": "PPSh-41 modernised: D_U low-poly PPSH-41 as the base",
    "track": "Weapons",
    "milestone": "M4",
    "size": "M",
    "bu": 20,
-   "status": "blocked",
-   "deps": [
-    "WP-A10"
-   ],
+   "status": "ready",
+   "deps": [],
    "agent": "any",
    "needs": [
     "human",
     "bpy",
     "net"
    ],
-   "inputs": [],
+   "inputs": [
+    "tools/assets/sketchfab-sources.json"
+   ],
    "acceptance": "As A16."
   },
   {
    "id": "WP-A18",
-   "title": "Bren and Chauchat: confirm sources only",
+   "title": "Bren and Chauchat: sources confirmed (TastyTony Low-Poly Bren Gun, Low-Poly Chauchat)",
    "track": "Weapons",
    "milestone": "M4",
    "size": "XS",
    "bu": 3,
-   "status": "blocked",
-   "deps": [
-    "WP-A10"
-   ],
+   "status": "done",
+   "deps": [],
    "agent": "human",
    "needs": [
     "human",
     "net"
    ],
-   "inputs": [],
+   "inputs": [
+    "tools/assets/sketchfab-sources.json"
+   ],
    "acceptance": "Source (or commission quote) recorded in the register for each."
   },
   {
@@ -996,7 +1003,7 @@
   },
   {
    "id": "WP-E1",
-   "title": "Environment demo A: source a CC0 low-poly ruin/barrier kit",
+   "title": "Environment demo A: low-poly barrier/sandbag/pallet/container kit and ruin pieces (sources chosen)",
    "track": "Environment",
    "milestone": "H27",
    "size": "S",
@@ -1008,7 +1015,9 @@
     "net",
     "human"
    ],
-   "inputs": [],
+   "inputs": [
+    "tools/assets/sketchfab-sources.json"
+   ],
    "acceptance": "Kit registered."
   },
   {

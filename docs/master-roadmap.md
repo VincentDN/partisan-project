@@ -137,7 +137,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | **M1** Gun modder: real parts, three weapons | v0.4.0 | 4/11 | 143 BU | 48% |
 | **M2** Operator roster: Recon, Insurgent, Enforcer | v0.5.0 | 10/11 | 172 BU | 95% |
 | **M3** Integration and sharing | v0.6.0 | 4/6 | 96 BU | 58% |
-| **M4** Weapon roster 2: modern and WW2 | v0.7.0 | 1/7 | 111 BU | 18% |
+| **M4** Weapon roster 2: modern and WW2 | v0.7.0 | 2/7 | 111 BU | 21% |
 | **M5** Production acceptance | v1.0.0 | 3/5 | 59 BU | 61% |
 | **TD** Tech debt (fill windows) | — | 4/4 | 44 BU | 100% |
 | **D** Design docs | — | 3/5 | 59 BU | 61% |
@@ -162,7 +162,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 
 | ID | Packet | Size | Status | Needs | Depends on |
 |---|---|---|---|---|---|
-| `WP-A1` | Owner: download the CC0 weapon packs into assets-incoming/ | XS (3) | ready | owner, net | — |
+| `WP-A1` | Fetch the chosen Sketchfab sources into assets-incoming/ (node tools/assets/sketchfab-fetch.mjs, needs SKETCHFAB_TOKEN) | XS (3) | ready | owner, net | — |
 | `WP-A2` | Import and normalise attachment parts (magazine, muzzle device, optic) from the CC0 packs | S (8) | planned | bpy | `WP-A1` |
 | `WP-A3` | Wire real parts through glb() for magazines, one muzzle device and one optic | S (8) | planned | — | `WP-A2` |
 | `WP-A4` | Generalise finishes/camo to real-asset material names | S (8) | planned | — | `WP-A3` |
@@ -170,7 +170,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-A6` | Rail footprints: parts on one rail cannot overlap (footprints, travel, auto-slide, repair on load) | M (20) | done | — | — |
 | `WP-A7` | New slots: sling mount, charging handle, trigger, dust-cover rail | M (20) | done | — | `WP-A6` |
 | `WP-A8` | Stat consistency pass: ergonomics, recoil, mass, length, ADS, sound signature, hover deltas for every option | S (8) | done | — | — |
-| `WP-A9` | G3A3: import, models.js entry (parts, sockets, defaults, factory options) | M (20) | blocked | bpy | `WP-A1` |
+| `WP-A9` | G3A3: import D_U low-poly HK G3 (+ .308 drum, bipod, Z-24 scope), models.js entry | M (20) | ready | bpy | `WP-A1` |
 | `WP-A10` | Weapon-depth exit tests: >=3 weapons, visible compatibility reasons, hover deltas, presets, regression | S (8) | planned | — | `WP-A9`, `WP-A7`, `WP-A8` |
 | `WP-A11` | Handling sounds from cleared CC0 recordings (optional upgrade over synthesis) | M (20) | done | net | — |
 
@@ -180,7 +180,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 |---|---|---|---|---|---|
 | `WP-C1` | Skeleton contract: document the shared 83-bone rig, add a test that poses/idles run on any base with the same bone names | S (8) | done | — | — |
 | `WP-C2` | Recon: hood and scarf meshes skinned to the Base skeleton (bpy), plate-carrier variant | M (20) | done | bpy, browser | `WP-C1` |
-| `WP-C3` | Recon: gear props (carabiner, canister, radio handheld) and owner sign-off against the sheet | S (8) | blocked | — | `WP-C2` |
+| `WP-C3` | Recon: gear props (carabiner, canister, radio handheld) and owner sign-off against the sheet | S (8) | planned | — | `WP-C2` |
 | `WP-C4` | Roster switcher: data-driven per-base slot and zone configs | S (8) | done | — | `WP-C1` |
 | `WP-C5` | Insurgent: plaid shirt, shemagh, bare head, AK-pattern kit built from Base parts plus new meshes | M (20) | done | bpy | `WP-C4` |
 | `WP-C6` | Enforcer: black kit, bold pouches, NVG helmet variant | M (20) | done | bpy | `WP-C4` |
@@ -205,13 +205,13 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 
 | ID | Packet | Size | Status | Needs | Depends on |
 |---|---|---|---|---|---|
-| `WP-A12` | M16 and modernised M16 | M (20) | planned | bpy, net | `WP-A10` |
-| `WP-A13` | Mk14 EBR: pick a source, import | M (20) | blocked | bpy, net | `WP-A10` |
+| `WP-A12` | M16: import TastyTony Low-Poly M16, models.js entry | M (20) | ready | bpy, net | — |
+| `WP-A13` | Mk14 EBR: import TastyTony Low-Poly Mk14 EBR, models.js entry | M (20) | ready | bpy, net | — |
 | `WP-A14` | Modernised RPK (D_U catalogue, else kitbash from AK-74M/AK-15K) | M (20) | done | bpy | — |
-| `WP-A15` | SIG Spear: owner decision (pay / placeholder), then implement | S (8) | blocked | owner | `WP-A10` |
-| `WP-A16` | STG44 modernised kitbash (CC0 base) | M (20) | planned | bpy, net | `WP-A10` |
-| `WP-A17` | PPSh-41 modernised kitbash | M (20) | blocked | bpy, net | `WP-A10` |
-| `WP-A18` | Bren and Chauchat: confirm sources only | XS (3) | blocked | owner, net | `WP-A10` |
+| `WP-A15` | SIG Spear: import D_U low-poly SIG MCX Spear (free download, no purchase) | S (8) | ready | owner | — |
+| `WP-A16` | StG 44 modernised: D_U low-poly Stg44 as the base | M (20) | ready | bpy, net | — |
+| `WP-A17` | PPSh-41 modernised: D_U low-poly PPSH-41 as the base | M (20) | ready | bpy, net | — |
+| `WP-A18` | Bren and Chauchat: sources confirmed (TastyTony Low-Poly Bren Gun, Low-Poly Chauchat) | XS (3) | done | owner, net | — |
 
 ### M5 · Production acceptance
 
@@ -246,7 +246,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 
 | ID | Packet | Size | Status | Needs | Depends on |
 |---|---|---|---|---|---|
-| `WP-E1` | Environment demo A: source a CC0 low-poly ruin/barrier kit | S (8) | planned | net | — |
+| `WP-E1` | Environment demo A: low-poly barrier/sandbag/pallet/container kit and ruin pieces (sources chosen) | S (8) | planned | net | — |
 | `WP-E2` | Environment demo B: ruined-checkpoint diorama viewer with weather and haze | M (20) | planned | — | `WP-E1`, `WP-Q5` |
 | `WP-E3` | AI demo: belief-model visualiser derived from the AI compendium | M (20) | planned | — | `WP-D2`, `WP-Q5` |
 
