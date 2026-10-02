@@ -3,9 +3,9 @@
 Things only the project owner can do. Agents cannot, or must not, do these. The full list of every packet is in [master-roadmap.md](master-roadmap.md); the agent hand-off is [agent-ops/STATE.md](agent-ops/STATE.md).
 
 ## Do first
-- [ ] **WP-F8, enable Pages.** Settings > Pages > Source: GitHub Actions. The deploy workflow is already on `main`.
+- [x] **WP-F8, enable Pages.** Settings > Pages > Source: GitHub Actions. The deploy workflow is already on `main`.
 - [ ] **WP-F8, licences.** Confirm you may redistribute the purchased Low_Poly_US_Soldier pack, and that you hold the rights to *Abdulena* and *The Duce Puts On His Uniform* (`assets/audio/`).
-- [ ] **WP-F10, check the live site** once Pages is on: open `https://vincentdn.github.io/partisan-project/` and tell an agent if any link or asset is broken.
+- [ ] **WP-F10, check the live site** (deploys are green; I cannot open github.io from the sandbox) once Pages is on: open `https://vincentdn.github.io/partisan-project/` and tell an agent if any link or asset is broken.
 
 ## Unblocks the weapon work
 - [ ] **Network access for agents** (or do WP-A1 yourself). The sandbox blocks the model sites. To let an agent download weapons, edit the cloud environment's network access and allow: `kenney.nl`, `quaternius.com`, `poly.pizza`, `opengameart.org`, `itch.io` and their download CDNs. Sketchfab needs a login, so those stay manual.

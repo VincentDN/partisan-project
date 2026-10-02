@@ -5,10 +5,10 @@ Small on purpose. Read this first, then `AGENTS.md`. Plan and sizes: [`README.md
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-02 12:08 UTC · agent · (no packet) · partial**
+**2026-10-02 12:20 UTC · agent · (no packet) · partial**
 
-- Branch `claude/friendly-dijkstra-4ky9w6` at `8f137b4`; **2 uncommitted file(s)** (commit before stopping): M CHANGELOG.md,  M docs/game-design-master-doc.html.
-- Last commits: 8f137b4 Chiptune cover of The Duce Puts On His Uniform with synced crossfade on the Nokia index; blips +50% (tests running) · 0aa2c3f Index: straight to the menu, 60% less camera drift, Weapon Workbench as 1 and Weapon Modder as 2 (tests running) · 82279fe Fix test label match and add role=img to the scene stage (tests running)
+- Branch `claude/friendly-dijkstra-4ky9w6` at `bffb980`; **4 uncommitted file(s)** (commit before stopping): M docs/CODEMAP.md,  M docs/agent-ops/packets.json,  M docs/master-roadmap.md,  M docs/vincent-todo.md.
+- Last commits: bffb980 Chiptune cover with synced crossfade on the Nokia index, blips +50%, game design doc section 'Low poly and loud' · 8f137b4 Chiptune cover of The Duce Puts On His Uniform with synced crossfade on the Nokia index; blips +50% (tests running) · 0aa2c3f Index: straight to the menu, 60% less camera drift, Weapon Workbench as 1 and Weapon Modder as 2 (tests running)
 - What happened: (write one or two sentences)
 - Next step: (name the exact next action, file and command)
 <!-- handoff:end -->

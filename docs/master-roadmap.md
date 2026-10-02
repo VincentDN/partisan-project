@@ -133,8 +133,8 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 
 | Milestone | Target | Packets | Budget | Progress |
 |---|---|---|---|---|
-| **M0** Foundation | v0.3.0 | 8/10 | 130 BU | 95% |
-| **M1** Gun modder: real parts, three weapons | v0.4.0 | 3/11 | 143 BU | 34% |
+| **M0** Foundation | v0.3.0 | 10/10 | 130 BU | 100% |
+| **M1** Gun modder: real parts, three weapons | v0.4.0 | 4/11 | 143 BU | 48% |
 | **M2** Operator roster: Recon, Insurgent, Enforcer | v0.5.0 | 10/11 | 172 BU | 95% |
 | **M3** Integration and sharing | v0.6.0 | 4/6 | 96 BU | 58% |
 | **M4** Weapon roster 2: modern and WW2 | v0.7.0 | 0/7 | 111 BU | 0% |
@@ -154,9 +154,9 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-F5` | Operator Customiser v1: Base Operator ingest, equipment slots, colour zones, 5 hero poses, 3 idles | M (20) | done | — | — |
 | `WP-F6` | Asset register, licence policy and import tooling (bpy + glTF-Transform) | S (8) | done | — | — |
 | `WP-F7` | GitHub Pages workflow, allowlist site build, link checker, dev server | S (8) | done | — | — |
-| `WP-F8` | Owner: enable Pages (Settings > Pages > Source: GitHub Actions), merge the branch to main, confirm licences (purchased pack redistribution, music rights) | XS (3) | ready | owner | — |
+| `WP-F8` | Owner: enable Pages (Settings > Pages > Source: GitHub Actions), merge the branch to main, confirm licences (purchased pack redistribution, music rights) | XS (3) | done | owner | — |
 | `WP-F9` | Browser smoke tests (Playwright) for index, workbench, operator, viewer, in CI | S (8) | done | — | — |
-| `WP-F10` | Verify the live Pages deployment; fix any base-path problem | XS (3) | blocked | browser | `WP-F8` |
+| `WP-F10` | Verify the live Pages deployment; fix any base-path problem | XS (3) | done | browser | `WP-F8` |
 
 ### M1 · Gun modder: real parts, three weapons
 
@@ -172,7 +172,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-A8` | Stat consistency pass: ergonomics, recoil, mass, length, ADS, sound signature, hover deltas for every option | S (8) | done | — | — |
 | `WP-A9` | G3A3: verify licence (owner), import, models.js entry (parts, sockets, defaults, factory options) | M (20) | blocked | bpy | `WP-A1` |
 | `WP-A10` | Weapon-depth exit tests: >=3 weapons, visible compatibility reasons, hover deltas, presets, regression | S (8) | planned | — | `WP-A9`, `WP-A7`, `WP-A8` |
-| `WP-A11` | Handling sounds from cleared CC0 recordings (optional upgrade over synthesis) | M (20) | planned | net | — |
+| `WP-A11` | Handling sounds from cleared CC0 recordings (optional upgrade over synthesis) | M (20) | done | net | — |
 
 ### M2 · Operator roster: Recon, Insurgent, Enforcer
 
@@ -195,7 +195,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | ID | Packet | Size | Status | Needs | Depends on |
 |---|---|---|---|---|---|
 | `WP-I1` | Shared loadout state: carry the Workbench build into the Operator Customiser (URL + localStorage) | M (20) | done | — | `WP-C4` |
-| `WP-I2` | Per-weapon grip contact data and pose-fit for every supported weapon/stock combination | M (20) | planned | — | `WP-I1`, `WP-A10` |
+| `WP-I2` | Per-weapon grip contact data and pose-fit for every supported weapon/stock combination | M (20) | blocked | — | `WP-I1`, `WP-A10` |
 | `WP-I3` | Versioned loadout codes (P1.<base64url>) with backward compatibility for old AK hashes | S (8) | done | — | `WP-I1` |
 | `WP-I4` | Combined share card (operator + weapon + stats) and photo-mode extras | S (8) | done | — | `WP-I3` |
 | `WP-X1` | Original opening scene and advanced-animations test restored verbatim from vincentdenil-site (intro/), wired to the current customiser and the shared music player | M (20) | done | browser | — |
