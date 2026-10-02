@@ -1,4 +1,4 @@
-// Import downloaded Sketchfab sources (assets-incoming/<id>/, see sketchfab-fetch.mjs) into assets/models/<dir>/<id>.glb:
+// Import downloaded Sketchfab sources (assets-incoming/<id>/ or inbound/sketchfab/<id>/) into assets/models/<dir>/<id>.glb:
 // optimise (prune, dedupe, meshopt), register the triangle count, and print the node tree so the parts can be mapped in
 // workbench/models.js. Weapons keep their source units (the Workbench scales them at runtime: paste the printed
 // `scale` into the models.js entry, like the AK-74M's); props, vehicles and environment pieces get real size baked in.
@@ -37,9 +37,14 @@ function tree(node, depth = 0, out = []) {
   return out;
 }
 
-export async function importSource(s, {inDir = 'assets-incoming', outRoot = 'assets/models', register = 'assets/register.json'} = {}) {
-  const dir = path.join(inDir, s.id);
-  const file = ['scene.glb', 'scene.gltf'].map(f => path.join(dir, f)).find(f => fs.existsSync(f));
+// Downloads land in assets-incoming/ (sketchfab-fetch.mjs, in a session with the token) or in inbound/sketchfab/
+// (sketchfab-bulk-download.py, run on the owner's computer and pushed).
+const IN_DIRS = ['assets-incoming', 'inbound/sketchfab'];
+
+export async function importSource(s, {inDir = null, outRoot = 'assets/models', register = 'assets/register.json'} = {}) {
+  const file = (inDir ? [inDir] : IN_DIRS)
+    .flatMap(d => ['scene.glb', 'scene.gltf'].map(f => path.join(d, s.id, f)))
+    .find(f => fs.existsSync(f));
   if (!file) return {id: s.id, skipped: 'not downloaded'};
   const doc = await io.read(file);
   const scene = doc.getRoot().getDefaultScene() || doc.getRoot().listScenes()[0];
