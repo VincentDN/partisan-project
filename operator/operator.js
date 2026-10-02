@@ -21,7 +21,8 @@ import {encode, decode, parseLegacy} from '../shared/loadout.js';
 
 const $ = s => document.querySelector(s);
 const status = $('#status');
-mountTopBar({title: 'Operator Customiser', scene: 'viewer'});
+const lab = new URLSearchParams(location.search).has('lab'); // Art Style Lab mode (operator/art-lab.js)
+mountTopBar({title: lab ? 'Art Style Lab' : 'Operator Customiser', scene: 'viewer'});
 
 const stage = await createStage($('#stage'), {
   environment: 'outdoor',
@@ -634,3 +635,4 @@ window.PARP_OPERATOR = {
   switchBase,
   ready: true,
 };
+if (lab) window.PARP_OPERATOR.artLab = (await import('./art-lab.js')).mountArtLab(window.PARP_OPERATOR);

@@ -141,30 +141,33 @@ await check('operator: loads, equipment toggles, zones are independent, hash rou
   });
   await page.waitForFunction(() => window.PARP_OPERATOR.weapon, null, {timeout: 60000});
   await page.waitForFunction(() => window.PARP_OPERATOR.pivot.visible, null, {timeout: 30000}); // a frame has placed the prop
-  // The hands are solved onto the rifle (operator/grip.js): each palm closes on its grip point.
-  const reach = pose =>
-    page.evaluate(async pose => {
-      const o = window.PARP_OPERATOR,
-        V = o.stage.T.Vector3;
-      o.set('pose', pose);
-      o.rig.setPose(pose, 0);
-      for (let i = 0; i < 40; i++) await new Promise(r => requestAnimationFrame(r)); // the rifle eases into place
-      const palm = side => {
-        const h = o.rig.bones.get('hand_' + side);
-        return h.getWorldPosition(new V()).add(new V(0, 0.072, 0.028).applyQuaternion(h.getWorldQuaternion(new o.stage.T.Quaternion())));
-      };
-      const gripAt = {r: [-0.028, -0.058, 0], l: [0.3, 0.008, 0]};
-      return Object.fromEntries(
-        Object.keys(o.state.pose === pose ? {r: 1, l: 1} : {}).map(side => [
-          side,
-          palm(side).distanceTo(o.pivot.localToWorld(new V(...gripAt[side]))),
-        ]),
-      );
-    }, pose);
-  const hero = await reach('hero');
-  assert.ok(hero.r < 0.02, `hero: right palm on the pistol grip (${hero.r.toFixed(3)} m)`);
-  const ready = await reach('ready');
-  assert.ok(ready.r < 0.02 && ready.l < 0.02, `low ready: both palms on the rifle (${ready.r.toFixed(3)}, ${ready.l.toFixed(3)} m)`);
+  // The hands are solved onto the rifle (operator/grip.js): once the rifle has eased into place, each palm closes on its grip point.
+  const reach = async (pose, sides) => {
+    await page.evaluate(pose => window.PARP_OPERATOR.set('pose', pose), pose);
+    const handle = await page
+      .waitForFunction(
+        sides => {
+          const o = window.PARP_OPERATOR,
+            V = o.stage.T.Vector3;
+          o.stage.wake();
+          const gripAt = {r: [-0.028, -0.058, 0], l: [0.3, 0.008, 0]};
+          const d = sides.map(side => {
+            const h = o.rig.bones.get('hand_' + side);
+            const palm = h
+              .getWorldPosition(new V())
+              .add(new V(0, 0.072, 0.028).applyQuaternion(h.getWorldQuaternion(new o.stage.T.Quaternion())));
+            return palm.distanceTo(o.pivot.localToWorld(new V(...gripAt[side])));
+          });
+          return d.every(x => x < 0.02) && d;
+        },
+        sides,
+        {timeout: 20000, polling: 250},
+      )
+      .catch(() => null);
+    return handle ? handle.jsonValue() : null;
+  };
+  assert.ok(await reach('hero', ['r']), 'hero: the right palm closes on the pistol grip');
+  assert.ok(await reach('ready', ['r', 'l']), 'low ready: both palms on the rifle');
   // triangle readout within budget
   const tris = await page.locator('#tris').innerText();
   assert.ok(+tris.replace(/,/g, '') <= 15000, 'triangles ' + tris);
@@ -367,6 +370,27 @@ await check('workbench: loads, swapping a part writes the hash, both rifles load
   await page.waitForFunction(() => document.querySelector('#title').textContent.includes('AK-15K'), null, {timeout: 60000});
   assert.equal(await page.locator('.fire').count(), 0, 'no test-fire control remains');
   assert.equal(await page.locator('#copy-code').count(), 1);
+  noProblems(page);
+  await page.close();
+});
+
+await check('art style lab: every style renders over the operator and switching back restores the materials', async () => {
+  const page = await open(browser, server.url + 'operator/?lab#weapon=ak74m&pose=hero');
+  await page.waitForFunction(() => window.PARP_OPERATOR?.artLab && window.PARP_OPERATOR.weapon, null, {timeout: 90000});
+  assert.equal((await page.locator('#styles button').count()) >= 6, true, 'style buttons');
+  const before = await page.evaluate(() => window.PARP_OPERATOR.meshes.map(m => m.material.uuid).join());
+  for (const id of await page.locator('#styles button').evaluateAll(bs => bs.map(b => b.dataset.style))) {
+    await page.locator(`#styles button[data-style="${id}"]`).click();
+    await page.waitForTimeout(400);
+    assert.equal(await page.locator(`#styles button[data-style="${id}"]`).getAttribute('aria-pressed'), 'true');
+    assert.match(page.url(), new RegExp(`lab=${id}`));
+  }
+  await page.locator('#styles button[data-style="pbr"]').click();
+  assert.equal(
+    await page.evaluate(() => window.PARP_OPERATOR.meshes.map(m => m.material.uuid).join()),
+    before,
+    'original materials restored',
+  );
   noProblems(page);
   await page.close();
 });

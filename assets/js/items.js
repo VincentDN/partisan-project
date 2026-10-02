@@ -22,6 +22,12 @@ export const ITEMS = [
     help: 'Demo. Demo. Four operators: dress, repaint and pose them. Hero poses, idles.',
   },
   {
+    label: 'Art Style Lab',
+    href: '../operator/?lab#weapon=ak74m&pose=hero',
+    icon: px('1110011010100100110001110'),
+    help: 'Try art styles and shaders on the operator: toon, ink, clay, Nokia LCD, PS1, night vision.',
+  },
+  {
     label: 'Advanced animations',
     href: '../intro/advanced.html',
     icon: px('1111101010111110101011111'),

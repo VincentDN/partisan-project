@@ -4,6 +4,17 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 ## [0.3.1] · 2026-10-01
 
+### Added (round 6)
+- **Art Style Lab** (`operator/?lab`, index entry 4). It switches the operator and its rifle between art styles: Lit low-poly, Toon cel, Toon + ink, Clay study, Silhouette test, Nokia LCD, PS1 retro and Night vision. Styles are data in `shared/art-styles.js`: material swaps plus screen-space passes through the new `stage.setRender` hook. The chosen style is kept in the address (`?lab=<id>`).
+- **Hands on the rifle**: `operator/grip.js` solves both arms onto the carried rifle each frame (two-bone IK, hand aligned to the grip). Weapon poses place the rifle in body space (`hold`, `muzzle`, `up`). The hero pose follows the moodboard. Also new: *Hero · both hands* and *Port arms* (replaces *Shoulder arms*). Low ready, high ready, crouch and kneel are reworked.
+- `outbound/` (files for the owner, starting with the weapon sounds package) and `inbound/` (files from the owner). Neither is deployed.
+
+### Changed (round 6)
+- The Base Operator defaults to plain olive fabric; the pack camo stays selectable as *Original camo*.
+- Tool-page sidebars, share cards and the style guide use Nokia greens instead of blue-grey.
+- The Pages deploy no longer waits for the browser tests; they run in parallel.
+- The Weapon Modder lists the modernised RPK.
+
 ### Removed
 - **Credits page and licence audit** (ADR 0012): the Credits section of the design document, per-demo credit lists, the register audit tools and tests, `assets/REGISTER.md` and packet WP-Q3. Each place now says: credits and licences are in the GitHub documentation, or contact the owner. All agent instruction pages carry an express instruction not to spend tokens on credits or licences.
 

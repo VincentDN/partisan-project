@@ -233,6 +233,12 @@ export async function createStage(container, opts = {}) {
   const clock = new T.Clock();
   /** Register a per-frame callback `(dt, elapsedSeconds)`. dt is capped so slow frames never skip animation. */
   const onFrame = fn => hooks.push(fn);
+  // A screen-space pass (shared/art-styles.js) can take over drawing: fn(renderer, scene, camera); null restores it.
+  let renderFn = null;
+  const setRender = fn => {
+    renderFn = fn;
+    wake();
+  };
 
   // Power: a still scene does not need 60 renders a second. After any input, camera change or wake() the stage
   // runs at full rate for a moment; with nothing animating (see setAnimated) it then drops to IDLE_FPS. Phones
@@ -268,7 +274,8 @@ export async function createStage(container, opts = {}) {
     key.target.updateMatrixWorld();
     if (controls.update()) wake(400); // damping still gliding
     orientLights();
-    renderer.render(scene, camera);
+    if (renderFn) renderFn(renderer, scene, camera);
+    else renderer.render(scene, camera);
     adaptResolution();
   });
 
@@ -290,6 +297,7 @@ export async function createStage(container, opts = {}) {
     rotateLights,
     moveCamera,
     onFrame,
+    setRender,
     resize,
     wake,
     setAnimated,
