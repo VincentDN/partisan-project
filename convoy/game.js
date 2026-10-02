@@ -3,7 +3,8 @@
 import '../shared/frame.js';
 import * as T from 'three';
 import {mountTopBar} from '../shared/topbar.js';
-import {Sim, MAG} from './sim.js';
+import {Sim} from './sim.js';
+import {WEAPONS, ROLES} from './weapons.js';
 import {COVER, ROAD, BOUNDS} from './world.js';
 import {bestBelief} from './ai.js';
 
@@ -78,8 +79,48 @@ for (const c of COVER) {
 
 const ARMY = 0x6b6e62,
   PARTISAN = 0x4f6236;
+function mrapMesh(v, g) {
+  // Angular armoured hull with a V-shaped belly, a raised cab and a ring turret with the DShK.
+  const hull = new T.Mesh(new T.BoxGeometry(v.w, v.h * 0.5, v.d), flat(0x55594a));
+  hull.position.y = v.h * 0.5;
+  const belly = new T.Mesh(new T.CylinderGeometry(v.d * 0.5, v.d * 0.5, v.w * 0.92, 3), flat(0x3f4236));
+  belly.rotation.set(0, 0, Math.PI / 2);
+  belly.rotation.x = Math.PI;
+  belly.scale.set(1, 1, 0.5);
+  belly.position.y = v.h * 0.22;
+  const cab = new T.Mesh(new T.BoxGeometry(v.w * 0.62, v.h * 0.32, v.d * 0.94), flat(0x4b4f42));
+  cab.position.set(v.w * 0.12, v.h * 0.9, 0);
+  const glass = new T.Mesh(new T.BoxGeometry(0.05, v.h * 0.16, v.d * 0.7), flat(0x1b2226));
+  glass.position.set(v.w * 0.43 + 0.02, v.h * 0.92, 0);
+  const ring = new T.Mesh(new T.CylinderGeometry(0.62, 0.7, 0.3, 8), flat(0x3a3d33));
+  ring.position.set(-0.2, v.h * 1.12, 0);
+  const turret = new T.Group();
+  turret.position.copy(ring.position);
+  turret.position.y += 0.2;
+  const shield = new T.Mesh(new T.BoxGeometry(0.12, 0.55, 0.9), flat(0x4b4f42));
+  shield.position.set(0.5, 0.25, 0);
+  const gun = new T.Mesh(new T.CylinderGeometry(0.06, 0.07, 1.6, 6), flat(0x15161a));
+  gun.rotation.z = Math.PI / 2;
+  gun.position.set(1.1, 0.22, 0);
+  turret.add(shield, gun);
+  g.add(hull, belly, cab, glass, ring, turret);
+  g.userData.turret = turret;
+  for (const sx of [-1, 1])
+    for (const sz of [-1, 1]) {
+      const w = new T.Mesh(new T.CylinderGeometry(0.62, 0.62, 0.45, 8), flat(0x1c1d1a));
+      w.rotation.x = Math.PI / 2;
+      w.position.set(sx * (v.w / 2 - 1.1), 0.62, sz * (v.d / 2));
+      g.add(w);
+    }
+}
 function vehicleMesh(v) {
   const g = new T.Group();
+  if (v.kind === 'mrap') {
+    mrapMesh(v, g);
+    g.traverse(o => (o.castShadow = o.receiveShadow = true));
+    scene.add(g);
+    return g;
+  }
   const body = new T.Mesh(new T.BoxGeometry(v.w, v.h * 0.55, v.d), flat(0x5c6150));
   body.position.y = v.h * 0.45;
   const cabW = v.kind === 'truck' ? 2 : v.w * 0.45;
@@ -102,6 +143,34 @@ function vehicleMesh(v) {
   scene.add(g);
   return g;
 }
+/** Weapon silhouettes along +x: length and bulk tell them apart from above. */
+function weaponMesh(w) {
+  const g = new T.Group();
+  const dark = flat(0x1e1f1b);
+  const add = (len, thick, x) => {
+    const m = new T.Mesh(new T.BoxGeometry(len, thick, thick), dark);
+    m.position.x = x;
+    g.add(m);
+    return m;
+  };
+  if (w === 'ak') add(0.95, 0.09, 0.35);
+  else if (w === 'pkm') {
+    add(1.15, 0.13, 0.45);
+    add(0.18, 0.18, 0.25).position.y = -0.12; // ammo box
+  } else if (w === 'svd') {
+    add(1.3, 0.08, 0.5);
+    add(0.3, 0.1, 0.2).position.y = 0.1; // scope
+  } else if (w === 'rpg') {
+    const tube = new T.Mesh(new T.CylinderGeometry(0.07, 0.07, 1.1, 6), flat(0x4a5233));
+    tube.rotation.z = Math.PI / 2;
+    tube.position.x = 0.2;
+    const head = new T.Mesh(new T.ConeGeometry(0.11, 0.35, 6), flat(0x3a3f2a));
+    head.rotation.z = -Math.PI / 2;
+    head.position.x = 0.9;
+    g.add(tube, head);
+  }
+  return g;
+}
 function unitMesh(u) {
   const g = new T.Group();
   const col = u.side === 'army' ? ARMY : PARTISAN;
@@ -109,9 +178,41 @@ function unitMesh(u) {
   body.position.y = 0.6;
   const head = new T.Mesh(new T.IcosahedronGeometry(0.24, 0), flat(u.side === 'army' ? 0x3a3d34 : 0xc89a72));
   head.position.y = 1.36;
-  const rifle = new T.Mesh(new T.BoxGeometry(0.95, 0.09, 0.09), flat(0x1e1f1b));
-  rifle.position.set(0.45, 0.95, 0.18);
-  g.add(body, head, rifle);
+  g.add(body, head);
+  g.userData.weapons = {};
+  for (const w of u.weapons) {
+    if (w === 'gp') continue;
+    const m = weaponMesh(w);
+    m.position.set(0.1, 0.95, 0.18);
+    m.visible = w === u.weapon;
+    g.add(m);
+    g.userData.weapons[w] = m;
+  }
+  // role silhouettes: an antenna for the radio operator, a beret band for the sergeant, a launcher tube on the grenadier
+  if (u.role === 'rto') {
+    const pack = new T.Mesh(new T.BoxGeometry(0.3, 0.45, 0.42), flat(0x3d4234));
+    pack.position.set(-0.36, 0.85, 0);
+    const ant = new T.Mesh(new T.CylinderGeometry(0.015, 0.015, 1.5, 4), flat(0x111111));
+    ant.position.set(-0.4, 1.7, 0.12);
+    g.add(pack, ant);
+  }
+  if (u.role === 'leader') {
+    const beret = new T.Mesh(new T.CylinderGeometry(0.27, 0.27, 0.08, 8), flat(0x7a2a24));
+    beret.position.y = 1.5;
+    g.add(beret);
+  }
+  if (u.role === 'grenadier') {
+    const tube = new T.Mesh(new T.CylinderGeometry(0.06, 0.06, 0.35, 6), flat(0x2a2b26));
+    tube.rotation.z = Math.PI / 2;
+    tube.position.set(0.5, 0.86, 0.18);
+    g.add(tube);
+  }
+  if (u.role === 'turret') {
+    body.scale.set(0.9, 0.55, 0.9); // only the torso shows above the hatch
+    body.position.y = 0.35;
+    head.position.y = 0.85;
+    for (const m of Object.values(g.userData.weapons)) m.visible = false; // the DShK is on the vehicle
+  }
   if (u.id === 'player') {
     const ring = new T.Mesh(new T.RingGeometry(0.55, 0.7, 20), new T.MeshBasicMaterial({color: 0xef8f39}));
     ring.rotation.x = -Math.PI / 2;
@@ -131,7 +232,27 @@ tracerGeo.setAttribute('color', new T.BufferAttribute(new Float32Array(MAX_TRACE
 const tracers = new T.LineSegments(tracerGeo, new T.LineBasicMaterial({vertexColors: true, transparent: true, opacity: 0.9}));
 tracers.frustumCulled = false;
 scene.add(tracers);
-const TRACER = {partisan: new T.Color(0xffe08a), army: new T.Color(0xff8a50)};
+const TRACER = {
+  partisan: new T.Color(0xffe08a),
+  army: new T.Color(0xff8a50),
+  hmg: new T.Color(0xff5030),
+  svd: new T.Color(0xffffff),
+  rpg: new T.Color(0xffb040),
+  gp: new T.Color(0xc0c0a0),
+};
+
+// explosions: a flash and an expanding scorch ring, pooled
+const blasts = [...Array(8)].map(() => {
+  const flash = new T.Mesh(new T.IcosahedronGeometry(1, 1), new T.MeshBasicMaterial({color: 0xffc070, transparent: true}));
+  const ring = new T.Mesh(
+    new T.RingGeometry(0.8, 1, 24),
+    new T.MeshBasicMaterial({color: 0x2a1e12, transparent: true, side: T.DoubleSide}),
+  );
+  ring.rotation.x = -Math.PI / 2;
+  flash.visible = ring.visible = false;
+  scene.add(flash, ring);
+  return {flash, ring};
+});
 
 // aim marker
 const aimRing = new T.Mesh(new T.RingGeometry(0.35, 0.45, 16), new T.MeshBasicMaterial({color: 0xef8f39, transparent: true, opacity: 0.8}));
@@ -181,7 +302,7 @@ function newGame() {
   started = false;
   $('#card-title').textContent = 'Convoy ambush';
   $('#card-text').textContent =
-    'An army convoy is coming east down the valley road. The log across the road will stop it under your ridge. Wait for it, then open fire. Mila and Dragan hold fire until you do.';
+    'An army convoy is coming east down the valley road. The log across the road will stop it under your ridge. Wait for it, then open fire. Mila (marksman) and Dragan (machine gun) hold fire until you do. The MRAP’s heavy gun will tear you apart: you carry three RPG rockets for it.';
   $('#start').textContent = 'Start';
   $('#card').hidden = false;
 }
@@ -194,7 +315,8 @@ function start() {
 // ---------- input ----------
 const keys = new Set();
 let fire = false,
-  reload = false;
+  reload = false,
+  wantWeapon = null;
 const aim = new T.Vector3(),
   ray = new T.Raycaster(),
   ndc = new T.Vector2(),
@@ -206,6 +328,7 @@ addEventListener('keydown', e => {
   if (['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'shift', ' '].includes(k)) e.preventDefault();
   keys.add(k);
   if (k === 'r') reload = true;
+  if (['1', '2', '3'].includes(k)) wantWeapon = sim.player.weapons[Number(k) - 1];
   if (k === 'v') toggleAi();
   if (k === 'enter') started && !sim.outcome ? null : sim.outcome ? newGame() : start();
 });
@@ -233,8 +356,9 @@ function input() {
     ray.setFromCamera(ndc, camera);
     ray.ray.intersectPlane(groundPlane, aim);
   }
-  const i = {mx, mz, sneak: has('shift'), fire, reload, ...(hasAim ? {ax: aim.x, az: aim.z} : {})};
+  const i = {mx, mz, sneak: has('shift'), fire, reload, weapon: wantWeapon, ...(hasAim ? {ax: aim.x, az: aim.z} : {})};
   reload = false;
+  wantWeapon = null;
   return i;
 }
 
@@ -301,10 +425,10 @@ function updateLabels() {
     const show = u.alive && !u.escaped && u.state !== 'mounted';
     el.hidden = !show;
     if (!show) continue;
-    const [x, y] = project(u.x, 0, u.z);
+    const [x, y] = project(u.x, u.state === 'turret' ? 3.4 : 0, u.z);
     el.style.left = `${x}px`;
     el.style.top = `${y}px`;
-    el.textContent = `${u.state}${u.supp > 0.3 ? ` · supp ${Math.round(u.supp * 100)}%` : ''}`;
+    el.textContent = `${ROLES[u.role]?.short || ''} · ${u.state}${u.supp > 0.3 ? ` · supp ${Math.round(u.supp * 100)}%` : ''}`;
   }
 }
 
@@ -352,14 +476,23 @@ function updateHud() {
       ? 'Waiting for the convoy'
       : 'Contact';
   $('#hud').innerHTML =
-    `<b>${status}</b><br>Health ${Math.max(0, p.hp)} · Ammo ${p.reload > 0 ? 'reloading' : `${p.mag}/${MAG}`}<br>Army: ${s.armyAlive} up · ${s.armyDown} down · ${s.escaped} fled<br>Partisans up: ${s.partisansAlive}/3 · ${Math.floor(sim.time)} s`;
+    `<b>${status}</b><br>Health ${Math.max(0, p.hp)}<br>` +
+    p.weapons
+      .map((w, i) => {
+        const W = WEAPONS[w],
+          ammo = p.reload > 0 && p.reloading === w ? 'reloading' : `${p.mags[w]}${p.reserve[w] === Infinity ? '' : ` +${p.reserve[w]}`}`;
+        return `${w === p.weapon ? '<b>▸' : '&nbsp;'} ${i + 1} ${W.label} ${ammo}${w === p.weapon ? '</b>' : ''}`;
+      })
+      .join('<br>') +
+    `<br>Army: ${s.armyAlive} up · ${s.armyDown} down · ${s.escaped} fled · ${s.vehiclesDestroyed} vehicles burning<br>Partisans up: ${s.partisansAlive}/3 · ${Math.floor(sim.time)} s`;
 }
 
 // ---------- frame ----------
 function draw() {
   for (const [u, g] of units) {
     g.visible = !u.escaped && u.state !== 'mounted';
-    g.position.set(u.x, 0, u.z);
+    g.position.set(u.x, u.state === 'turret' || (u.role === 'turret' && !u.alive) ? u.vehicle.h * 1.2 : 0, u.z);
+    if (u.role !== 'turret') for (const [w, m] of Object.entries(g.userData.weapons)) m.visible = w === u.weapon;
     g.rotation.y = -u.facing;
     if (!u.alive && !g.userData.down) {
       g.userData.down = true;
@@ -367,9 +500,34 @@ function draw() {
       g.position.y = 0.35;
       g.traverse(o => o.material?.color?.multiplyScalar?.(0.55));
     }
-    if (!u.alive) g.position.y = 0.35;
+    if (!u.alive && u.role !== 'turret') g.position.y = 0.35;
   }
-  sim.vehicles.forEach((v, i) => vehicles[i].position.set(v.x, 0, v.z));
+  sim.vehicles.forEach((v, i) => {
+    const g = vehicles[i];
+    g.position.set(v.x, 0, v.z);
+    const gunner = v.crew.find(c => c.role === 'turret');
+    if (g.userData.turret && gunner?.alive) g.userData.turret.rotation.y = -gunner.facing;
+    if (v.destroyed && !g.userData.burnt) {
+      g.userData.burnt = true;
+      g.traverse(o => o.material && (o.material = o.material.clone()) && o.material.color.multiplyScalar(0.3));
+      g.rotation.z = 0.05;
+      g.rotation.x = 0.06;
+    }
+  });
+  // explosions: 0.6 s each
+  const live = sim.explosions.filter(e => sim.time - e.t < 0.6);
+  blasts.forEach((b, i) => {
+    const e = live[i];
+    b.flash.visible = b.ring.visible = !!e;
+    if (!e) return;
+    const k = (sim.time - e.t) / 0.6;
+    b.flash.position.set(e.x, 1, e.z);
+    b.flash.scale.setScalar(e.r * (0.4 + k * 0.6));
+    b.flash.material.opacity = 1 - k;
+    b.ring.position.set(e.x, 0.06, e.z);
+    b.ring.scale.setScalar(e.r * (0.5 + k));
+    b.ring.material.opacity = 0.7 * (1 - k);
+  });
   // tracers: the last 70 ms of shots
   const pos = tracerGeo.attributes.position.array,
     col = tracerGeo.attributes.color.array;
@@ -377,7 +535,7 @@ function draw() {
   for (const t of sim.tracers) {
     if (sim.time - t.t > 0.07 || n >= MAX_TRACERS) continue;
     pos.set([t.x0, 1, t.z0, t.x1, 1, t.z1], n * 6);
-    const c = TRACER[t.side];
+    const c = TRACER[t.weapon] || TRACER[t.side];
     col.set([c.r, c.g, c.b, c.r, c.g, c.b], n * 6);
     n++;
   }
@@ -386,7 +544,7 @@ function draw() {
   // camera follows the player, looking down at an angle
   const p = sim.player;
   const tx = Math.max(BOUNDS.minX + 12, Math.min(BOUNDS.maxX - 12, p.x)),
-    tz = Math.max(BOUNDS.minZ + 6, Math.min(BOUNDS.maxZ - 6, p.z + 6));
+    tz = Math.max(BOUNDS.minZ + 6, Math.min(BOUNDS.maxZ - 6, p.z + 12)); // look a little south of you, toward the road
   const k = reduceMotion ? 1 : 0.08;
   camera.position.lerp(v3.set(tx, 44, tz + 24), k);
   camera.lookAt(camera.position.x, 0, camera.position.z - 24);

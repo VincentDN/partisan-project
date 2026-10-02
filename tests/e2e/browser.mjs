@@ -22,6 +22,7 @@ export async function launch() {
 export async function open(browser, url, opts = {}) {
   const page = await browser.newPage({viewport: {width: 1280, height: 800}, reducedMotion: 'reduce', ...opts});
   page.problems = [];
+  (browser.openPages ||= []).push(page); // closed after each smoke check, pass or fail
   page.on('console', m => {
     if (m.type() === 'error') page.problems.push('console: ' + m.text());
   });

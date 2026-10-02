@@ -3,8 +3,8 @@
 <link rel="stylesheet" href="../shared/panel-ui.css"><link rel="stylesheet" href="convoy.css">
 <script type="importmap">{"imports":{"three":"../vendor/three/build/three.module.min.js","three/addons/":"../vendor/three/examples/jsm/"}}</script></head>
 <body><main><div id="stage" tabindex="0" aria-label="Top-down convoy ambush. WASD to move, mouse to aim, click to fire."><div id="labels" aria-hidden="true"></div>
-<div id="card" class="card" role="dialog" aria-labelledby="card-title"><h2 id="card-title">Convoy ambush</h2><p id="card-text">An army convoy is coming east down the valley road. The log across the road will stop it under your ridge. Wait for it, then open fire. Mila and Dragan hold fire until you do.</p><button id="start" class="primary">Start</button></div>
-<div class="hint">WASD MOVE · MOUSE AIM · CLICK FIRE · SHIFT SNEAK · R RELOAD · V AI VIEW · ENTER RESTART</div></div>
+<div id="card" class="card" role="dialog" aria-labelledby="card-title"><h2 id="card-title">Convoy ambush</h2><p id="card-text">An army convoy is coming east down the valley road. The log across the road will stop it under your ridge. Wait for it, then open fire. Mila (marksman) and Dragan (machine gun) hold fire until you do. The MRAP's heavy gun will tear you apart: you carry three RPG rockets for it.</p><button id="start" class="primary">Start</button></div>
+<div class="hint">WASD MOVE · MOUSE AIM · CLICK FIRE · 1 AK · 2 SVD · 3 RPG · SHIFT SNEAK · R RELOAD · V AI VIEW</div></div>
 <aside><div class="eyebrow">PARTISAN PROJECT · CONVOY AMBUSH</div><h1>Convoy<br>ambush.</h1>
 <p>A top-down test bed for the enemy AI. Soldiers act on what they believe, not on the truth: what they saw, what they heard, and what a squadmate shouted. Turn on the AI view to watch them think.</p>
 <h2>STATUS</h2><div id="hud" class="note" aria-live="polite"></div>
@@ -12,5 +12,6 @@
 <label class="slider"><span>Enemy awareness</span><output id="aware-out">50%</output><input id="aware" type="range" min="0" max="100" step="5" value="50"></label>
 <p class="note small">Awareness sharpens hearing, spotting and how fast callouts reach the squad. It never changes health or aim. It applies on restart.</p>
 <h2>COMMS</h2><ol id="comms" class="comms" aria-live="polite"></ol>
-<h2>LEGEND</h2><p class="note small"><b class="k-p">●</b> partisans (you have the orange ring) · <b class="k-a">●</b> army · in AI view: rings are believed threat positions (size = uncertainty, brightness = confidence), the fan is a soldier's view, the label is its state.</p>
+<h2>ENEMY</h2><p class="note small"><b>Convoy</b>: jeep, MRAP (armoured, DShK turret, needs RPGs), truck, jeep.<br><b>SL</b> squad leader (red beret): orders the flank and the retreat. <b>RTO</b> radio operator (antenna): callouts reach the squad twice as fast; kill him to slow them down. <b>MG</b> machine gunner: heavy suppression. <b>DM</b> marksman: long sight, never fires blind. <b>GR</b> grenadier: lobs grenades at where he thinks you hide. <b>HMG</b> MRAP gunner: shielded.</p>
+<h2>LEGEND</h2><p class="note small"><b class="k-p">●</b> partisans (you have the orange ring) · <b class="k-a">●</b> army · in AI view: rings are believed threat positions (size = uncertainty, brightness = confidence), the fan is a soldier's view, the label is role · state.</p>
 </aside></main><noscript><p>This prototype requires JavaScript and WebGL.</p></noscript><script type="module" src="game.js"></script></body></html>

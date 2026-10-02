@@ -37,11 +37,65 @@ export const PARTISAN_SPAWNS = [
   {id: 'dragan', x: -4, z: -18, label: 'Dragan'},
 ];
 
-// Vehicles in convoy order (lead first), each with its dismounting squad.
+// Vehicles in convoy order (lead first), each with its crew: {name, role} (roles in convoy/weapons.js).
+// hp: what an RPG has to chew through. The MRAP's turret gunner stays aboard; everyone else dismounts.
 export const CONVOY = [
-  {id: 'lead', kind: 'jeep', w: 4.2, d: 2.2, h: 1.6, gap: 0, crew: ['Sgt. Horvat', 'Pvt. Kos']},
-  {id: 'truck', kind: 'truck', w: 7, d: 2.6, h: 2.8, gap: 14, crew: ['Cpl. Babic', 'Pvt. Lenz', 'Pvt. Maric', 'Pvt. Ulbrich']},
-  {id: 'rear', kind: 'jeep', w: 4.2, d: 2.2, h: 1.6, gap: 13, crew: ['Pvt. Juric', 'Pvt. Novak']},
+  {
+    id: 'lead',
+    kind: 'jeep',
+    w: 4.2,
+    d: 2.2,
+    h: 1.6,
+    hp: 220,
+    gap: 0,
+    crew: [
+      {name: 'Sgt. Horvat', role: 'leader'},
+      {name: 'Pvt. Kos', role: 'rifleman'},
+    ],
+  },
+  {
+    id: 'mrap',
+    kind: 'mrap',
+    w: 6,
+    d: 2.7,
+    h: 2.8,
+    hp: 520,
+    armoured: true,
+    gap: 12,
+    crew: [
+      {name: 'Cpl. Vidic', role: 'turret'},
+      {name: 'Pvt. Sabo', role: 'marksman'},
+      {name: 'Pvt. Radic', role: 'rto'},
+    ],
+  },
+  {
+    id: 'truck',
+    kind: 'truck',
+    w: 7,
+    d: 2.6,
+    h: 2.8,
+    hp: 300,
+    gap: 14,
+    crew: [
+      {name: 'Cpl. Babic', role: 'rifleman'},
+      {name: 'Pvt. Lenz', role: 'mg'},
+      {name: 'Pvt. Maric', role: 'rifleman'},
+      {name: 'Pvt. Ulbrich', role: 'rifleman'},
+    ],
+  },
+  {
+    id: 'rear',
+    kind: 'jeep',
+    w: 4.2,
+    d: 2.2,
+    h: 1.6,
+    hp: 220,
+    gap: 13,
+    crew: [
+      {name: 'Pvt. Juric', role: 'grenadier'},
+      {name: 'Pvt. Novak', role: 'rifleman'},
+    ],
+  },
 ];
 export const CONVOY_START_X = -58;
 export const CONVOY_SPEED = 7; // m/s

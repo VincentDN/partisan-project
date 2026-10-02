@@ -22,6 +22,9 @@ async function check(name, fn) {
   } catch (e) {
     results.push(`FAIL ${name}: ${e.message}`);
     process.exitCode = 1;
+  } finally {
+    // A failed check leaves its page rendering; in SwiftShader that starves every later page, so close them all.
+    for (const p of browser.openPages?.splice(0) || []) if (!p.isClosed()) await p.close().catch(() => {});
   }
 }
 const noProblems = page =>
@@ -40,7 +43,7 @@ await check('index: the Nokia screen lies on the table and opens straight on the
     'LCD is laid on the phone with a projective transform',
   );
   assert.equal(await page.evaluate(() => window.PARP_INDEX.mode), 'menu', 'no splash screen');
-  assert.equal(await page.locator('.menu a').count(), 11);
+  assert.equal(await page.locator('.menu a').count(), 13);
   const first = await page.locator('.menu a').allInnerTexts();
   assert.match(first[0], /Weapon Workbench/i, '1 is the opening scene');
   assert.match(first[1], /Weapon Modder/i, '2 is the weapon customiser');
@@ -416,7 +419,7 @@ await check('convoy ambush: the convoy drives, the ambush springs, soldiers dism
     };
   });
   assert.equal(r.alarm, true, 'the ambush is sprung');
-  assert.equal(r.dismounted, 8, 'every soldier dismounted');
+  assert.equal(r.dismounted, 11, 'every soldier is out (the MRAP gunner stays in his turret)');
   assert.ok(r.callouts >= 3, `the army calls out (${r.callouts})`);
   await page.waitForTimeout(500);
   assert.ok((await page.locator('#comms li').count()) >= 3, 'callouts reach the comms log');

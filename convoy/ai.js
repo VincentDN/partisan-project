@@ -11,6 +11,7 @@
 // Unit states (army): mounted > (secure | cover) > engage <> pinned, flank, search, retreat.
 // The squad director (1 Hz) handles what no single soldier decides: flanking and falling back.
 import {ROAD} from './world.js';
+import {WEAPONS, ROLES} from './weapons.js';
 import {dist} from './sim.js';
 
 const COMPASS = ['east', 'south-east', 'south', 'south-west', 'west', 'north-west', 'north', 'north-east'];
@@ -64,8 +65,11 @@ export function receive(sim, u, belief) {
 // ---------- perception ----------
 export function perceive(sim, u) {
   const mounted = u.state === 'mounted';
-  const range = mounted ? 24 : u.side === 'army' ? 42 : 48;
-  const halfFov = u.side === 'partisan' || mounted || sim.alarm ? Math.PI : 1.25;
+  // Sight by role (a marksman's optic, the gunner's height on the MRAP); riders in a moving vehicle see little.
+  // Before the ambush the MRAP gunner watches the road ahead from his hatch: farther than the riders, not all round.
+  const scanning = u.state === 'turret' && !sim.alarm;
+  const range = mounted ? 24 : scanning ? 32 : u.side === 'army' ? ROLES[u.role]?.sight || 42 : u.weapon === 'svd' ? 60 : 48;
+  const halfFov = scanning ? 1.6 : u.side === 'partisan' || mounted || u.state === 'turret' || sim.alarm ? Math.PI : 1.25;
   u.visible = [];
   for (const e of sim.enemiesOf(u)) {
     const d = dist(u, e);
@@ -159,11 +163,11 @@ function setState(sim, u, state) {
 // ---------- army ----------
 function dismount(sim, u, best) {
   const v = u.vehicle,
-    idx = v.crew.indexOf(u);
+    idx = v.crew.filter(c => c.role !== 'turret').indexOf(u);
   const since = sim.alarm ? sim.alarmAt : v.stopAt;
   if (sim.time < since + 0.4 + idx * 0.35) return; // they pile out one by one
   const side = best ? (best.z < v.z ? 1 : -1) : 1; // out of the doors away from the threat
-  u.x = v.x + (idx - (v.crew.length - 1) / 2) * 1.3;
+  u.x = v.x + (idx - (v.crew.length - 2) / 2) * 1.3;
   u.z = v.z + side * (v.d / 2 + 0.8);
   u.facing = side > 0 ? -Math.PI / 2 : Math.PI / 2;
   if (best) {
@@ -222,6 +226,9 @@ export function armyThink(sim, u) {
     case 'pinned':
       if (u.supp < 0.3) setState(sim, u, 'engage');
       break;
+    case 'turret':
+      if (best) u.lastKnown = {x: best.x, z: best.z};
+      break;
     case 'flank':
       if (u.visible.length) {
         setState(sim, u, 'engage');
@@ -251,33 +258,51 @@ export function armyThink(sim, u) {
   }
 }
 
+const between = (sim, [lo, hi]) => lo + sim.rand() * (hi - lo);
+
 export function armyAct(sim, u, dt) {
   if (u.state === 'mounted' || u.state === 'escaped') return;
   if (!u.moveTo && u.path?.length) u.moveTo = u.path.shift();
-  if (u.state !== 'engage' && u.state !== 'pinned') sim.move(u, dt);
+  if (!['engage', 'pinned', 'turret'].includes(u.state)) sim.move(u, dt);
   else u.moving = false;
-  const target = u.visible.filter(e => e.alive).sort((a, b) => dist(u, a) - dist(u, b))[0];
-  const firing = ['engage', 'flank', 'search', 'cover', 'retreat'].includes(u.state);
   if (u.pause > 0) {
     u.pause -= dt;
     return;
   }
-  if (target && firing && u.state !== 'pinned') {
-    if (sim.shoot(u, target.x, target.z) && ++u.burst >= 3) {
+  if (sim.time < (u.reactAt || 0)) return; // the first moments of an ambush: surprise
+  const W = WEAPONS[u.weapon],
+    role = ROLES[u.role];
+  const target = u.visible.filter(e => e.alive).sort((a, b) => dist(u, a) - dist(u, b))[0];
+  const best = bestBelief(u);
+  // Grenadier: lob a grenade at a hidden enemy it is fairly sure about, to flush it out of cover.
+  if (role.launcher && best && !target && best.conf > 0.45 && best.err < 7 && sim.time - (u.lastLob || -99) > 6) {
+    const d = Math.hypot(best.x - u.x, best.z - u.z);
+    if (d > 12 && d < WEAPONS[role.launcher].range && (u.mags[role.launcher] > 0 || u.reserve[role.launcher] > 0) && u.state !== 'pinned') {
+      if (u.mags[role.launcher] === 0) sim.startReload(u, role.launcher);
+      else if (sim.shoot(u, best.x, best.z, 0, role.launcher)) {
+        u.lastLob = sim.time;
+        u.pause = 1;
+        sim.say(u, 'Grenade out!', 'lob', 6);
+        return;
+      }
+    }
+  }
+  const firing = ['engage', 'flank', 'search', 'cover', 'retreat', 'turret'].includes(u.state);
+  if (target && firing) {
+    if (sim.shoot(u, target.x, target.z) && ++u.burst >= Math.round(between(sim, W.burst))) {
       u.burst = 0;
-      u.pause = 0.45 + sim.rand() * 0.8;
+      u.pause = between(sim, W.pause);
     }
     return;
   }
-  const best = bestBelief(u);
-  if (u.state === 'engage' && best && best.conf > 0.3) {
-    // Suppress where it thinks you are: wider spread, slower cadence.
+  // Suppress where it thinks you are (a marksman never fires blind): wider spread, slower cadence.
+  if ((u.state === 'engage' || u.state === 'turret') && best && best.conf > role.suppressAt) {
     u.facing = Math.atan2(best.z - u.z, best.x - u.x);
     if (sim.shoot(u, best.x, best.z, 0.05 + best.err * 0.012)) {
       sim.say(u, 'Suppressing!', 'suppress', 8);
-      if (++u.burst >= 2) {
+      if (++u.burst >= Math.max(2, Math.round(between(sim, W.burst) * 0.6))) {
         u.burst = 0;
-        u.pause = 1.1 + sim.rand() * 1.2;
+        u.pause = between(sim, W.pause) + 0.8;
       }
     }
   } else if (best && !u.moving) u.facing = Math.atan2(best.z - u.z, best.x - u.x);
@@ -287,7 +312,7 @@ export function armyAct(sim, u, dt) {
 export function squadThink(sim) {
   if (!sim.alarm) return;
   const army = sim.units.filter(u => u.side === 'army');
-  const up = army.filter(u => u.alive && !u.escaped && u.state !== 'mounted');
+  const up = army.filter(u => u.alive && !u.escaped && u.state !== 'mounted' && u.state !== 'turret');
   const all = army.filter(u => u.alive && !u.escaped);
   if (!all.length) return;
   const beliefs = up.flatMap(u => u.beliefs.filter(b => b.conf > 0.4));
@@ -343,9 +368,10 @@ export function partisanAct(sim, u, dt) {
     u.pause -= dt;
     return;
   }
+  const W = WEAPONS[u.weapon];
   const target = u.visible.filter(e => e.alive).sort((a, b) => dist(u, a) - dist(u, b))[0];
-  if (target && sim.shoot(u, target.x, target.z) && ++u.burst >= 2 + Math.floor(sim.rand() * 2)) {
+  if (target && sim.shoot(u, target.x, target.z) && ++u.burst >= Math.round(between(sim, W.burst))) {
     u.burst = 0;
-    u.pause = 0.5 + sim.rand() * 0.9;
+    u.pause = between(sim, W.pause);
   }
 }

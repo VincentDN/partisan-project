@@ -12,6 +12,11 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
   - Behaviour: dismount away from the threat, take cover, suppress where they think you are, get pinned, flank on the sergeant's order, search last-known positions and fall back after heavy losses.
   - The AI view shows each soldier's beliefs, view and state. The enemy awareness setting changes perception and comms, never health or aim.
   - The simulation is pure and seeded (`convoy/sim.js`, `convoy/ai.js`), with unit tests in `tests/convoy.test.mjs`.
+- Convoy Ambush, round 2:
+  - **MRAP** with a shielded DShK turret gunner. Rifles bounce off it; three RPG rockets destroy it, and any vehicle can burn.
+  - **Weapons** (`convoy/weapons.js`): AK-74, PKM, SVD, RPG-7 (direct, splash, anti-vehicle), GP-25 (lobbed over cover) and the mounted DShK. You switch with 1, 2, 3; Mila carries the SVD and Dragan the PKM.
+  - **Enemy roles**: squad leader, rifleman, machine gunner, marksman, radio operator (callouts twice as fast; kill him to slow the squad) and grenadier (lobs at believed positions). Each has its own silhouette.
+  - Soldiers take a moment to react when the ambush opens. Failed smoke checks now close their pages, so one failure no longer starves the rest.
 - Art Style Lab: **Cel shaded** style (two hard tones, bright flat colour, thick outlines).
 - **Art Style Lab** (`operator/?lab`, index entry 4). It switches the operator and its rifle between art styles: Lit low-poly, Toon cel, Toon + ink, Clay study, Silhouette test, Nokia LCD, PS1 retro and Night vision. Styles are data in `shared/art-styles.js`: material swaps plus screen-space passes through the new `stage.setRender` hook. The chosen style is kept in the address (`?lab=<id>`).
 - **Hands on the rifle**: `operator/grip.js` solves both arms onto the carried rifle each frame (two-bone IK, hand aligned to the grip). Weapon poses place the rifle in body space (`hold`, `muzzle`, `up`). The hero pose follows the moodboard. Also new: *Hero · both hands* and *Port arms* (replaces *Shoulder arms*). Low ready, high ready, crouch and kneel are reworked.

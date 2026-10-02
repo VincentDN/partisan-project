@@ -109,3 +109,67 @@ test('a full ambush plays out deterministically for a seed', () => {
   assert.ok(stats.armyDown >= 1, 'the ambush draws blood');
   assert.ok(callouts >= 6, 'the army talks');
 });
+
+test('vehicles: rifles bounce off, three RPG rockets destroy the MRAP and its gunner', () => {
+  const sim = new Sim({seed: 5});
+  run(sim, 40);
+  const mrap = sim.vehicles.find(v => v.kind === 'mrap');
+  const gunner = mrap.crew.find(u => u.role === 'turret');
+  const p = sim.player;
+  // rifle fire at the hull does nothing to it
+  for (let i = 0; i < 30; i++) sim.step(1 / 60, {weapon: 'ak', ax: mrap.x, az: mrap.z, fire: true});
+  assert.equal(mrap.hp, mrap.maxHp);
+  for (let i = 0; i < 60 * 15 && !mrap.destroyed && p.alive; i++) sim.step(1 / 60, {weapon: 'rpg', ax: mrap.x, az: mrap.z, fire: true});
+  assert.ok(mrap.destroyed || !p.alive, 'MRAP destroyed (or the player died trying)');
+  if (mrap.destroyed) {
+    assert.equal(gunner.alive, false, 'the turret gunner goes with it');
+    assert.ok(sim.explosions.length >= 3);
+    assert.equal(p.mags.rpg + p.reserve.rpg, 0, 'all three rockets used');
+  }
+});
+
+test('roles: every soldier carries its role weapon; the grenadier also has a launcher', () => {
+  const sim = new Sim();
+  const by = r => sim.units.find(u => u.role === r);
+  assert.equal(by('mg').weapon, 'pkm');
+  assert.equal(by('marksman').weapon, 'svd');
+  assert.equal(by('turret').weapon, 'hmg');
+  assert.deepEqual(by('grenadier').weapons, ['ak', 'gp']);
+  assert.deepEqual(sim.player.weapons, ['ak', 'svd', 'rpg']);
+});
+
+test('the radio operator speeds up squad comms; losing him and the sergeant slows them', () => {
+  const sim = new Sim({awareness: 0.5});
+  const from = sim.units.find(u => u.role === 'rifleman');
+  const delay = () => {
+    sim.messages = [];
+    sim.share(from, {x: 0, z: 0, err: 1, conf: 1});
+    return sim.messages[0].at - sim.time;
+  };
+  const withRto = delay();
+  sim.units.find(u => u.role === 'rto').alive = false;
+  const without = delay();
+  sim.units.find(u => u.leader).alive = false;
+  const leaderless = delay();
+  assert.ok(withRto < without && without < leaderless, `${withRto} < ${without} < ${leaderless}`);
+});
+
+test('the grenadier lobs a grenade at a hidden enemy it believes in', () => {
+  const sim = new Sim({seed: 9, awareness: 1});
+  run(sim, 40);
+  const gr = sim.units.find(u => u.role === 'grenadier');
+  // put him in a fight with a confident belief about a target he cannot see
+  sim.raiseAlarm(null);
+  Object.assign(gr, {
+    state: 'engage',
+    supp: 0,
+    visible: [],
+    pause: 0,
+    reactAt: 0,
+    x: 0,
+    z: 10,
+    beliefs: [{x: 0, z: -14, err: 2, conf: 0.9, src: 'told', t: sim.time}],
+  });
+  for (let i = 0; i < 30; i++) sim.step(1 / 60, {});
+  assert.ok(sim.callouts.some(c => c.id === gr.id && c.text === 'Grenade out!') || gr.mags.gp === 0, 'a grenade went out');
+});

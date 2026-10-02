@@ -1,6 +1,7 @@
 // Convoy Ambush simulation: pure, deterministic (seeded), no three.js, so the AI can be unit-tested in node.
 // Fixed-step: call step(dt, input) at 60 Hz. The renderer (convoy/game.js) only reads state and event lists.
 import {BOUNDS, COVER, PARTISAN_SPAWNS, CONVOY, CONVOY_START_X, CONVOY_SPEED, ROADBLOCK} from './world.js';
+import {WEAPONS, ROLES, PARTISAN_LOADOUTS} from './weapons.js';
 import {perceive, hear, decay, armyThink, armyAct, partisanThink, partisanAct, squadThink, receive} from './ai.js';
 
 /** mulberry32: small seeded PRNG so a run can be replayed exactly. */
@@ -57,8 +58,7 @@ function rayCircle(ox, oz, dx, dz, cx, cz, r) {
 }
 
 export const DAMAGE = 34;
-export const MAG = 30;
-const RELOAD = 2.2;
+export const MAG = WEAPONS.ak.mag;
 const SPEED = {walk: 3, run: 4.6, sneak: 1.8};
 
 export class Sim {
@@ -70,7 +70,8 @@ export class Sim {
     this.alarm = false; // the ambush has been sprung (or the army spotted the partisans)
     this.alarmAt = Infinity;
     this.outcome = null; // 'won' | 'lost'
-    this.tracers = []; // {x0,z0,x1,z1,side,t}
+    this.tracers = []; // {x0,z0,x1,z1,side,weapon,t}
+    this.explosions = []; // {x,z,r,t}
     this.callouts = []; // {id, name, side, text, t}
     this.messages = []; // comms in flight: {at, to, belief, from}
     this.squad = {contactSince: Infinity, flanking: false, retreating: false, nextThink: 0};
@@ -79,18 +80,31 @@ export class Sim {
     let x = CONVOY_START_X;
     for (const v of CONVOY) {
       x -= v.gap;
-      const veh = {...v, x, z: 0, stopped: false, stopAt: Infinity, crew: []};
+      const veh = {...v, x, z: 0, maxHp: v.hp, destroyed: false, stopped: false, stopAt: Infinity, crew: []};
       this.vehicles.push(veh);
-      v.crew.forEach((name, i) => {
-        const u = this.unit({id: `${v.id}-${i}`, name, side: 'army', x, z: 0});
-        u.state = 'mounted';
+      v.crew.forEach((c, i) => {
+        const role = ROLES[c.role];
+        const u = this.unit({
+          id: `${v.id}-${i}`,
+          name: c.name,
+          role: c.role,
+          side: 'army',
+          x,
+          z: 0,
+          weapons: [role.weapon, ...(role.launcher ? [role.launcher] : [])],
+        });
+        u.state = c.role === 'turret' ? 'turret' : 'mounted';
         u.vehicle = veh;
-        u.leader = v.id === 'lead' && i === 0;
+        u.leader = c.role === 'leader';
+        if (c.role === 'turret') {
+          u.r = 0.32; // only head and shoulders show above the hatch
+          u.armour = 0.5; // the gun shield halves suppression
+        }
         veh.crew.push(u);
       });
     }
     for (const p of PARTISAN_SPAWNS) {
-      const u = this.unit({id: p.id, name: p.label, side: 'partisan', x: p.x, z: p.z});
+      const u = this.unit({id: p.id, name: p.label, role: 'partisan', side: 'partisan', x: p.x, z: p.z, weapons: PARTISAN_LOADOUTS[p.id]});
       u.state = 'hold';
       u.facing = Math.PI / 2; // facing the road (south, +z)
     }
@@ -104,8 +118,9 @@ export class Sim {
       alive: true,
       escaped: false,
       facing: 0,
-      mag: MAG,
+      weapons: ['ak'],
       reload: 0,
+      reloading: null,
       cd: 0,
       burst: 0,
       pause: 0,
@@ -122,13 +137,16 @@ export class Sim {
       thinkAt: 0,
       ...o,
     };
+    u.weapon = u.weapons[0];
+    u.mags = Object.fromEntries(u.weapons.map(w => [w, WEAPONS[w].mag]));
+    u.reserve = Object.fromEntries(u.weapons.map(w => [w, WEAPONS[w].reserve ?? Infinity]));
     this.units.push(u);
     return u;
   }
 
   /** Static cover plus the vehicles, as boxes. */
   boxes() {
-    return [...COVER, ...this.vehicles.map(v => ({x: v.x, z: v.z, w: v.w, d: v.d, h: v.h, kind: 'vehicle'}))];
+    return [...COVER, ...this.vehicles.map(v => ({x: v.x, z: v.z, w: v.w, d: v.d, h: v.h, kind: 'vehicle', vehicle: v}))];
   }
 
   /** Line of sight between two points (eye height is implied: every obstacle is taller than a crouching man). */
@@ -157,7 +175,11 @@ export class Sim {
 
   /** Radio a belief to the squad: arrives after a delay that shrinks with awareness, slightly blurred. */
   share(from, belief) {
-    const delay = 0.4 + (1 - this.awareness) * 1.4;
+    // A living radio operator halves the delay; with the sergeant dead too, word travels slower.
+    const army = from.side === 'army' ? this.units.filter(u => u.side === 'army' && u.alive) : [];
+    const rto = army.some(u => u.role === 'rto') ? 0.5 : 1,
+      leaderless = from.side === 'army' && !army.some(u => u.leader) ? 1.5 : 1;
+    const delay = (0.4 + (1 - this.awareness) * 1.4) * rto * leaderless;
     for (const to of this.units)
       if (to !== from && to.alive && to.side === from.side)
         this.messages.push({
@@ -176,69 +198,139 @@ export class Sim {
       v.stopped = true;
       v.stopAt = this.time;
     }
+    // Human reaction: nobody returns fire the instant the ambush opens (quicker when the army is alert).
+    for (const u of this.units) if (u.side === 'army') u.reactAt = this.time + (0.5 + this.rand()) * (1.4 - this.awareness * 0.8);
     if (by?.side === 'army') this.say(by, 'Ambush! Contact north!', 'contact');
   }
 
-  /** Fire one round from u toward (tx, tz). extra: added spread (radians), e.g. for suppressive fire. */
-  shoot(u, tx, tz, extra = 0) {
-    if (u.reload > 0 || u.cd > 0 || !u.alive) return false;
-    if (u.mag <= 0) {
-      u.reload = RELOAD;
-      if (u.side === 'army' || u.id !== 'player') this.say(u, 'Reloading!', 'reload', 6);
+  startReload(u, wid = u.weapon) {
+    const W = WEAPONS[wid];
+    if (u.reload > 0 || u.mags[wid] >= W.mag || u.reserve[wid] <= 0) return false;
+    u.reload = W.reload;
+    u.reloading = wid;
+    if (u.reserve[wid] !== Infinity) u.reserve[wid]--;
+    if (u.id !== 'player') this.say(u, 'Reloading!', 'reload', 6);
+    return true;
+  }
+
+  /**
+   * Fire one round of weapon `wid` from u toward (tx, tz). extra: added spread (radians), e.g. for suppressive fire.
+   * Bullets are hitscan; explosives burst where they hit; lobbed rounds arc over cover to land near the aim point.
+   */
+  shoot(u, tx, tz, extra = 0, wid = u.weapon) {
+    const W = WEAPONS[wid];
+    if (u.reload > 0 || u.cd > 0 || !u.alive || !(wid in u.mags)) return false;
+    if (u.mags[wid] <= 0) {
+      this.startReload(u, wid);
       return false;
     }
-    u.mag--;
-    u.cd = u.id === 'player' ? 0.1 : 0.11;
+    u.mags[wid]--;
+    u.cd = W.cd;
     const base = Math.atan2(tz - u.z, tx - u.x);
     u.facing = base;
-    const sigma = (u.id === 'player' ? 0.018 : 0.03) + u.supp * 0.1 + (u.moving ? 0.045 : 0) + extra;
+    const sigma = W.spread * (u.id === 'player' ? 0.9 : 1.5) + u.supp * 0.1 * (u.armour ?? 1) + (u.moving ? 0.045 : 0) + extra;
     const g = (this.rand() + this.rand() + this.rand() - 1.5) * 1.15; // ~normal
     const a = base + g * sigma,
       dx = Math.cos(a),
       dz = Math.sin(a);
     const ox = u.x + dx * (u.r + 0.05),
       oz = u.z + dz * (u.r + 0.05);
-    let best = 70,
-      hit = null;
+    if (u.side === 'partisan') this.raiseAlarm(null);
+    hear(this, u);
+    if (W.lob) {
+      // Indirect: lands short or long of the aim point by the spread, whatever is in between.
+      const d = Math.min(W.range, Math.hypot(tx - u.x, tz - u.z)) * (1 + g * W.spread * 2);
+      const x1 = u.x + dx * d,
+        z1 = u.z + dz * d;
+      this.tracers.push({x0: ox, z0: oz, x1, z1, side: u.side, weapon: wid, t: this.time});
+      this.explode(x1, z1, W, u, null);
+      return true;
+    }
+    // Every box the round could hit; a turret gunner sits above his own hull, so that box does not shield him.
+    const boxHits = [];
     for (const b of this.boxes()) {
       if (inBox(u.x, u.z, b, 0.1)) continue;
-      const t = segmentBox(ox, oz, ox + dx * 70, oz + dz * 70, b);
-      if (t * 70 < best) best = t * 70;
+      const t = segmentBox(ox, oz, ox + dx * W.range, oz + dz * W.range, b);
+      if (t <= 1) boxHits.push({s: t * W.range, b});
     }
+    const blockFor = o => boxHits.reduce((m, h) => (o?.state === 'turret' && h.b.vehicle === o.vehicle ? m : Math.min(m, h.s)), W.range);
+    let best = blockFor(null),
+      hit = null;
     for (const o of this.units) {
       if (o === u || !o.alive || o.escaped || o.state === 'mounted' || o.side === u.side) continue;
       const s = rayCircle(ox, oz, dx, dz, o.x, o.z, o.r);
-      if (s < best) {
+      if (s < blockFor(o) && s < (hit ? best : Infinity)) {
         best = s;
         hit = o;
       }
     }
+    if (!hit) best = blockFor(null);
+    const hitBox = hit ? null : boxHits.find(h => Math.abs(h.s - best) < 1e-6)?.b || null;
     const x1 = ox + dx * best,
       z1 = oz + dz * best;
-    this.tracers.push({x0: ox, z0: oz, x1, z1, side: u.side, t: this.time});
+    this.tracers.push({x0: ox, z0: oz, x1, z1, side: u.side, weapon: wid, t: this.time});
     if (this.tracers.length > 80) this.tracers.shift();
-    // Near misses suppress; anyone on the other side within earshot hears where the shot came from.
+    // Near misses suppress (less behind a gun shield).
     for (const o of this.units) {
       if (!o.alive || o.side === u.side || o === hit) continue;
       const px = o.x - ox,
         pz = o.z - oz,
         along = px * dx + pz * dz;
-      if (along > 0 && along < best + 1.5 && Math.abs(px * dz - pz * dx) < 2.6) o.supp = Math.min(1, o.supp + 0.22);
+      if (along > 0 && along < best + 1.5 && Math.abs(px * dz - pz * dx) < 2.6) o.supp = Math.min(1, o.supp + W.supp * (o.armour ?? 1));
     }
-    hear(this, u);
-    if (u.side === 'partisan') this.raiseAlarm(null);
-    if (hit) this.damage(hit, u);
+    if (W.splash) this.explode(x1, z1, W, u, hitBox);
+    else if (hit) this.damage(hit, u, W.damage);
     return true;
   }
 
-  damage(o, by) {
-    o.hp -= DAMAGE;
+  /** An explosive bursts at (x, z): splash damage with falloff, heavy suppression, and damage to a vehicle it struck. */
+  explode(x, z, W, by, hitBox) {
+    this.explosions.push({x, z, r: W.splash.r, t: this.time});
+    if (this.explosions.length > 20) this.explosions.shift();
+    for (const o of this.units) {
+      if (!o.alive || o.escaped || o.state === 'mounted') continue;
+      const d = Math.hypot(o.x - x, o.z - z);
+      if (d < W.splash.r && (d < 1 || this.los(x, z, o.x, o.z)))
+        this.damage(o, by, W.splash.damage * (1 - d / W.splash.r) * (o.armour ?? 1));
+      if (o.alive && d < W.splash.r * 2.5) o.supp = Math.min(1, o.supp + 0.6 * (o.armour ?? 1));
+    }
+    for (const v of this.vehicles) {
+      const direct = hitBox?.vehicle === v;
+      const near = Math.max(Math.abs(x - v.x) - v.w / 2, Math.abs(z - v.z) - v.d / 2, 0);
+      if (direct || near < W.splash.r * 0.4) this.damageVehicle(v, W.vehicle * (direct ? 1 : 0.3), by);
+    }
+    // Whoever is close shouts what it was.
+    const word = W.lob ? 'Grenade!' : 'RPG!';
+    const near = this.units
+      .filter(o => o.alive && o.side !== by.side && Math.hypot(o.x - x, o.z - z) < 14)
+      .sort((a, b) => Math.hypot(a.x - x, a.z - z) - Math.hypot(b.x - x, b.z - z))[0];
+    if (near && near.id !== 'player') this.say(near, word, 'blast', 3);
+  }
+
+  damageVehicle(v, amount, by) {
+    if (v.destroyed || !amount) return;
+    v.hp -= amount;
+    if (v.hp > 0) return;
+    v.hp = 0;
+    v.destroyed = true;
+    v.stopped = true;
+    for (const u of v.crew) if (u.alive && (u.state === 'mounted' || u.state === 'turret')) this.damage(u, by, 999);
+    const mate = this.units.filter(m => m.alive && m.side === 'army').sort((a, b) => dist(a, v) - dist(b, v))[0];
+    if (mate) this.say(mate, v.kind === 'mrap' ? "We've lost the MRAP!" : 'Vehicle down!', 'vehicle', 3);
+  }
+
+  damage(o, by, amount = DAMAGE) {
+    o.hp -= amount;
     o.supp = Math.min(1, o.supp + 0.4);
     if (o.hp > 0) return;
     o.alive = false;
     o.state = 'down';
     o.moveTo = null;
     if (by.side === 'partisan' && by.id !== 'player') this.say(by, 'Target down!', 'kill', 3);
+    if (o.role === 'rto') {
+      const m = this.units.find(x => x.alive && x.side === 'army');
+      if (m) this.say(m, "Radio's down!", 'radio', 99);
+    }
     // The nearest comrade who can see the body calls it.
     const mates = this.units.filter(m => m.alive && m.side === o.side && m !== o).sort((a, b) => dist(a, o) - dist(b, o));
     if (mates[0] && dist(mates[0], o) < 25)
@@ -299,14 +391,14 @@ export class Sim {
         v.stopped = true;
         v.stopAt = this.time;
       }
-      for (const u of v.crew) if (u.state === 'mounted') u.x = v.x;
+      for (const u of v.crew) if (u.state === 'mounted' || u.state === 'turret') u.x = v.x;
     });
   }
 
   /**
    * Advance the world.
    * @param {number} dt seconds (fixed step)
-   * @param {{mx?: number, mz?: number, ax?: number, az?: number, fire?: boolean, reload?: boolean, sneak?: boolean}} input player controls
+   * @param {{mx?: number, mz?: number, ax?: number, az?: number, fire?: boolean, reload?: boolean, sneak?: boolean, weapon?: string}} input player controls
    */
   step(dt, input = {}) {
     if (this.outcome) return;
@@ -324,7 +416,8 @@ export class Sim {
       u.supp = Math.max(0, u.supp - dt * 0.18);
       if (u.reload > 0 && (u.reload -= dt) <= 0) {
         u.reload = 0;
-        u.mag = MAG;
+        if (u.reloading) u.mags[u.reloading] = WEAPONS[u.reloading].mag;
+        u.reloading = null;
       }
       decay(this, u, dt);
     }
@@ -336,7 +429,14 @@ export class Sim {
       p.moving = len > 0;
       if (len > 0) this.slide(p, ((input.mx || 0) / len) * p.speed * dt, ((input.mz || 0) / len) * p.speed * dt);
       if (input.ax !== undefined) p.facing = Math.atan2(input.az - p.z, input.ax - p.x);
-      if (input.reload && p.reload === 0 && p.mag < MAG) p.reload = RELOAD;
+      if (input.weapon && input.weapon !== p.weapon && p.weapons.includes(input.weapon)) {
+        p.weapon = input.weapon;
+        p.reload = 0;
+        p.reloading = null;
+        p.cd = 0.35; // bring it up
+      }
+      if (input.reload) this.startReload(p);
+      if (p.mags[p.weapon] === 0 && p.reload === 0) this.startReload(p);
       if (input.fire && input.ax !== undefined) this.shoot(p, input.ax, input.az);
     }
     // AI: perception and decisions at 5 Hz per unit (staggered), actions every step
@@ -375,6 +475,7 @@ export class Sim {
       armyDown: army.filter(u => !u.alive).length,
       escaped: army.filter(u => u.escaped).length,
       partisansAlive: this.units.filter(u => u.side === 'partisan' && u.alive).length,
+      vehiclesDestroyed: this.vehicles.filter(v => v.destroyed).length,
     };
   }
 }
