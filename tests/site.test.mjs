@@ -67,3 +67,18 @@ test('version is consistent across VERSION, index, design doc and package.json',
   assert.equal(JSON.parse(fs.readFileSync('package.json', 'utf8')).version, v);
   assert.match(fs.readFileSync('CHANGELOG.md', 'utf8'), new RegExp(`## \\[${v.replace(/\./g, '\\.')}\\]`));
 });
+
+test('every published page is hidden from search: noindex, nofollow, noarchive and seo_hidden', () => {
+  const pages = [];
+  const walk = d =>
+    fs
+      .readdirSync(d, {withFileTypes: true})
+      .forEach(e => (e.isDirectory() ? walk(path.join(d, e.name)) : /\.html$/.test(e.name) && pages.push(path.join(d, e.name))));
+  walk(out);
+  assert.ok(pages.length >= 9);
+  for (const p of pages) {
+    const html = fs.readFileSync(p, 'utf8');
+    assert.match(html, /name="robots" content="[^"]*noindex[^"]*nofollow[^"]*noarchive/, `${p}: robots`);
+    assert.match(html, /name="seo_hidden" content="true"/, `${p}: seo_hidden`);
+  }
+});

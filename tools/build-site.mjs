@@ -67,7 +67,7 @@ const html = marked
   });
 const page = `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="robots" content="noindex"><meta name="seo_hidden" content="true"><meta name="version" content="${version}">
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex"><meta name="googlebot" content="noindex, nofollow"><meta name="seo_hidden" content="true"><meta name="version" content="${version}">
 <title>Partisan Project | Master Roadmap</title><link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
 <style>
 :root{color-scheme:dark;--bg:#0d100c;--panel:#161b13;--line:#2c3526;--text:#e6e9dc;--dim:#98a487;--accent:#ef8f39;--olive:#c8d4a8}
@@ -88,7 +88,7 @@ fs.writeFileSync(path.join(out, 'docs/master-roadmap.html'), page);
 fs.writeFileSync(path.join(out, '.nojekyll'), '');
 fs.writeFileSync(
   path.join(out, '404.html'),
-  `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Partisan Project | 404</title><body style="background:#0d100c;color:#c8d4a8;font:16px monospace;display:grid;place-items:center;height:100vh;margin:0"><p>SIGNAL LOST. <a style="color:#ef8f39" href="./">Back to the Partisan Project index</a></p></body>`,
+  `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex"><meta name="googlebot" content="noindex, nofollow"><meta name="seo_hidden" content="true"><title>Partisan Project | 404</title><body style="background:#0d100c;color:#c8d4a8;font:16px monospace;display:grid;place-items:center;height:100vh;margin:0"><p>SIGNAL LOST. <a style="color:#ef8f39" href="./">Back to the Partisan Project index</a></p></body>`,
 );
 const count = d => fs.readdirSync(d, {withFileTypes: true}).reduce((n, e) => n + (e.isDirectory() ? count(path.join(d, e.name)) : 1), 0);
 console.log(`built ${out}: ${count(out)} files`);

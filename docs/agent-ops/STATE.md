@@ -5,10 +5,10 @@ Small on purpose. Read this first, then `AGENTS.md`. Plan and sizes: [`README.md
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-02 08:18 UTC · agent · (no packet) · partial**
+**2026-10-02 08:45 UTC · agent · (no packet) · partial**
 
-- Branch `claude/friendly-dijkstra-4ky9w6` at `38f4668`; **57 uncommitted file(s)** (commit before stopping): M .github/workflows/pages.yml,  M AGENTS.md,  M CHANGELOG.md,  M README.md,  M assets/REGISTER.md,  M assets/css/nokia.css.
-- Last commits: 38f4668 Opening scene, persistent music shell, Nokia top bar, Nokia index on the table, new favicon · 57e9a10 Fix intro a11y role and label-case test (tests running) · a49e7f3 WIP: shell, opening scene, Nokia index on the table, top bar (tests running)
+- Branch `claude/friendly-dijkstra-4ky9w6` at `2640969`; **10 uncommitted file(s)** (commit before stopping): M bench/index.html,  M docs/game-design-master-doc.html,  M index.html,  M intro/index.html,  M menu/index.html,  M operator/index.html.
+- Last commits: 2640969 Opening scene: keep only the orange button (tests running) · 3f7a88a Top bar v2, lambda favicon, Partisan Project naming, menu zoom and UI sounds, restored operator (tests running) · 38f4668 Opening scene, persistent music shell, Nokia top bar, Nokia index on the table, new favicon
 - What happened: (write one or two sentences)
 - Next step: (name the exact next action, file and command)
 <!-- handoff:end -->
