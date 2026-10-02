@@ -68,7 +68,7 @@ const html = marked
 const page = `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex"><meta name="seo_hidden" content="true"><meta name="version" content="${version}">
-<title>PARP · Master Roadmap</title><link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<title>Partisan Project | Master Roadmap</title><link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
 <style>
 :root{color-scheme:dark;--bg:#0d100c;--panel:#161b13;--line:#2c3526;--text:#e6e9dc;--dim:#98a487;--accent:#ef8f39;--olive:#c8d4a8}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}
@@ -80,7 +80,7 @@ table{border-collapse:collapse;width:100%;font-size:.88rem;display:block;overflo
 blockquote{margin:1em 0;padding:.4em 1em;border-left:3px solid var(--accent);background:#161b13;color:var(--dim)}hr{border:0;border-top:1px solid var(--line)}img{max-width:100%}
 @media(max-width:640px){main{padding:18px 16px 60px}h1{font-size:1.6rem}}
 </style></head><body>
-<header><span>PARP master roadmap · v${version}</span><nav><a href="${REPO}">Source</a></nav></header>
+<header><span>Partisan Project master roadmap · v${version}</span><nav><a href="${REPO}">Source</a></nav></header>
 <main>${html}</main>
 <script type="module">import {mountTopBar} from '../shared/topbar.js';mountTopBar({title: 'Master roadmap', scene: 'viewer', sticky: true, replaceHeader: false});</script></body></html>
 `;
@@ -88,7 +88,7 @@ fs.writeFileSync(path.join(out, 'docs/master-roadmap.html'), page);
 fs.writeFileSync(path.join(out, '.nojekyll'), '');
 fs.writeFileSync(
   path.join(out, '404.html'),
-  `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>PARP · 404</title><body style="background:#0d100c;color:#c8d4a8;font:16px monospace;display:grid;place-items:center;height:100vh;margin:0"><p>SIGNAL LOST. <a style="color:#ef8f39" href="./">Back to the PARP index</a></p></body>`,
+  `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Partisan Project | 404</title><body style="background:#0d100c;color:#c8d4a8;font:16px monospace;display:grid;place-items:center;height:100vh;margin:0"><p>SIGNAL LOST. <a style="color:#ef8f39" href="./">Back to the Partisan Project index</a></p></body>`,
 );
 const count = d => fs.readdirSync(d, {withFileTypes: true}).reduce((n, e) => n + (e.isDirectory() ? count(path.join(d, e.name)) : 1), 0);
 console.log(`built ${out}: ${count(out)} files`);

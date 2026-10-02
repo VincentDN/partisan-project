@@ -14,7 +14,7 @@ import * as mech from '../workbench/mech.js';
 import {BenchActions, FAMILIES, FAMILY_OF, phase, smooth} from './actions.js';
 import {MOTION, IN_PLACE, partPaths} from './motion.js';
 import {buildBench} from './scene.js';
-import {Arms} from './hands.js';
+import {LegacyArms} from './legacy-arms.js';
 
 const $ = s => document.querySelector(s);
 const stageEl = $('#stage'),
@@ -304,7 +304,7 @@ function runTask(slot, current, option, commit) {
 }
 
 function parkArms() {
-  const home = V(0, 0.2, -0.45);
+  const home = V(0, 0.05, -0.22);
   arms.reach('R', home.clone().add(V(0.25, 0, 0)), V(0, -1, 0.3), {curl: 0.25});
   arms.reach('L', home.clone().add(V(-0.25, 0, 0)), V(0, -1, 0.3), {curl: 0.25});
 }
@@ -333,14 +333,14 @@ try {
   stage.floor.position.y = -0.9;
   stage.controls.minDistance = 0.4;
   stage.controls.maxDistance = 4;
-  stage.controls.target.set(0.03, 0.12, -0.05);
-  stage.camera.position.set(0.35, 1.3, 1.85);
+  stage.controls.target.set(0.03, 0.25, -0.1);
+  stage.camera.position.set(0.35, 1.4, 2.25);
   stage.controls.maxPolarAngle = Math.PI * 0.49;
   Object.assign(stage.key.shadow.camera, {left: -1.6, right: 1.6, top: 1.6, bottom: -1.6, near: 0.5, far: 9});
   stage.key.shadow.camera.updateProjectionMatrix();
   benchProps = buildBench();
   stage.scene.add(benchProps.group);
-  arms = new Arms({R: [0.22, 0.46, -0.78], L: [-0.22, 0.46, -0.78]});
+  arms = new LegacyArms();
   stage.scene.add(arms.group);
   await mount(savedLoadout());
   parkArms();

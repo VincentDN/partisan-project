@@ -107,8 +107,8 @@ try {
     holder.updateMatrixWorld(true);
     centre.set(0, sc.y, top).applyMatrix4(holder.matrixWorld);
     // Frame the screen with some phone around it: about 62% of the height on a landscape view, 84% of the width on a portrait one.
-    const visibleH = Math.max((sc.h / 0.62) * 1.0, sc.w / 0.78 / aspect);
-    const dist = 0.36;
+    const visibleH = Math.max(sc.h / 0.8, sc.w / 0.9 / aspect);
+    const dist = 0.28;
     camera.fov = (2 * Math.atan(visibleH / 2 / dist) * 180) / Math.PI;
     camera.aspect = aspect;
     camera.updateProjectionMatrix();

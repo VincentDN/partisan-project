@@ -59,7 +59,12 @@ await check('opening scene: the table, the rifle, four buttons; the shell keeps 
     ['customize this weapon', 'partisan project index', 'read game design doc', 'load advanced animations test'],
   );
   assert.equal(await page.locator('.pbar a[href$="menu/"]').count(), 1, 'top bar has INDEX');
-  assert.equal(await page.locator('.pbar a[href$="game-design-master-doc.html"]').count(), 1, 'top bar has DESIGN DOC');
+  assert.equal(await page.locator('.pbar a[href$="game-design-master-doc.html"]').count(), 1, 'top bar has GAME DESIGN DOC');
+  assert.equal(await page.locator('.pbar a.brand[title="Return to home"]').count(), 1, 'lambda mark returns home');
+  assert.equal(await page.locator('.pbar > a:not(.brand)').count(), 2, 'top bar has only INDEX and GAME DESIGN DOC');
+  assert.equal(await page.locator('#music-player').isHidden(), true, 'the player is a drop-down');
+  await page.locator('#music-menu').click();
+  assert.equal(await page.locator('#music-player').isVisible(), true);
   assert.equal(await page.locator('.pbar #music-toggle').count(), 1, 'music player is in the top bar');
   noProblems(page);
   await page.close();
@@ -383,7 +388,7 @@ await check('roadmap page renders (built site only)', async () => {
   const res = await fetch(server.url + 'docs/master-roadmap.html');
   if (res.status === 404 && !live && !process.env.ROOT) return; // source tree has the .md only
   assert.equal(res.status, 200);
-  assert.match(await res.text(), /PARP master roadmap/);
+  assert.match(await res.text(), /Partisan Project master roadmap/);
 });
 
 await browser.close();

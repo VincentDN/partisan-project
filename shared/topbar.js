@@ -1,5 +1,6 @@
-// The top bar shared by every PARP page: a strip of Nokia LCD with INDEX and DESIGN DOC buttons, the page name and
-// the music player (on/off, track, volume). It replaces each page's own header and music controls.
+// The top bar shared by every Partisan Project page: a thin strip of dark-green Nokia LCD with the lambda mark (back to the opening
+// scene), INDEX and GAME DESIGN DOC, and a small music player that drops down from one button. It replaces each page's
+// own header and music controls.
 //
 //   import {mountTopBar} from '../shared/topbar.js';
 //   mountTopBar({title: 'Weapon Workbench', scene: 'viewer', current: 'workbench'});
@@ -10,10 +11,19 @@ const root = new URL('../', import.meta.url);
 const href = path => new URL(path, root).href;
 
 /**
- * @param {{title?: string, scene?: 'bench'|'viewer', current?: 'index'|'doc'|'intro'|string, overlay?: boolean, sticky?: boolean, replaceHeader?: boolean}} [opts]
+ * @param {{title?: string, scene?: 'bench'|'viewer', current?: 'index'|'doc'|'intro'|string, overlay?: boolean, sticky?: boolean, replaceHeader?: boolean, light?: boolean}} [opts]
+ *   light: the pale-green version, for the game design doc whose own bar is already dark
  *   current: which button is the page you are on (shown pressed instead of a link)
  */
-export function mountTopBar({title = '', scene = 'viewer', current = '', overlay = false, sticky = false, replaceHeader = true} = {}) {
+export function mountTopBar({
+  title = '',
+  scene = 'viewer',
+  current = '',
+  overlay = false,
+  sticky = false,
+  replaceHeader = true,
+  light = false,
+} = {}) {
   if (!document.querySelector('link[data-pbar]')) {
     const link = document.createElement('link');
     link.rel = 'stylesheet';
@@ -22,24 +32,58 @@ export function mountTopBar({title = '', scene = 'viewer', current = '', overlay
     document.head.append(link);
   }
   const bar = document.createElement('nav');
-  bar.className = 'pbar' + (overlay ? ' overlay' : '') + (sticky ? ' sticky' : '');
+  bar.className = ['pbar', overlay && 'overlay', sticky && 'sticky', light && 'light'].filter(Boolean).join(' ');
   bar.setAttribute('aria-label', 'Partisan Project');
-  const link = (id, label, path, cls = '') =>
-    current === id ? `<a class="${cls}" aria-current="page">${label}</a>` : `<a class="${cls}" href="${href(path)}">${label}</a>`;
-  const brand = '<span class="bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>PARP';
+  const link = (id, label, path, cls = '', attrs = '') =>
+    current === id
+      ? `<a class="${cls}" aria-current="page" ${attrs}>${label}</a>`
+      : `<a class="${cls}" href="${href(path)}" ${attrs}>${label}</a>`;
+  // A plain lambda: a long stroke and a short leg.
+  const lambda =
+    '<svg viewBox="0 0 32 32" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="square"><path d="M8 5 25 27M17.4 16.8 8 27"/></svg>';
   bar.innerHTML =
-    link('intro', brand, 'intro/', 'brand') +
+    link(
+      'intro',
+      `${lambda}<span class="name">Partisan Project</span>`,
+      'intro/',
+      'brand',
+      'title="Return to home" aria-label="Partisan Project: return to home"',
+    ) +
     link('index', 'Index', 'menu/') +
-    link('doc', 'Design doc', 'docs/game-design-master-doc.html') +
-    `<span class="where">${title}</span><span class="spacer"></span>` +
-    `<span class="music" role="group" aria-label="Music"><button id="music-toggle" aria-pressed="false" aria-label="Background music" title="Background music">♪</button>` +
-    TRACKS.map(
-      (t, i) =>
-        `<button data-track="${t.id}" aria-pressed="false" aria-label="${t.label || t.id}" title="${t.label || t.id}">${i + 1}</button>`,
-    ).join('') +
-    `</span><label class="vol"><span class="sr-only">Volume</span><input id="music-volume" type="range" min="0" max="100" step="1" value="36" aria-label="Music volume"><output id="music-level">36%</output></label>`;
+    link('doc', '<span class="long">Game design doc</span><span class="short">Game doc</span>', 'docs/game-design-master-doc.html') +
+    '<span class="spacer"></span>' +
+    `<span class="music-wrap"><button id="music-menu" aria-haspopup="true" aria-expanded="false" aria-controls="music-player" title="Music"><span class="dot" aria-hidden="true"></span>♪<span class="sr-only"> Music player</span></button>` +
+    `<div class="player" id="music-player" role="group" aria-label="Music player" hidden>` +
+    `<div class="row"><button id="music-toggle" aria-pressed="false" aria-label="Background music">Music</button></div>` +
+    `<div class="tracks">${TRACKS.map(t => `<button data-track="${t.id}" aria-pressed="false">${t.label || t.id}</button>`).join('')}</div>` +
+    `<label>Vol<input id="music-volume" type="range" min="0" max="100" step="1" value="36" aria-label="Music volume"><output id="music-level">36%</output></label></div></span>`;
   const old = replaceHeader && document.querySelector('body > header');
   if (old) old.replaceWith(bar);
   else document.body.prepend(bar);
-  return bindMusicUI({scene});
+
+  // The drop-down player.
+  const trigger = bar.querySelector('#music-menu'),
+    panel = bar.querySelector('#music-player');
+  const setOpen = open => {
+    panel.hidden = !open;
+    trigger.setAttribute('aria-expanded', String(open));
+  };
+  trigger.addEventListener('click', () => setOpen(panel.hidden));
+  document.addEventListener('pointerdown', e => {
+    if (!panel.hidden && !bar.querySelector('.music-wrap').contains(e.target)) setOpen(false);
+  });
+  bar.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && !panel.hidden) {
+      setOpen(false);
+      trigger.focus();
+    }
+  });
+  const sound = bindMusicUI({scene});
+  // The trigger shows whether the music is on.
+  const mirror = () => (bar.dataset.music = sound.prefs.on ? 'on' : 'off');
+  mirror();
+  sound.subscribe(mirror);
+  trigger.addEventListener('click', mirror);
+  panel.addEventListener('click', () => setTimeout(mirror, 0));
+  return sound;
 }

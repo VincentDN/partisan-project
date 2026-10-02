@@ -1,4 +1,4 @@
-// Keeps the music playing across pages: every PARP page lives inside the shell (index.html), which owns the sound
+// Keeps the music playing across pages: every Partisan Project page lives inside the shell (index.html), which owns the sound
 // layer. A page opened on its own is sent into the shell at the same address, so deep links keep working and the
 // music never restarts on navigation. Automated browsers (tests) and `?standalone` skip the redirect.
 //

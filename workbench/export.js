@@ -34,7 +34,7 @@ export function saveCard({renderer, scene, camera, rifle, buildBox}) {
     g.font = `${weight} ${size}px ${font}`;
     g.fillText(t, x, y);
   };
-  text('PARP · WEAPON WORKBENCH', 16, '#ef8f39', 600, 'ui-monospace,monospace');
+  text('PARTISAN PROJECT · WEAPON WORKBENCH', 16, '#ef8f39', 600, 'ui-monospace,monospace');
   y += 48;
   text(rifle.config.title, 34, '#eceeea', 650);
   y += 34;
@@ -94,12 +94,12 @@ export function savePhoto({renderer, scene, camera, rifle}) {
   g.fillRect(0, out.height - bar, out.width, bar);
   g.fillStyle = '#ef8f39';
   g.font = `600 ${Math.round(22 * scale)}px ui-monospace,monospace`;
-  g.fillText('PARP', Math.round(24 * scale), out.height - bar / 2 + Math.round(8 * scale));
+  g.fillText('Partisan Project', Math.round(24 * scale), out.height - bar / 2 + Math.round(8 * scale));
   g.fillStyle = '#eceeea';
   g.font = `${Math.round(18 * scale)}px system-ui,sans-serif`;
   g.fillText(
     `${rifle.config.title} · ${new Date().toISOString().slice(0, 10)}`,
-    Math.round(170 * scale),
+    Math.round(300 * scale),
     out.height - bar / 2 + Math.round(7 * scale),
   );
   const a = document.createElement('a');

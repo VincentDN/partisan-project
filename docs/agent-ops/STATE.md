@@ -5,10 +5,10 @@ Small on purpose. Read this first, then `AGENTS.md`. Plan and sizes: [`README.md
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-01 21:19 UTC · agent · (no packet) · partial**
+**2026-10-02 08:18 UTC · agent · (no packet) · partial**
 
-- Branch `claude/friendly-dijkstra-4ky9w6` at `57e9a10`; **1 uncommitted file(s)** (commit before stopping): M docs/CODEMAP.md.
-- Last commits: 57e9a10 Fix intro a11y role and label-case test (tests running) · a49e7f3 WIP: shell, opening scene, Nokia index on the table, top bar (tests running) · d13ff8d Commit the vendored three.js build (it was git-ignored by the build/ rule)
+- Branch `claude/friendly-dijkstra-4ky9w6` at `38f4668`; **57 uncommitted file(s)** (commit before stopping): M .github/workflows/pages.yml,  M AGENTS.md,  M CHANGELOG.md,  M README.md,  M assets/REGISTER.md,  M assets/css/nokia.css.
+- Last commits: 38f4668 Opening scene, persistent music shell, Nokia top bar, Nokia index on the table, new favicon · 57e9a10 Fix intro a11y role and label-case test (tests running) · a49e7f3 WIP: shell, opening scene, Nokia index on the table, top bar (tests running)
 - What happened: (write one or two sentences)
 - Next step: (name the exact next action, file and command)
 <!-- handoff:end -->
@@ -30,5 +30,5 @@ Small on purpose. Read this first, then `AGENTS.md`. Plan and sizes: [`README.md
 
 ## Decisions since the last review
 
-- 2026-10-01: project renamed Partisan Project (PARP); deployed from an allowlist build, not the repo root (ADR 0003).
+- 2026-10-01: project renamed Partisan Project; deployed from an allowlist build, not the repo root (ADR 0003).
 - 2026-10-01: recorded foley bank removed for provenance reasons; handling sounds are synthesised (ADR 0004).

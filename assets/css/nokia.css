@@ -1,4 +1,4 @@
-/* PARP index browser: a Nokia-style 1-bit LCD with ordered-dither shading.
+/* Partisan Project index browser: a Nokia-style 1-bit LCD with ordered-dither shading.
    Palette is two LCD tones plus a dither between them; nothing here uses an image or a web font. */
 :root{
   --lcd-0:#16200f;          /* LCD "ink" */
@@ -32,7 +32,7 @@ body.flat .lcd-frame{left:50%;top:calc(50% + var(--topbar,40px)/2);margin:-150px
 .splash{flex:1;min-height:0;position:relative;display:flex;flex-direction:column;text-align:center}
 .splash canvas{flex:1;min-height:0;width:100%;height:100%;object-fit:cover;image-rendering:pixelated;display:block}
 .splash .cap{background:var(--lcd-0);color:var(--lcd-1);padding:5px 6px 6px}
-.splash h1{margin:0;font-size:18px;letter-spacing:.3em}.splash p{margin:2px 0 0;font-size:11px}
+.splash h1{margin:0;font-size:15px;letter-spacing:.16em}.splash p{margin:2px 0 0;font-size:11px}
 .menu{flex:1;overflow:auto;margin:0;padding:0;list-style:none;scrollbar-width:none}
 .menu::-webkit-scrollbar{display:none}
 .menu a{display:flex;gap:8px;align-items:center;padding:5px 7px;color:inherit;text-decoration:none;border-bottom:1px dotted #16200f66}

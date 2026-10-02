@@ -1,4 +1,4 @@
-"""Shared Blender helpers for the PARP extension-pack builders (build-*-pack.py).
+"""Shared Blender helpers for the Partisan Project extension-pack builders (build-*-pack.py).
 
 Usage from a builder:   sys.path.insert(0, os.path.dirname(__file__)); import blender_common as bc; ctx = bc.open_skeleton(path)
 Blender world: +Z up, the character faces -Y, its left is +X. Meshes are authored in WORLD metres and converted

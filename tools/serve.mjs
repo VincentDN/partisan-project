@@ -35,4 +35,4 @@ http
     res.writeHead(200, {'content-type': types[path.extname(file)] || 'application/octet-stream', 'cache-control': 'no-store'});
     fs.createReadStream(file).pipe(res);
   })
-  .listen(port, () => console.log(`PARP dev server: http://localhost:${port}/  (root ${root})`));
+  .listen(port, () => console.log(`Partisan Project dev server: http://localhost:${port}/  (root ${root})`));

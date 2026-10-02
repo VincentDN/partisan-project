@@ -1,6 +1,6 @@
 # Skeleton contract
 
-Every PARP operator base shares one skeleton so that poses, idles, weapon props and the customiser UI work on any of
+Every Partisan Project operator base shares one skeleton so that poses, idles, weapon props and the customiser UI work on any of
 them the day they exist. The contract is what a new base (Recon, Insurgent, Enforcer, …) must provide.
 
 ## Required

@@ -80,7 +80,7 @@ def main(src, dst):
     small = img[:h // 2 * 2, :w // 2 * 2].reshape(h // 2, 2, w // 2, 2, 3).mean(axis=(1, 3))
     rgbe = to_rgbe(small)
     with open(dst, 'wb') as f:
-        f.write(b'#?RADIANCE\n# PARP half-size copy (tools/assets/downscale-hdr.py)\nFORMAT=32-bit_rle_rgbe\n\n')
+        f.write(b'#?RADIANCE\n# Partisan Project half-size copy (tools/assets/downscale-hdr.py)\nFORMAT=32-bit_rle_rgbe\n\n')
         f.write(f'-Y {rgbe.shape[0]} +X {rgbe.shape[1]}\n'.encode())
         for row in rgbe:
             f.write(rle_row(row))

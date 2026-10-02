@@ -30,7 +30,7 @@ bpy.ops.export_scene.gltf(
     use_selection=True,
     export_apply=False,          # keep the armature modifier, i.e. real skinning
     export_skins=True,
-    export_animations=False,     # the purchased file ships no clips; PARP authors its own (operator/poses.json)
+    export_animations=False,     # the purchased file ships no clips; Partisan Project authors its own (operator/poses.json)
     export_yup=True,
     export_materials='EXPORT',
     export_image_format='AUTO',

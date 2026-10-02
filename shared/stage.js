@@ -1,4 +1,4 @@
-// Shared 3D stage for PARP modules: renderer, orbit camera, HDR image-based lighting that follows
+// Shared 3D stage for Partisan Project modules: renderer, orbit camera, HDR image-based lighting that follows
 // the camera, a shadow-catching floor and adaptive resolution. The Operator Customiser, the
 // Asset Viewer and the Weapon Workbench all use it.
 import * as T from 'three';

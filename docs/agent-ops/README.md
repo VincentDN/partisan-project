@@ -1,4 +1,4 @@
-# Agent-ops: building PARP on two $20 subscriptions
+# Agent-ops: building Partisan Project on two $20 subscriptions
 
 This is the working agreement for every AI agent (Claude, ChatGPT/Codex, or any other) that touches this
 repository. Its job is to turn a large hobby project into small pieces that **each fit inside one usage

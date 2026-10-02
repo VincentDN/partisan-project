@@ -1,4 +1,4 @@
-// Wires the standard music controls found on PARP demo pages to the shared sound layer:
+// Wires the standard music controls found on Partisan Project demo pages to the shared sound layer:
 //   #music-toggle (♪ button), [data-track] buttons, #music-volume slider, #music-level readout.
 // Music starts on by default at a low volume; where the browser blocks autoplay it starts on the
 // first click or key press. The choice persists per browser (sound-layer.js).

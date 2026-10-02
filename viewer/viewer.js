@@ -1,4 +1,4 @@
-// PARP Asset Viewer: inspect any registered GLB against the budgets in assets/register.json.
+// Partisan Project Asset Viewer: inspect any registered GLB against the budgets in assets/register.json.
 import * as T from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';

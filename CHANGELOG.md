@@ -4,6 +4,13 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 ## [0.3.1] · 2026-10-01
 
+### Changed (round 2)
+- **Top bar v2**: thinner (28 px), smaller type, dark-green base with pale-green ink and a little LCD scanline and dithered edge; the game design doc keeps the pale-green version. Left: a plain lambda with "Partisan Project" (tooltip "Return to home", goes to the opening scene). Buttons: INDEX and GAME DESIGN DOC only. The music player is a small drop-down (on/off, three tracks, volume) from one ♪ button.
+- **Favicon** is now the lambda (dark green on bright green, 1px border, dithered shadow).
+- **Names**: the abbreviation PARP is gone from page titles ("Partisan Project | Subpage"), the interface and every document; it survives only inside file names, storage keys and code identifiers.
+- **Index scene** zoomed in on the phone; **interface sounds** (tap, select, back) synthesised in `shared/ui-sounds.js`, silent when the music is off.
+- **The earlier operator is back** in the opening scene and in Bench Lab (`shared/legacy-operator/`, `bench/legacy-arms.js`), with its articulated hands; the Operator Customiser keeps the new Base Operator.
+
 ### Changed (site structure)
 - **Opening scene restored** (`intro/`): the old workbench table, your saved rifle, the old radio tuning in, the FIA flag. Buttons bottom left: Customize this weapon, PARTISAN project index, Read Game Design Doc, Load Advanced animations test (Bench Lab). Arms are the Bench Lab IK arms; the code-built operator stays retired.
 - **The music plays through the whole site**: `index.html` is now a shell that owns the sound layer and shows every page in one frame (ADR 0010). The radio and camp sound (`shared/bench-audio.js`) plays on the scene and the index, the clean track elsewhere.
@@ -60,7 +67,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 ## [0.3.0] · 2026-10-01 · "Foundation"
 
 ### Added
-- **Partisan Project (PARP)** repository layout: `workbench/`, `operator/`, `viewer/`, `docs/`, `shared/`, `assets/`, `vendor/`, `tools/`, `tests/`.
+- **Partisan Project** repository layout: `workbench/`, `operator/`, `viewer/`, `docs/`, `shared/`, `assets/`, `vendor/`, `tools/`, `tests/`.
 - **Operator Customiser**: Base Operator from the purchased low-poly soldier (8,646 triangles, 83 bones), 10 equipment slots, 8 colour zones, 5 hero poses (including the character sheet's rifle-up pose), 3 idle animations, optional carried rifle prop, shareable URL looks, photo export, budget readout.
 - Data-driven pose system: character-space rotations over the rest pose (`operator/poses.json`, `operator/rig.js`), `tools/pose-fit.mjs`.
 - **Asset Viewer** and the **asset register** (`assets/register.json`) with licence audit and import tooling (`tools/assets/*`).

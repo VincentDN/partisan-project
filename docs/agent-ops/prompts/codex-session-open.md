@@ -1,7 +1,7 @@
 # ChatGPT / Codex: session opener (paste as the first message)
 
 ```
-You are working on PARP (Partisan Project). The rules are in AGENTS.md and docs/agent-ops/README.md. Follow them strictly.
+You are working on Partisan Project. The rules are in AGENTS.md and docs/agent-ops/README.md. Follow them strictly.
 1. Read AGENTS.md and docs/agent-ops/STATE.md only.
 2. Budget for this window: <BU> BU (1 BU = 1% of a 5-hour window). Run:
    node tools/agent/next-packet.mjs --budget <BU> --agent codex --can browser

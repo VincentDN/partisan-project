@@ -1,4 +1,4 @@
-> **Archived 2026-10-01.** Superseded by `docs/master-roadmap.md` (PARP v0.3.0). Kept for traceability: the Stage 1-3 weapon content tables were folded into `assets/register.json`; the Advanced animation experiment (X0-X6) was retired (ADR 0005). Image links in this file are intentionally dead.
+> **Archived 2026-10-01.** Superseded by `docs/master-roadmap.md` (Partisan Project v0.3.0). Kept for traceability: the Stage 1-3 weapon content tables were folded into `assets/register.json`; the Advanced animation experiment (X0-X6) was retired (ADR 0005). Image links in this file are intentionally dead.
 
 # Partisan — master roadmap
 

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex"><meta name="seo_hidden" content="true">
 <meta name="theme-color" content="#0d100c"><meta name="version" content="0.3.1">
-<title>PARP · Field Handbook (Game Design Document)</title>
+<title>Partisan Project | Field Handbook (Game Design Document)</title>
 <meta name="description" content="Partisan Project field handbook: the in-universe game design document with live demos, moodboard, roadmap and credits.">
 <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
 <style>
@@ -92,7 +92,7 @@ footer a{color:var(--olive)}
 <body>
 <a class="skip" href="#main">Skip to content</a>
 <header class="bar"><div class="bar-in">
-  <b>PARP</b><span>Field handbook n°03 · v0.3.1</span>
+  <b>Partisan Project</b><span>Field handbook n°03 · v0.3.1</span>
   <nav aria-label="Sections"><a href="#dispatches">Dispatches</a><a href="#pillars">Pillars</a><a href="#operators">Operators</a><a href="#moodboard">Moodboard</a><a href="#roadmap">Roadmap</a><a href="#specs">Specs</a><a href="#credits">Credits</a><a href="../menu/">Index</a></nav>
   <button id="signal" aria-pressed="false" title="Render the images as a 1-bit dithered radio signal">Signal: clean</button>
 </div></header>
@@ -102,7 +102,7 @@ footer a{color:var(--olive)}
 <section class="hero" id="top" aria-labelledby="h-title">
   <div>
     <p class="bulletin">Transmission 0.3.1 · 1 October 2026 · clandestine design bureau</p>
-    <h1 id="h-title"><span>Partisan Project</span>PARP</h1>
+    <h1 id="h-title"><span>Field handbook</span>Partisan Project</h1>
     <p class="lede">A casual-friendly, low-poly, gear-obsessed resistance shooter, written as a field handbook you can play with. Every page of this handbook is a working demo, a drawing or a number we are held to.</p>
     <div class="row">
       <a class="btn" href="../operator/">Dress an operator</a>
@@ -240,14 +240,14 @@ footer a{color:var(--olive)}
 </main>
 
 <footer>
-  <p>PARP · Partisan Project · v0.3.1 · © 2026 Vincent De Nil, Atelier Vincent De Nil BV. All rights reserved except where an asset's own licence says otherwise.<br>
+  <p>Partisan Project · v0.3.1 · © 2026 Vincent De Nil, Atelier Vincent De Nil BV. All rights reserved except where an asset's own licence says otherwise.<br>
   <a href="../menu/">Index</a> · <a href="master-roadmap.html">Roadmap</a> · <a href="https://github.com/VincentDN/partisan-project">Source</a> · <a href="https://vincentdenil.com/projects/">AVDN projects</a></p>
 </footer>
 
 <script type="module">
 import {drawDithered} from '../assets/js/dither.js';
 import {mountTopBar} from '../shared/topbar.js';
-mountTopBar({title: 'Game design doc', scene: 'viewer', current: 'doc', sticky: true, replaceHeader: false});
+mountTopBar({title: 'Game design doc', scene: 'viewer', current: 'doc', sticky: true, replaceHeader: false, light: true});
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 

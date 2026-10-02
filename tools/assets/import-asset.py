@@ -3,7 +3,7 @@
 For weapons and attachments (kind=weapon|attachment):
   - joins nothing (keeps separate objects so parts stay selectable), applies transforms
   - scales so the longest dimension equals --length (metres), if given, else --scale
-  - rotates so the longest axis lies along +X (the PARP muzzle axis) when --auto-axis
+  - rotates so the longest axis lies along +X (the Partisan Project muzzle axis) when --auto-axis
   - origin: --origin center (default) | bottom | keep
 Usage:
   python tools/assets/import-asset.py --in assets-incoming/m16.obj --out build/m16.raw.glb --length 0.99 --auto-axis

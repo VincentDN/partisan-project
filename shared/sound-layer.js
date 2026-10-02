@@ -1,4 +1,4 @@
-// One sound layer for every PARP page: the music player (music.js) routed through the bench's radio and
+// One sound layer for every Partisan Project page: the music player (music.js) routed through the bench's radio and
 // camp graph (bench-audio.js), plus the shared on/off, volume and track preference.
 //
 // The site is a shell page (index.html) that creates the layer and shows every other page in a full-screen
@@ -13,7 +13,7 @@
 import {Music, TRACKS} from './music.js';
 import {createBench} from './bench-audio.js';
 
-// v4: PARP v0.3. The v3 key is read once so existing volume/on-off choices carry over.
+// v4: Partisan Project v0.3. The v3 key is read once so existing volume/on-off choices carry over.
 const KEY = 'parp-music-v4',
   OLD_KEY = 'ak-customiser-music-v3';
 function loadPrefs() {

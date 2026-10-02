@@ -39,7 +39,7 @@ Colours are sampled from the references (k-means on the images, then curated by 
 | Pouch olive | `#6e6f43` | the Base Operator pouch colour |
 | Wolf grey | `#758492` | overcast sky, haze, urban camo |
 | Concrete | `#afb3b3` | barriers, ruins |
-| Spark | `#ef8f39` | the PARP accent: muzzle sparks, selections, UI focus |
+| Spark | `#ef8f39` | the Partisan Project accent: muzzle sparks, selections, UI focus |
 | Hazard | `#959622` | Abiotic-style accent, hi-vis moments |
 | LCD ink / paper | `#16200f` / `#b5c79a` | the index browser's 1-bit screen |
 

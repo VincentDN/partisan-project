@@ -7,7 +7,8 @@ import {soundLayer} from '../shared/sound-layer.js';
 import {buildBenchScene, TABLE} from '../shared/bench-scene.js';
 import {loadRifle} from '../workbench/rifle-instance.js';
 import {applyLoadout, installCamo, savedLoadout} from '../workbench/apply-loadout.js';
-import {Arms} from '../bench/hands.js';
+import {DEFAULT_OPERATOR, buildOperator} from '../shared/legacy-operator/operator.js';
+import {solveArm} from '../shared/legacy-operator/field.js';
 import * as mech from '../workbench/mech.js';
 
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -38,9 +39,23 @@ camera.position.copy(SHOT.position);
 camera.lookAt(SHOT.target);
 const room = buildBenchScene(scene, {small});
 
-// The operator's arms: shoulders behind the camera, hands resting on the grip and the handguard.
-const arms = new Arms({R: [-0.2, 1.32, -0.22], L: [0.22, 1.32, -0.22]}, 0x55603f, {upper: 0.46, fore: 0.44, thickness: 0.6});
-scene.add(arms.group);
+// The partisan, leaning over the bench (the earlier workbench's code-built operator, restored).
+const op = buildOperator({...DEFAULT_OPERATOR, headgear: 'none', gloves: 'none', pack: 'none'});
+op.root.traverse(m => {
+  if (m.isMesh) m.castShadow = m.receiveShadow = true;
+});
+scene.add(op.root);
+const LEAN = {hips: 0.1, spine: 0.16, chest: 0.18, neck: 0.08, head: 0.42};
+function pose(time) {
+  const breath = reduceMotion ? 0 : Math.sin(time * 1.4) * 0.012;
+  for (const [joint, x] of Object.entries(LEAN)) op.joints[joint].rotation.x = x + (joint === 'chest' ? breath : 0);
+  op.joints.head.rotation.y = -0.1 + look.x * 0.12;
+  for (const side of ['R', 'L']) {
+    op.joints['upperLeg' + side].rotation.x = -0.08;
+    op.joints['lowerLeg' + side].rotation.x = 0.14;
+  }
+  op.root.updateMatrixWorld(true);
+}
 
 // The rifle lies flat on its side; yaw and tilt live on the outer group.
 const rifleGroup = new T.Group();
@@ -80,19 +95,16 @@ function pollPad() {
     if (pad.buttons[0]?.pressed || pad.buttons[9]?.pressed) begin();
   }
 }
-const HOLD = {R: {along: -0.2, pole: [-1, -0.2, -0.5]}, L: {along: 0.2, pole: [1, -0.4, -0.4]}};
-const tmp = new T.Vector3(),
-  fingers = new T.Vector3(0, -0.55, 1);
+// Palm targets along the rifle: grip (right hand) and handguard (left hand), just above the top face.
+const HOLD = {R: {along: -0.2, pole: new T.Vector3(-1, -0.2, -0.5)}, L: {along: 0.2, pole: new T.Vector3(1, -0.4, -0.4)}};
 function placeRifle() {
   const tilt = look.y * 0.07; // lift the far edge a touch, as if checking the ejection port
   rifleGroup.position.set(RIFLE_AT.x, TABLE.top + rifleHalf + Math.abs(tilt) * rifleHalf, RIFLE_AT.z);
   rifleGroup.rotation.set(tilt, -0.22 + look.x * 0.08, 0, 'YXZ');
   rifleGroup.updateMatrixWorld(true);
   for (const [side, h] of Object.entries(HOLD)) {
-    tmp.set(h.along * rifleLength, rifleHalf + 0.035, -0.015).applyMatrix4(rifleGroup.matrixWorld);
-    // Wrist sits back from the palm along the finger direction.
-    tmp.addScaledVector(fingers.clone().normalize(), -0.09);
-    arms.reach(side, tmp, fingers, {curl: 0.35, lean: 0.5});
+    const target = new T.Vector3(h.along * rifleLength, rifleHalf + 0.035, -0.015).applyMatrix4(rifleGroup.matrixWorld);
+    solveArm(op, side, target, h.pole);
   }
 }
 
@@ -146,6 +158,7 @@ function frame() {
   const k = 1 - Math.exp(-dt * (push ? 1.5 : 4));
   look.x += (want.x - look.x) * k;
   look.y += (want.y - look.y) * k;
+  pose(time);
   placeRifle();
   room.drapeFlag(time);
   room.radio.userData.dial.material.emissiveIntensity = 1.3 + Math.random() * 0.15; // valve glow flicker
@@ -195,7 +208,7 @@ window.PARP_INTRO = {
   camera,
   renderer,
   room,
-  arms,
+  op,
 };
 loadModel()
   .then(() => {

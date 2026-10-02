@@ -1,7 +1,7 @@
 # Claude Code: session opener (paste as the first message)
 
 ```
-You are working on PARP (Partisan Project) under docs/agent-ops/README.md. Follow it strictly.
+You are working on Partisan Project under docs/agent-ops/README.md. Follow it strictly.
 1. Read AGENTS.md and docs/agent-ops/STATE.md only.
 2. My window: I have used <N>% so far, so your budget is <80-N> BU.
    Run: node tools/agent/next-packet.mjs --budget <BU> --agent claude --can browser,bpy

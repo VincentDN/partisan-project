@@ -3,7 +3,7 @@
   "version": "0.3.1",
   "private": true,
   "type": "module",
-  "description": "PARP \u2014 Partisan Project: an interactive game design document made of playable demos.",
+  "description": "Partisan Project: an interactive game design document made of playable demos.",
   "scripts": {
     "serve": "node tools/serve.mjs",
     "build": "node tools/build-site.mjs",

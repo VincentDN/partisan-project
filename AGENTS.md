@@ -1,6 +1,6 @@
-# PARP: instructions for AI agents (Claude, Codex, anyone)
+# Partisan Project: instructions for AI agents (Claude, Codex, anyone)
 
-PARP = **Partisan Project**: an interactive game design document made of playable low-poly demos
+**Partisan Project** is an interactive game design document made of playable low-poly demos
 (Weapon Workbench, Operator Customiser, Asset Viewer) plus an in-universe design doc. Static site, no
 bundler, deployed to GitHub Pages. Owner: Vincent De Nil.
 

@@ -1,6 +1,6 @@
-# PARP master roadmap
+# Partisan Project master roadmap
 
-**Partisan Project (PARP)** · version 0.3.0 · updated 1 October 2026 · single maintained roadmap
+**Partisan Project** · version 0.3.0 · updated 1 October 2026 · single maintained roadmap
 
 This document supersedes the four earlier plans (customiser, Partisan, content roster, workbench animation) and
 the 30 September 2026 master roadmap, which is kept for traceability in
@@ -12,7 +12,7 @@ forth between windows: see [`agent-ops/README.md`](agent-ops/README.md). The pla
 > Links: [Design document (one-pager)](game-design-master-doc.html) · [Index](../) · [Art direction](art-direction.md) ·
 > [Engineering standards](engineering/standards.md) · [Asset register](../assets/REGISTER.md) · [Decisions (ADRs)](adr/README.md)
 
-## 1. What PARP is
+## 1. What Partisan Project is
 
 An **interactive game design document**. Instead of a static PDF, each aspect of the future game is a playable
 or inspectable demo, tied together by an in-universe design document and a Nokia-style index.
@@ -28,7 +28,7 @@ Everything else (environment diorama, AI belief-model visualiser) is the 2027 ho
 
 | Area | State |
 |---|---|
-| Home | PARP index browser (1-bit LCD, dither, keypad), design document, this roadmap, moodboard |
+| Home | Partisan Project index browser (1-bit LCD, dither, keypad), design document, this roadmap, moodboard |
 | Repository | Moved out of the portfolio site into `partisan-project`; buildless static site; three.js vendored; Pages workflow (needs one owner click, `WP-F8`) |
 | Operator Customiser | **Live**: four operators on one skeleton, *Base*, *Recon*, *Insurgent*, *Enforcer* (extension packs bound to the purchased soldier's rig by bone name); 10+ equipment slots, 8–10 colour zones per base, 5 hero poses, 3 idle animations, shareable URL looks, optional carried rifle as a prop |
 | Weapon Workbench | **Live**: AK-74M and AK-15K, 12 slots on three rails that cannot overlap (back-up sight, trigger, charging handle, sling…), stats and hover deltas, rules, presets, finishes, camo, wear, photo and loadout card |
@@ -42,7 +42,7 @@ Everything else (environment diorama, AI belief-model visualiser) is the 2027 ho
 |---|---|
 | Token-budget system for $20 plans, handing off between agents | `docs/agent-ops/` + `tools/agent/*` (WP-F3) |
 | Remove the project from vincentdenil-site, host in `partisan-project` with GitHub Pages; outbound links from `/projects` | Done in both repos; Pages workflow built; owner enables Pages (WP-F8) |
-| Rename to Partisan Project, abbreviation PARP | Done everywhere |
+| Rename to Partisan Project, abbreviation Partisan Project | Done everywhere |
 | Hierarchy: `workbench`, `viewer`, `docs`, `docs/moodboard` | Done, plus `operator`, `shared`, `assets`, `vendor`, `tools`, `tests` |
 | `docs/game-design-master-doc.html` (in-universe one-pager) and `docs/master-roadmap.md` | Done |
 | Ingest `feedback/` images for art direction; moodboard folder | `docs/moodboard/`, `docs/art-direction.md` |
@@ -147,7 +147,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 
 | ID | Packet | Size | Status | Needs | Depends on |
 |---|---|---|---|---|---|
-| `WP-F1` | Restructure into the PARP layout; migrate from vincentdenil-site | M (20) | done | — | — |
+| `WP-F1` | Restructure into the Partisan Project layout; migrate from vincentdenil-site | M (20) | done | — | — |
 | `WP-F2` | Remove firing, range drill, bench-hand animation, advanced-animation experiment and the procedural operator | M (20) | done | — | — |
 | `WP-F3` | Agent-ops: work-packet system, calibration, handoff protocol and tooling | M (20) | done | — | — |
 | `WP-F4` | Master roadmap, design-doc one-pager, moodboard and Nokia-style index | M (20) | done | — | — |
@@ -290,7 +290,7 @@ A passing test certifies mechanics, never art quality.
 1. **Setting canon** for demos: Yantis / WW2044 prologue, or the modern low-poly world? (`WP-D1`)
 2. **Roster naming** from the keyframes (proposal in `art-direction.md` §4).
 3. **Licences:** purchased pack redistribution; two music tracks; asset exceptions to CC0/CC BY (SIG Spear, G3A3).
-4. **Indexing:** pages are `noindex` (link-only) like the portfolio's projects. Flip when PARP should be discoverable.
+4. **Indexing:** pages are `noindex` (link-only) like the portfolio's projects. Flip when Partisan Project should be discoverable.
 5. **Budget calibration:** which plan meters to read, and the weekly window count, after the first two weeks.
 
 ## 10. Maintenance

@@ -1,4 +1,4 @@
-# PARP · Partisan Project
+# Partisan Project
 
 An **interactive game design document**: a set of playable low-poly demos and an in-universe design doc for a
 casual-friendly resistance shooter. Live site (after the one-time Pages setup in

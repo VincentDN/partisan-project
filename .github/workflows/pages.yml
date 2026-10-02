@@ -1,4 +1,4 @@
-# Build, test, and deploy PARP to GitHub Pages.
+# Build, test, and deploy Partisan Project to GitHub Pages.
 # One-time owner setup: Settings > Pages > Build and deployment > Source: "GitHub Actions".
 name: Build and deploy
 

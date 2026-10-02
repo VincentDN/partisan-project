@@ -1,4 +1,4 @@
-// PARP Operator Customiser: equipment slots, colour zones, hero poses and idle animation on a roster of
+// Partisan Project Operator Customiser: equipment slots, colour zones, hero poses and idle animation on a roster of
 // bases that share one skeleton (Base Operator today; Recon, Insurgent, Enforcer next: see config.js BASES).
 //
 // State is one flat object {base, slot ids, 'z.<zone>' colours, pose, idle} serialised to the URL hash
@@ -486,12 +486,12 @@ $('#photo').onclick = () => {
   g.fillRect(0, out.height - bar, out.width, bar);
   g.fillStyle = '#ef8f39';
   g.font = `600 ${Math.round(22 * scale)}px ui-monospace,monospace`;
-  g.fillText('PARP', Math.round(24 * scale), out.height - bar / 2 + Math.round(8 * scale));
+  g.fillText('Partisan Project', Math.round(24 * scale), out.height - bar / 2 + Math.round(8 * scale));
   g.fillStyle = '#eceeea';
   g.font = `${Math.round(18 * scale)}px system-ui,sans-serif`;
   g.fillText(
     `${base.label} · ${poseData.poses[state.pose].label} · ${new Date().toISOString().slice(0, 10)}`,
-    Math.round(120 * scale),
+    Math.round(250 * scale),
     out.height - bar / 2 + Math.round(7 * scale),
   );
   const a = document.createElement('a');

@@ -41,7 +41,7 @@ export function shareCardDataUrl({canvas, base, poseLabel, equipment, rifle}) {
     g.fillText(t, x + dx, y);
   };
   const mono = 'ui-monospace,monospace';
-  text('PARP · OPERATOR CUSTOMISER', 16, '#ef8f39', 600, mono);
+  text('PARTISAN PROJECT · OPERATOR CUSTOMISER', 16, '#ef8f39', 600, mono);
   y += 46;
   text(base.label, 34, '#eceeea', 650);
   y += 30;

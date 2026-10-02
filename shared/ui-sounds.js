@@ -1,0 +1,58 @@
+// Small Nokia-style interface sounds for the index: a tap when the selection moves, a two-note chirp on select, a falling
+// note on back. Synthesised with Web Audio (no samples), quiet, and silent when the music preference is off.
+import {audio} from './sfx.js';
+import {soundLayer} from './sound-layer.js';
+
+const enabled = () => {
+  try {
+    return soundLayer().prefs.on;
+  } catch {
+    return true;
+  }
+};
+
+/** One square-wave note: `freq` Hz for `dur` seconds from `t`, with a fast attack and an exponential decay. */
+function note(ctx, out, freq, t, dur, gain = 0.07, type = 'square') {
+  const osc = ctx.createOscillator(),
+    g = ctx.createGain(),
+    lp = ctx.createBiquadFilter();
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, t);
+  lp.type = 'lowpass';
+  lp.frequency.value = 3200; // soften the square so it reads as a speaker, not a buzzer
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.linearRampToValueAtTime(gain, t + 0.003);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  osc.connect(lp).connect(g).connect(out);
+  osc.start(t);
+  osc.stop(t + dur + 0.02);
+}
+
+function play(fn) {
+  if (!enabled()) return;
+  try {
+    const {ctx, out} = audio();
+    fn(ctx, out, ctx.currentTime + 0.005);
+  } catch {}
+}
+
+/** Selection moved: a short dry tick. */
+export const tap = () =>
+  play((ctx, out, t) => {
+    note(ctx, out, 1250, t, 0.035, 0.05);
+    note(ctx, out, 620, t, 0.025, 0.03, 'triangle');
+  });
+/** Chosen: two quick rising notes. */
+export const select = () =>
+  play((ctx, out, t) => {
+    note(ctx, out, 880, t, 0.07);
+    note(ctx, out, 1320, t + 0.07, 0.11);
+  });
+/** Back or exit: a falling pair. */
+export const back = () =>
+  play((ctx, out, t) => {
+    note(ctx, out, 990, t, 0.06);
+    note(ctx, out, 660, t + 0.06, 0.1);
+  });
+/** Nothing to do: a low blip. */
+export const deny = () => play((ctx, out, t) => note(ctx, out, 220, t, 0.12, 0.06));

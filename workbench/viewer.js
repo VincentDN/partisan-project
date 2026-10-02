@@ -23,7 +23,7 @@ const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 // Camera presets are sized for a rifle this long (m); longer or shorter builds scale them.
 const FRAME_LENGTH = 0.943;
 
-// Background music, volume and track: shared with every PARP module (shared/music-ui.js).
+// Background music, volume and track: shared with every Partisan Project module (shared/music-ui.js).
 mountTopBar({title: 'Weapon Workbench', scene: 'viewer'});
 
 const stageEl = document.querySelector('#stage'),

@@ -1,5 +1,5 @@
 // Shared Web Audio context for synthesised UI and handling sounds: one context, one compressor.
-// (Weapon-fire synthesis was removed in PARP v0.3.)
+// (Weapon-fire synthesis was removed in Partisan Project v0.3.)
 let ctx, out, noise;
 function setup() {
   if (ctx) return;
