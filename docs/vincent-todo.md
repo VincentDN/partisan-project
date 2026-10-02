@@ -27,4 +27,4 @@ Things only the project owner can do. Agents cannot, or must not, do these. The 
 - RPK (WP-A14) is a data-only kitbash on the AK-74M mesh (45-round mag, compensator, angled grip). A real long-barrel mesh needs a Blender pass.
 - Design doc (WP-D2) fiction-dependent parts are provisional until setting canon (WP-D1) is decided.
 - The v1.0.0 tag is yours to create after the release checklist (docs/engineering/release-checklist.md).
-- Credits and licences: pages point to the GitHub docs / contacting you via GitHub. Say if you want a public email added.
+- Credits and licences: pages point to the GitHub docs or vincent@kaisercatcinema.com.

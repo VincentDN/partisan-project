@@ -6,7 +6,7 @@
 
 **Decision.**
 1. The Credits section of the game design document, the per-demo credit lists, `tools/assets/register*.mjs`, `assets/REGISTER.md`, the register audit tests and packet WP-Q3 are removed.
-2. Every place that carried credits now carries one line: credits and licences are in the GitHub documentation, or contact the owner through GitHub.
+2. Every place that carried credits now carries one line: credits and licences are in the GitHub documentation, or contact vincent@kaisercatcinema.com.
 3. `assets/register.json` stays only as the list of models and their triangle budgets for the Asset Viewer.
 4. Every agent instruction page (AGENTS.md, CLAUDE.md, docs/agent-ops/README.md, STATE.md and both session prompts) carries an express instruction not to spend tokens on credits or licences.
 
