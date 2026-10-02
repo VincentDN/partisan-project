@@ -20,8 +20,7 @@ const pages = [
     async p =>
       p.waitForFunction(() => document.querySelector('#start') && !document.querySelector('#start').disabled, null, {timeout: 90000}),
   ],
-  ['index (splash)', 'menu/', async p => p.waitForFunction(() => window.PARP_INDEX?.ready && window.PARP_MENU?.ready)],
-  ['index (menu)', 'menu/#menu', async p => p.waitForFunction(() => window.PARP_INDEX?.ready && window.PARP_MENU?.ready)],
+  ['index (menu)', 'menu/', async p => p.waitForFunction(() => window.PARP_INDEX?.ready && window.PARP_MENU?.ready)],
   ['workbench', 'workbench/', async p => p.waitForSelector('#build .slot', {timeout: 60000})],
   ['operator', 'operator/', async p => p.waitForFunction(() => window.PARP_OPERATOR?.ready, null, {timeout: 60000})],
   ['operator (recon)', 'operator/#base=recon', async p => p.waitForFunction(() => window.PARP_OPERATOR?.ready, null, {timeout: 60000})],

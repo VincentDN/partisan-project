@@ -5,10 +5,10 @@ Small on purpose. Read this first, then `AGENTS.md`. Plan and sizes: [`README.md
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-02 08:45 UTC · agent · (no packet) · partial**
+**2026-10-02 11:30 UTC · agent · (no packet) · partial**
 
-- Branch `claude/friendly-dijkstra-4ky9w6` at `2640969`; **10 uncommitted file(s)** (commit before stopping): M bench/index.html,  M docs/game-design-master-doc.html,  M index.html,  M intro/index.html,  M menu/index.html,  M operator/index.html.
-- Last commits: 2640969 Opening scene: keep only the orange button (tests running) · 3f7a88a Top bar v2, lambda favicon, Partisan Project naming, menu zoom and UI sounds, restored operator (tests running) · 38f4668 Opening scene, persistent music shell, Nokia top bar, Nokia index on the table, new favicon
+- Branch `claude/friendly-dijkstra-4ky9w6` at `82279fe`; **7 uncommitted file(s)** (commit before stopping): M CHANGELOG.md,  M assets/css/nokia.css,  M assets/js/index.js,  M assets/js/items.js,  M menu/menu.js,  M tests/e2e/a11y.mjs.
+- Last commits: 82279fe Fix test label match and add role=img to the scene stage (tests running) · a23fd67 Original opening scene and advanced animations, text-only green top bar, HL2 lambda favicon (tests running) · 00bf496 Hide the whole site from search: stronger robots meta on every page, seo_hidden on 404, test
 - What happened: (write one or two sentences)
 - Next step: (name the exact next action, file and command)
 <!-- handoff:end -->

@@ -114,7 +114,7 @@ try {
     camera.updateProjectionMatrix();
     // From the operator's side and above, tilted ~28 degrees off straight down, with a touch of parallax.
     const tilt = portrait ? 0.12 : 0.49;
-    camera.position.set(centre.x + look.x * 0.03, centre.y + dist * Math.cos(tilt), centre.z - dist * Math.sin(tilt) + look.y * 0.02);
+    camera.position.set(centre.x + look.x * 0.012, centre.y + dist * Math.cos(tilt), centre.z - dist * Math.sin(tilt) + look.y * 0.008);
     camera.lookAt(centre);
     camera.updateMatrixWorld(true);
     const px = quad.map(p => {

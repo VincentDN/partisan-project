@@ -29,10 +29,6 @@ body.flat .lcd-frame{left:50%;top:calc(50% + var(--topbar,40px)/2);margin:-150px
 .bars{display:inline-flex;align-items:flex-end;gap:1px;height:10px}.bars i{width:3px;background:var(--lcd-0)}.bars i:nth-child(1){height:3px}.bars i:nth-child(2){height:5px}.bars i:nth-child(3){height:7px}.bars i:nth-child(4){height:10px}
 .batt{display:inline-block;width:18px;height:9px;border:2px solid var(--lcd-0);position:relative;margin-left:5px;vertical-align:-1px}.batt::after{content:"";position:absolute;right:-5px;top:1px;width:3px;height:3px;background:var(--lcd-0)}.batt b{display:block;height:100%;width:70%;background:var(--lcd-0)}
 .title{padding:4px 7px;background:var(--lcd-0);color:var(--lcd-1);display:flex;justify-content:space-between;font-size:12px}
-.splash{flex:1;min-height:0;position:relative;display:flex;flex-direction:column;text-align:center}
-.splash canvas{flex:1;min-height:0;width:100%;height:100%;object-fit:cover;image-rendering:pixelated;display:block}
-.splash .cap{background:var(--lcd-0);color:var(--lcd-1);padding:5px 6px 6px}
-.splash h1{margin:0;font-size:15px;letter-spacing:.16em}.splash p{margin:2px 0 0;font-size:11px}
 .menu{flex:1;overflow:auto;margin:0;padding:0;list-style:none;scrollbar-width:none}
 .menu::-webkit-scrollbar{display:none}
 .menu a{display:flex;gap:8px;align-items:center;padding:5px 7px;color:inherit;text-decoration:none;border-bottom:1px dotted #16200f66}

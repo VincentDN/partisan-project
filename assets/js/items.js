@@ -5,6 +5,12 @@ const px = bits =>
 export const ITEMS = [
   {
     label: 'Weapon Workbench',
+    href: '../intro/',
+    icon: px('0111011111111100100001000'),
+    help: 'The bench at night: your rifle on the table, the old radio. Start here.',
+  },
+  {
+    label: 'Weapon Modder',
     href: '../workbench/',
     icon: px('0111011111111100100001000'),
     help: 'Demo. Swap parts, finishes and wear on AK rifles. Presets, stats, photo mode.',

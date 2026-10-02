@@ -1,17 +1,15 @@
 // Partisan Project index browser logic: a keyboard- and click-driven menu in the shape of a 1990s phone.
 // The menu items are real links (so it works without JS and for screen readers); this script adds
 // selection state, number-key jumps, soft keys, the sound toggle and the About screen.
-import {drawDithered} from './dither.js';
 import {soundLayer} from '../../shared/sound-layer.js';
 import {ITEMS} from './items.js';
 import * as ui from '../../shared/ui-sounds.js';
 
 const $ = s => document.querySelector(s);
-const screen = $('.screen'),
-  content = $('#content');
+const content = $('#content');
 const sound = soundLayer();
 let index = 0,
-  mode = 'splash';
+  mode = 'menu';
 
 const clock = () => new Date().toLocaleTimeString('en-GB', {hour: '2-digit', minute: '2-digit'});
 function chrome(titleLeft, titleRight) {
@@ -25,14 +23,6 @@ function soundLabel() {
   return `Sound: ${sound.prefs.on ? 'ON' : 'OFF'}`;
 }
 
-function renderSplash() {
-  mode = 'splash';
-  content.innerHTML =
-    chrome('Partisan Project', 'v' + window.PARP_VERSION) +
-    `<div class="splash boot"><canvas id="dither" aria-label="Dithered concept art of two low-poly operators" role="img"></canvas><div class="cap"><h1>Partisan Project</h1><p><span class="blink">PRESS ANY KEY</span></p></div></div>` +
-    softkeys('MENU', '');
-  drawDithered($('#dither'), '../docs/moodboard/keyframe-2-firefight.jpg', {width: 200, contrast: 1.45, bias: -0.04}).catch(() => {});
-}
 function renderMenu() {
   mode = 'menu';
   const rows = ITEMS.map(
@@ -82,7 +72,6 @@ function renderAbout() {
 }
 function activate() {
   ui.select();
-  if (mode === 'splash') return renderMenu();
   if (mode === 'about') return renderMenu();
   const it = ITEMS[index];
   if (it.action === 'sound') {
@@ -98,18 +87,14 @@ function activate() {
   if (it.href) (/^https?:/.test(it.href) ? window.top : window).location.href = it.href; // outbound links leave the frame
 }
 function back() {
-  ui.back();
-  if (mode === 'about') renderMenu();
-  else if (mode === 'menu') renderSplash();
+  if (mode === 'about') {
+    ui.back();
+    renderMenu();
+  } else ui.deny(); // already at the top: nothing to go back to
 }
 
 // Input: keyboard, soft keys, d-pad, number pad.
 function press(k) {
-  if (mode === 'splash') {
-    ui.select();
-    renderMenu();
-    return;
-  }
   if (k === 'up') mode === 'menu' && select(index - 1);
   else if (k === 'down') mode === 'menu' && select(index + 1);
   else if (k === 'select') activate();
@@ -131,10 +116,7 @@ addEventListener('keydown', e => {
     ArrowLeft: 'back',
   };
   const k = map[e.key] || (/^[1-9]$/.test(e.key) ? e.key : null);
-  if (!k) {
-    if (mode === 'splash') press('select');
-    return;
-  }
+  if (!k) return;
   if (e.key === 'Enter' && document.activeElement?.closest('.menu a') && mode === 'menu') return; // let the focused link navigate
   e.preventDefault();
   press(k);
@@ -143,9 +125,6 @@ addEventListener('keydown', e => {
 content.addEventListener('click', e => {
   const k = e.target.closest?.('[data-key]');
   if (k) press(k.dataset.key);
-});
-screen.addEventListener('click', e => {
-  if (mode === 'splash') press('select');
 });
 
 // Music follows the shared preference (autoplay is blocked until a first gesture).
@@ -164,8 +143,7 @@ addEventListener(
   {once: true, capture: true},
 );
 
-renderSplash();
-if (location.hash === '#menu') renderMenu();
+renderMenu();
 window.PARP_INDEX = {
   ready: true,
   get mode() {

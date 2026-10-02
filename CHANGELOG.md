@@ -4,6 +4,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 ## [0.3.1] · 2026-10-01
 
+### Changed (round 4)
+- **Index**: opens straight on the menu (the "press any key" splash is gone); the camera follows the mouse 60% less; new **1. Weapon Workbench** (the opening scene) and the former 1 is now **2. Weapon Modder**.
+
 ### Changed (round 3)
 - **Original opening scene and advanced animations restored verbatim** (`intro/`, ADR 0011): the code from vincentdenil-site, with its own operator, hands and bench timeline, wired to the current weapon customiser and the shared top bar and music player. One orange button on the scene: *Customize this weapon*. The rebuilt scene and Bench Lab are removed; the index lists "Advanced animations".
 

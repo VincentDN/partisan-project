@@ -30,7 +30,7 @@ const noProblems = page =>
     [],
   );
 
-await check('index: the Nokia screen lies on the table, splash, menu, number key navigates', async () => {
+await check('index: the Nokia screen lies on the table and opens straight on the menu; number keys navigate', async () => {
   const page = await open(browser, server.url + 'menu/');
   await page.waitForFunction(() => window.PARP_INDEX?.ready && window.PARP_MENU?.ready);
   assert.equal(await page.evaluate(() => window.PARP_MENU.flat ?? false), false, 'WebGL scene is behind the screen');
@@ -39,13 +39,14 @@ await check('index: the Nokia screen lies on the table, splash, menu, number key
     /^matrix3d\(/,
     'LCD is laid on the phone with a projective transform',
   );
-  assert.equal(await page.evaluate(() => window.PARP_INDEX.mode), 'splash');
-  await page.keyboard.press('Enter');
-  assert.equal(await page.evaluate(() => window.PARP_INDEX.mode), 'menu');
-  assert.equal(await page.locator('.menu a').count(), 10);
+  assert.equal(await page.evaluate(() => window.PARP_INDEX.mode), 'menu', 'no splash screen');
+  assert.equal(await page.locator('.menu a').count(), 11);
+  const first = await page.locator('.menu a').allInnerTexts();
+  assert.match(first[0], /Weapon Workbench/i, '1 is the opening scene');
+  assert.match(first[1], /Weapon Modder/i, '2 is the weapon customiser');
   await page.keyboard.press('ArrowDown');
   assert.equal(await page.evaluate(() => window.PARP_INDEX.index), 1);
-  await Promise.all([page.waitForURL(/operator\/?$/), page.keyboard.press('2')]);
+  await Promise.all([page.waitForURL(/operator\/?$/), page.keyboard.press('3')]);
   noProblems(page);
   await page.close();
 });
