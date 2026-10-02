@@ -64,8 +64,8 @@
    }
   },
   "hero": {
-   "label": "Hero \u00b7 rifle up",
-   "detail": "The character-sheet hero pose: rifle held upright at the right side, weight on the back foot.",
+   "label": "Hero · rifle up",
+   "detail": "The moodboard hero pose: rifle upright at the right side, gripped one-handed at chest height, weight on the back foot.",
    "bones": {
     "upperarm_r": [
      -26,
@@ -133,17 +133,32 @@
     "l": 0.45
    },
    "weapon": {
-    "hand": "r",
-    "rotation": [
-     0,
-     0,
-     90
+    "anchor": "spine_03",
+    "hold": [
+     -0.33,
+     0.22,
+     0.07
     ],
-    "offset": [
+    "muzzle": [
+     -0.06,
+     1,
+     0.07
+    ],
+    "up": [
+     0.6,
      0,
-     0.0,
-     0.02
-    ]
+     -0.8
+    ],
+    "hands": {
+     "r": "grip"
+    },
+    "pole": {
+     "r": [
+      -0.35,
+      -1,
+      -0.25
+     ]
+    }
    }
   },
   "ready": {
@@ -182,21 +197,30 @@
     ]
    },
    "curl": {
-    "r": 0.8,
-    "l": 0.8
+    "r": 0.85,
+    "l": 0.7
    },
    "weapon": {
-    "hand": "r",
-    "rotation": [
-     0,
-     -55,
-     -8
+    "anchor": "spine_03",
+    "hold": [
+     -0.16,
+     -0.13,
+     0.2
     ],
-    "offset": [
+    "muzzle": [
+     0.35,
+     -0.5,
+     0.8
+    ],
+    "up": [
      0,
-     0.0,
-     0.0
-    ]
+     1,
+     0
+    ],
+    "hands": {
+     "r": "grip",
+     "l": "handguard"
+    }
    }
   },
   "comms": {
@@ -361,21 +385,30 @@
     ]
    },
    "curl": {
-    "r": 0.8,
-    "l": 0.8
+    "r": 0.85,
+    "l": 0.7
    },
    "weapon": {
-    "hand": "r",
-    "rotation": [
-     0,
-     -55,
-     -8
+    "anchor": "spine_03",
+    "hold": [
+     -0.16,
+     -0.1,
+     0.22
     ],
-    "offset": [
+    "muzzle": [
+     0.3,
+     -0.35,
+     0.9
+    ],
+    "up": [
      0,
-     0,
+     1,
      0
-    ]
+    ],
+    "hands": {
+     "r": "grip",
+     "l": "handguard"
+    }
    }
   },
   "kneel": {
@@ -460,21 +493,30 @@
     ]
    },
    "curl": {
-    "r": 0.8,
-    "l": 0.8
+    "r": 0.85,
+    "l": 0.7
    },
    "weapon": {
-    "hand": "r",
-    "rotation": [
-     0,
-     -55,
-     -8
+    "anchor": "spine_03",
+    "hold": [
+     -0.16,
+     -0.1,
+     0.22
     ],
-    "offset": [
+    "muzzle": [
+     0.3,
+     -0.4,
+     0.85
+    ],
+    "up": [
      0,
-     0,
+     1,
      0
-    ]
+    ],
+    "hands": {
+     "r": "grip",
+     "l": "handguard"
+    }
    }
   },
   "salute": {
@@ -563,47 +605,36 @@
     ]
    },
    "curl": {
-    "r": 0.8,
-    "l": 0.8
+    "r": 0.85,
+    "l": 0.7
    },
    "weapon": {
-    "hand": "r",
-    "rotation": [
-     0,
-     -50,
-     40
+    "anchor": "spine_03",
+    "hold": [
+     -0.13,
+     -0.03,
+     0.24
     ],
-    "offset": [
+    "muzzle": [
+     0.28,
+     0.72,
+     0.62
+    ],
+    "up": [
      0,
-     0,
-     0
-    ]
+     0.3,
+     -1
+    ],
+    "hands": {
+     "r": "grip",
+     "l": "handguard"
+    }
    }
   },
-  "shoulder": {
-   "label": "Shoulder arms",
-   "detail": "Rifle resting on the shoulder, easy walk.",
+  "port": {
+   "label": "Port arms",
+   "detail": "Rifle across the chest, muzzle up and to the left, both hands on.",
    "bones": {
-    "upperarm_r": [
-     -10,
-     0,
-     -10
-    ],
-    "lowerarm_r": [
-     -110,
-     0,
-     0
-    ],
-    "upperarm_l": [
-     -4,
-     0,
-     -20
-    ],
-    "lowerarm_l": [
-     -12,
-     0,
-     0
-    ],
     "pelvis": [
      0,
      -4,
@@ -617,20 +648,96 @@
    },
    "curl": {
     "r": 0.85,
-    "l": 0.3
+    "l": 0.7
    },
    "weapon": {
-    "hand": "r",
-    "rotation": [
-     0,
-     -30,
-     70
+    "anchor": "spine_03",
+    "hold": [
+     -0.17,
+     -0.06,
+     0.22
     ],
-    "offset": [
+    "muzzle": [
+     0.6,
+     0.75,
+     0.25
+    ],
+    "up": [
      0,
+     0.1,
+     -1
+    ],
+    "hands": {
+     "r": "grip",
+     "l": "handguard"
+    }
+   }
+  },
+  "herotwo": {
+   "label": "Hero · both hands",
+   "detail": "The hero pose with the support hand up on the handguard, rifle upright in front of the right shoulder.",
+   "bones": {
+    "thigh_r": [
+     -5,
+     0,
+     5
+    ],
+    "calf_r": [
+     6,
      0,
      0
+    ],
+    "thigh_l": [
+     4,
+     0,
+     -3
+    ],
+    "pelvis": [
+     0,
+     -6,
+     2
+    ],
+    "spine_03": [
+     0,
+     8,
+     -1
+    ],
+    "neck_01": [
+     0,
+     4,
+     0
+    ],
+    "head": [
+     2,
+     8,
+     0
     ]
+   },
+   "curl": {
+    "r": 0.9,
+    "l": 0.7
+   },
+   "weapon": {
+    "anchor": "spine_03",
+    "hold": [
+     -0.2,
+     0.02,
+     0.2
+    ],
+    "muzzle": [
+     0.3,
+     1,
+     0.3
+    ],
+    "up": [
+     0.3,
+     0.1,
+     -1
+    ],
+    "hands": {
+     "r": "grip",
+     "l": "handguard"
+    }
    }
   }
  },
@@ -707,7 +814,7 @@
    ]
   },
   "alert": {
-   "label": "Alert \u00b7 scanning",
+   "label": "Alert · scanning",
    "layers": [
     {
      "bone": "spine_02",
@@ -773,7 +880,7 @@
    ]
   },
   "weary": {
-   "label": "Weary \u00b7 heavy breath",
+   "label": "Weary · heavy breath",
    "layers": [
     {
      "bone": "spine_02",

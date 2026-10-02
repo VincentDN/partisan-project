@@ -436,7 +436,8 @@ export const BASES = {
     slots: SLOTS,
     zones: ZONES,
     presets: PRESETS,
-    defaults: {},
+    // Plain fabric by default; the pack's camo stays one click away as 'Original camo'.
+    defaults: {'z.top': 'olive', 'z.pants': 'olive'},
     status: 'available',
   },
   recon: {

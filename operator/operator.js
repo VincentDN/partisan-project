@@ -12,6 +12,7 @@ import {createStage, reduceMotion} from '../shared/stage.js';
 import {mountTopBar} from '../shared/topbar.js';
 import {camoFor, FABRIC} from '../shared/camo.js';
 import {Rig, blinkAt} from './rig.js';
+import {Grip, GRIPS} from './grip.js';
 import {PALETTES, CAMO_IDS, VIEWS, HERO_AZIMUTH, TRIANGLE_BUDGET, ROSTER, BASES, DEFAULT_BASE, defaultsFor} from './config.js';
 import {loadRifle} from '../workbench/rifle-instance.js';
 import {MODELS} from '../workbench/models.js';
@@ -36,7 +37,7 @@ const loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
 const turn = new T.Group(); // turntable parent: operator and carried weapon spin together
 turn.name = 'turntable';
 scene.add(turn);
-const pivot = new T.Group(); // carried weapon, positioned at the hand each frame (no IK)
+const pivot = new T.Group(); // carried weapon: placed per pose in body space, then the hands are solved onto it
 pivot.name = 'weapon pivot';
 turn.add(pivot);
 
@@ -96,6 +97,7 @@ async function loadBase(id) {
     const gltf = await loader.loadAsync(next.model);
     // The rig captures the rest pose, so it must be created once, before any pose is applied, and cached with the scene.
     const newRig = new Rig(gltf.scene, poseData);
+    newRig.grip = new Grip(newRig.bones, newRig.rest);
     for (const url of next.packs || []) bindPack((await loader.loadAsync(url)).scene, gltf.scene, newRig);
     gltf.scene.traverse(o => {
       if (o.isMesh) {
@@ -261,18 +263,49 @@ async function syncWeapon() {
   weapon = {rifle, holder, tris, loadout};
   applyEquipment();
 }
-const handPos = new T.Vector3(),
-  tmpE = new T.Euler();
-function placeWeapon() {
+// A weapon pose (poses.json `weapon`) places the rifle in character space: `hold` is where the pistol-grip centre
+// sits, in metres from the `anchor` bone (so it rides the breathing and the crouch), `muzzle` and `up` are the
+// directions of the barrel and the top rail. `hands` names the grip each hand takes (operator/grip.js).
+const anchorPos = new T.Vector3(),
+  mx = new T.Vector3(),
+  my = new T.Vector3(),
+  mz = new T.Vector3(),
+  basisM = new T.Matrix4(),
+  goalP = new T.Vector3(),
+  goalQ = new T.Quaternion(),
+  poleV = new T.Vector3(),
+  POLES = {r: [-0.5, -1, -0.45], l: [0.6, -1, -0.3]}; // elbows hang down, out and a little back
+let carry = null; // {p, q, w}: the rifle's blended placement (turn space) and the IK weight
+function placeWeapon(dt = 0) {
   const pose = poseData.poses[state.pose];
-  pivot.visible = !!weapon && !!pose.weapon;
-  if (!pivot.visible) return;
-  const w = pose.weapon,
-    offset = w.offset || [0, 0, 0],
-    r = w.rotation || [0, 0, 0];
-  turn.worldToLocal(rig.bones.get(`hand_${w.hand}`).getWorldPosition(handPos));
-  pivot.position.set(handPos.x + offset[0], handPos.y + offset[1], handPos.z + offset[2]);
-  pivot.quaternion.setFromEuler(tmpE.set((r[0] * Math.PI) / 180, (r[1] * Math.PI) / 180, (r[2] * Math.PI) / 180, 'YXZ'));
+  const w = pose.weapon;
+  pivot.visible = !!weapon && !!w;
+  if (!pivot.visible) {
+    carry = null;
+    return;
+  }
+  turn.worldToLocal(rig.bones.get(w.anchor || 'spine_03').getWorldPosition(anchorPos));
+  mx.fromArray(w.muzzle).normalize();
+  my.fromArray(w.up);
+  my.addScaledVector(mx, -my.dot(mx)).normalize();
+  mz.crossVectors(mx, my);
+  goalQ.setFromRotationMatrix(basisM.makeBasis(mx, my, mz));
+  goalP.fromArray(w.hold).add(anchorPos).sub(mx.fromArray(GRIPS.grip.at).applyQuaternion(goalQ));
+  if (!carry) carry = {p: goalP.clone(), q: goalQ.clone(), w: 0};
+  // Follow the pose blend: the rifle eases to its new place while the body blends.
+  const k = dt > 0 && !reduceMotion ? 1 - Math.exp(-dt * 9) : 1;
+  carry.p.lerp(goalP, k);
+  carry.q.slerp(goalQ, k);
+  carry.w = reduceMotion ? 1 : Math.min(1, carry.w + dt * 5);
+  pivot.position.copy(carry.p);
+  pivot.quaternion.copy(carry.q);
+  pivot.updateMatrixWorld(true);
+  const ik = rig.grip;
+  for (const [side, gripId] of Object.entries(w.hands || {r: 'grip'})) {
+    poleV.fromArray(w.pole?.[side] || POLES[side]).transformDirection(turn.matrixWorld);
+    ik.solve(side, gripId, pivot.matrixWorld, poleV, carry.w);
+  }
+  if (carry.w < 1) rig._dirty = true; // the next frame rewrites the pose before blending the IK in again
 }
 
 // ---------- Panels ----------
@@ -568,7 +601,7 @@ stage.onFrame((dt, t) => {
   rig.update(dt, t, state.idle === 'off' ? null : state.idle, reduceMotion ? 0 : 1);
   operator.position.y = -rig.lower; // crouch / kneel: legs fold, the whole body drops
   operator.updateMatrixWorld(true);
-  placeWeapon();
+  placeWeapon(dt);
   if (turntable) turn.rotation.y += dt * 0.5;
 });
 

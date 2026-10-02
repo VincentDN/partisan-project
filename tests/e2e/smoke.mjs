@@ -115,6 +115,7 @@ await check('operator: loads, equipment toggles, zones are independent, hash rou
   assert.equal(await vis('M_Helmet_Headphone'), false);
   // regression: top and trousers are separate materials (a dedup bug once fused them)
   await page.evaluate(() => {
+    window.PARP_OPERATOR.set('z.pants', 'original');
     window.PARP_OPERATOR.set('z.top', 'navy');
   });
   const colours = await page.evaluate(() => {
@@ -140,13 +141,30 @@ await check('operator: loads, equipment toggles, zones are independent, hash rou
   });
   await page.waitForFunction(() => window.PARP_OPERATOR.weapon, null, {timeout: 60000});
   await page.waitForFunction(() => window.PARP_OPERATOR.pivot.visible, null, {timeout: 30000}); // a frame has placed the prop
-  const hand = await page.evaluate(() => {
-    const o = window.PARP_OPERATOR;
-    const h = o.rig.bones.get('hand_r').getWorldPosition(new o.stage.T.Vector3());
-    const w = o.pivot.getWorldPosition(new o.stage.T.Vector3());
-    return h.distanceTo(w);
-  });
-  assert.ok(hand < 0.05, `rifle pivot follows the right hand (distance ${hand})`);
+  // The hands are solved onto the rifle (operator/grip.js): each palm closes on its grip point.
+  const reach = pose =>
+    page.evaluate(async pose => {
+      const o = window.PARP_OPERATOR,
+        V = o.stage.T.Vector3;
+      o.set('pose', pose);
+      o.rig.setPose(pose, 0);
+      for (let i = 0; i < 40; i++) await new Promise(r => requestAnimationFrame(r)); // the rifle eases into place
+      const palm = side => {
+        const h = o.rig.bones.get('hand_' + side);
+        return h.getWorldPosition(new V()).add(new V(0, 0.072, 0.028).applyQuaternion(h.getWorldQuaternion(new o.stage.T.Quaternion())));
+      };
+      const gripAt = {r: [-0.028, -0.058, 0], l: [0.3, 0.008, 0]};
+      return Object.fromEntries(
+        Object.keys(o.state.pose === pose ? {r: 1, l: 1} : {}).map(side => [
+          side,
+          palm(side).distanceTo(o.pivot.localToWorld(new V(...gripAt[side]))),
+        ]),
+      );
+    }, pose);
+  const hero = await reach('hero');
+  assert.ok(hero.r < 0.02, `hero: right palm on the pistol grip (${hero.r.toFixed(3)} m)`);
+  const ready = await reach('ready');
+  assert.ok(ready.r < 0.02 && ready.l < 0.02, `low ready: both palms on the rifle (${ready.r.toFixed(3)}, ${ready.l.toFixed(3)} m)`);
   // triangle readout within budget
   const tris = await page.locator('#tris').innerText();
   assert.ok(+tris.replace(/,/g, '') <= 15000, 'triangles ' + tris);

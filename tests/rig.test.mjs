@@ -89,7 +89,8 @@ test('every bone named in poses.json exists in the Base Operator skeleton', () =
   const missing = [];
   for (const [id, pose] of Object.entries(poseData.poses)) {
     for (const b of Object.keys(Rig.expand(pose))) if (!bones.has(b)) missing.push(`${id}:${b}`);
-    if (pose.weapon && !bones.has(`hand_${pose.weapon.hand}`)) missing.push(`${id}:hand_${pose.weapon.hand}`);
+    for (const side of Object.keys(pose.weapon?.hands || {})) if (!bones.has(`hand_${side}`)) missing.push(`${id}:hand_${side}`);
+    if (pose.weapon && !bones.has(pose.weapon.anchor)) missing.push(`${id}:${pose.weapon.anchor}`);
   }
   for (const [id, idle] of Object.entries(poseData.idles))
     for (const l of idle.layers) if (!bones.has(l.bone)) missing.push(`idle ${id}:${l.bone}`);
@@ -219,4 +220,19 @@ test('a held pose skips the bone pass, and leaving idle writes the held pose bac
   bone.quaternion.set(0.1, 0, 0, 0.99);
   rig.update(1 / 60, 20, null, 1); // nothing changed: the pass is skipped, the bone is not rewritten
   assert.equal(bone.quaternion.x, 0.1);
+});
+
+test('weapon poses place the rifle with valid directions and name known grips', async () => {
+  const {GRIPS} = await import('../operator/grip.js');
+  for (const [id, pose] of Object.entries(poseData.poses)) {
+    const w = pose.weapon;
+    if (!w) continue;
+    for (const k of ['hold', 'muzzle', 'up'])
+      assert.ok(Array.isArray(w[k]) && w[k].length === 3 && w[k].every(Number.isFinite), `${id}.weapon.${k}`);
+    const len = v => Math.hypot(...v);
+    const cos = w.muzzle.reduce((s, x, i) => s + x * w.up[i], 0) / (len(w.muzzle) * len(w.up));
+    assert.ok(Math.abs(cos) < 0.9, `${id}: muzzle and up must not be (nearly) parallel`);
+    assert.ok(w.hands?.r === 'grip', `${id}: the right hand takes the pistol grip`);
+    for (const g of Object.values(w.hands)) assert.ok(GRIPS[g], `${id}: unknown grip "${g}"`);
+  }
 });

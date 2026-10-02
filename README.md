@@ -33,6 +33,7 @@ workbench/  operator/  viewer/        the demos
 docs/       master-roadmap.md · game-design-master-doc.html · art-direction.md · moodboard/ · agent-ops/ · adr/ · engineering/
 tools/      assets/ (import pipeline) · agent/ (budget system) · build-site.mjs · check-site.mjs · serve.mjs · pose-fit.mjs
 tests/      node --test unit tests · e2e/ Playwright smoke + contact sheet
+outbound/   files for the owner to download · inbound/ files from the owner for agents (neither is deployed)
 ```
 
 ## How the work is organised
