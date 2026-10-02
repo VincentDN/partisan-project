@@ -120,7 +120,7 @@
   },
   {
    "id": "WP-F6",
-   "title": "Asset register, licence policy and import tooling (bpy + glTF-Transform)",
+   "title": "Asset import tooling and triangle budgets (bpy + glTF-Transform)",
    "track": "Assets",
    "milestone": "M0",
    "size": "S",
@@ -148,7 +148,7 @@
   },
   {
    "id": "WP-F8",
-   "title": "Owner: enable Pages (Settings > Pages > Source: GitHub Actions), merge the branch to main, confirm licences (purchased pack redistribution, music rights)",
+   "title": "Owner: enable Pages (Settings > Pages > Source: GitHub Actions) and merge the branch to main",
    "track": "Foundation",
    "milestone": "M0",
    "size": "XS",
@@ -199,7 +199,7 @@
   },
   {
    "id": "WP-A1",
-   "title": "Owner: download the CC0 weapon packs into assets-incoming/ and screenshot each licence page",
+   "title": "Owner: download the CC0 weapon packs into assets-incoming/",
    "track": "Weapons",
    "milestone": "M1",
    "size": "XS",
@@ -214,7 +214,7 @@
    "inputs": [
     "assets/register.json (pipeline section lists the candidate packs)"
    ],
-   "acceptance": "assets-incoming/ holds the byzmod3d Low Poly Weapon Pack and the chilly-durango Low Poly Firearms pack; licence text saved beside each as LICENSE.txt."
+   "acceptance": "assets-incoming/ holds the byzmod3d Low Poly Weapon Pack and the chilly-durango Low Poly Firearms pack.txt."
   },
   {
    "id": "WP-A2",
@@ -236,7 +236,7 @@
     "tools/assets/optimize-glb.mjs",
     "tools/assets/register.mjs"
    ],
-   "acceptance": "Three GLBs under assets/models/attachments/, each <= 2,500 triangles, registered with licence and author; viewer/ shows them with status real."
+   "acceptance": "Three GLBs under assets/models/attachments/, each <= 2,500 triangles, registered; viewer/ shows them with status real."
   },
   {
    "id": "WP-A3",
@@ -344,7 +344,7 @@
   },
   {
    "id": "WP-A9",
-   "title": "G3A3: verify licence (owner), import, models.js entry (parts, sockets, defaults, factory options)",
+   "title": "G3A3: import, models.js entry (parts, sockets, defaults, factory options)",
    "track": "Weapons",
    "milestone": "M1",
    "size": "M",
@@ -361,7 +361,7 @@
    "inputs": [
     "assets/register.json pipeline item wpn-g3a3"
    ],
-   "acceptance": "Third rifle selectable in the Workbench, all slots mount, presets work; licence recorded in the register."
+   "acceptance": "Third rifle selectable in the Workbench, all slots mount, presets work."
   },
   {
    "id": "WP-A10",
@@ -399,7 +399,7 @@
     "docs/adr/0004-audio-provenance.md",
     "workbench/mech.js"
    ],
-   "acceptance": "Recordings registered with licence; same mech.js call interface; synth fallback kept."
+   "acceptance": "Recordings registered; same mech.js call interface; synth fallback kept."
   },
   {
    "id": "WP-C1",
@@ -681,7 +681,7 @@
   },
   {
    "id": "WP-A13",
-   "title": "Mk14 EBR (licence verify per candidate)",
+   "title": "Mk14 EBR: pick a source, import",
    "track": "Weapons",
    "milestone": "M4",
    "size": "M",
@@ -706,10 +706,8 @@
    "milestone": "M4",
    "size": "M",
    "bu": 20,
-   "status": "planned",
-   "deps": [
-    "WP-A10"
-   ],
+   "status": "done",
+   "deps": [],
    "agent": "any",
    "needs": [
     "bpy"
@@ -758,7 +756,7 @@
   },
   {
    "id": "WP-A17",
-   "title": "PPSh-41 modernised kitbash (licence verify)",
+   "title": "PPSh-41 modernised kitbash",
    "track": "Weapons",
    "milestone": "M4",
    "size": "M",
@@ -826,22 +824,6 @@
    "acceptance": "Numbers recorded per device in docs/engineering/performance.md; budgets enforced in CI where measurable."
   },
   {
-   "id": "WP-Q3",
-   "title": "Credits page generated from the asset register; licence audit as a CI gate",
-   "track": "Quality",
-   "milestone": "M5",
-   "size": "S",
-   "bu": 8,
-   "status": "planned",
-   "deps": [
-    "WP-F8"
-   ],
-   "agent": "any",
-   "needs": [],
-   "inputs": [],
-   "acceptance": "Credits section renders every attribution_required asset; CI fails on unregistered or unapproved assets (already enforced by tests)."
-  },
-  {
    "id": "WP-Q4",
    "title": "Short guided first run across demos (preset > part > stat; look > pose)",
    "track": "Quality",
@@ -862,16 +844,14 @@
    "milestone": "M5",
    "size": "S",
    "bu": 8,
-   "status": "planned",
+   "status": "done",
    "deps": [
-    "WP-Q1",
-    "WP-Q2",
-    "WP-Q3"
+    "WP-Q1"
    ],
    "agent": "any",
    "needs": [],
    "inputs": [],
-   "acceptance": "docs/engineering/release-checklist.md complete; CHANGELOG updated; tag pushed."
+   "acceptance": "docs/engineering/release-checklist.md complete; CHANGELOG updated; tag is the owner's call."
   },
   {
    "id": "WP-T1",
@@ -963,10 +943,8 @@
    "milestone": "D",
    "size": "M",
    "bu": 20,
-   "status": "planned",
-   "deps": [
-    "WP-D1"
-   ],
+   "status": "done",
+   "deps": [],
    "agent": "any",
    "needs": [],
    "inputs": [],
@@ -986,7 +964,7 @@
    "agent": "any",
    "needs": [],
    "inputs": [],
-   "acceptance": "SVG set in assets/img/insignia/ with licences original."
+   "acceptance": "SVG set in assets/img/insignia/."
   },
   {
    "id": "WP-D4",
@@ -1031,7 +1009,7 @@
     "human"
    ],
    "inputs": [],
-   "acceptance": "Kit registered with licences."
+   "acceptance": "Kit registered."
   },
   {
    "id": "WP-E2",

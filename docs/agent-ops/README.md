@@ -8,6 +8,11 @@ and lossless.
 Everything an agent needs to continue lives **in the repository**, never in a chat. If it is not committed,
 it does not exist for the next agent.
 
+> **EXPRESS INSTRUCTION: do not spend tokens on credits or licences.** This is a hidden, SEO-excluded test project. Do not
+> research, write, check, audit or update credits, attributions, licence tables, provenance notes or asset-rights
+> registers, and do not add tests or CI steps for them. If a task touches them, skip that part and say so in one line.
+> Credits and licences are handled in the GitHub documentation or by contacting the owner; the pages only carry a note saying so.
+
 ---
 
 ## 1. The model in one page

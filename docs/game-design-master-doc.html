@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex"><meta name="googlebot" content="noindex, nofollow"><meta name="seo_hidden" content="true">
 <meta name="theme-color" content="#0d100c"><meta name="version" content="0.3.1">
 <title>Partisan Project | Field Handbook (Game Design Document)</title>
-<meta name="description" content="Partisan Project field handbook: the in-universe game design document with live demos, moodboard, roadmap and credits.">
+<meta name="description" content="Partisan Project field handbook: the in-universe game design document with live demos, moodboard, and roadmap.">
 <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
 <style>
 :root{
@@ -93,7 +93,7 @@ footer a{color:var(--olive)}
 <a class="skip" href="#main">Skip to content</a>
 <header class="bar"><div class="bar-in">
   <b>Partisan Project</b><span>Field handbook n°03 · v0.3.1</span>
-  <nav aria-label="Sections"><a href="#dispatches">Dispatches</a><a href="#pillars">Pillars</a><a href="#loud">Low poly and loud</a><a href="#operators">Operators</a><a href="#moodboard">Moodboard</a><a href="#roadmap">Roadmap</a><a href="#specs">Specs</a><a href="#credits">Credits</a><a href="../menu/">Index</a></nav>
+  <nav aria-label="Sections"><a href="#dispatches">Dispatches</a><a href="#pillars">Pillars</a><a href="#loud">Low poly and loud</a><a href="#design">Design</a><a href="#operators">Operators</a><a href="#moodboard">Moodboard</a><a href="#roadmap">Roadmap</a><a href="#specs">Specs</a><a href="../menu/">Index</a></nav>
   <button id="signal" aria-pressed="false" title="Render the images as a 1-bit dithered radio signal">Signal: clean</button>
 </div></header>
 
@@ -144,6 +144,34 @@ footer a{color:var(--olive)}
 <section id="loud" aria-labelledby="h-loud">
   <p class="eyebrow">Tone</p><h2 id="h-loud">Low poly and loud</h2>
   <p class="lede">Partisan uses a native three.js low-poly art style, but its animation and sound are inspired by hardcore milsim. Gunfights are loud and chaotic.</p>
+</section>
+
+<section id="design" aria-labelledby="h-design">
+  <p class="eyebrow">Design</p><h2 id="h-design">Core loop, progression and features</h2>
+  <p class="note"><b>Provisional</b> Setting canon (WP-D1) is undecided, so fiction-dependent details below are placeholders. Mechanics follow the pillars and the AI compendium.</p>
+  <h3 style="margin-top:20px">Core loop</h3>
+  <ol class="lede">
+    <li><b>Prepare</b>: build the loadout and operator in the customisers.</li>
+    <li><b>Infiltrate</b>: move through a small contested area, reading radio chatter and enemy calls.</li>
+    <li><b>Engage</b>: short, loud, chaotic fights where the enemy acts on what it believes it knows.</li>
+    <li><b>Withdraw</b>: leave with what you carried out; losses and finds feed the next preparation.</li>
+  </ol>
+  <h3 style="margin-top:20px">Progression</h3>
+  <p class="lede">Progress is access, not power: new slots and options unlock, while enemy knowledge and learning speed scale difficulty (pillar 4). Unlock order and economy are provisional.</p>
+  <h3 style="margin-top:20px">Feature matrix</h3>
+  <div style="overflow-x:auto"><table class="note" style="width:100%;border-collapse:collapse">
+    <thead><tr><th align="left">Feature</th><th align="left">State</th><th align="left">Where</th></tr></thead>
+    <tbody>
+      <tr><td>Weapon customiser (3 rifles, rails, stats, share codes)</td><td>Playable</td><td><a href="../workbench/">Workbench</a></td></tr>
+      <tr><td>Operator customiser, poses, secondary motion</td><td>Playable</td><td><a href="../operator/">Operator</a></td></tr>
+      <tr><td>Asset viewer with triangle budgets</td><td>Playable</td><td><a href="../viewer/">Viewer</a></td></tr>
+      <tr><td>Opening scene, advanced animations, music</td><td>Playable</td><td><a href="../intro/">Intro</a></td></tr>
+      <tr><td>Enemy belief model and callouts</td><td>Designed, not built</td><td>AI compendium</td></tr>
+      <tr><td>Missions, economy, factions</td><td>Provisional</td><td>Awaiting canon</td></tr>
+    </tbody>
+  </table></div>
+  <h3 style="margin-top:20px">AI in one paragraph</h3>
+  <p class="lede">Enemies hold beliefs about the player (last seen, likely routes, noise heard), act on them, and say what they are doing. Difficulty changes belief quality and learning rate, never health or aim. Full reasoning and the audience study: <a href="https://vincentdenil.com/docs/partisan-ai/">AI design compendium</a>.</p>
 </section>
 
 <section id="operators" aria-labelledby="h-operators">
@@ -208,7 +236,7 @@ footer a{color:var(--olive)}
     <div class="ms"><div><h3>M0 · Foundation <small>v0.3.0</small></h3></div><div class="pct">loading…</div></div>
   </div>
   <div class="row"><a class="btn" href="master-roadmap.html">Full master roadmap</a><a class="btn ghost" href="https://github.com/VincentDN/partisan-project/blob/main/docs/agent-ops/README.md">How the budget system works</a></div>
-  <p class="note"><b>Open decisions</b> (1) Setting canon: the earlier premise is Yantis, 2012, a prologue to a WW2044 timeline; the modern low-poly kit needs a reconciling decision. (2) Roster naming from the keyframes. (3) Licences: the purchased character pack's redistribution terms, two music tracks, and any exception for the SIG Spear. (4) When to drop <code>noindex</code>.</p>
+  <p class="note"><b>Open decisions</b> (1) Setting canon: the earlier premise is Yantis, 2012, a prologue to a WW2044 timeline; the modern low-poly kit needs a reconciling decision. (2) Roster naming from the keyframes. (3) Credits and licences: out of scope, see the GitHub documentation. (4) When to drop <code>noindex</code>.</p>
 </section>
 
 <section id="specs" aria-labelledby="h-specs">
@@ -228,24 +256,10 @@ footer a{color:var(--olive)}
   </table></div>
 </section>
 
-<section id="credits" aria-labelledby="h-credits">
-  <p class="eyebrow">Acknowledgements</p><h2 id="h-credits">Credits &amp; licences</h2>
-  <div class="scroll"><table>
-    <thead><tr><th>Asset</th><th>Author</th><th>Licence</th><th>Status</th></tr></thead>
-    <tbody id="credit-rows">
-      <tr><td>Rifles: AK-74M Zenitco and AK-15K</td><td><a href="https://sketchfab.com/DU1701">D_U</a></td><td>CC BY 4.0</td><td>real</td></tr>
-      <tr><td>Environment lighting: Quarry 01, Venice Sunset</td><td>Poly Haven</td><td>CC0</td><td>real</td></tr>
-      <tr><td>Base Operator</td><td>Purchased pack</td><td>Purchased (terms to be confirmed)</td><td>real</td></tr>
-      <tr><td>Music</td><td>Supplied by the project owner</td><td>Rights to be reconfirmed</td><td>real</td></tr>
-    </tbody>
-  </table></div>
-  <p>Rendering by <a href="https://threejs.org/">three.js</a> (MIT). Reference art on this page is credited beside each image and used for study only. The table above is rendered from <code>assets/register.json</code> when scripts are available.</p>
-</section>
-
 </main>
 
 <footer>
-  <p>Partisan Project · v0.3.1 · © 2026 Vincent De Nil, Atelier Vincent De Nil BV. All rights reserved except where an asset's own licence says otherwise.<br>
+  <p>Partisan Project · v0.3.1 · © 2026 Vincent De Nil, Atelier Vincent De Nil BV. <br>Credits and licences: see the documentation in the <a href="https://github.com/VincentDN/partisan-project">GitHub repository</a>, or contact the owner through GitHub.<br>
   <a href="../menu/">Index</a> · <a href="master-roadmap.html">Roadmap</a> · <a href="https://github.com/VincentDN/partisan-project">Source</a> · <a href="https://vincentdenil.com/projects/">AVDN projects</a></p>
 </footer>
 
@@ -268,13 +282,6 @@ try {
   }).join('');
   if (rows) $('#milestones').innerHTML = rows;
 } catch (e) { $('#milestones').innerHTML = '<p class="note"><b>Offline</b> Progress could not be loaded; see the master roadmap.</p>'; }
-
-// Credits from the asset register.
-try {
-  const reg = await (await fetch('../assets/register.json')).json();
-  const link = a => a.source?.startsWith('http') ? `<a href="${esc(a.source)}">${esc(a.label)}</a>` : esc(a.label);
-  $('#credit-rows').innerHTML = reg.assets.map(a => `<tr><td>${link(a)}</td><td>${esc(a.author || '')}</td><td>${esc(a.license)}</td><td>${esc(a.status)}</td></tr>`).join('');
-} catch (e) { /* static fallback stays */ }
 
 // "Signal" mode: render the figures as a 1-bit Bayer-dithered radio signal.
 const btn = $('#signal');

@@ -4,6 +4,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 ## [0.3.1] · 2026-10-01
 
+### Removed
+- **Credits page and licence audit** (ADR 0012): the Credits section of the design document, per-demo credit lists, the register audit tools and tests, `assets/REGISTER.md` and packet WP-Q3. Each place now says: credits and licences are in the GitHub documentation, or contact the owner. All agent instruction pages carry an express instruction not to spend tokens on credits or licences.
+
 ### Changed (round 5)
 - **Chiptune cover of *The Duce Puts On His Uniform*** (`assets/audio/duce-chiptune.mp3`, `tools/audio/chiptune-duce.py`), the same length and beat grid as the recording. The Nokia index switches the player to it with an equal-power crossfade; other pages fade back to the recording; the two never restart (`Music.setVariant`, `sound.variant`). `npm run test:audio` (also in CI) checks sync and the handover.
 - Nokia index blips are 50% louder.

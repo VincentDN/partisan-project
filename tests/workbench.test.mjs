@@ -102,16 +102,14 @@ test('presets from the Workbench parse as loadouts and survive the P1 code', () 
   }
 });
 
-test('every take in the foley manifest exists, is a WAV and is registered', async () => {
+test('every take in the foley manifest exists, is a WAV', async () => {
   const fs = await import('node:fs');
   const dir = 'assets/audio/foley',
-    manifest = JSON.parse(fs.readFileSync(`${dir}/manifest.json`, 'utf8')),
-    reg = JSON.parse(fs.readFileSync('assets/register.json', 'utf8')).assets.map(a => a.path);
+    manifest = JSON.parse(fs.readFileSync(`${dir}/manifest.json`, 'utf8'));
   assert.deepEqual(Object.keys(manifest).sort(), ['click', 'clunk', 'handle', 'hit', 'long', 'ratchet', 'slide']);
   for (const [cls, files] of Object.entries(manifest))
     for (const f of files) {
       const p = `${dir}/${cls}/${f}`;
       assert.equal(fs.readFileSync(p).subarray(0, 4).toString(), 'RIFF', p);
-      assert.ok(reg.includes(p), `${p} registered`);
     }
 });

@@ -20,7 +20,7 @@ import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
 // Real (downloaded, CC0 / CC BY) attachment parts. Replace a code-built `build` with
 //   build: glb('red-dot.glb', {position:[0,0,0], rotation:[0,0,0], scale:1})
 // where the file lives in assets/models/attachments/ (import it with tools/assets/import-asset.py,
-// register it with tools/assets/register.mjs). Geometry arrives asynchronously into an empty group,
+// add its budget to assets/register.json). Geometry arrives asynchronously into an empty group,
 // so the slot works immediately and the part pops in when loaded. Units: metres in slot space
 // (+x toward the muzzle, +y up, +z right side, origin at the mount point).
 const partLoader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);

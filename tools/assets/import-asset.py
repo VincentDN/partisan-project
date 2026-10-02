@@ -8,7 +8,7 @@ For weapons and attachments (kind=weapon|attachment):
 Usage:
   python tools/assets/import-asset.py --in assets-incoming/m16.obj --out build/m16.raw.glb --length 0.99 --auto-axis
 Then:   node tools/assets/optimize-glb.mjs build/m16.raw.glb assets/models/weapons/m16.glb
-Then:   node tools/assets/register.mjs add --id wpn-m16 --label "M16" --path assets/models/weapons/m16.glb ... --license CC0 ...
+Then:   add the model to workbench/models.js (and a budget entry in assets/register.json for the Asset Viewer)
 Needs the `bpy` package (pip install bpy), Python 3.11.
 """
 import argparse, sys, os, math

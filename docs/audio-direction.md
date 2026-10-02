@@ -26,8 +26,5 @@ Fabric rustle on pose change, buckle and velcro on equipment toggles, magazine s
 - Music and effects obey the single on/off control; reduced motion does not auto-start music.
 - Keep peak output safe: compressor on the master bus, music capped by the volume slider.
 
-## Provenance rules
-1. No audio ships without a row in `docs/assets/register.json` (`tools/assets` register tools check it in CI).
-2. Allowed: CC0, CC BY 4.0 (with credit in the design doc credits), original, owner-supplied with rights stated.
-3. Generated audio is not used as final provenance.
-4. Owner-supplied recordings are recorded as such; the owner confirms rights (tracked under WP-F8).
+## Provenance
+Not tracked here: credits and licences are covered by the GitHub documentation (express instruction in AGENTS.md).

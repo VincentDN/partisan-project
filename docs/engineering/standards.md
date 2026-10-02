@@ -6,7 +6,7 @@ The bar this project holds itself to. Items marked ▢ are not yet enforced auto
 
 - Acceptance criteria met by a **command** or a checkable fact, recorded in the commit body.
 - `npm test` green; `npm run build && npm run check` green; e2e smoke green when the change is visible.
-- No new console errors or warnings in the browser; no unregistered asset; no root-absolute URL.
+- No new console errors or warnings in the browser; no root-absolute URL.
 - Docs and data updated in the same change: `packets.json`, roadmap table (`roadmap-table.mjs`), `CHANGELOG.md` if user-visible, `docs/CODEMAP.md` if files moved.
 - Visual changes: a contact sheet is attached to the packet or committed under `docs/review/` (owner approves art).
 
@@ -40,7 +40,7 @@ colour is never the only carrier of a stat change (arrows and numbers accompany 
 
 | Layer | Tool | Where |
 |---|---|---|
-| Unit / data | `node --test` | `tests/*.test.mjs`: rig maths, poses vs skeleton, config consistency, dither, register audit, plan validity |
+| Unit / data | `node --test` | `tests/*.test.mjs`: rig maths, poses vs skeleton, config consistency, dither, plan validity |
 | Build | `build-site.mjs` + `check-site.mjs` | links, imports, import maps, size, base-path safety |
 | Browser | Playwright (`playwright-core`, system Chromium) | `tests/e2e/smoke.mjs`: each page loads, no console errors, state round-trips |
 | Visual | contact sheet + owner review | `tests/e2e/contact-sheet.mjs` |
@@ -53,7 +53,7 @@ No cookies, no analytics, no third-party requests at runtime. Optional analytics
 
 ## 7. Licensing and provenance
 
-CC0 / CC BY 4.0 downloads only unless the owner records an exception. Every shipped asset is in `assets/register.json` with licence, author and source; attribution is rendered from it. Purchased assets: keep raw sources out of the repo; record the licence terms. Reference screenshots (moodboard) are documentary, credited, and never used as runtime assets.
+Shipped models carry a triangle budget in `assets/register.json` (the Asset Viewer reads it). Credits and licences are out of scope for the tooling: see the GitHub documentation.
 
 ## 8. Versioning and releases
 

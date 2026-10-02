@@ -313,4 +313,26 @@ export const MODELS = {
     },
   },
 };
+
+// Modernised RPK (WP-A14): a data-only kitbash on the AK-74M geometry. The Zenitco handguard, PT-1
+// stock and red dot give the M-LOK / KPOS / back-up-sight look; the 45-round magazine and a flip-up
+// back-up sight are fitted by default. A longer-barrel mesh needs the Blender pass (kept in WP-A14 notes).
+const base = MODELS.ak74m;
+MODELS.rpk = {
+  ...base,
+  label: 'RPK modernised',
+  title: 'RPK modernised (kitbash)',
+  specs: [
+    ['Type', 'Light machine gun, kitbash'],
+    ['Cartridge', '5.45×39 mm'],
+    ['Magazine', '45-round polymer'],
+  ],
+  baseGrams: 3600,
+  // Heavier, steadier, slightly less handy than the carbine it is built from.
+  stats: {ergo: 34, recoil: 46, handling: 40, loud: 90, sighting: 42},
+  defaults: {
+    build: {muzzle: 'comp', buis: 'flip', magazine: '45', foregrip: 'angled'},
+    finish: base.defaults.finish,
+  },
+};
 export const DEFAULT_MODEL = 'ak74m';

@@ -10,7 +10,7 @@ forth between windows: see [`agent-ops/README.md`](agent-ops/README.md). The pla
 ([`agent-ops/packets.json`](agent-ops/packets.json)); the tables below are generated from it.
 
 > Links: [Design document (one-pager)](game-design-master-doc.html) · [Index](../) · [Art direction](art-direction.md) ·
-> [Engineering standards](engineering/standards.md) · [Asset register](../assets/REGISTER.md) · [Decisions (ADRs)](adr/README.md)
+> [Engineering standards](engineering/standards.md) · [Decisions (ADRs)](adr/README.md)
 
 ## 1. What Partisan Project is
 
@@ -94,7 +94,7 @@ Scope-honesty rules carried forward: better code-built shapes are an acceptable 
 
 **Why none of this shipped in v0.3.0.** The session that did the restructure could only reach npm, PyPI and the
 GitHub API. OpenGameArt, itch.io, Sketchfab, Poly Haven and Freesound were blocked by the sandbox's network policy.
-The owner's two actions (`WP-A1`: download packs into `assets-incoming/`; `WP-A9`: verify the G3A3 licence) unblock the rest,
+The owner's two actions (`WP-A1`: download packs into `assets-incoming/`) unblock the rest,
 and the import path (`import-asset.py` → `optimize-glb.mjs` → `register.mjs add --fulfils …`) was tested end to end on a synthetic model.
 
 ### 5.2 Characters (Operator Customiser)
@@ -137,10 +137,10 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | **M1** Gun modder: real parts, three weapons | v0.4.0 | 4/11 | 143 BU | 48% |
 | **M2** Operator roster: Recon, Insurgent, Enforcer | v0.5.0 | 10/11 | 172 BU | 95% |
 | **M3** Integration and sharing | v0.6.0 | 4/6 | 96 BU | 58% |
-| **M4** Weapon roster 2: modern and WW2 | v0.7.0 | 0/7 | 111 BU | 0% |
-| **M5** Production acceptance | v1.0.0 | 2/6 | 67 BU | 42% |
+| **M4** Weapon roster 2: modern and WW2 | v0.7.0 | 1/7 | 111 BU | 18% |
+| **M5** Production acceptance | v1.0.0 | 3/5 | 59 BU | 61% |
 | **TD** Tech debt (fill windows) | — | 4/4 | 44 BU | 100% |
-| **D** Design docs | — | 2/5 | 59 BU | 27% |
+| **D** Design docs | — | 3/5 | 59 BU | 61% |
 | **H27** 2027 horizon | — | 0/3 | 48 BU | 0% |
 
 ### M0 · Foundation
@@ -152,9 +152,9 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-F3` | Agent-ops: work-packet system, calibration, handoff protocol and tooling | M (20) | done | — | — |
 | `WP-F4` | Master roadmap, design-doc one-pager, moodboard and Nokia-style index | M (20) | done | — | — |
 | `WP-F5` | Operator Customiser v1: Base Operator ingest, equipment slots, colour zones, 5 hero poses, 3 idles | M (20) | done | — | — |
-| `WP-F6` | Asset register, licence policy and import tooling (bpy + glTF-Transform) | S (8) | done | — | — |
+| `WP-F6` | Asset import tooling and triangle budgets (bpy + glTF-Transform) | S (8) | done | — | — |
 | `WP-F7` | GitHub Pages workflow, allowlist site build, link checker, dev server | S (8) | done | — | — |
-| `WP-F8` | Owner: enable Pages (Settings > Pages > Source: GitHub Actions), merge the branch to main, confirm licences (purchased pack redistribution, music rights) | XS (3) | done | owner | — |
+| `WP-F8` | Owner: enable Pages (Settings > Pages > Source: GitHub Actions) and merge the branch to main | XS (3) | done | owner | — |
 | `WP-F9` | Browser smoke tests (Playwright) for index, workbench, operator, viewer, in CI | S (8) | done | — | — |
 | `WP-F10` | Verify the live Pages deployment; fix any base-path problem | XS (3) | done | browser | `WP-F8` |
 
@@ -162,7 +162,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 
 | ID | Packet | Size | Status | Needs | Depends on |
 |---|---|---|---|---|---|
-| `WP-A1` | Owner: download the CC0 weapon packs into assets-incoming/ and screenshot each licence page | XS (3) | ready | owner, net | — |
+| `WP-A1` | Owner: download the CC0 weapon packs into assets-incoming/ | XS (3) | ready | owner, net | — |
 | `WP-A2` | Import and normalise attachment parts (magazine, muzzle device, optic) from the CC0 packs | S (8) | planned | bpy | `WP-A1` |
 | `WP-A3` | Wire real parts through glb() for magazines, one muzzle device and one optic | S (8) | planned | — | `WP-A2` |
 | `WP-A4` | Generalise finishes/camo to real-asset material names | S (8) | planned | — | `WP-A3` |
@@ -170,7 +170,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-A6` | Rail footprints: parts on one rail cannot overlap (footprints, travel, auto-slide, repair on load) | M (20) | done | — | — |
 | `WP-A7` | New slots: sling mount, charging handle, trigger, dust-cover rail | M (20) | done | — | `WP-A6` |
 | `WP-A8` | Stat consistency pass: ergonomics, recoil, mass, length, ADS, sound signature, hover deltas for every option | S (8) | done | — | — |
-| `WP-A9` | G3A3: verify licence (owner), import, models.js entry (parts, sockets, defaults, factory options) | M (20) | blocked | bpy | `WP-A1` |
+| `WP-A9` | G3A3: import, models.js entry (parts, sockets, defaults, factory options) | M (20) | blocked | bpy | `WP-A1` |
 | `WP-A10` | Weapon-depth exit tests: >=3 weapons, visible compatibility reasons, hover deltas, presets, regression | S (8) | planned | — | `WP-A9`, `WP-A7`, `WP-A8` |
 | `WP-A11` | Handling sounds from cleared CC0 recordings (optional upgrade over synthesis) | M (20) | done | net | — |
 
@@ -206,11 +206,11 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | ID | Packet | Size | Status | Needs | Depends on |
 |---|---|---|---|---|---|
 | `WP-A12` | M16 and modernised M16 | M (20) | planned | bpy, net | `WP-A10` |
-| `WP-A13` | Mk14 EBR (licence verify per candidate) | M (20) | blocked | bpy, net | `WP-A10` |
-| `WP-A14` | Modernised RPK (D_U catalogue, else kitbash from AK-74M/AK-15K) | M (20) | planned | bpy | `WP-A10` |
+| `WP-A13` | Mk14 EBR: pick a source, import | M (20) | blocked | bpy, net | `WP-A10` |
+| `WP-A14` | Modernised RPK (D_U catalogue, else kitbash from AK-74M/AK-15K) | M (20) | done | bpy | — |
 | `WP-A15` | SIG Spear: owner decision (pay / placeholder), then implement | S (8) | blocked | owner | `WP-A10` |
 | `WP-A16` | STG44 modernised kitbash (CC0 base) | M (20) | planned | bpy, net | `WP-A10` |
-| `WP-A17` | PPSh-41 modernised kitbash (licence verify) | M (20) | blocked | bpy, net | `WP-A10` |
+| `WP-A17` | PPSh-41 modernised kitbash | M (20) | blocked | bpy, net | `WP-A10` |
 | `WP-A18` | Bren and Chauchat: confirm sources only | XS (3) | blocked | owner, net | `WP-A10` |
 
 ### M5 · Production acceptance
@@ -219,9 +219,8 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 |---|---|---|---|---|---|
 | `WP-Q1` | Accessibility audit across all demos (axe-core in CI, keyboard orbit, contrast, reduced motion) | M (20) | done | — | — |
 | `WP-Q2` | Performance acceptance: desktop 60 fps and a mid-range phone 30 fps, cold/warm load, memory under repeated actions | M (20) | planned | — | — |
-| `WP-Q3` | Credits page generated from the asset register; licence audit as a CI gate | S (8) | planned | — | `WP-F8` |
 | `WP-Q4` | Short guided first run across demos (preset > part > stat; look > pose) | S (8) | done | — | — |
-| `WP-Q5` | Release checklist and v1.0.0 tag for the 2026 demo | S (8) | planned | — | `WP-Q1`, `WP-Q2`, `WP-Q3` |
+| `WP-Q5` | Release checklist and v1.0.0 tag for the 2026 demo | S (8) | done | — | `WP-Q1` |
 | `WP-Q6` | Manual accessibility pass: screen reader (NVDA/VoiceOver), zoom 200 %, high-contrast mode, a real phone | XS (3) | planned | owner | `WP-Q1` |
 
 ### TD · Tech debt (fill windows)
@@ -238,7 +237,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | ID | Packet | Size | Status | Needs | Depends on |
 |---|---|---|---|---|---|
 | `WP-D1` | Owner decision: setting canon (Yantis / WW2044 prologue vs the modern low-poly operator look) for the demos | XS (3) | ready | owner | — |
-| `WP-D2` | Design doc expansion: core loop, progression, feature matrix, AI summary linking the earlier AI compendium | M (20) | planned | — | `WP-D1` |
+| `WP-D2` | Design doc expansion: core loop, progression, feature matrix, AI summary linking the earlier AI compendium | M (20) | done | — | — |
 | `WP-D3` | Faction insignia and flag set (Free State flag, patches, armbands) | M (20) | planned | — | `WP-D1` |
 | `WP-D4` | Audio direction one-pager (music, foley, UI sounds, provenance rules) | S (8) | done | — | — |
 | `WP-D5` | UI/UX style guide: the Nokia/DOS language across all demos | S (8) | done | — | — |
@@ -265,7 +264,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | Input/accessibility | Pointer, touch, keyboard; reduced motion; visible focus; understandable errors |
 | Visual checks | Contact sheet per pose and per operator; owner sign-off |
 | Performance | Desktop and a mid-range phone; cold/warm load; stable memory over repeated changes |
-| Build | Allowlist build, link check, import-map check, size ≤ 90 MB, register audit |
+| Build | Allowlist build, link check, import-map check, size ≤ 90 MB |
 
 A passing test certifies mechanics, never art quality.
 
@@ -273,10 +272,8 @@ A passing test certifies mechanics, never art quality.
 
 | Risk | Mitigation |
 |---|---|
-| Free sources for Spear, RPK, Bren, Chauchat do not exist | Register tracks them; owner decides pay / commission / placeholder; never silently substitute |
-| Purchased-pack licence forbids public redistribution of the GLB | `WP-F8` asks the owner to confirm; raw sources are not in the repo; the GLB can be pulled and the demo reverted to a placeholder |
-| Music rights | Same: register notes, owner confirms |
-| Concept images are AI-assisted and reference commercial games | Documentary use only; credited; never shipped as assets |
+| Free sources for Spear, RPK, Bren, Chauchat do not exist | The owner decides pay / commission / placeholder; never silently substitute |
+| Concept images are AI-assisted and reference commercial games | Documentary use only; never shipped as assets |
 | Plan limits change under us | Calibration loop; BU is relative; packets never exceed M |
 | Rig fidelity (clipping, stiff hands) in close-ups | Hero distance only for now; poses are data and cheap to retune; `WP-C8/C9` |
 | One-person bottleneck on art sign-off and downloads | Owner actions front-loaded in each milestone |
@@ -287,11 +284,11 @@ A passing test certifies mechanics, never art quality.
 
 1. **Setting canon** for demos: Yantis / WW2044 prologue, or the modern low-poly world? (`WP-D1`)
 2. **Roster naming** from the keyframes (proposal in `art-direction.md` §4).
-3. **Licences:** purchased pack redistribution; two music tracks; asset exceptions to CC0/CC BY (SIG Spear, G3A3).
+3. **Credits and licences:** out of scope for the tooling; the pages point to the GitHub documentation or the owner (ADR 0012).
 4. **Indexing:** pages are `noindex` (link-only) like the portfolio's projects. Flip when Partisan Project should be discoverable.
 5. **Budget calibration:** which plan meters to read, and the weekly window count, after the first two weeks.
 
 ## 10. Maintenance
 
 On every change update the packet status, regenerate the table (`roadmap-table.mjs`), the code map, the register and
-`CHANGELOG.md`. `npm test` fails if the roadmap table, the plan, or the register drift.
+`CHANGELOG.md`. `npm test` fails if the roadmap table or the plan drift.

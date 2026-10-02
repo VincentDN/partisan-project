@@ -52,7 +52,7 @@ export const ITEMS = [
     help: 'Art direction: character sheets, keyframes, palette.',
   },
   {label: 'Sound', action: 'sound', icon: px('0010001110111110011100100'), help: 'Toggle the background music (shared across all demos).'},
-  {label: 'About', action: 'about', icon: px('0010000000001000010000100'), help: 'Version, source repository, credits.'},
+  {label: 'About', action: 'about', icon: px('0010000000001000010000100'), help: 'Version and source repository.'},
   {
     label: 'AVDN Projects',
     href: 'https://vincentdenil.com/projects/',

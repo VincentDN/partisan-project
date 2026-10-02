@@ -362,10 +362,10 @@ await check('viewer: lists registered models and reports triangles and licence',
   await page.close();
 });
 
-await check('design doc: sections, live progress and credits render', async () => {
+await check('design doc: sections and live progress render', async () => {
   const page = await open(browser, server.url + 'docs/game-design-master-doc.html');
   await page.waitForFunction(() => document.querySelectorAll('#milestones .ms').length >= 4, null, {timeout: 15000});
-  assert.ok((await page.locator('#credit-rows tr').count()) >= 4);
+  assert.equal(await page.locator('#credits').count(), 0, 'no credits section');
   await page.click('#signal');
   await page.waitForSelector('.frame canvas', {timeout: 15000});
   noProblems(page);

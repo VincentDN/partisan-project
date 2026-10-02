@@ -10,7 +10,7 @@ casual-friendly resistance shooter. Live site (after the one-time Pages setup in
 | **Operator Modder** | Base Operator: equipment slots, colour zones, 10 poses (hero, ready, crouch, kneel, salute…), 3 idles, shareable looks | [`operator/`](operator/) |
 | **Weapon Workbench** | AK-74M / AK-15K, 12 attachment slots (rail-aware), stats, rules, finishes, wear, photo | [`workbench/`](workbench/) |
 | Asset Viewer | Inspect registered GLBs against triangle and licence budgets | [`viewer/`](viewer/) |
-| Design document | In-universe one-pager: pillars, dispatches, operators, moodboard, specs, credits | [`docs/game-design-master-doc.html`](docs/game-design-master-doc.html) |
+| Design document | In-universe one-pager: pillars, dispatches, operators, moodboard, specs | [`docs/game-design-master-doc.html`](docs/game-design-master-doc.html) |
 | Master roadmap | Milestones and ~60 work packets sized for $20 AI plans | [`docs/master-roadmap.md`](docs/master-roadmap.md) |
 | Opening scene | The workbench at night: your rifle on the table, the old radio; leads to the customiser and the advanced animations test | [`intro/`](intro/) |
 | Vincent to-do | What only you can do (Pages, licences, decisions) | [`docs/vincent-todo.md`](docs/vincent-todo.md) |
@@ -20,7 +20,7 @@ casual-friendly resistance shooter. Live site (after the one-time Pages setup in
 ```sh
 npm ci                 # dev tools only; the site has no runtime dependencies
 npm run serve          # http://localhost:8123/   (ES modules need http, not file://)
-npm test               # unit, plan, register and site-build tests
+npm test               # unit, plan and site-build tests
 npm run build && npm run check     # build _site/ and verify every link
 npm run test:e2e       # headless-browser smoke test (CHROMIUM=/path/to/chrome if needed)
 ```
@@ -49,7 +49,7 @@ node   tools/assets/optimize-glb.mjs build/thing.raw.glb assets/models/weapons/t
 node   tools/assets/register.mjs add --id … --label … --path assets/models/weapons/thing.glb --kind weapon \
        --license CC0 --author … --source https://… --fulfils wpn-m16
 ```
-Only CC0 / CC BY 4.0 are accepted by the tool. The register feeds the credits and the build audit.
+Credits and licences are not tracked in the repository's tooling: see the GitHub documentation or contact the owner.
 
 ## Licence
 
