@@ -19,3 +19,25 @@ test('no .blend or .fbx source files are tracked in the shipped folders', () => 
   walk('.');
   assert.deepEqual(bad, []);
 });
+
+test('the Sketchfab importer scales to real size, keeps weapon units for the Workbench, and maps nodes', async () => {
+  const os = await import('node:os');
+  const fs = await import('node:fs');
+  const path = await import('node:path');
+  const {importSource, DU_SCALE} = await import('../tools/assets/import-sketchfab.mjs');
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'sf-'));
+  fs.mkdirSync(path.join(tmp, 'in', 'x'), {recursive: true});
+  fs.copyFileSync('assets/models/weapons/ak-74m-zenitco.glb', path.join(tmp, 'in', 'x', 'scene.glb'));
+  const opts = {inDir: path.join(tmp, 'in'), outRoot: path.join(tmp, 'out'), register: null};
+  const du = await importSource({id: 'x', name: 'stand-in', unit: 'du', dir: 'weapons'}, opts);
+  assert.equal(du.size, 0.943, 'D_U units: the AK-74M comes out at its real 943 mm');
+  assert.equal(du.scale, +DU_SCALE.toPrecision(6), 'weapons keep source units; the models.js scale is printed');
+  assert.ok(
+    du.tree.some(l => l.includes('ak74m receiver')),
+    'node names survive for part mapping',
+  );
+  const prop = await importSource({id: 'x', name: 'stand-in', length: 2, dir: 'props'}, opts);
+  assert.equal(prop.size, 2);
+  assert.equal(prop.scale, 1, 'props get their real size baked in');
+  fs.rmSync(tmp, {recursive: true, force: true});
+});
