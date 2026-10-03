@@ -41,3 +41,16 @@ test('the Sketchfab importer scales to real size, keeps weapon units for the Wor
   assert.equal(prop.scale, 1, 'props get their real size baked in');
   fs.rmSync(tmp, {recursive: true, force: true});
 });
+
+test('outbound/sketchfab-download.py is the current standalone build of the downloader and its model list', async () => {
+  const fs = await import('node:fs');
+  const {build} = await import('../tools/assets/build-outbound-downloader.mjs');
+  assert.equal(
+    fs.readFileSync('outbound/sketchfab-download.py', 'utf8'),
+    build(),
+    'stale: run node tools/assets/build-outbound-downloader.mjs',
+  );
+  const {sources} = JSON.parse(fs.readFileSync('tools/assets/sketchfab-sources.json', 'utf8'));
+  assert.ok(sources.length >= 39);
+  for (const s of sources) assert.match(s.uid, /^[0-9a-f]{32}$/, `${s.id}: bad uid`);
+});
