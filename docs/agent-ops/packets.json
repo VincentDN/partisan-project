@@ -2057,6 +2057,27 @@
     "docs/design-decisions/I-graphics.md"
    ],
    "acceptance": "Doc renders; links work."
+  },
+  {
+   "id": "WP-CG1",
+   "title": "Generated Recon: import split model, fit animation rig and expose modular equipment",
+   "track": "Characters",
+   "milestone": "M2",
+   "size": "M",
+   "bu": 20,
+   "status": "done",
+   "deps": [],
+   "agent": "any",
+   "needs": [
+    "bpy",
+    "browser"
+   ],
+   "inputs": [
+    "inbound/Models/PARP_Recon_hooded_model_splitparts_v01_05.glb",
+    "operator/config.js",
+    "operator/poses.json"
+   ],
+   "acceptance": "Generated Recon loads from its own GLB below 15000 triangles; both hands remain visible, equipment and colours are independent, all poses/idles deform finite geometry, reduced motion and URL reload work. node --test tests/generated-recon.test.mjs tests/operator-config.test.mjs; node tests/e2e/generated-recon.mjs"
   }
  ]
 }

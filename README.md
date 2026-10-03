@@ -23,6 +23,7 @@ npm run serve          # http://localhost:8123/   (ES modules need http, not fil
 npm test               # unit, plan and site-build tests
 npm run build && npm run check     # build _site/ and verify every link
 npm run test:e2e       # headless-browser smoke test (CHROMIUM=/path/to/chrome if needed)
+npm run test:operator  # generated operator geometry, equipment, animation and browser checks
 ```
 
 ## Layout

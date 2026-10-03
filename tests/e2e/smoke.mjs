@@ -136,7 +136,7 @@ await check('operator: loads, equipment toggles, zones are independent, hash rou
   // roster switching keeps working (reload the same base) and resets looks to the base defaults
   await page.evaluate(() => window.PARP_OPERATOR.switchBase('base'));
   assert.equal(await page.evaluate(() => window.PARP_OPERATOR.state.head), 'nvg');
-  assert.equal(await page.locator('#roster button').count(), 4, 'Base, Recon, Insurgent, Enforcer in the roster');
+  assert.equal(await page.locator('#roster button').count(), 5, 'Base, Recon, Insurgent, Enforcer and Generated Recon in the roster');
   // pose + weapon prop
   await page.evaluate(() => {
     window.PARP_OPERATOR.set('weapon', 'ak74m');

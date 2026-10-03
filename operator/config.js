@@ -5,6 +5,8 @@
 // materials inside them (a node can carry several primitives, e.g. the helmet shell and its headset).
 // A *slot* lists mutually exclusive options; each option says which parts are visible.
 
+import {generatedRecon} from './generated-recon.js';
+
 export const PARTS = {
   helmet: {nodes: ['SK_Helmet'], materials: ['M_Helmet_Frame', 'M_Helmet', 'M_Mask_Strap']},
   headset: {nodes: ['SK_Helmet'], materials: ['M_Helmet_Headphone']},
@@ -581,6 +583,8 @@ BASES.enforcer = {
   defaults: {pose: 'hero'},
   status: 'available',
 };
+
+BASES['generated-recon'] = generatedRecon(SLOTS.find(s => s.id === 'weapon'));
 
 export const ROSTER = [
   ...Object.values(BASES).map(b => ({id: b.id, label: b.label, status: b.status})),

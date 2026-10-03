@@ -1,0 +1,315 @@
+{
+ "generated": "2026-10-03",
+ "triangles": 11253,
+ "bones": [
+  "root",
+  "pelvis",
+  "spine_01",
+  "spine_02",
+  "spine_03",
+  "spine_04",
+  "neck_01",
+  "neck_02",
+  "neck_03",
+  "head",
+  "clavicle_r",
+  "upperarm_r",
+  "lowerarm_r",
+  "hand_r",
+  "clavicle_l",
+  "upperarm_l",
+  "lowerarm_l",
+  "hand_l",
+  "thigh_r",
+  "calf_r",
+  "foot_r",
+  "ball_r",
+  "thigh_l",
+  "calf_l",
+  "foot_l",
+  "ball_l"
+ ],
+ "meshes": [
+  {
+   "node": "SK_GR_BackPouch",
+   "triangles": 210,
+   "materials": [
+    "M_GR_rig"
+   ]
+  },
+  {
+   "node": "SK_GR_BeltPouch",
+   "triangles": 262,
+   "materials": [
+    "M_GR_rig"
+   ]
+  },
+  {
+   "node": "SK_GR_Boot_L",
+   "triangles": 270,
+   "materials": [
+    "M_GR_boots"
+   ]
+  },
+  {
+   "node": "SK_GR_Boot_R",
+   "triangles": 252,
+   "materials": [
+    "M_GR_boots"
+   ]
+  },
+  {
+   "node": "SK_GR_Carabiner",
+   "triangles": 76,
+   "materials": [
+    "M_GR_gear"
+   ]
+  },
+  {
+   "node": "SK_GR_Cuff_R",
+   "triangles": 124,
+   "materials": [
+    "M_GR_gloves"
+   ]
+  },
+  {
+   "node": "SK_GR_Eyes",
+   "triangles": 70,
+   "materials": [
+    "M_GR_eyes"
+   ]
+  },
+  {
+   "node": "SK_GR_Glove_L",
+   "triangles": 258,
+   "materials": [
+    "M_GR_gloves"
+   ]
+  },
+  {
+   "node": "SK_GR_Glove_R",
+   "triangles": 258,
+   "materials": [
+    "M_GR_gloves"
+   ]
+  },
+  {
+   "node": "SK_GR_Harness",
+   "triangles": 597,
+   "materials": [
+    "M_GR_rig"
+   ]
+  },
+  {
+   "node": "SK_GR_HipPouch",
+   "triangles": 188,
+   "materials": [
+    "M_GR_rig"
+   ]
+  },
+  {
+   "node": "SK_GR_Holster",
+   "triangles": 339,
+   "materials": [
+    "M_GR_gear"
+   ]
+  },
+  {
+   "node": "SK_GR_Hood",
+   "triangles": 660,
+   "materials": [
+    "M_GR_hood"
+   ]
+  },
+  {
+   "node": "SK_GR_Jacket",
+   "triangles": 1923,
+   "materials": [
+    "M_GR_top"
+   ]
+  },
+  {
+   "node": "SK_GR_Knee_L",
+   "triangles": 74,
+   "materials": [
+    "M_GR_gear"
+   ]
+  },
+  {
+   "node": "SK_GR_Knee_R",
+   "triangles": 70,
+   "materials": [
+    "M_GR_gear"
+   ]
+  },
+  {
+   "node": "SK_GR_MagPouches",
+   "triangles": 210,
+   "materials": [
+    "M_GR_rig"
+   ]
+  },
+  {
+   "node": "SK_GR_Neck",
+   "triangles": 48,
+   "materials": [
+    "M_GR_hood"
+   ]
+  },
+  {
+   "node": "SK_GR_Radio",
+   "triangles": 70,
+   "materials": [
+    "M_GR_gear"
+   ]
+  },
+  {
+   "node": "SK_GR_RadioBadge",
+   "triangles": 70,
+   "materials": [
+    "M_GR_badge"
+   ]
+  },
+  {
+   "node": "SK_GR_Scarf",
+   "triangles": 434,
+   "materials": [
+    "M_GR_scarf"
+   ]
+  },
+  {
+   "node": "SK_GR_ShoulderTab",
+   "triangles": 70,
+   "materials": [
+    "M_GR_gear"
+   ]
+  },
+  {
+   "node": "SK_GR_Sleeve_L",
+   "triangles": 798,
+   "materials": [
+    "M_GR_top"
+   ]
+  },
+  {
+   "node": "SK_GR_Sleeve_R",
+   "triangles": 718,
+   "materials": [
+    "M_GR_top"
+   ]
+  },
+  {
+   "node": "SK_GR_Trousers_L",
+   "triangles": 1361,
+   "materials": [
+    "M_GR_pants"
+   ]
+  },
+  {
+   "node": "SK_GR_Trousers_R",
+   "triangles": 1619,
+   "materials": [
+    "M_GR_pants"
+   ]
+  },
+  {
+   "node": "SK_GR_UtilityPouch",
+   "triangles": 224,
+   "materials": [
+    "M_GR_rig"
+   ]
+  }
+ ],
+ "materials": [
+  {
+   "name": "M_GR_rig",
+   "baseColor": [
+    0.076,
+    0.091,
+    0.044
+   ],
+   "textured": false
+  },
+  {
+   "name": "M_GR_boots",
+   "baseColor": [
+    0.036,
+    0.042,
+    0.03
+   ],
+   "textured": false
+  },
+  {
+   "name": "M_GR_gear",
+   "baseColor": [
+    0.03,
+    0.04,
+    0.025
+   ],
+   "textured": false
+  },
+  {
+   "name": "M_GR_gloves",
+   "baseColor": [
+    0.053,
+    0.065,
+    0.04
+   ],
+   "textured": false
+  },
+  {
+   "name": "M_GR_eyes",
+   "baseColor": [
+    0.019,
+    0.026,
+    0.017
+   ],
+   "textured": false
+  },
+  {
+   "name": "M_GR_hood",
+   "baseColor": [
+    0.136,
+    0.165,
+    0.117
+   ],
+   "textured": false
+  },
+  {
+   "name": "M_GR_top",
+   "baseColor": [
+    0.141,
+    0.171,
+    0.13
+   ],
+   "textured": false
+  },
+  {
+   "name": "M_GR_badge",
+   "baseColor": [
+    0.571,
+    0.216,
+    0.041
+   ],
+   "textured": false
+  },
+  {
+   "name": "M_GR_scarf",
+   "baseColor": [
+    0.361,
+    0.347,
+    0.254
+   ],
+   "textured": false
+  },
+  {
+   "name": "M_GR_pants",
+   "baseColor": [
+    0.087,
+    0.098,
+    0.061
+   ],
+   "textured": false
+  }
+ ]
+}
