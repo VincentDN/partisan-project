@@ -6,6 +6,7 @@ import {Sim} from './sim.js';
 import {WEAPONS} from './weapons.js';
 import {LEVELS, MISSIONS, DEFAULT_LEVEL} from './levels/index.js';
 import {createSquadPicker} from './squad-picker.js';
+import {createSoundscape} from './soundscape.js';
 import {createSpriteRenderer} from './sprite-render.js';
 import {COSMETICS, buildPawn, lookFor, saveLook, resetLook, savedLook} from './sprite-art.js';
 
@@ -41,7 +42,7 @@ function newGame() {
   $('#start').textContent = 'Start';
   renderMissions();
   $('#card').hidden = false;
-  $('#to-3d').href = `./?mission=${levelId}`;
+  $('#to-3d').href = `3d.html?mission=${levelId}`;
   renderLook();
 }
 function renderMissions() {
@@ -61,6 +62,32 @@ function renderMissions() {
     }),
   );
 }
+// Sound: opened by the first key or click (browsers keep audio shut until then); M or the button mutes it.
+const sound = createSoundscape();
+const soundButton = () => {
+  const b = $('#sound');
+  if (!b) return;
+  b.textContent = sound.on ? 'Sound on (M)' : 'Sound off (M)';
+  b.setAttribute('aria-pressed', String(sound.on));
+};
+addEventListener('pointerdown', () => sound.unlock(), {capture: true});
+addEventListener(
+  'keydown',
+  e => {
+    sound.unlock();
+    if (e.key.toLowerCase() === 'm' && !e.repeat && !e.target.closest?.('input, textarea')) {
+      sound.setOn(!sound.on);
+      soundButton();
+    }
+  },
+  {capture: true},
+);
+$('#sound')?.addEventListener('click', () => {
+  sound.setOn(!sound.on);
+  soundButton();
+});
+soundButton();
+
 function start() {
   started = true;
   $('#card').hidden = true;
@@ -402,6 +429,7 @@ function frame() {
     showDebrief(sim.debrief());
     $('#card').hidden = false;
   }
+  sound.update(sim, {paused, scale: picker.scale, dt: elapsed});
   R.draw(sim, {aim: started ? aimPoint() : null, selected});
   if (now - panelAt > 120) {
     panelAt = now;
@@ -420,5 +448,6 @@ window.PARP_SPRITES = {
   renderer: R,
   start,
   newGame,
+  sound,
   ready: true,
 };

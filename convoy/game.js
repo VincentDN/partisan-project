@@ -8,6 +8,7 @@ import {Sim} from './sim.js';
 import {WEAPONS, ROLES} from './weapons.js';
 import {LEVELS, MISSIONS, DEFAULT_LEVEL} from './levels/index.js';
 import {createSquadPicker} from './squad-picker.js';
+import {createSoundscape} from './soundscape.js';
 import {bestBelief} from './ai.js';
 
 mountTopBar({title: 'Partisan Tactical', scene: 'viewer'});
@@ -441,6 +442,32 @@ function renderMissions() {
     }),
   );
 }
+// Sound: opened by the first key or click (browsers keep audio shut until then); M or the button mutes it.
+const sound = createSoundscape();
+const soundButton = () => {
+  const b = $('#sound');
+  if (!b) return;
+  b.textContent = sound.on ? 'Sound on (M)' : 'Sound off (M)';
+  b.setAttribute('aria-pressed', String(sound.on));
+};
+addEventListener('pointerdown', () => sound.unlock(), {capture: true});
+addEventListener(
+  'keydown',
+  e => {
+    sound.unlock();
+    if (e.key.toLowerCase() === 'm' && !e.repeat && !e.target.closest?.('input, textarea')) {
+      sound.setOn(!sound.on);
+      soundButton();
+    }
+  },
+  {capture: true},
+);
+$('#sound')?.addEventListener('click', () => {
+  sound.setOn(!sound.on);
+  soundButton();
+});
+soundButton();
+
 function start() {
   started = true;
   $('#card').hidden = true;
@@ -927,6 +954,7 @@ renderer.setAnimationLoop(() => {
     showDebrief(sim.debrief());
     $('#card').hidden = false;
   }
+  sound.update(sim, {paused, scale: picker.scale, dt: elapsed});
   draw();
   renderer.render(scene, camera);
 });
@@ -943,5 +971,6 @@ window.PARP_CONVOY = {
   newGame,
   toggleAi,
   openSwap: () => picker.open(),
+  sound,
   ready: true,
 };

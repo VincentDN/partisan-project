@@ -80,6 +80,8 @@ export class Sim {
     this.tracers = []; // {x0,z0,x1,z1,side,weapon,t}
     this.explosions = []; // {x,z,r,t}
     this.callouts = []; // {id, name, side, text, t}
+    // Sound events for the soundscape (convoy/soundscape.js drains them each frame): {type, x, z, t, ...}.
+    this.sounds = [];
     this.messages = []; // comms in flight: {at, to, belief, from}
     this.squad = {contactSince: Infinity, flanking: false, retreating: false, nextThink: 0};
     this.objectives = initObjectives(this.level);
@@ -250,8 +252,15 @@ export class Sim {
     if (this.callouts.some(c => c.side === u.side && c.text === text && this.time - c.t < 2.5)) return false;
     u.said[key] = this.time;
     this.callouts.push({id: u.id, name: u.name, side: u.side, text, t: this.time});
+    this.sound({type: 'say', x: u.x, z: u.z, side: u.side, key, radio: u.role === 'rto', unit: u.id});
     if (this.callouts.length > 60) this.callouts.shift();
     return true;
+  }
+
+  /** Queue a sound event (shot, impact, explode, reload, death, ...); capped so a headless run never grows it. */
+  sound(e) {
+    this.sounds.push({...e, t: this.time});
+    if (this.sounds.length > 400) this.sounds.splice(0, this.sounds.length - 400);
   }
 
   /** One soldier becomes alert: a moment of surprise first; in a global alarm everyone does at once. */
@@ -353,6 +362,7 @@ export class Sim {
   raiseAlarm(by) {
     if (this.alarm) return;
     this.alarm = true;
+    this.sound({type: 'alarm', x: by?.x ?? 0, z: by?.z ?? 0});
     this.alarmAt = this.time;
     for (const v of this.vehicles) {
       v.stopped = true;
@@ -375,6 +385,7 @@ export class Sim {
     u.reload = W.reload;
     u.reloading = wid;
     if (u.reserve[wid] !== Infinity) u.reserve[wid]--;
+    this.sound({type: 'reload', x: u.x, z: u.z, weapon: wid, seconds: W.reload, unit: u.id, side: u.side});
     if (u !== this.player) this.say(u, 'Reloading!', 'reload', 6);
     return true;
   }
@@ -409,6 +420,7 @@ export class Sim {
       const x1 = u.x + dx * d,
         z1 = u.z + dz * d;
       this.tracers.push({x0: ox, z0: oz, x1, z1, side: u.side, weapon: wid, t: this.time});
+      this.sound({type: 'shot', x: ox, z: oz, x1, z1, weapon: wid, side: u.side, unit: u.id});
       this.explode(x1, z1, W, u, null);
       return true;
     }
@@ -436,6 +448,14 @@ export class Sim {
       z1 = oz + dz * best;
     this.tracers.push({x0: ox, z0: oz, x1, z1, side: u.side, weapon: wid, t: this.time});
     if (this.tracers.length > 80) this.tracers.shift();
+    this.sound({type: 'shot', x: ox, z: oz, x1, z1, weapon: wid, side: u.side, unit: u.id});
+    if (!W.splash)
+      this.sound({
+        type: 'impact',
+        x: x1,
+        z: z1,
+        surface: hit ? 'flesh' : hitBox?.vehicle || hitBox?.target ? 'metal' : hitBox ? 'wall' : 'ground',
+      });
     // Near misses suppress (less behind a gun shield).
     for (const o of this.units) {
       if (!o.alive || o.side === u.side || o === hit) continue;
@@ -453,6 +473,7 @@ export class Sim {
   /** An explosive bursts at (x, z): splash damage with falloff, heavy suppression, and damage to a vehicle it struck. */
   explode(x, z, W, by, hitBox) {
     this.explosions.push({x, z, r: W.splash.r, t: this.time});
+    this.sound({type: 'explode', x, z, r: W.splash.r, lob: !!W.lob});
     if (this.explosions.length > 20) this.explosions.shift();
     for (const o of this.units) {
       if (!o.alive || o.escaped || o.state === 'mounted') continue;
@@ -488,6 +509,7 @@ export class Sim {
     t.hp = 0;
     t.destroyed = true;
     this.explosions.push({x: t.x, z: t.z, r: 3, t: this.time});
+    this.sound({type: 'collapse', x: t.x, z: t.z});
     if (t.radio) {
       this.radioDown = true;
       const mate = this.units.filter(m => m.alive && m.side === 'army').sort((a, b) => dist(a, t) - dist(b, t))[0];
@@ -503,6 +525,7 @@ export class Sim {
     v.hp = 0;
     v.destroyed = true;
     v.stopped = true;
+    this.sound({type: 'wreck', x: v.x, z: v.z, id: v.id});
     for (const u of v.crew) if (u.alive && (u.state === 'mounted' || u.state === 'turret')) this.damage(u, by, 999);
     const mate = this.units.filter(m => m.alive && m.side === 'army').sort((a, b) => dist(a, v) - dist(b, v))[0];
     if (mate) this.say(mate, v.kind === 'mrap' ? "We've lost the MRAP!" : 'Vehicle down!', 'vehicle', 3);
@@ -511,7 +534,11 @@ export class Sim {
   damage(o, by, amount = DAMAGE) {
     o.hp -= amount;
     o.supp = Math.min(1, o.supp + 0.4);
-    if (o.hp > 0) return;
+    if (o.hp > 0) {
+      this.sound({type: 'hurt', x: o.x, z: o.z, unit: o.id, side: o.side});
+      return;
+    }
+    this.sound({type: 'death', x: o.x, z: o.z, unit: o.id, side: o.side});
     o.alive = false;
     o.state = 'down';
     o.moveTo = null;
@@ -630,6 +657,7 @@ export class Sim {
         p.reload = 0;
         p.reloading = null;
         p.cd = 0.35; // bring it up
+        this.sound({type: 'switch', x: p.x, z: p.z, weapon: p.weapon, unit: p.id});
       }
       if (input.reload) this.startReload(p);
       if (p.mags[p.weapon] === 0 && p.reload === 0) this.startReload(p);

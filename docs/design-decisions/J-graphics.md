@@ -352,3 +352,23 @@ The 2.5-D top-down sprite look for the shooter (RimWorld style) and the retro ov
 - Cost to change: Low (three constants in `shared/stage.js`).
 - Revisit if: Owner feedback on the feel, or the in-game camera needs the same moves.
 - Owner feedback: —
+
+### TAC-J-36 · The 2.5-D view is Partisan Tactical; the 3-D top-down page is deprecated
+- Status: built  ·  Packet: WP-V5
+- Decision: `convoy/` now opens the 2.5-D RimWorld-style view (formerly `convoy/sprites.html`, which redirects there). The 3-D page moves to `convoy/3d.html`, says it is deprecated, leaves the index menu, and gets no new work; it stays only because the AI view has not moved across yet. The paper-doll layers are scaled to the 128 px doll canvas (the hood and capes come at 256 px and were drawn cropped, a green box beside the head).
+- Why: The owner judged the 2.5-D style better than the 3-D top-down view.
+- Alternatives rejected: Deleting the 3-D page now (loses the AI view, which the AI work still uses); keeping both in the menu (two doors to the same game).
+- Cost / risk: Two renderers share one simulation until the 3-D page goes; its tests still run.
+- Cost to change: Low.
+- Revisit if: The AI view is ported to the 2.5-D renderer: then delete `convoy/3d.html` and `convoy/game.js`.
+- Owner feedback: "the rimworld style works better than 3d"
+
+### TAC-J-37 · A synthesised soundscape for the top-down missions
+- Status: built  ·  Packet: WP-V5
+- Decision: `convoy/soundscape.js` gives both top-down views sound. The simulation queues sound events (`sim.sounds`: shot, impact, explode, reload, switch, death, hurt, wreck, collapse, say, alarm); the soundscape drains them each frame and polls what has no event (reload progress, footsteps, engines). Gunfire is synthesised per weapon (crack, band-passed blast, low thump, rolling tail, echo off the treeline), with supersonic snaps and whizzes for rounds passing close, impacts per surface (ground, wall, metal with ricochets, flesh), explosions with debris and blast deafness, engines that rev with speed, burning wrecks, radio squelch on the radio operator's calls, and per-level ambience (wind, birds that fall silent at the first shots, crows, leaves; night crickets and an owl; cave drips and drone with a long reverb). Reloads use the recorded Workbench foley bank in a per-weapon choreography. Sound is placed relative to the active rebel: pan, distance gain, air low-pass and the speed-of-sound delay. The tactical pause and slow-motion picker dull the mix. M or the Sound button mutes; the choice is saved (`parp-sfx`).
+- Why: The owner asked for a detailed soundscape with good gun sounds, environments and reloads. No gunfire recordings are in the project, and synthesis keeps the build small and every sound tunable in code.
+- Alternatives rejected: Recorded gunfire packs (none in the repository; licensing and size); one generic shot sound (every gun sounding alike).
+- Cost / risk: Synthesised gunfire is less rich than good recordings; heavy fire is capped at about 90 voices (far shots drop first).
+- Cost to change: Low: swap a synth voice for a sample in `shot()` when recordings arrive.
+- Revisit if: Recorded weapon sounds land in `inbound/`.
+- Owner feedback: —

@@ -44,7 +44,7 @@ await check('index: the Nokia screen lies on the table and opens straight on the
     'LCD is laid on the phone with a projective transform',
   );
   assert.equal(await page.evaluate(() => window.PARP_INDEX.mode), 'menu', 'no splash screen');
-  assert.equal(await page.locator('.menu a').count(), 14);
+  assert.equal(await page.locator('.menu a').count(), 13);
   const first = await page.locator('.menu a').allInnerTexts();
   assert.match(first[0], /Weapon Workbench/i, '1 is the opening scene');
   assert.match(first[1], /Weapon Modder/i, '2 is the weapon customiser');
@@ -403,7 +403,7 @@ await check('squad control: keyboard, death transfer, all-down and reduced motio
 await check('squad control: timed slow-motion selection', () => checkSquadControl(browser, server.url, 'no-preference'));
 
 await check('convoy ambush: the convoy drives, the ambush springs, soldiers dismount and call out', async () => {
-  const page = await open(browser, server.url + 'convoy/?seed=7&ai');
+  const page = await open(browser, server.url + 'convoy/3d.html?seed=7&ai');
   await page.waitForFunction(() => window.PARP_CONVOY?.ready, null, {timeout: 60000});
   await page.locator('#start').click();
   // fast-forward the simulation until the lead vehicle stops at the roadblock, then open fire on it
@@ -433,7 +433,7 @@ await check('convoy ambush: the convoy drives, the ambush springs, soldiers dism
 });
 
 await check('2.5-D sprite view: the ambush draws with the placeholder art and plays through the same simulation', async () => {
-  const page = await open(browser, server.url + 'convoy/sprites.html?seed=7');
+  const page = await open(browser, server.url + 'convoy/?seed=7');
   await page.waitForFunction(() => window.PARP_SPRITES?.ready, null, {timeout: 90000});
   await page.locator('#start').click();
   await page.evaluate(() => {
@@ -458,6 +458,9 @@ await check('2.5-D sprite view: the ambush draws with the placeholder art and pl
   });
   assert.equal(r.alarm, true);
   assert.equal(r.loaded, r.total, `every sprite file loads (${r.loaded}/${r.total})`);
+  // the soundscape opened on the Start click and turned the shots and impacts into sound
+  const heard = await page.evaluate(() => window.PARP_SPRITES.sound.stats.played);
+  assert.ok(heard.shot > 0 && heard.impact > 0, `soundscape played ${JSON.stringify(heard)}`);
   // every Workbench rifle has a gun sprite, and the Look panel dresses a rebel (saved per browser)
   const looks = await page.evaluate(async () => {
     const {MODELS} = await import('../workbench/models.js');

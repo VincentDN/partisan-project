@@ -4,7 +4,7 @@ import {fileURLToPath} from 'node:url';
 import {launch, open, startServer} from './browser.mjs';
 
 export async function checkSquadControl(browser, url, reducedMotion = 'reduce') {
-  const page = await open(browser, url + 'convoy/?seed=7', {reducedMotion});
+  const page = await open(browser, url + 'convoy/3d.html?seed=7', {reducedMotion});
   try {
     await page.waitForFunction(() => window.PARP_CONVOY?.ready);
     await page.locator('#start').click();

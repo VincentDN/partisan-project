@@ -4,6 +4,15 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 ## [Unreleased]
 
+### Changed (Partisan Tactical)
+- **The 2.5-D RimWorld-style view is now Partisan Tactical** at `convoy/` and in the index; the old 3-D top-down page moved to `convoy/3d.html` and is deprecated. `convoy/sprites.html` redirects. TAC-J-36.
+
+### Added (Partisan Tactical sound)
+- **Soundscape** for the top-down missions (`convoy/soundscape.js`): per-weapon gunfire with echo and the speed-of-sound delay, close-pass snaps and whizzes, impacts per surface, explosions with debris and blast deafness, reloads from the foley bank, footsteps on dirt or stone, engines, burning wrecks, radio squelch, and ambience per mission (birds that fall silent when the shooting starts, wind, crickets and an owl at night, cave drips). M mutes. TAC-J-37.
+
+### Fixed
+- The hood on the lead rebel (and capes) in the 2.5-D view: drawn at double size and cropped into a green box beside the head.
+
 ### Added (Operator and Weapon Modder cameras)
 - **Snap camera**: switching views in the Operator Modder and framing a slot in the Weapon Modder now accelerates, swings around the model, overshoots a touch and snaps into place, like the NFSU2 mod shop. TAC-J-35.
 - **Low angle** view, **Gunner · low angle** pose and look preset in the Operator Modder: balaclava, black shirt, olive carrier and trousers, RPK with the drum across the chest, seen from knee height. The RPK now takes the drum in the Weapon Modder.

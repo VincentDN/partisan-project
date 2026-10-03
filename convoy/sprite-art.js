@@ -266,7 +266,8 @@ export async function buildPawn(look) {
     const [body, shirt, shell, head, hair, hat] = layers;
     const c = canvas(128, 128),
       g = c.getContext('2d');
-    const draw = (img, color, dx = 0, dy = 0) => img && g.drawImage(tinted(img, color), dx, dy);
+    // Some layers (hoods, capes) come at 256 px for the 128 px doll: scale every layer to the canvas.
+    const draw = (img, color, dx = 0, dy = 0) => img && g.drawImage(tinted(img, color), dx, dy, 128, 128);
     // Head offset (south and north straight up; east a little forward), in pixels of the 128 px canvas.
     const hx = d === 'east' ? 6 : 0,
       hy = -26;
