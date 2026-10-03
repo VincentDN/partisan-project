@@ -28,10 +28,10 @@ export const ITEMS = [
     help: 'Try art styles and shaders on the operator: toon, ink, clay, Nokia LCD, PS1, night vision.',
   },
   {
-    label: 'Convoy Ambush',
+    label: 'Partisan Tactical',
     href: '../convoy/',
     icon: px('0000011110111111111101010'),
-    help: 'Top-down ambush on an army convoy. A test bed for the enemy AI: beliefs, callouts, flanking.',
+    help: 'Top-down missions: convoy ambush, compound assault, cave defence. Loot the army, equip your squad. A test bed for the enemy AI.',
   },
   {
     label: 'Advanced animations',

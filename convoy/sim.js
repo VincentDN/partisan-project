@@ -1,7 +1,8 @@
 // Convoy Ambush simulation: pure, deterministic (seeded), no three.js, so the AI can be unit-tested in node.
 // Fixed-step: call step(dt, input) at 60 Hz. The renderer (convoy/game.js) only reads state and event lists.
-import {BOUNDS, COVER, PARTISAN_SPAWNS, CONVOY, CONVOY_START_X, CONVOY_SPEED, ROADBLOCK} from './world.js';
+import {LEVELS, DEFAULT_LEVEL} from './levels/index.js';
 import {WEAPONS, ROLES, PARTISAN_LOADOUTS} from './weapons.js';
+import {initObjectives, evaluate} from './objectives.js';
 import {perceive, hear, decay, armyThink, armyAct, partisanThink, partisanAct, squadThink, receive} from './ai.js';
 
 /** mulberry32: small seeded PRNG so a run can be replayed exactly. */
@@ -62,8 +63,13 @@ export const MAG = WEAPONS.ak.mag;
 const SPEED = {walk: 3, run: 4.6, sneak: 1.8};
 
 export class Sim {
-  /** @param {{seed?: number, awareness?: number}} opts awareness 0..1: how well the army perceives and communicates */
-  constructor({seed = 7, awareness = 0.5} = {}) {
+  /**
+   * @param {{level?: object|string, seed?: number, awareness?: number}} opts
+   *   level: a level object or id (convoy/levels/index.js); awareness 0..1: how well the army perceives and communicates
+   */
+  constructor({level = DEFAULT_LEVEL, seed = 7, awareness = 0.5} = {}) {
+    this.level = typeof level === 'string' ? LEVELS[level] : level;
+    if (!this.level) throw new Error(`unknown level ${level}`);
     this.rand = rng(seed);
     this.awareness = awareness;
     this.time = 0;
@@ -75,12 +81,18 @@ export class Sim {
     this.callouts = []; // {id, name, side, text, t}
     this.messages = []; // comms in flight: {at, to, belief, from}
     this.squad = {contactSince: Infinity, flanking: false, retreating: false, nextThink: 0};
+    this.objectives = initObjectives(this.level);
+    this.items = (this.level.items || []).map(i => ({...i, progress: 0, taken: false})); // things to steal (hold E)
+    this.taken = new Set();
+    this.kills = {}; // partisan id -> soldiers they put down
     this.vehicles = [];
     this.units = [];
-    let x = CONVOY_START_X;
-    for (const v of CONVOY) {
+    const L = this.level;
+    let x = L.convoy?.startX ?? 0;
+    for (const v of L.convoy?.vehicles || []) {
       x -= v.gap;
-      const veh = {...v, x, z: 0, maxHp: v.hp, destroyed: false, stopped: false, stopAt: Infinity, crew: []};
+      const z = L.convoy.z;
+      const veh = {...v, x, z, maxHp: v.hp, destroyed: false, stopped: false, stopAt: Infinity, crew: []};
       this.vehicles.push(veh);
       v.crew.forEach((c, i) => {
         const role = ROLES[c.role];
@@ -90,7 +102,7 @@ export class Sim {
           role: c.role,
           side: 'army',
           x,
-          z: 0,
+          z,
           weapons: [role.weapon, ...(role.launcher ? [role.launcher] : [])],
         });
         u.state = c.role === 'turret' ? 'turret' : 'mounted';
@@ -103,12 +115,40 @@ export class Sim {
         veh.crew.push(u);
       });
     }
-    for (const p of PARTISAN_SPAWNS) {
-      const u = this.unit({id: p.id, name: p.label, role: 'partisan', side: 'partisan', x: p.x, z: p.z, weapons: PARTISAN_LOADOUTS[p.id]});
+    (L.units || []).forEach((f, i) => this.footSoldier(f, i));
+    for (const p of L.partisans) {
+      const u = this.unit({
+        id: p.id,
+        name: p.label,
+        role: 'partisan',
+        side: 'partisan',
+        x: p.x,
+        z: p.z,
+        weapons: p.weapons || PARTISAN_LOADOUTS[p.id] || ['ak'],
+      });
       u.state = 'hold';
-      u.facing = Math.PI / 2; // facing the road (south, +z)
+      u.facing = p.facing ?? 0;
     }
     this.player = this.units.find(u => u.id === 'player');
+  }
+
+  /** An army soldier on foot from level data: {name, role, x, z, facing, state?, ...}. */
+  footSoldier(f, i) {
+    const role = ROLES[f.role];
+    const u = this.unit({
+      id: f.id || `foot-${i}`,
+      name: f.name,
+      role: f.role,
+      side: 'army',
+      x: f.x,
+      z: f.z,
+      facing: f.facing || 0,
+      weapons: [role.weapon, ...(role.launcher ? [role.launcher] : [])],
+    });
+    u.state = f.state || 'secure';
+    u.leader = f.role === 'leader';
+    u.post = {x: f.x, z: f.z, facing: f.facing || 0};
+    return u;
   }
 
   unit(o) {
@@ -146,7 +186,7 @@ export class Sim {
 
   /** Static cover plus the vehicles, as boxes. */
   boxes() {
-    return [...COVER, ...this.vehicles.map(v => ({x: v.x, z: v.z, w: v.w, d: v.d, h: v.h, kind: 'vehicle', vehicle: v}))];
+    return [...this.level.cover, ...this.vehicles.map(v => ({x: v.x, z: v.z, w: v.w, d: v.d, h: v.h, kind: 'vehicle', vehicle: v}))];
   }
 
   /** Line of sight between two points (eye height is implied: every obstacle is taller than a crouching man). */
@@ -326,6 +366,7 @@ export class Sim {
     o.alive = false;
     o.state = 'down';
     o.moveTo = null;
+    if (by.side === 'partisan') this.kills[by.id] = (this.kills[by.id] || 0) + 1;
     if (by.side === 'partisan' && by.id !== 'player') this.say(by, 'Target down!', 'kill', 3);
     if (o.role === 'rto') {
       const m = this.units.find(x => x.alive && x.side === 'army');
@@ -356,8 +397,8 @@ export class Sim {
   }
 
   slide(u, sx, sz) {
-    const blocked = (x, z) =>
-      this.boxes().some(b => inBox(x, z, b, u.r)) || x < BOUNDS.minX || x > BOUNDS.maxX || z < BOUNDS.minZ || z > BOUNDS.maxZ;
+    const B = this.level.bounds;
+    const blocked = (x, z) => this.boxes().some(b => inBox(x, z, b, u.r)) || x < B.minX || x > B.maxX || z < B.minZ || z > B.maxZ;
     const ox = u.x,
       oz = u.z;
     if (!blocked(u.x + sx, u.z)) u.x += sx;
@@ -379,8 +420,9 @@ export class Sim {
   driveConvoy(dt) {
     this.vehicles.forEach((v, i) => {
       if (v.stopped) return;
-      const front = i === 0 ? ROADBLOCK.x - ROADBLOCK.w / 2 - 3 : this.vehicles[i - 1].x - this.vehicles[i - 1].w / 2 - 4;
-      const nx = Math.min(v.x + CONVOY_SPEED * dt, front - v.w / 2);
+      const C = this.level.convoy;
+      const front = i === 0 ? C.stopX : this.vehicles[i - 1].x - this.vehicles[i - 1].w / 2 - 4;
+      const nx = Math.min(v.x + C.speed * dt, front - v.w / 2);
       if (nx <= v.x + 1e-6 && i === 0 && !v.stopped) {
         v.stopped = true;
         v.stopAt = this.time;
@@ -438,6 +480,7 @@ export class Sim {
       if (input.reload) this.startReload(p);
       if (p.mags[p.weapon] === 0 && p.reload === 0) this.startReload(p);
       if (input.fire && input.ax !== undefined) this.shoot(p, input.ax, input.az);
+      this.interact(p, !!input.interact, dt);
     }
     // AI: perception and decisions at 5 Hz per unit (staggered), actions every step
     for (const u of this.units) {
@@ -462,10 +505,44 @@ export class Sim {
     this.checkOutcome();
   }
 
+  /** Hold E next to an item to take it: progress fills over item.search seconds, and resets if you let go or move off. */
+  interact(u, holding, dt) {
+    const item = this.items
+      .filter(i => !i.taken && Math.hypot(i.x - u.x, i.z - u.z) < 1.8)
+      .sort((a, b) => Math.hypot(a.x - u.x, a.z - u.z) - Math.hypot(b.x - u.x, b.z - u.z))[0];
+    for (const i of this.items) if (i !== item || !holding) i.progress = 0;
+    u.searching = holding && item ? item : null;
+    if (!u.searching) return;
+    item.progress += dt;
+    if (item.progress >= (item.search ?? 3)) {
+      item.taken = true;
+      this.taken.add(item.id);
+      this.say(u, `Got the ${item.label.toLowerCase()}!`, 'taken-' + item.id, 99);
+    }
+  }
+
   checkOutcome() {
-    const army = this.units.filter(u => u.side === 'army');
-    if (!this.player.alive) this.outcome = 'lost';
-    else if (army.every(u => !u.alive || u.escaped)) this.outcome = 'won';
+    this.outcome = evaluate(this);
+  }
+
+  /** What the debrief shows. */
+  debrief() {
+    const s = this.stats();
+    const squad = this.units.filter(u => u.side === 'partisan');
+    return {
+      outcome: this.outcome,
+      time: this.time,
+      objectives: this.objectives.map(o => ({id: o.id, label: o.label, state: o.state, optional: !!o.optional})),
+      kills: Object.values(this.kills).reduce((a, b) => a + b, 0),
+      byPartisan: squad.map(u => ({
+        id: u.id,
+        name: u.name,
+        kills: this.kills[u.id] || 0,
+        state: !u.alive ? 'down' : u.hp < 100 ? 'wounded' : 'fit',
+      })),
+      taken: this.items.filter(i => i.taken).map(i => i.label),
+      ...s,
+    };
   }
 
   stats() {

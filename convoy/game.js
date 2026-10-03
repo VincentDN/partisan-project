@@ -1,14 +1,15 @@
-// Convoy Ambush: renders convoy/sim.js top-down and feeds it the player's input. All rules and AI live in the
-// simulation; this file only draws state, callouts and (in AI view) what each soldier believes.
+// Partisan Tactical: renders convoy/sim.js top-down and feeds it the player's input. All rules and AI live in the
+// simulation and the maps are data (convoy/levels/); this file only draws state, callouts and (in AI view) what each
+// soldier believes.
 import '../shared/frame.js';
 import * as T from 'three';
 import {mountTopBar} from '../shared/topbar.js';
 import {Sim} from './sim.js';
 import {WEAPONS, ROLES} from './weapons.js';
-import {COVER, ROAD, BOUNDS} from './world.js';
+import {LEVELS, MISSIONS, DEFAULT_LEVEL} from './levels/index.js';
 import {bestBelief} from './ai.js';
 
-mountTopBar({title: 'Convoy Ambush', scene: 'viewer'});
+mountTopBar({title: 'Partisan Tactical', scene: 'viewer'});
 
 const $ = s => document.querySelector(s);
 const stageEl = $('#stage'),
@@ -33,23 +34,18 @@ Object.assign(sun.shadow.camera, {left: -45, right: 45, top: 45, bottom: -45, ne
 scene.add(sun, sun.target);
 
 const flat = color => new T.MeshLambertMaterial({color, flatShading: true});
-const ground = new T.Mesh(new T.PlaneGeometry(BOUNDS.maxX - BOUNDS.minX + 60, BOUNDS.maxZ - BOUNDS.minZ + 60), flat(0x56643a));
-ground.rotation.x = -Math.PI / 2;
-ground.receiveShadow = true;
-scene.add(ground);
-const ridge = new T.Mesh(new T.PlaneGeometry(BOUNDS.maxX - BOUNDS.minX + 60, 30), flat(0x4b5733));
-ridge.rotation.x = -Math.PI / 2;
-ridge.position.set(0, 0.01, -24);
-ridge.receiveShadow = true;
-scene.add(ridge);
-const road = new T.Mesh(new T.PlaneGeometry(BOUNDS.maxX - BOUNDS.minX + 60, ROAD.half * 2), flat(0x6e6553));
-road.rotation.x = -Math.PI / 2;
-road.position.set(0, 0.02, ROAD.z);
-road.receiveShadow = true;
-scene.add(road);
-
 const KIND = {rock: 0x7d7a6c, wall: 0x8c846f, wreck: 0x4b4236, barn: 0x7a5a3a, log: 0x6b4a2a};
-for (const c of COVER) {
+
+// The map: ground, patches, roads and cover, rebuilt from level data when the mission changes.
+let mapGroup = null;
+function plane(w, d, color, x, z, y) {
+  const m = new T.Mesh(new T.PlaneGeometry(w, d), flat(color));
+  m.rotation.x = -Math.PI / 2;
+  m.position.set(x, y, z);
+  m.receiveShadow = true;
+  return m;
+}
+function coverMesh(c) {
   let mesh;
   if (c.kind === 'rock') {
     mesh = new T.Mesh(new T.IcosahedronGeometry(0.5, 0), flat(KIND.rock));
@@ -57,11 +53,12 @@ for (const c of COVER) {
     mesh.position.y = c.h * 0.5;
     mesh.rotation.y = (c.x * 7 + c.z) % 3;
   } else if (c.kind === 'log') {
-    mesh = new T.Mesh(new T.CylinderGeometry(c.h / 2, c.h / 2, c.d, 7), flat(KIND.log));
-    mesh.rotation.x = Math.PI / 2;
+    mesh = new T.Mesh(new T.CylinderGeometry(c.h / 2, c.h / 2, Math.max(c.w, c.d), 7), flat(KIND.log));
+    if (c.d >= c.w) mesh.rotation.x = Math.PI / 2;
+    else mesh.rotation.z = Math.PI / 2;
     mesh.position.y = c.h / 2;
   } else {
-    mesh = new T.Mesh(new T.BoxGeometry(c.w, c.h, c.d), flat(KIND[c.kind] || KIND.wall));
+    mesh = new T.Mesh(new T.BoxGeometry(c.w, c.h, c.d), flat(c.color ?? KIND[c.kind] ?? KIND.wall));
     mesh.position.y = c.h / 2;
     if (c.kind === 'barn') {
       const roof = new T.Mesh(new T.ConeGeometry(Math.hypot(c.w, c.d) / 2, 1.8, 4), flat(0x4a3a2c));
@@ -74,7 +71,24 @@ for (const c of COVER) {
   mesh.position.x = c.x;
   mesh.position.z = c.z;
   mesh.castShadow = mesh.receiveShadow = true;
-  scene.add(mesh);
+  return mesh;
+}
+function buildMap(level) {
+  if (mapGroup) {
+    scene.remove(mapGroup);
+    mapGroup.traverse(o => {
+      o.geometry?.dispose();
+      o.material?.dispose?.();
+    });
+  }
+  mapGroup = new T.Group();
+  const B = level.bounds,
+    G = level.ground;
+  mapGroup.add(plane(B.maxX - B.minX + 60, B.maxZ - B.minZ + 60, G.color, (B.minX + B.maxX) / 2, (B.minZ + B.maxZ) / 2, 0));
+  (G.patches || []).forEach((r, i) => mapGroup.add(plane(r.w, r.d, r.color, r.x, r.z, 0.01 + i * 0.001)));
+  for (const r of G.roads || []) mapGroup.add(plane(r.w, r.d, r.color ?? 0x6e6553, r.x, r.z, 0.02));
+  for (const c of level.cover) mapGroup.add(coverMesh(c));
+  scene.add(mapGroup);
 }
 
 const ARMY = 0x6b6e62,
@@ -288,10 +302,17 @@ let sim,
   started,
   aiView = false;
 const params = new URLSearchParams(location.search);
+let levelId = LEVELS[params.get('mission')] ? params.get('mission') : DEFAULT_LEVEL;
+let builtLevel = null;
 function newGame() {
   for (const m of [...(units?.values() || []), ...(vehicles || [])]) scene.remove(m);
   const awareness = Number($('#aware').value) / 100;
-  sim = new Sim({seed: Number(params.get('seed')) || Math.floor(Math.random() * 1e6), awareness});
+  const level = LEVELS[levelId];
+  if (builtLevel !== level) {
+    buildMap(level);
+    builtLevel = level;
+  }
+  sim = new Sim({level, seed: Number(params.get('seed')) || Math.floor(Math.random() * 1e6), awareness});
   units = new Map(sim.units.map(u => [u, unitMesh(u)]));
   vehicles = sim.vehicles.map(vehicleMesh);
   updateLabels.last = -1;
@@ -300,11 +321,33 @@ function newGame() {
   stateLabels.clear();
   $('#comms').replaceChildren();
   started = false;
-  $('#card-title').textContent = 'Convoy ambush';
-  $('#card-text').textContent =
-    'An army convoy is coming east down the valley road. The log across the road will stop it under your ridge. Wait for it, then open fire. Mila (marksman) and Dragan (machine gun) hold fire until you do. The MRAP’s heavy gun will tear you apart: you carry three RPG rockets for it.';
+  $('#card-title').textContent = level.title;
+  $('#card-text').textContent = level.brief;
   $('#start').textContent = 'Start';
+  renderMissions();
   $('#card').hidden = false;
+}
+// Mission select: built missions are buttons, the rest say what is coming.
+function renderMissions() {
+  $('#missions').replaceChildren(
+    ...MISSIONS.map((m, i) => {
+      const b = document.createElement('button');
+      b.textContent = `${i + 1}. ${m.title}`;
+      b.setAttribute('aria-pressed', String(m.id === levelId));
+      if (!LEVELS[m.id]) {
+        b.disabled = true;
+        b.title = m.soon || 'Coming soon';
+      } else
+        b.onclick = () => {
+          levelId = m.id;
+          const url = new URL(location.href);
+          url.searchParams.set('mission', m.id);
+          history.replaceState(null, '', url);
+          newGame();
+        };
+      return b;
+    }),
+  );
 }
 function start() {
   started = true;
@@ -328,6 +371,7 @@ addEventListener('keydown', e => {
   if (['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'shift', ' '].includes(k)) e.preventDefault();
   keys.add(k);
   if (k === 'r') reload = true;
+  if (k === 'e') e.preventDefault();
   if (['1', '2', '3'].includes(k)) wantWeapon = sim.player.weapons[Number(k) - 1];
   if (k === 'v') toggleAi();
   if (k === 'enter') started && !sim.outcome ? null : sim.outcome ? newGame() : start();
@@ -356,7 +400,7 @@ function input() {
     ray.setFromCamera(ndc, camera);
     ray.ray.intersectPlane(groundPlane, aim);
   }
-  const i = {mx, mz, sneak: has('shift'), fire, reload, weapon: wantWeapon, ...(hasAim ? {ax: aim.x, az: aim.z} : {})};
+  const i = {mx, mz, sneak: has('shift'), fire, reload, interact: has('e'), weapon: wantWeapon, ...(hasAim ? {ax: aim.x, az: aim.z} : {})};
   reload = false;
   wantWeapon = null;
   return i;
@@ -468,15 +512,17 @@ function updateAi() {
 function updateHud() {
   const p = sim.player,
     s = sim.stats();
-  const status = sim.outcome
-    ? sim.outcome === 'won'
-      ? 'Ambush successful'
-      : 'You were killed'
-    : !sim.alarm
-      ? 'Waiting for the convoy'
-      : 'Contact';
+  const status = sim.outcome ? (sim.outcome === 'won' ? 'Mission accomplished' : 'Mission failed') : !sim.alarm ? 'Quiet' : 'Contact';
+  const mark = {active: '○', locked: '·', done: '✓', failed: '✗'};
+  const objectives = sim.objectives
+    .filter(o => o.state !== 'locked')
+    .map(o => `<span class="obj ${o.state}">${mark[o.state]} ${o.label}${o.optional ? ' <i>(optional)</i>' : ''}</span>`)
+    .join('<br>');
+  const searching = p.searching
+    ? `<br><b>Taking ${p.searching.label}… ${Math.min(100, Math.round((p.searching.progress / (p.searching.search ?? 3)) * 100))}%</b>`
+    : '';
   $('#hud').innerHTML =
-    `<b>${status}</b><br>Health ${Math.max(0, p.hp)}<br>` +
+    `<b>${status}</b><br>${objectives}${searching}<br>Health ${Math.max(0, p.hp)}<br>` +
     p.weapons
       .map((w, i) => {
         const W = WEAPONS[w],
@@ -484,7 +530,37 @@ function updateHud() {
         return `${w === p.weapon ? '<b>▸' : '&nbsp;'} ${i + 1} ${W.label} ${ammo}${w === p.weapon ? '</b>' : ''}`;
       })
       .join('<br>') +
-    `<br>Army: ${s.armyAlive} up · ${s.armyDown} down · ${s.escaped} fled · ${s.vehiclesDestroyed} vehicles burning<br>Partisans up: ${s.partisansAlive}/3 · ${Math.floor(sim.time)} s`;
+    `<br>Army: ${s.armyAlive} up · ${s.armyDown} down · ${s.escaped} fled · ${s.vehiclesDestroyed} vehicles burning<br>Partisans up: ${s.partisansAlive}/${sim.units.filter(u => u.side === 'partisan').length} · ${Math.floor(sim.time)} s`;
+}
+
+// Debrief: outcome, objectives, the squad, what was taken.
+function showDebrief(d) {
+  $('#card-title').textContent = d.outcome === 'won' ? `${sim.level.title}: accomplished` : `${sim.level.title}: failed`;
+  const mark = {done: '✓', failed: '✗', active: '○', locked: '·'};
+  const text = $('#card-text');
+  text.textContent = '';
+  const add = (tag, str, cls) => {
+    const el = document.createElement(tag);
+    el.textContent = str;
+    if (cls) el.className = cls;
+    text.append(el);
+    return el;
+  };
+  add(
+    'p',
+    `${Math.floor(d.time / 60)}:${String(Math.floor(d.time % 60)).padStart(2, '0')} · ${d.armyDown} soldiers down, ${d.escaped} fled, ${d.vehiclesDestroyed} vehicles destroyed.`,
+  );
+  const ul = add('ul', '', 'debrief');
+  for (const o of d.objectives) {
+    const li = document.createElement('li');
+    li.className = `obj ${o.state}`;
+    li.textContent = `${mark[o.state]} ${o.label}${o.optional ? ' (optional)' : ''}`;
+    ul.append(li);
+  }
+  add('p', d.byPartisan.map(u => `${u.name}: ${u.state}, ${u.kills} down`).join(' · '));
+  if (d.taken.length) add('p', `Taken: ${d.taken.join(', ')}.`);
+  $('#start').textContent = 'Play again';
+  renderMissions();
 }
 
 // ---------- frame ----------
@@ -543,8 +619,9 @@ function draw() {
   tracerGeo.attributes.position.needsUpdate = tracerGeo.attributes.color.needsUpdate = true;
   // camera follows the player, looking down at an angle
   const p = sim.player;
-  const tx = Math.max(BOUNDS.minX + 12, Math.min(BOUNDS.maxX - 12, p.x)),
-    tz = Math.max(BOUNDS.minZ + 6, Math.min(BOUNDS.maxZ - 6, p.z + 12)); // look a little south of you, toward the road
+  const B = sim.level.bounds;
+  const tx = Math.max(B.minX + 12, Math.min(B.maxX - 12, p.x)),
+    tz = Math.max(B.minZ + 6, Math.min(B.maxZ - 6, p.z + 12)); // look a little south of you, toward the road
   const k = reduceMotion ? 1 : 0.08;
   camera.position.lerp(v3.set(tx, 44, tz + 24), k);
   camera.lookAt(camera.position.x, 0, camera.position.z - 24);
@@ -581,11 +658,7 @@ renderer.setAnimationLoop(() => {
     }
   else acc = 0;
   if (sim.outcome && $('#card').hidden) {
-    $('#card-title').textContent = sim.outcome === 'won' ? 'Ambush successful' : 'You were killed';
-    const s = sim.stats();
-    $('#card-text').textContent =
-      `${s.armyDown} soldiers down, ${s.escaped} fled, ${s.partisansAlive}/3 partisans standing, in ${Math.floor(sim.time)} seconds.`;
-    $('#start').textContent = 'Play again';
+    showDebrief(sim.debrief());
     $('#card').hidden = false;
   }
   draw();

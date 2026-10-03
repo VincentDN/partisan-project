@@ -15,3 +15,9 @@ button.primary{background:var(--accent);color:#14100a;border-color:var(--accent)
 .small{font-size:12px}
 .k-p{color:#8fae5e}
 .k-a{color:#c9a27a}
+.missions{margin:0 0 12px;flex-wrap:wrap}
+.missions button:disabled{opacity:.45;cursor:not-allowed}
+.obj.done{color:var(--good)}
+.obj.failed{color:var(--bad);text-decoration:line-through}
+.obj i{opacity:.7}
+.debrief{margin:6px 0 10px;padding-left:18px}

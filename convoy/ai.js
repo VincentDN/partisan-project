@@ -10,9 +10,8 @@
 //
 // Unit states (army): mounted > (secure | cover) > engage <> pinned, flank, search, retreat.
 // The squad director (1 Hz) handles what no single soldier decides: flanking and falling back.
-import {ROAD} from './world.js';
 import {WEAPONS, ROLES} from './weapons.js';
-import {dist} from './sim.js';
+import {dist, inBox} from './sim.js';
 
 const COMPASS = ['east', 'south-east', 'south', 'south-west', 'west', 'north-west', 'north', 'north-east'];
 /** Compass word for a direction on the map (x east, z south). */
@@ -144,7 +143,7 @@ export function findCover(sim, u, threat) {
         Math.hypot(px - u.x, pz - u.z) * 1.2 -
         (Math.hypot(px - threat.x, pz - threat.z) < 10 ? 25 : 0) -
         crowd * 14 -
-        (Math.abs(pz - ROAD.z) < ROAD.half ? 4 : 0);
+        ((sim.level.avoid || []).some(a => inBox(px, pz, a)) ? 4 : 0);
       if (score > bestScore) {
         bestScore = score;
         best = {x: px, z: pz};

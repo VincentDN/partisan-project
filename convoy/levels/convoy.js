@@ -1,12 +1,11 @@
-// Convoy Ambush map: pure data, no three.js. Metres; x runs east, z runs south, the road runs along z = 0.
-// The convoy drives east; a log roadblock stops it at the ambush site. Partisans start on the north ridge.
-
-export const BOUNDS = {minX: -64, maxX: 64, minZ: -36, maxZ: 36};
-export const ROAD = {z: 0, half: 3.2};
-export const ROADBLOCK = {x: 26, z: 0, w: 1.2, d: 7.5, h: 1.1, kind: 'log'};
+// Level 1: Convoy ambush. An army convoy drives east down the valley road; a log roadblock stops it under the
+// partisans' ridge. Metres; x runs east, z runs south, the road runs along z = 0. Level format: convoy/levels/index.js.
+const BOUNDS = {minX: -64, maxX: 64, minZ: -36, maxZ: 36};
+const ROAD = {z: 0, half: 3.2};
+const ROADBLOCK = {x: 26, z: 0, w: 1.2, d: 7.5, h: 1.1, kind: 'log'};
 
 // Static cover: centre (x, z), footprint (w along x, d along z), height h. Everything here blocks movement and sight.
-export const COVER = [
+const COVER = [
   // north ridge (ambush side): rocks and a broken wall
   {x: -6, z: -14, w: 4, d: 2, h: 1.3, kind: 'rock'},
   {x: 4, z: -12, w: 2.5, d: 2.5, h: 1.2, kind: 'rock'},
@@ -31,7 +30,7 @@ export const COVER = [
   ROADBLOCK,
 ];
 
-export const PARTISAN_SPAWNS = [
+const PARTISAN_SPAWNS = [
   {id: 'player', x: 6, z: -16, label: 'You'},
   {id: 'mila', x: 15, z: -18, label: 'Mila'},
   {id: 'dragan', x: -4, z: -18, label: 'Dragan'},
@@ -39,7 +38,7 @@ export const PARTISAN_SPAWNS = [
 
 // Vehicles in convoy order (lead first), each with its crew: {name, role} (roles in convoy/weapons.js).
 // hp: what an RPG has to chew through. The MRAP's turret gunner stays aboard; everyone else dismounts.
-export const CONVOY = [
+const CONVOY = [
   {
     id: 'lead',
     kind: 'jeep',
@@ -97,5 +96,30 @@ export const CONVOY = [
     ],
   },
 ];
-export const CONVOY_START_X = -58;
-export const CONVOY_SPEED = 7; // m/s
+const CONVOY_START_X = -58;
+const CONVOY_SPEED = 7; // m/s
+
+export default {
+  id: 'convoy',
+  title: 'Convoy ambush',
+  summary: 'Ambush an army convoy stopped by your roadblock.',
+  brief:
+    'An army convoy is coming east down the valley road. The log across the road will stop it under your ridge. Wait for it, then open fire. Mila (marksman) and Dragan (machine gun) hold fire until you do. The MRAP’s heavy gun will tear you apart: you carry three RPG rockets for it.',
+  bounds: BOUNDS,
+  ground: {
+    color: 0x56643a,
+    patches: [{x: 0, z: -24, w: BOUNDS.maxX - BOUNDS.minX + 60, d: 30, color: 0x4b5733}], // the ridge
+    roads: [{x: 0, z: ROAD.z, w: BOUNDS.maxX - BOUNDS.minX + 60, d: ROAD.half * 2}],
+  },
+  // places a soldier looking for cover would rather not stand (scored down, not forbidden)
+  avoid: [{x: 0, z: ROAD.z, w: 1e4, d: ROAD.half * 2}],
+  cover: COVER,
+  partisans: PARTISAN_SPAWNS.map(p => ({...p, facing: Math.PI / 2})),
+  convoy: {startX: CONVOY_START_X, z: ROAD.z, speed: CONVOY_SPEED, stopX: ROADBLOCK.x - ROADBLOCK.w / 2 - 3, vehicles: CONVOY},
+  units: [],
+  objectives: [
+    {id: 'convoy', type: 'eliminate', routs: true, label: 'Destroy or rout the convoy'},
+    {id: 'mrap', type: 'destroy', target: 'mrap', label: 'Knock out the MRAP', optional: true},
+    {id: 'alive', type: 'protect', units: ['mila', 'dragan'], label: 'Bring Mila and Dragan home', optional: true},
+  ],
+};
