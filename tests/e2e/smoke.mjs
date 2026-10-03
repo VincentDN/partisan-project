@@ -432,6 +432,37 @@ await check('convoy ambush: the convoy drives, the ambush springs, soldiers dism
   await page.close();
 });
 
+await check('2.5-D sprite view: the ambush draws with the placeholder art and plays through the same simulation', async () => {
+  const page = await open(browser, server.url + 'convoy/sprites.html?seed=7');
+  await page.waitForFunction(() => window.PARP_SPRITES?.ready, null, {timeout: 90000});
+  await page.locator('#start').click();
+  await page.evaluate(() => {
+    const {sim} = window.PARP_SPRITES;
+    while (!sim.vehicles[0].stopped && sim.time < 60) sim.step(1 / 60, {});
+    const v = sim.vehicles[1];
+    for (let i = 0; i < 60; i++) sim.step(1 / 60, {ax: v.x, az: v.z, fire: true});
+  });
+  await page.waitForTimeout(600);
+  const r = await page.evaluate(() => {
+    const {sim, renderer} = window.PARP_SPRITES;
+    const c = document.querySelector('#view'),
+      px = c.getContext('2d').getImageData(0, 0, c.width, c.height).data;
+    let colours = new Set();
+    for (let i = 0; i < px.length; i += 4 * 97) colours.add((px[i] >> 4) * 256 + (px[i + 1] >> 4) * 16 + (px[i + 2] >> 4));
+    return {
+      alarm: sim.alarm,
+      loaded: Object.values(renderer.files).filter(Boolean).length,
+      total: Object.keys(renderer.files).length,
+      colours: colours.size,
+    };
+  });
+  assert.equal(r.alarm, true);
+  assert.equal(r.loaded, r.total, `every sprite file loads (${r.loaded}/${r.total})`);
+  assert.ok(r.colours > 60, `the canvas shows textured art, not a flat fill (${r.colours} colours)`);
+  noProblems(page);
+  await page.close();
+});
+
 await check('viewer: lists registered models and reports triangles and licence', async () => {
   const page = await open(browser, server.url + 'viewer/');
   await page.waitForFunction(() => window.PARP_VIEWER?.ready, null, {timeout: 60000});

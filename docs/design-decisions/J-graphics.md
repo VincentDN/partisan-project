@@ -311,3 +311,14 @@ The 2.5-D top-down sprite look for the shooter (RimWorld style) and the retro ov
 - Cost to change: Low.
 - Revisit if: The snapped terrain looks muddy in the contact sheet.
 - Owner feedback: —
+
+### TAC-J-32 · A first 2.5-D sprite view, side by side with the 3-D page, before the renderer interface
+- Status: built  ·  Packet: WP-V3 (early test)
+- Decision: `convoy/sprites.html` plays the same missions through the same simulation, drawn on a Canvas 2-D with the placeholder art: paper-doll pawns built from tinted body, clothes, head, hair and headgear layers (three directions, west mirrored), side-view weapons that turn with the aim, rusted vehicle sprites tinted army green (burnt when destroyed), rocks, logs, sandbag-atlas walls, a plank barn, a baked ground of feathered terrain textures with grass and stone scatter, shadows, tracers, muzzle flashes, explosions that scorch the ground, smoke, RimWorld-style name labels, health bars, selection brackets and speech bubbles.
+- Why: The owner asked to see the ambush in the target style now. A separate page proves the look and the art pipeline without touching the 3-D game, and it uses only the simulation's public state, so it becomes the 2-D renderer of WP-V3 once the interface of WP-V2 exists.
+- Alternatives rejected: Waiting for WP-V1 and V2 (no picture to judge for weeks); switching the 3-D page over (risky, and the AI view is not ported yet).
+- Cost / risk: Two input and HUD copies (game.js and sprite-game.js) until WP-V2 merges them; the AI view is not in the sprite page yet.
+- Cost to change: Low.
+- Revisit if: The owner prefers the 2-D view as the default before WP-V18.
+- Owner feedback: —
+
