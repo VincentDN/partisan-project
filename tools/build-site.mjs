@@ -30,7 +30,6 @@ const ALLOW = [
   'convoy',
   'docs/game-design-master-doc.html',
   'docs/moodboard',
-  'docs',
   'inbound',
   'outbound',
 ];
