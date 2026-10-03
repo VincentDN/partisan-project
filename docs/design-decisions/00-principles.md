@@ -125,3 +125,18 @@ The rules every section inherits. Section documents refer to these by ID instead
 - Cost to change: High (tooling was deleted).
 - Revisit if: The project is published or sold.
 - Owner feedback: —
+
+### TAC-X-11 · A 2D sprite look is a candidate for the shooter's characters
+- Status: planned
+- Decision: The moodboard now holds a 2D sprite soldier reference (thick black outlines, chunky gear, a big pack, a
+  readable rifle: `docs/moodboard/ref-2d-sprite-soldier.jpg`). The shooter keeps its simple 3-D shapes for now; the sprite look is
+  to be tried against them (and against the Art Style Lab's cel and ink styles) before real models arrive.
+- Why: Thick outlines and chunky gear are exactly what makes a role readable from above (pillar 2), and the Art Style
+  Lab's cel-shaded look is already close. A 2D look could also be cheaper to author and animate for a top-down view
+  than 3-D rigs, and it would set the shooter apart from the Workbench.
+- Alternatives rejected: Deciding now (no evidence yet); dropping the reference (the idea is worth testing).
+- Cost / risk: A second art pipeline (sprites with directions and animations) beside the 3-D one; the Sketchfab
+  models would not be reused in the shooter.
+- Cost to change: Low while it is only a reference.
+- Revisit if: The cel/ink 3-D look reads as well from above; then keep one pipeline.
+- Owner feedback: —
