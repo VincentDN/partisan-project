@@ -458,6 +458,16 @@ await check('2.5-D sprite view: the ambush draws with the placeholder art and pl
   });
   assert.equal(r.alarm, true);
   assert.equal(r.loaded, r.total, `every sprite file loads (${r.loaded}/${r.total})`);
+  // every Workbench rifle has a gun sprite, and the Look panel dresses a rebel (saved per browser)
+  const looks = await page.evaluate(async () => {
+    const {MODELS} = await import('../workbench/models.js');
+    const guns = window.PARP_SPRITES.renderer.guns;
+    return {missing: Object.keys(MODELS).filter(id => !guns[id]), options: document.querySelectorAll('#look select').length};
+  });
+  assert.deepEqual(looks.missing, [], 'gun sprites for every Workbench rifle');
+  assert.ok(looks.options >= 6, 'the Look panel offers gun, body, hair, shirt, outfit and headgear');
+  await page.locator('#look label.row', {hasText: 'Gun'}).locator('select').selectOption('g3');
+  assert.match(await page.evaluate(() => localStorage.getItem('parp-sprite-looks')), /"gun":"g3"/);
   assert.ok(r.colours > 60, `the canvas shows textured art, not a flat fill (${r.colours} colours)`);
   noProblems(page);
   await page.close();

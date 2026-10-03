@@ -21,6 +21,7 @@ const ALLOW = [
   'assets/audio',
   'assets/lighting',
   'assets/models',
+  'assets/sprites',
   'assets/register.json',
   'shared',
   'vendor',

@@ -322,3 +322,23 @@ The 2.5-D top-down sprite look for the shooter (RimWorld style) and the retro ov
 - Revisit if: The owner prefers the 2-D view as the default before WP-V18.
 - Owner feedback: —
 
+### TAC-J-33 · Weapon sprites are rendered from the Workbench models, outlined, at real length
+- Status: built  ·  Packet: WP-V6 (early)
+- Decision: `tools/sprites/render-weapons.mjs` renders every Workbench rifle in its factory build side-on (muzzle right) with flat light, then draws a dark outline round the silhouette, lifts and warms the colours, and writes `assets/sprites/weapons/<id>.png` (256 px) with a manifest of labels and real lengths. The sprite view draws each gun at 1.4 times its real length, the way the set oversizes weapons. Re-run the script when a rifle or its default build changes.
+- Why: The gun in the shooter must be the gun on the bench (TAC-J-10); rendering keeps the two in step automatically, and the outline pass makes the 3-D art read like the hand-painted set sprites next to it.
+- Alternatives rejected: Hand-drawing each gun (slow, drifts from the bench); using only the set's eight guns (no G3, Spear, AKs).
+- Cost / risk: Factory builds only; a player's custom build is not drawn yet.
+- Cost to change: Low.
+- Revisit if: The custom build should show in the shooter (render on demand from the loadout code).
+- Owner feedback: —
+
+### TAC-J-34 · Rebel cosmetics in the sprite view: layers from the set, chosen per rebel, saved in the browser
+- Status: built  ·  Packet: WP-V5 (early)
+- Decision: A Look panel per rebel picks the gun shown (every Workbench rifle plus the set's guns), body type, skin, hair and hair colour, shirt, outfit (jacket, parka, duster, flak vest or jacket, recon or plate armour, cape, robe), headgear (helmets, hood, tuque, cowboy and bowler hats, masks, veil) and the colour of each. It previews front and side, and saves to `localStorage` (`parp-sprite-looks`). Cosmetics change only the sprites; the simulated weapon and stats stay as they are.
+- Why: The paper-doll layers make dressing a rebel cheap, and seeing your own squad on the field is the point of the style test. Keeping it cosmetic avoids touching the balance before the inventory (section C) exists.
+- Alternatives rejected: Tying the gun choice to the simulated weapon now (needs per-gun stats in the shooter); a separate customiser page (more clicks for a test).
+- Cost / risk: A cosmetic gun can disagree with the weapon the HUD names until the inventory links them.
+- Cost to change: Low.
+- Revisit if: Section C (inventory and looting) lands: the equipped item then decides the sprite.
+- Owner feedback: —
+

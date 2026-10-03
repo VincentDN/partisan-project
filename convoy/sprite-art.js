@@ -62,16 +62,134 @@ const doll = {
   body: (type, d) => `${H}Bodies/Naked_${type}_${d}.png`,
   head: (head, d) => `${H}Heads/${head.startsWith('Female') ? 'Female' : 'Male'}/${head}_${d}.png`,
   hair: (hair, d) => `${H}Hairs/${hair}_${d}.png`,
-  shell: (name, type, d) => `${H}Apparel/${name}/${name}_${type}_${d}.png`,
+  // PlateArmor spells its body types in lower case
+  shell: (name, type, d) => `${H}Apparel/${name}/${name}_${name === 'PlateArmor' ? type.toLowerCase() : type}_${d}.png`,
   hat: (dir, name, d) => `${H}Apparel/${dir}/${name}_${d}.png`,
 };
+// Headgear: [folder, file stem, hair shows under it]
 const HATS = {
-  SimpleHelmet: ['SimpleHelmet', 'SimpleHelmet'],
-  AdvancedHelmet: ['AdvancedHelmet', 'AdvancedHelmet'],
-  Tuque: ['Tuque', 'Tuque'],
-  Hood: ['Hood', 'Hood'],
-  ReconHelmet: ['ReconArmorHelmet', 'ReconHelmet'],
+  SimpleHelmet: ['SimpleHelmet', 'SimpleHelmet', false],
+  AdvancedHelmet: ['AdvancedHelmet', 'AdvancedHelmet', false],
+  ReconHelmet: ['ReconArmorHelmet', 'ReconHelmet', false],
+  PowerArmorHelmet: ['PowerArmorHelmet', 'PowerArmorHelmet', false],
+  Tuque: ['Tuque', 'Tuque', true],
+  Hood: ['Hood', 'Hood', false],
+  CowboyHat: ['CowboyHat', 'CowboyHat', true],
+  BowlerHat: ['BowlerHat', 'BowlerHat', true],
+  WarMask: ['WarMask', 'WarMask', true],
+  ClothMask: ['ClothMask', 'ClothMask', true],
+  Veil: ['Veil', 'Veil', true],
 };
+
+// ---------- cosmetics: the choices the Look panel offers (every combination exists in the set) ----------
+export const COSMETICS = {
+  body: ['Male', 'Female', 'Thin', 'Hulk', 'Fat'],
+  shirt: ['ShirtBasic', 'ShirtButton'],
+  shell: ['none', 'Jacket', 'Parka', 'Duster', 'FlakVest', 'FlakJacket', 'ReconArmor', 'PlateArmor', 'Cape', 'Robe'],
+  hat: ['none', ...Object.keys(HATS)],
+  hair: [
+    'Bowlcut',
+    'Mess',
+    'Recruit',
+    'Rookie',
+    'Shaved',
+    'Tuft',
+    'Decent',
+    'Scrapper',
+    'Ponytails',
+    'Bob',
+    'Mohawk',
+    'Long',
+    'Afro',
+    'Spikes',
+    'Locks',
+    'Elder',
+  ],
+  colors: [
+    '#6b5a38',
+    '#5f6e45',
+    '#4d4a3a',
+    '#77806a',
+    '#3d4230',
+    '#8a7a5a',
+    '#2e3a4a',
+    '#7a3a2e',
+    '#a89a78',
+    '#2b2b28',
+    '#8e2b25',
+    '#c9b48a',
+  ],
+  skins: ['#f0d0b0', '#e8c4a0', '#d9a77e', '#c48e66', '#a8754f', '#7d5236'],
+  hairColors: ['#1d1a17', '#2b2118', '#4a3220', '#6b4a2a', '#8a6a42', '#b8925a', '#9a9a96'],
+};
+const headFor = (body, current) =>
+  body === 'Female'
+    ? current?.startsWith('Female')
+      ? current
+      : 'Female_Average_Normal'
+    : current?.startsWith('Male')
+      ? current
+      : 'Male_Average_Normal';
+
+// ---------- guns: the Workbench rifles (rendered by tools/sprites/render-weapons.mjs) plus the set's own ----------
+const SET = 'Things/Item/Equipment/WeaponRanged/';
+export const SET_GUNS = {
+  'set-assault': {label: 'Assault rifle (set)', file: SET + 'AssaultRifle.png', length: 1},
+  'set-sniper': {label: 'Sniper rifle (set)', file: SET + 'SniperRifle.png', length: 1.25},
+  'set-lmg': {label: 'Light machine gun (set)', file: SET + 'LMG.png', length: 1.2},
+  'set-bolt': {label: 'Bolt-action rifle (set)', file: SET + 'BoltActionRifle.png', length: 1.15},
+  'set-shotgun': {label: 'Shotgun (set)', file: SET + 'Shotgun.png', length: 1},
+  'set-smg': {label: 'Heavy SMG (set)', file: SET + 'HeavySMG.png', length: 0.8},
+  'set-mp': {label: 'Machine pistol (set)', file: SET + 'MachinePistol.png', length: 0.55},
+  'set-rocket': {label: 'Rocket launcher (set)', file: SET + 'RocketLauncher.png', length: 1.15},
+};
+/** Every gun sprite: {id: {label, img, length}}. Workbench guns first, in the Workbench's order. */
+export async function loadGuns() {
+  let bench = {};
+  try {
+    bench = await (await fetch(new URL('../assets/sprites/weapons/manifest.json', import.meta.url))).json();
+  } catch {}
+  const out = {};
+  await Promise.all([
+    ...Object.entries(bench).map(async ([id, g]) => {
+      const img = await loadUrl(new URL(`../assets/sprites/weapons/${g.file}`, import.meta.url).href);
+      if (img) out[id] = {label: g.label, img, length: g.length, bench: true};
+    }),
+    ...Object.entries(SET_GUNS).map(async ([id, g]) => {
+      const img = await load(g.file);
+      if (img) out[id] = {label: g.label, img, length: g.length};
+    }),
+  ]);
+  const order = [...Object.keys(bench), ...Object.keys(SET_GUNS)];
+  return Object.fromEntries(order.filter(id => out[id]).map(id => [id, out[id]]));
+}
+// What each simulated weapon shows by default (a cosmetic gun replaces a rebel's first weapon).
+export const DEFAULT_GUN = {
+  partisan: {ak: 'ak74m', svd: 'set-sniper', pkm: 'set-lmg', rpg: 'set-rocket'},
+  army: {ak: 'ak15k', svd: 'set-sniper', pkm: 'set-lmg', rpg: 'set-rocket', gp: 'ak15k'},
+};
+
+// ---------- saved looks (per rebel, in this browser only) ----------
+const LOOKS_KEY = 'parp-sprite-looks';
+let saved = {};
+try {
+  saved = JSON.parse(localStorage.getItem(LOOKS_KEY) || '{}') || {};
+} catch {}
+export const savedLook = id => saved[id] || {};
+export function saveLook(id, patch) {
+  saved[id] = {...(saved[id] || {}), ...patch};
+  if (patch.body) saved[id].head = headFor(patch.body, saved[id].head);
+  try {
+    localStorage.setItem(LOOKS_KEY, JSON.stringify(saved));
+  } catch {}
+  return saved[id];
+}
+export function resetLook(id) {
+  delete saved[id];
+  try {
+    localStorage.setItem(LOOKS_KEY, JSON.stringify(saved));
+  } catch {}
+}
 
 const images = new Map();
 function load(path) {
@@ -86,6 +204,15 @@ function load(path) {
       }),
     );
   return images.get(path);
+}
+
+function loadUrl(url) {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => resolve(null);
+    img.src = url;
+  });
 }
 
 /** Load every named file; returns {name: HTMLImageElement | null}. */
@@ -131,10 +258,10 @@ export async function buildPawn(look) {
     const layers = await Promise.all([
       load(doll.body(look.body, d)),
       look.shirt ? load(doll.shell(look.shirt, look.body, d)) : null,
-      look.shell ? load(doll.shell(look.shell, look.body, d)) : null,
+      look.shell && look.shell !== 'none' ? load(doll.shell(look.shell, look.body, d)) : null,
       load(doll.head(look.head, d)),
       look.hair ? load(doll.hair(look.hair, d)) : null,
-      look.hat ? load(doll.hat(HATS[look.hat][0], HATS[look.hat][1], d)) : null,
+      HATS[look.hat] ? load(doll.hat(HATS[look.hat][0], HATS[look.hat][1], d)) : null,
     ]);
     const [body, shirt, shell, head, hair, hat] = layers;
     const c = canvas(128, 128),
@@ -148,11 +275,11 @@ export async function buildPawn(look) {
     draw(shell, look.shellColor);
     if (d === 'north') {
       draw(head, look.skin, hx, hy);
-      if (!look.hat) draw(hair, look.hairColor, hx, hy);
+      if (!hat || HATS[look.hat][2]) draw(hair, look.hairColor, hx, hy);
       draw(hat, look.hatColor, hx, hy);
     } else {
       draw(head, look.skin, hx, hy);
-      if (!look.hat || look.hat === 'Tuque') draw(hair, look.hairColor, hx, hy);
+      if (!hat || HATS[look.hat][2]) draw(hair, look.hairColor, hx, hy);
       draw(hat, look.hatColor, hx, hy);
     }
     out[d] = c;
@@ -166,7 +293,12 @@ const SKINS = ['#e8c4a0', '#d9a77e', '#c48e66', '#a8754f', '#f0d0b0'];
 const HAIRS = ['Bowlcut', 'Mess', 'Recruit', 'Rookie', 'Shaved', 'Tuft', 'Decent', 'Scrapper'];
 const HAIR_COLORS = ['#2b2118', '#4a3220', '#6b4a2a', '#1d1a17', '#8a6a42'];
 const pick = (list, key) => list[[...key].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7) % list.length];
+/** The look for a unit: the side's default, with any saved cosmetics on top (rebels only). */
 export function lookFor(u) {
+  const look = defaultLook(u);
+  return u.side === 'partisan' ? {...look, ...savedLook(u.id)} : look;
+}
+function defaultLook(u) {
   const base = {
     body: 'Male',
     skin: pick(SKINS, u.id + 's'),

@@ -4,6 +4,10 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 ## [Unreleased]
 
+### Added (graphics test, round 2)
+- **Gun sprites for every Weapon Modder rifle** (AK-74M, AK-15K, RPK, M16A1, G3A3, Mk 14, SIG Spear, StG 44, PPSh-41, Bren, Chauchat), rendered from the 3-D models with a dark outline by `tools/sprites/render-weapons.mjs` into `assets/sprites/weapons/`. Rebels carry them in the sprite view; the army carries the AK-15K. TAC-J-33.
+- **Sprite cosmetics**: a Look panel per rebel (gun, body, skin, hair, shirt, outfit, headgear and their colours, from the placeholder layers) with a front and side preview, saved in the browser. TAC-J-34.
+
 ### Added (graphics test)
 - **2.5-D sprite view** of Partisan Tactical (`convoy/sprites.html`, linked from the 3-D page): the convoy ambush and the other two missions drawn in the RimWorld style with the placeholder art (paper-doll pawns, sprite vehicles, props and walls, baked terrain with scatter, shadows, tracers, explosions, smoke, labels and bubbles). Same simulation, keys and orders as the 3-D page; wheel or +/- to zoom. Decision TAC-J-32.
 

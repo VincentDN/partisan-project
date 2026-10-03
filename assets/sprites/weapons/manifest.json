@@ -1,0 +1,57 @@
+{
+  "ak74m": {
+    "label": "AK-74M Zenitco",
+    "file": "ak74m.png",
+    "length": 1.036
+  },
+  "ak15k": {
+    "label": "AK-15K",
+    "file": "ak15k.png",
+    "length": 0.967
+  },
+  "g3": {
+    "label": "HK G3A3",
+    "file": "g3.png",
+    "length": 1.025
+  },
+  "m16": {
+    "label": "M16A1",
+    "file": "m16.png",
+    "length": 1
+  },
+  "mk14": {
+    "label": "Mk 14 EBR",
+    "file": "mk14.png",
+    "length": 0.889
+  },
+  "spear": {
+    "label": "SIG Spear",
+    "file": "spear.png",
+    "length": 1.209
+  },
+  "stg44": {
+    "label": "StG 44",
+    "file": "stg44.png",
+    "length": 0.953
+  },
+  "ppsh41": {
+    "label": "PPSh-41",
+    "file": "ppsh41.png",
+    "length": 1.063
+  },
+  "bren": {
+    "label": "Bren",
+    "file": "bren.png",
+    "length": 1.15
+  },
+  "chauchat": {
+    "label": "Chauchat",
+    "file": "chauchat.png",
+    "length": 1.143
+  },
+  "rpk": {
+    "label": "RPK (7.62×39)",
+    "file": "rpk.png",
+    "length": 1.059
+  }
+}

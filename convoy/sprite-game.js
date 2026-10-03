@@ -7,6 +7,7 @@ import {WEAPONS} from './weapons.js';
 import {LEVELS, MISSIONS, DEFAULT_LEVEL} from './levels/index.js';
 import {createSquadPicker} from './squad-picker.js';
 import {createSpriteRenderer} from './sprite-render.js';
+import {COSMETICS, buildPawn, lookFor, saveLook, resetLook, savedLook} from './sprite-art.js';
 
 mountTopBar({title: 'Partisan Tactical (2.5-D test)', scene: 'viewer'});
 const $ = s => document.querySelector(s);
@@ -41,6 +42,7 @@ function newGame() {
   renderMissions();
   $('#card').hidden = false;
   $('#to-3d').href = `./?mission=${levelId}`;
+  renderLook();
 }
 function renderMissions() {
   $('#missions').replaceChildren(
@@ -248,6 +250,133 @@ const picker = createSquadPicker({
     selected = [];
   },
 });
+
+// ---------- look: cosmetics for each rebel (saved in this browser; they change only the sprites) ----------
+let lookId = 'player';
+const lookEl = $('#look');
+function lookUnit() {
+  return sim.units.find(u => u.id === lookId && u.side === 'partisan') || sim.units.find(u => u.side === 'partisan');
+}
+function select(label, value, options, onChange) {
+  const row = document.createElement('label');
+  row.className = 'row';
+  const sel = document.createElement('select');
+  for (const [v, text] of options) sel.append(new Option(text, v, false, v === value));
+  sel.onchange = () => onChange(sel.value);
+  row.append(label, sel);
+  return row;
+}
+function swatches(label, value, colors, onChange) {
+  const row = document.createElement('div');
+  row.className = 'row';
+  const box = document.createElement('div');
+  box.className = 'sw';
+  box.setAttribute('role', 'group');
+  box.setAttribute('aria-label', label);
+  colors.forEach((c, i) => {
+    const b = document.createElement('button');
+    b.style.background = c;
+    b.setAttribute('aria-label', `${label} ${i + 1}`);
+    b.setAttribute('aria-pressed', String(c === value));
+    b.onclick = () => onChange(c);
+    box.append(b);
+  });
+  row.append(Object.assign(document.createElement('span'), {textContent: label}), box);
+  return row;
+}
+const nice = s => (s === 'none' ? 'None' : s.replace(/([a-z])([A-Z])/g, '$1 $2'));
+async function renderLook() {
+  const u = lookUnit();
+  if (!u) return;
+  lookId = u.id;
+  const look = lookFor(u),
+    gun = savedLook(u.id).gun || '';
+  const change = patch => {
+    saveLook(u.id, patch);
+    R.refreshLook(u.id);
+    renderLook();
+  };
+  const tabs = document.createElement('div');
+  tabs.className = 'tools';
+  tabs.setAttribute('role', 'group');
+  tabs.setAttribute('aria-label', 'Rebel');
+  for (const r of sim.units.filter(x => x.side === 'partisan')) {
+    const b = document.createElement('button');
+    b.textContent = r.name;
+    b.setAttribute('aria-pressed', String(r.id === u.id));
+    b.onclick = () => {
+      lookId = r.id;
+      renderLook();
+    };
+    tabs.append(b);
+  }
+  const preview = document.createElement('canvas');
+  preview.width = 440;
+  preview.height = 240;
+  preview.setAttribute('aria-label', `${u.name}: front and side`);
+  const reset = document.createElement('button');
+  reset.textContent = 'Reset look';
+  reset.onclick = () => {
+    resetLook(u.id);
+    R.refreshLook(u.id);
+    renderLook();
+  };
+  const gunOptions = [['', `Default (${WEAPONS[u.weapons[0]].label})`], ...Object.entries(R.guns).map(([id, g]) => [id, g.label])];
+  lookEl.replaceChildren(
+    tabs,
+    preview,
+    select('Gun', gun, gunOptions, v => change({gun: v || undefined})),
+    select(
+      'Body',
+      look.body,
+      COSMETICS.body.map(b => [b, b]),
+      v => change({body: v}),
+    ),
+    swatches('Skin', look.skin, COSMETICS.skins, v => change({skin: v})),
+    select(
+      'Hair',
+      look.hair,
+      COSMETICS.hair.map(h => [h, h]),
+      v => change({hair: v}),
+    ),
+    swatches('Hair colour', look.hairColor, COSMETICS.hairColors, v => change({hairColor: v})),
+    select(
+      'Shirt',
+      look.shirt || 'ShirtBasic',
+      COSMETICS.shirt.map(h => [h, nice(h)]),
+      v => change({shirt: v}),
+    ),
+    swatches('Shirt colour', look.shirtColor, COSMETICS.colors, v => change({shirtColor: v})),
+    select(
+      'Outfit',
+      look.shell || 'none',
+      COSMETICS.shell.map(h => [h, nice(h)]),
+      v => change({shell: v}),
+    ),
+    swatches('Outfit colour', look.shellColor, COSMETICS.colors, v => change({shellColor: v})),
+    select(
+      'Headgear',
+      look.hat || 'none',
+      COSMETICS.hat.map(h => [h, nice(h)]),
+      v => change({hat: v}),
+    ),
+    swatches('Headgear colour', look.hatColor, COSMETICS.colors, v => change({hatColor: v})),
+    reset,
+  );
+  // preview: front and side, the side view holding the gun
+  const sprites = await buildPawn(look);
+  const g = preview.getContext('2d');
+  g.clearRect(0, 0, preview.width, preview.height);
+  g.drawImage(sprites.south, 10, 0, 220, 220);
+  const chosen = R.guns[gun] || null;
+  g.drawImage(sprites.east, 220, 0, 220, 220);
+  const G = chosen || R.guns.ak74m;
+  if (G) {
+    const w = 170,
+      h = (w * G.img.height) / G.img.width;
+    g.drawImage(G.img, 300, 130 - h / 2, w, h);
+  }
+}
 
 // ---------- loop ----------
 const resize = () => R.resize();

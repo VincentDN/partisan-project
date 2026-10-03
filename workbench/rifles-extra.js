@@ -195,7 +195,7 @@ export const EXTRA = {
     handguardAt: [0.357, 0.074, 0],
     sockets: [
       ['muzzle', 'Muzzle', [170, 22, 0], [1, 0, 0]],
-      ['optic', 'Top rail', [10, 36, 0], [0, 1, 0]],
+      ['optic', 'Top rail', [10, 30, 0], [0, 1, 0]],
       ['buis', 'Back-up sight rail', [95, 36, 0], [0, 1, 0]],
       ['sling', 'Sling mount', [-185, 20, 0], [-1, 0, 0]],
       ['foregrip', 'Under rail', [80, -4, 0], [0, -1, 0]],

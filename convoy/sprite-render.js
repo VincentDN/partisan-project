@@ -2,7 +2,7 @@
 // Layers: baked ground (terrain textures, feathered patches and roads, grass and scatter, scorch marks), then shadows,
 // then every object sorted by its south edge (cover, vehicles, pawns, trees), then effects and labels on top.
 // x runs east and z south in metres; the camera looks straight down, objects show their front faces (2.5-D).
-import {loadArt, buildPawn, lookFor, tinted, atlasCell} from './sprite-art.js';
+import {loadArt, loadGuns, buildPawn, lookFor, savedLook, DEFAULT_GUN, tinted, atlasCell} from './sprite-art.js';
 
 const PPM = 32; // pixels per metre at zoom 1 (art bible: 1 m = 32 px)
 
@@ -15,7 +15,7 @@ const canvas = (w, h) => Object.assign(document.createElement('canvas'), {width:
 const hex = n => '#' + n.toString(16).padStart(6, '0');
 
 export async function createSpriteRenderer(view) {
-  const art = await loadArt();
+  const [art, guns] = await Promise.all([loadArt(), loadGuns()]);
   const ctx = view.getContext('2d');
   const pawns = new Map(); // unit id -> {south, east, north} or a pending promise
   const camera = {x: 0, z: 0, zoom: 0.85};
@@ -283,7 +283,11 @@ export async function createSpriteRenderer(view) {
   }
 
   // ---------- pawns ----------
-  const WEAPON_LEN = {ak: 1.05, svd: 1.3, pkm: 1.25, rpg: 1.25, gp: 1.05, hmg: 1.3};
+  /** The gun a unit shows: a rebel's chosen cosmetic gun replaces its first weapon; otherwise the side's default. */
+  function gunFor(u) {
+    const chosen = u.side === 'partisan' && u.weapon === u.weapons[0] ? savedLook(u.id).gun : null;
+    return guns[chosen] || guns[DEFAULT_GUN[u.side]?.[u.weapon]] || Object.values(guns)[0];
+  }
   function drawPawn(u, sim, opts) {
     if (u.escaped || u.state === 'mounted' || u.state === 'turret' || (u.role === 'turret' && !u.alive)) return;
     const p = pawnFor(u);
@@ -301,10 +305,13 @@ export async function createSpriteRenderer(view) {
       sprite(img, u.x, u.z, size, size, {rot: Math.PI / 2, filter: 'grayscale(.4) brightness(.6)', flipX: dir === 'west'});
       return;
     }
-    const weapon = art[u.weapon] || art.ak;
-    const wl = WEAPON_LEN[u.weapon] || 1,
+    const gun = gunFor(u),
       left = cx < 0;
-    const drawWeapon = () => sprite(weapon, u.x + cx * 0.32, u.z + cz * 0.32 + 0.12, wl, wl, {rot: a, flipY: left, oy: -0.15 - bob});
+    // drawn a little larger than life, as the set does, with the grip near the body
+    const len = gun ? gun.length * 1.4 : 1,
+      gh = gun ? (len * gun.img.height) / gun.img.width : 0.5,
+      off = len * 0.28;
+    const drawWeapon = () => gun && sprite(gun.img, u.x + cx * off, u.z + cz * off + 0.12, len, gh, {rot: a, flipY: left, oy: -0.2 - bob});
     if (dir === 'north') drawWeapon(); // held in front: behind the body from this side
     sprite(img, u.x, u.z, size, size, {flipX: dir === 'west', oy: -0.5 - bob});
     if (dir !== 'north') drawWeapon();
@@ -555,6 +562,9 @@ export async function createSpriteRenderer(view) {
       camera.z = sim.player.z + 6;
     },
     files: art,
+    guns,
+    /** A rebel's look changed: rebuild its sprite on the next frame. */
+    refreshLook: id => pawns.delete(id),
   };
 }
 export {hex};

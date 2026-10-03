@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="robots" content="noindex, nofollow, noarchive"><title>Weapon sprite render</title>
+<script type="importmap">{"imports":{"three":"../../vendor/three/build/three.module.min.js","three/addons/":"../../vendor/three/examples/jsm/"}}</script></head>
+<body style="margin:0;background:#0000">
+<script type="module">
+// Renders every Workbench rifle (factory build) side-on into a RimWorld-style sprite: flat light, dark outline, muzzle
+// to the right, transparent background. Driven by tools/sprites/render-weapons.mjs, which saves the PNGs.
+import * as T from 'three';
+import {MODELS} from '../../workbench/models.js';
+import {loadRifle} from '../../workbench/rifle-instance.js';
+import {applyLoadout, emptyLoadout, installCamo} from '../../workbench/apply-loadout.js';
+
+const W = 1024, H = 512;
+const renderer = new T.WebGLRenderer({antialias: true, alpha: true, preserveDrawingBuffer: true});
+renderer.setSize(W, H);
+renderer.setClearColor(0x000000, 0);
+renderer.outputColorSpace = T.SRGBColorSpace;
+const scene = new T.Scene();
+scene.add(new T.HemisphereLight(0xffffff, 0xa09a8c, 3.4));
+const key = new T.DirectionalLight(0xfff4e0, 2.2);
+key.position.set(0.3, 1, 1);
+scene.add(key);
+
+async function render(id) {
+  const wear = {value: 0};
+  const rifle = await loadRifle(id, {decorate: m => installCamo(m, wear)});
+  applyLoadout(rifle, emptyLoadout(id), wear);
+  await new Promise(r => setTimeout(r, 700)); // real attachment parts arrive asynchronously
+  scene.add(rifle.model);
+  rifle.model.updateMatrixWorld(true);
+  const box = new T.Box3();
+  rifle.model.traverse(o => {
+    if (!o.isMesh || !o.visible) return;
+    for (let a = o; a; a = a.parent) if (!a.visible) return;
+    box.expandByObject(o);
+  });
+  const size = box.getSize(new T.Vector3()), c = box.getCenter(new T.Vector3());
+  const half = (size.x / 2) * 1.04, aspect = W / H;
+  const cam = new T.OrthographicCamera(-half, half, half / aspect, -half / aspect, -10, 10);
+  cam.position.set(c.x, c.y, c.z + 2);
+  cam.lookAt(c.x, c.y, c.z);
+  renderer.render(scene, cam);
+  scene.remove(rifle.model);
+  // 2-D pass: trim, then a dark outline behind the silhouette (the art bible's 2 px line at sprite size)
+  const src = document.createElement('canvas');
+  src.width = W; src.height = H;
+  src.getContext('2d').drawImage(renderer.domElement, 0, 0);
+  // clean the edge: anything nearly transparent becomes fully transparent (else the outline pass picks it up)
+  const id0 = src.getContext('2d').getImageData(0, 0, W, H),
+    px = id0.data;
+  for (let i = 3; i < px.length; i += 4) if (px[i] < 40) px[i] = 0;
+  src.getContext('2d').putImageData(id0, 0, 0);
+  let minX = W, maxX = 0, minY = H, maxY = 0;
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (px[(y * W + x) * 4 + 3] > 8) {
+    minX = Math.min(minX, x); maxX = Math.max(maxX, x); minY = Math.min(minY, y); maxY = Math.max(maxY, y);
+  }
+  const pad = 10, cw = maxX - minX + 1 + pad * 2, ch = maxY - minY + 1 + pad * 2;
+  const out = document.createElement('canvas');
+  out.width = cw; out.height = ch;
+  const g = out.getContext('2d');
+  const sil = document.createElement('canvas');
+  sil.width = cw; sil.height = ch;
+  const sg = sil.getContext('2d');
+  sg.drawImage(src, minX, minY, cw - pad * 2, ch - pad * 2, pad, pad, cw - pad * 2, ch - pad * 2);
+  const m = sg.getImageData(0, 0, cw, ch);
+  for (let i = 0; i < m.data.length; i += 4) {
+    const on = m.data[i + 3] > 0;
+    m.data[i] = 0x1b;
+    m.data[i + 1] = 0x1a;
+    m.data[i + 2] = 0x16;
+    m.data[i + 3] = on ? 255 : 0;
+  }
+  sg.putImageData(m, 0, 0);
+  const r = 7;
+  for (let a = 0; a < 16; a++) g.drawImage(sil, Math.round(Math.cos((a / 16) * Math.PI * 2) * r), Math.round(Math.sin((a / 16) * Math.PI * 2) * r));
+  // the gun itself, lifted and warmed a touch so dark steel reads like painted art, over its outline
+  g.filter = 'brightness(1.45) contrast(1.05) sepia(.12)';
+  g.drawImage(src, minX, minY, cw - pad * 2, ch - pad * 2, pad, pad, cw - pad * 2, ch - pad * 2);
+  g.filter = 'none';
+  return {id, label: MODELS[id].label, length: +size.x.toFixed(3), png: out.toDataURL('image/png')};
+}
+window.renderAll = async () => {
+  const out = [];
+  for (const id of Object.keys(MODELS)) out.push(await render(id));
+  return out;
+};
+window.ready = true;
+</script></body></html>
