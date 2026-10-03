@@ -4,6 +4,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 ## [0.3.1] · 2026-10-01
 
+### Changed (design doc)
+- The Game Design Doc opens with the pitch: *Escape from Tarkov meets Mount and Blade with guns*, inspired by the Antistasi mod for Arma 3: a PvE loop where you play a group of units and level your characters and Resistance on a Mount and Blade style overworld, so stealing weapons and attachments levels up different characters, escalating from ambushes and raids to vehicle warfare against the Invader.
+
 ### Added (Partisan Tactical, roadmap round 2)
 - **Play as the whole squad** (roadmap sections G and H, packets WP-S20 to S26): you control one rebel at a time, swap by button (slow-motion zoom-out, hover the rebel, take control) or automatically when yours falls, and lose only when every rebel is down. Rebels level up on Bannerlord-style upgrade trees whose branches need the right equipment, with perks and abilities.
 - **Design decision log** (`docs/design-decisions/`): every decision per build with the reasoning, alternatives, cost and a feedback line, under stable IDs (`TAC-A-07`). A test keeps it complete.
