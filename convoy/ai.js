@@ -59,6 +59,7 @@ export function decay(sim, u, dt) {
 
 export function receive(sim, u, belief) {
   addBelief(u, belief, sim.time);
+  if (u.side === 'army' && !u.alert) sim.alert(u); // word of contact puts a soldier on alert
 }
 
 // ---------- perception ----------
@@ -66,9 +67,9 @@ export function perceive(sim, u) {
   const mounted = u.state === 'mounted';
   // Sight by role (a marksman's optic, the gunner's height on the MRAP); riders in a moving vehicle see little.
   // Before the ambush the MRAP gunner watches the road ahead from his hatch: farther than the riders, not all round.
-  const scanning = u.state === 'turret' && !sim.alarm;
+  const scanning = u.state === 'turret' && !u.alert;
   const range = mounted ? 24 : scanning ? 32 : u.side === 'army' ? ROLES[u.role]?.sight || 42 : u.weapon === 'svd' ? 60 : 48;
-  const halfFov = scanning ? 1.6 : u.side === 'partisan' || mounted || u.state === 'turret' || sim.alarm ? Math.PI : 1.25;
+  const halfFov = scanning ? 1.6 : u.side === 'partisan' || mounted || u.state === 'turret' || u.alert ? Math.PI : 1.25;
   u.visible = [];
   for (const e of sim.enemiesOf(u)) {
     const d = dist(u, e);
@@ -77,12 +78,12 @@ export function perceive(sim, u) {
     da = Math.atan2(Math.sin(da), Math.cos(da));
     if (Math.abs(da) > halfFov) continue;
     if (!sim.los(u.x, u.z, e.x, e.z)) continue;
-    if (u.side === 'army' && !sim.alarm) {
-      // Before the ambush a soldier only grows suspicious: movement and closeness make you easier to spot.
+    if (u.side === 'army' && !u.alert) {
+      // Before the alarm a soldier only grows suspicious: movement and closeness make you easier to spot.
       const pace = !e.moving ? 0.6 : e.speed < 2 ? 1 : 2.2;
       u.suspicion += 0.2 * (0.4 + sim.awareness * 1.2) * (1 - d / range) * pace;
       if (u.suspicion < 1) continue;
-      sim.raiseAlarm(u);
+      sim.alert(u);
     }
     u.visible.push(e);
   }
@@ -111,6 +112,7 @@ export function hear(sim, shooter) {
       sim.time,
     );
     if (isNew === 'new' && u.state !== 'mounted') sim.say(u, `Shots ${compass(shooter.x - u.x, shooter.z - u.z)}!`, 'shots', 6);
+    sim.alert(u);
   }
 }
 
@@ -194,9 +196,37 @@ export function armyThink(sim, u) {
         u.moveTo = findCover(sim, u, best);
         u.speed = 4.6;
       } else if (!u.moveTo && sim.rand() < 0.04) {
-        // drift around the vehicles, looking north
-        u.moveTo = {x: u.vehicle.x + (sim.rand() - 0.5) * 10, z: u.vehicle.z + 3 + sim.rand() * 4};
+        // drift around the vehicles (or the post), looking north
+        const at = u.vehicle || u.post;
+        u.moveTo = {x: at.x + (sim.rand() - 0.5) * 10, z: at.z + 3 + sim.rand() * 4};
         u.speed = 1.6;
+      }
+      break;
+    case 'guard':
+    case 'patrol':
+      if (u.alert) {
+        react(sim, u, best);
+        break;
+      }
+      if (u.state === 'guard') {
+        // stand the post, scanning left and right of its arc
+        u.moveTo = Math.hypot(u.post.x - u.x, u.post.z - u.z) > 0.5 ? {x: u.post.x, z: u.post.z} : null;
+        u.speed = 1.6;
+        if (!u.moveTo) u.facing = u.post.facing + Math.sin(sim.time * 0.35 + u.post.x) * 0.7;
+      } else {
+        // walk the route, waypoint to waypoint, and loop
+        const w = u.route[u.routeI];
+        if (Math.hypot(w.x - u.x, w.z - u.z) < 0.6) u.routeI = (u.routeI + 1) % u.route.length;
+        u.moveTo = {...u.route[u.routeI]};
+        u.speed = 1.5;
+      }
+      break;
+    case 'bound':
+    case 'overwatch':
+      // run by the assault director (squadThink); here only the hand-over to a plain fight
+      if (u.supp > 0.75) {
+        setState(sim, u, 'pinned');
+        sim.say(u, 'Pinned down!', 'pinned', 8);
       }
       break;
     case 'cover':
@@ -245,6 +275,7 @@ export function armyThink(sim, u) {
       } else if (!u.moveTo) {
         setState(sim, u, 'secure');
         u.vehicle = u.vehicle || sim.vehicles[0];
+        if (!u.vehicle) u.post = {x: u.x, z: u.z, facing: u.facing};
         sim.say(u, 'Clear here.', 'clear', 15);
       }
       break;
@@ -259,10 +290,24 @@ export function armyThink(sim, u) {
 
 const between = (sim, [lo, hi]) => lo + sim.rand() * (hi - lo);
 
+/** A guard or patrol has been alerted: take cover from what it believes, or go and look where the trouble was. */
+function react(sim, u, best) {
+  if (best) {
+    setState(sim, u, 'cover');
+    u.moveTo = findCover(sim, u, best);
+    u.speed = 4.6;
+    sim.say(u, `Contact ${compass(best.x - u.x, best.z - u.z)}!`, 'contact', 5);
+  } else {
+    setState(sim, u, 'search');
+    u.speed = 2.4;
+    u.moveTo = u.lastKnown || null;
+  }
+}
+
 export function armyAct(sim, u, dt) {
   if (u.state === 'mounted' || u.state === 'escaped') return;
   if (!u.moveTo && u.path?.length) u.moveTo = u.path.shift();
-  if (!['engage', 'pinned', 'turret'].includes(u.state)) sim.move(u, dt);
+  if (!['engage', 'pinned', 'turret', 'overwatch'].includes(u.state)) sim.move(u, dt);
   else u.moving = false;
   if (u.pause > 0) {
     u.pause -= dt;
@@ -286,7 +331,8 @@ export function armyAct(sim, u, dt) {
       }
     }
   }
-  const firing = ['engage', 'flank', 'search', 'cover', 'retreat', 'turret'].includes(u.state);
+  if (!u.alert && sim.alarmMode === 'local') return; // unaware soldiers do not fire
+  const firing = ['engage', 'flank', 'search', 'cover', 'retreat', 'turret', 'bound', 'overwatch'].includes(u.state);
   if (target && firing) {
     if (sim.shoot(u, target.x, target.z) && ++u.burst >= Math.round(between(sim, W.burst))) {
       u.burst = 0;
@@ -295,7 +341,7 @@ export function armyAct(sim, u, dt) {
     return;
   }
   // Suppress where it thinks you are (a marksman never fires blind): wider spread, slower cadence.
-  if ((u.state === 'engage' || u.state === 'turret') && best && best.conf > role.suppressAt) {
+  if ((u.state === 'engage' || u.state === 'turret' || u.state === 'overwatch') && best && best.conf > role.suppressAt) {
     u.facing = Math.atan2(best.z - u.z, best.x - u.x);
     if (sim.shoot(u, best.x, best.z, 0.05 + best.err * 0.012)) {
       sim.say(u, 'Suppressing!', 'suppress', 8);
@@ -310,6 +356,8 @@ export function armyAct(sim, u, dt) {
 /** Squad director, 1 Hz: flanking orders and the decision to fall back. */
 export function squadThink(sim) {
   if (!sim.alarm) return;
+  reinforce(sim);
+  directAssaults(sim);
   const army = sim.units.filter(u => u.side === 'army');
   const up = army.filter(u => u.alive && !u.escaped && u.state !== 'mounted' && u.state !== 'turret');
   const all = army.filter(u => u.alive && !u.escaped);
@@ -420,4 +468,91 @@ export function partisanAct(sim, u, dt) {
     u.pause = between(sim, W.pause);
   }
   if (!target && o.type === 'cover' && !u.moving) u.facing = o.angle;
+}
+
+// ---------- reinforcements and bounding assaults (WP-S4) ----------
+/**
+ * Reinforcements need the radio: an alerted, living radio operator spends `callTime` seconds on the call (kill him then
+ * and nobody comes); the group arrives `after` seconds later and assaults what the army believes.
+ */
+function reinforce(sim) {
+  const R = sim.reinforcements;
+  if (!R || R.state === 'arrived' || R.state === 'lost') return;
+  const rto = sim.units.find(u => u.side === 'army' && u.role === 'rto' && u.alive && u.alert);
+  if (R.state === 'idle') {
+    if (!rto) return;
+    R.state = 'calling';
+    R.callEnds = sim.time + (R.callTime ?? 4);
+    R.caller = rto.id;
+    sim.say(rto, 'Base, contact at our position, send the reaction force!', 'radio-call', 99);
+  } else if (R.state === 'calling') {
+    const caller = sim.units.find(u => u.id === R.caller);
+    if (!caller?.alive) {
+      R.state = 'lost';
+      return;
+    }
+    if (sim.time >= R.callEnds) {
+      R.state = 'inbound';
+      R.arriveAt = sim.time + (R.after ?? 20);
+      sim.say(caller, 'Reaction force inbound!', 'radio-ok', 99);
+    }
+  } else if (R.state === 'inbound' && sim.time >= R.arriveAt) {
+    R.state = 'arrived';
+    const army = sim.units.filter(u => u.side === 'army' && u.alive);
+    const beliefs = army.flatMap(u => u.beliefs).filter(b => b.conf > 0.3);
+    const goal = beliefs.reduce((a, b) => (!a || b.conf > a.conf ? b : a), null) || R.goal || sim.player;
+    const made = sim.spawnGroup(R.units, {group: R.group || 'qrf', goal: {x: goal.x, z: goal.z}, beliefs});
+    if (made[0]) sim.say(made[0], 'Reaction force here! Moving up!', 'qrf', 99);
+  }
+}
+
+/** Next spot for a bounding soldier: 5 to 15 m on, nearer the goal, preferably hidden from it. */
+export function nextBound(sim, u, goal) {
+  const d0 = Math.hypot(goal.x - u.x, goal.z - u.z);
+  const c = findCover(sim, u, goal);
+  if (c) {
+    const d1 = Math.hypot(goal.x - c.x, goal.z - c.z),
+      hop = Math.hypot(c.x - u.x, c.z - u.z);
+    if (d1 < d0 - 3 && hop > 3 && hop < 16) return c;
+  }
+  const step = Math.min(10, d0 - 4);
+  return {x: u.x + ((goal.x - u.x) / d0) * step, z: u.z + ((goal.z - u.z) / d0) * step};
+}
+
+/**
+ * Bounding overwatch: each assault group splits into two fireteams; one moves cover to cover toward the goal while the
+ * other holds and fires, then they swap. Within 10 m of the goal (or with the enemy in sight up close) it becomes a fight.
+ */
+function directAssaults(sim) {
+  for (const a of sim.assaults) {
+    const team = sim.units.filter(
+      u => u.group === a.group && u.alive && (u.state === 'bound' || u.state === 'overwatch' || u.state === 'pinned'),
+    );
+    if (!team.length) continue;
+    const near = team.some(u => Math.hypot(a.goal.x - u.x, a.goal.z - u.z) < 10 || u.visible.some(e => dist(u, e) < 12));
+    if (near) {
+      for (const u of team) if (u.state !== 'pinned') setState(sim, u, 'engage');
+      a.done = true;
+      continue;
+    }
+    const fireteams = [team.filter((_, i) => i % 2 === 0), team.filter((_, i) => i % 2 === 1)];
+    const movers = fireteams[a.moving].filter(u => u.state !== 'pinned');
+    const arrived = movers.every(u => u.state === 'overwatch' || (!u.moveTo && u.state === 'bound'));
+    if (arrived || sim.time - a.since > 12) {
+      // swap: the team that was covering bounds forward now
+      a.moving = fireteams[1].length ? 1 - a.moving : 0;
+      a.since = sim.time;
+      const next = fireteams[a.moving].filter(u => u.state !== 'pinned');
+      for (const u of team) if (u.state !== 'pinned') setState(sim, u, next.includes(u) ? 'bound' : 'overwatch');
+      for (const u of next) {
+        u.moveTo = nextBound(sim, u, a.goal);
+        u.speed = 4.6;
+      }
+      for (const u of team) if (!next.includes(u)) u.moveTo = null;
+      if (next[0]) sim.say(next[0], 'Moving!', 'bound', 3);
+      const cover = team.find(u => !next.includes(u));
+      if (cover) sim.say(cover, 'Covering!', 'covering', 3);
+    }
+  }
+  sim.assaults = sim.assaults.filter(a => !a.done);
 }

@@ -148,7 +148,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | **TD** Tech debt (fill windows) | — | 4/4 | 44 BU | 100% |
 | **D** Design docs | — | 3/5 | 59 BU | 61% |
 | **H27** 2027 horizon | — | 0/3 | 48 BU | 0% |
-| **S** Partisan Tactical: three missions, looting, inventory, unlocks | v0.8.0 | 0/19 | 255 BU | 0% |
+| **S** Partisan Tactical: three missions, looting, inventory, unlocks | v0.8.0 | 4/19 | 255 BU | 22% |
 
 ### M0 · Foundation
 
@@ -234,10 +234,10 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 
 | ID | Packet | Size | Status | Needs | Depends on |
 |---|---|---|---|---|---|
-| `WP-S1` | Level framework: level data format, Sim takes a level, convoy as level 1, mission select (module named Partisan Tactical) | M (20) | ready | — | — |
-| `WP-S2` | Objectives and outcomes: eliminate, reach, destroy, steal, hold, protect, extract; debrief screen | S (8) | planned | — | `WP-S1` |
-| `WP-S3` | Squad orders: select teammates, follow/hold/move/attack/cover, tactical pause, order markers | M (20) | planned | — | `WP-S1` |
-| `WP-S4` | AI behaviours for new scenarios: guard posts, patrols, alarm propagation, radio reinforcements, bounding attack waves | S (8) | planned | — | `WP-S1` |
+| `WP-S1` | Level framework: level data format, Sim takes a level, convoy as level 1, mission select (module named Partisan Tactical) | M (20) | done | — | — |
+| `WP-S2` | Objectives and outcomes: eliminate, reach, destroy, steal, hold, protect, extract; debrief screen | S (8) | done | — | `WP-S1` |
+| `WP-S3` | Squad orders: select teammates, follow/hold/move/attack/cover, tactical pause, order markers | M (20) | done | — | `WP-S1` |
+| `WP-S4` | AI behaviours for new scenarios: guard posts, patrols, alarm propagation, radio reinforcements, bounding attack waves | S (8) | done | — | `WP-S1` |
 | `WP-S5` | Level 2 Compound assault: walled compound, towers, armoury cache, radio mast, stealth then alarm, extract | M (20) | planned | — | `WP-S2`, `WP-S4` |
 | `WP-S6` | Level 3 Cave hideout defence: cave, tunnels, fallback chamber, night, three attack waves, hold until dawn | M (20) | planned | — | `WP-S2`, `WP-S3`, `WP-S4` |
 | `WP-S7` | Level visuals: roof cut-away indoors, cave darkness and lamp light, night lighting and searchlight | S (8) | planned | — | `WP-S5`, `WP-S6` |

@@ -4,6 +4,22 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 ## [0.3.1] · 2026-10-01
 
+### Added (Partisan Tactical, section A)
+- **Partisan Tactical**: the top-down shooter, renamed. It has a mission select (convoy ambush now; compound assault and cave defence listed as coming).
+- **Levels are data** (`convoy/levels/`): map, cover, squad, convoy, foot soldiers, items, objectives. The convoy is level 1, and its seeded replays are identical to before.
+- **Objectives** (`convoy/objectives.js`):
+  - Types: eliminate, reach, destroy, steal (hold E), hold, protect, extract.
+  - Objectives can be optional or locked until earlier ones are done.
+  - A debrief screen shows the objectives, each partisan's state and kills, and what was taken.
+- **Squad orders**:
+  - Tab selects teammates; F follow, H hold, G go, T attack, C cover a sector; right-click to go or attack.
+  - Space pauses the fight so you can give orders. Order markers show on the ground and the squad list in the HUD.
+- **AI behaviours**:
+  - Guards on posts that scan; patrols on routes.
+  - Local alarm: word travels by shout (30 m), by radio (only while a radio operator lives) and by gunfire.
+  - Reinforcements need a radio operator who survives his call.
+  - Bounding-overwatch assault groups.
+
 ### Added (round 6)
 - **Convoy Ambush** (`convoy/`, index entry 5): a top-down shooter and test bed for the enemy AI.
   - Scenario: you and two partisans ambush an eight-man army convoy that a log roadblock stops under your ridge.

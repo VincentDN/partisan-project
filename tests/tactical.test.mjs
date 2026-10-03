@@ -193,3 +193,131 @@ test('orders: cover only engages targets inside the sector', () => {
   assert.ok(shotAt.has('east'), 'engages the soldier in the sector');
   assert.ok(!shotAt.has('south'), 'never turns to the south soldier');
 });
+
+// ---------- WP-S4: guards, patrols, alarm, reinforcements, bounding ----------
+const camp = ({units, reinforcements, partisans} = {}) =>
+  tiny([{id: 'h', type: 'hold', seconds: 999, label: 'wait'}], {
+    alarm: 'local',
+    bounds: {minX: -80, maxX: 80, minZ: -80, maxZ: 80},
+    cover: [
+      {x: 0, z: 10, w: 3, d: 1, h: 1.4, kind: 'wall'},
+      {x: 10, z: 20, w: 3, d: 1, h: 1.4, kind: 'wall'},
+      {x: 20, z: 30, w: 3, d: 1, h: 1.4, kind: 'wall'},
+    ],
+    partisans: partisans || [{id: 'player', label: 'You', x: -60, z: -60}],
+    units,
+    reinforcements,
+  });
+
+test('guards hold their post and scan; patrols walk their route and loop', () => {
+  const sim = new Sim({
+    level: camp({
+      units: [
+        {id: 'g', name: 'Guard', role: 'rifleman', x: 0, z: 0, facing: 0},
+        {
+          id: 'p',
+          name: 'Patrol',
+          role: 'rifleman',
+          x: 30,
+          z: 0,
+          patrol: [
+            {x: 30, z: 0},
+            {x: 40, z: 0},
+            {x: 40, z: 8},
+          ],
+        },
+      ],
+    }),
+    seed: 11,
+  });
+  const g = sim.units.find(u => u.id === 'g'),
+    p = sim.units.find(u => u.id === 'p');
+  const facings = new Set();
+  for (let i = 0; i < 60 * 10; i++) {
+    sim.step(1 / 60, {});
+    if (i % 60 === 0) facings.add(g.facing.toFixed(1));
+  }
+  assert.equal(g.state, 'guard');
+  assert.ok(Math.hypot(g.x, g.z) < 0.6, 'the guard stays at the post');
+  assert.ok(facings.size > 3, 'and looks around');
+  assert.equal(p.state, 'patrol');
+  assert.ok(p.routeI !== 0 || Math.hypot(p.x - 30, p.z) > 1, 'the patrol has moved along its route');
+  steps(sim, 25);
+  assert.ok(sim.callouts.length === 0 && !sim.alarm, 'nobody alerted, nobody fired');
+});
+
+test('local alarm: a shout reaches soldiers within 30 m; the radio reaches the rest only while a radio operator lives', () => {
+  const units = [
+    {id: 'a', name: 'A', role: 'rifleman', x: 0, z: 0, facing: Math.PI},
+    {id: 'near', name: 'Near', role: 'rifleman', x: 15, z: 0, facing: 0},
+    {id: 'far', name: 'Far', role: 'rifleman', x: 70, z: 70, facing: 0},
+  ];
+  const run = withRadio => {
+    const sim = new Sim({
+      level: camp({units: withRadio ? [...units, {id: 'rto', name: 'Radio', role: 'rto', x: 5, z: 5, facing: 0}] : units}),
+      seed: 12,
+    });
+    const a = sim.units.find(u => u.id === 'a');
+    sim.alert(a);
+    addSeen(sim, a);
+    steps(sim, 4);
+    return Object.fromEntries(sim.units.filter(u => u.side === 'army').map(u => [u.id, !!u.alert]));
+  };
+  const addSeen = (sim, a) => {
+    a.beliefs.push({x: -30, z: 0, err: 1, conf: 1, src: 'seen', t: sim.time});
+    sim.share(a, {x: -30, z: 0, err: 1, conf: 1});
+  };
+  const quiet = run(false);
+  assert.equal(quiet.near, true, 'the shout reached the soldier 15 m away');
+  assert.equal(quiet.far, false, 'no radio: the far soldier never heard');
+  const radio = run(true);
+  assert.equal(radio.far, true, 'with a radio operator the word reaches everyone');
+});
+
+test('reinforcements come only if the radio operator survives his call', () => {
+  const R = {
+    after: 5,
+    callTime: 3,
+    units: [
+      {name: 'Q1', role: 'rifleman', x: 60, z: 60},
+      {name: 'Q2', role: 'rifleman', x: 62, z: 60},
+    ],
+  };
+  const base = [{id: 'rto', name: 'Radio', role: 'rto', x: 0, z: 0, facing: 0}];
+  const go = killRto => {
+    const sim = new Sim({level: camp({units: base, reinforcements: R}), seed: 13});
+    const rto = sim.units.find(u => u.id === 'rto');
+    sim.alert(rto);
+    steps(sim, 1.5);
+    if (killRto) sim.damage(rto, sim.player, 999);
+    steps(sim, 12);
+    return sim;
+  };
+  const lucky = go(false);
+  assert.equal(lucky.reinforcements.state, 'arrived');
+  assert.equal(lucky.units.filter(u => u.group === 'qrf').length, 2);
+  assert.ok(lucky.callouts.some(c => c.text.startsWith('Base, contact')));
+  const cut = go(true);
+  assert.equal(cut.reinforcements.state, 'lost', 'killed during the call: nobody comes');
+  assert.equal(cut.units.filter(u => u.group === 'qrf').length, 0);
+});
+
+test('bounding assault: fireteams alternate moving and covering, and close on the goal', () => {
+  const sim = new Sim({level: camp({units: []}), seed: 14});
+  sim.raiseAlarm(null);
+  const goal = {x: 0, z: 0};
+  const made = sim.spawnGroup(
+    [0, 1, 2, 3].map(i => ({name: `W${i}`, role: 'rifleman', x: 40 + i * 2, z: 45})),
+    {group: 'wave', goal},
+  );
+  const d0 = Math.min(...made.map(u => Math.hypot(u.x, u.z)));
+  const seen = new Set();
+  for (let i = 0; i < 60 * 30; i++) {
+    sim.step(1 / 60, {});
+    if (i % 30 === 0) for (const u of made) if (u.alive) seen.add(u.state);
+  }
+  assert.ok(seen.has('bound') && seen.has('overwatch'), `both roles used: ${[...seen]}`);
+  const d1 = Math.min(...made.map(u => Math.hypot(u.x, u.z)));
+  assert.ok(d1 < d0 - 15, `the group advanced (${d0.toFixed(1)} -> ${d1.toFixed(1)} m)`);
+  assert.ok(sim.callouts.some(c => c.text === 'Moving!') && sim.callouts.some(c => c.text === 'Covering!'));
+});

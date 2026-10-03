@@ -3,7 +3,7 @@
 import {LEVELS, DEFAULT_LEVEL} from './levels/index.js';
 import {WEAPONS, ROLES, PARTISAN_LOADOUTS} from './weapons.js';
 import {initObjectives, evaluate} from './objectives.js';
-import {perceive, hear, decay, armyThink, armyAct, partisanThink, partisanAct, squadThink, receive} from './ai.js';
+import {bestBelief, compass, perceive, hear, decay, armyThink, armyAct, partisanThink, partisanAct, squadThink, receive} from './ai.js';
 
 /** mulberry32: small seeded PRNG so a run can be replayed exactly. */
 export function rng(seed) {
@@ -84,6 +84,10 @@ export class Sim {
     this.objectives = initObjectives(this.level);
     this.items = (this.level.items || []).map(i => ({...i, progress: 0, taken: false})); // things to steal (hold E)
     this.taken = new Set();
+    // Alarm: 'global' (the convoy: one shot and the whole column knows) or 'local' (word travels by voice, radio, gunfire)
+    this.alarmMode = this.level.alarm || 'global';
+    this.reinforcements = this.level.reinforcements ? {...this.level.reinforcements, state: 'idle'} : null;
+    this.assaults = []; // bounding groups: {group, goal, moving: 0 | 1}
     this.kills = {}; // partisan id -> soldiers they put down
     this.vehicles = [];
     this.units = [];
@@ -145,9 +149,11 @@ export class Sim {
       facing: f.facing || 0,
       weapons: [role.weapon, ...(role.launcher ? [role.launcher] : [])],
     });
-    u.state = f.state || 'secure';
+    u.state = f.state || (f.patrol ? 'patrol' : 'guard');
     u.leader = f.role === 'leader';
+    u.group = f.group || null;
     u.post = {x: f.x, z: f.z, facing: f.facing || 0};
+    if (f.patrol) Object.assign(u, {route: f.patrol, routeI: 0});
     return u;
   }
 
@@ -213,8 +219,23 @@ export class Sim {
     return true;
   }
 
+  /** One soldier becomes alert: a moment of surprise first; in a global alarm everyone does at once. */
+  alert(u) {
+    if (u.alert || !u.alive) return;
+    if (!this.alarm) return this.raiseAlarm(u);
+    u.alert = true;
+    u.reactAt = this.time + (0.5 + this.rand()) * (1.4 - this.awareness * 0.8);
+    // A radio operator who hears of contact puts it out on the net at once.
+    const b = u.role === 'rto' && this.alarmMode === 'local' ? bestBelief(u) : null;
+    if (b) {
+      this.say(u, `All units, contact ${compass(b.x - u.x, b.z - u.z)}!`, 'radio-net', 20);
+      this.shareLocal(u, b);
+    }
+  }
+
   /** Radio a belief to the squad: arrives after a delay that shrinks with awareness, slightly blurred. */
   share(from, belief) {
+    if (this.alarmMode === 'local') return this.shareLocal(from, belief);
     // A living radio operator halves the delay; with the sergeant dead too, word travels slower.
     const army = from.side === 'army' ? this.units.filter(u => u.side === 'army' && u.alive) : [];
     const rto = army.some(u => u.role === 'rto') ? 0.5 : 1,
@@ -230,6 +251,38 @@ export class Sim {
         });
   }
 
+  /**
+   * Local alarm: a shout reaches soldiers within 30 m; the radio reaches everyone, but only while a radio operator lives.
+   */
+  shareLocal(from, belief) {
+    const radio = from.side === 'army' && this.units.some(u => u.side === 'army' && u.alive && u.role === 'rto' && u.alert);
+    for (const to of this.units) {
+      if (to === from || !to.alive || to.side !== from.side) continue;
+      const voice = dist(to, from) < 30;
+      if (!voice && !radio) continue;
+      const delay = voice ? 0.4 + this.rand() * 0.5 : (0.8 + (1 - this.awareness) * 1.6) * 0.6;
+      this.messages.push({
+        at: this.time + delay,
+        to,
+        from,
+        belief: {...belief, err: belief.err + (voice ? 1.5 : 3), conf: belief.conf * 0.85, src: 'told'},
+      });
+    }
+  }
+
+  /** Spawn army soldiers on foot (reinforcements, attack waves) and, with a goal, send them in as a bounding assault. */
+  spawnGroup(defs, {group, goal, beliefs = []} = {}) {
+    const made = defs.map((f, i) => {
+      const u = this.footSoldier({...f, id: f.id || `${group}-${i}`, group, state: goal ? 'bound' : 'secure'}, this.units.length);
+      u.alert = true;
+      u.reactAt = this.time + 0.5;
+      for (const b of beliefs) u.beliefs.push({...b});
+      return u;
+    });
+    if (goal) this.assaults.push({group, goal: {...goal}, moving: 0, since: this.time});
+    return made;
+  }
+
   raiseAlarm(by) {
     if (this.alarm) return;
     this.alarm = true;
@@ -238,8 +291,14 @@ export class Sim {
       v.stopped = true;
       v.stopAt = this.time;
     }
-    // Human reaction: nobody returns fire the instant the ambush opens (quicker when the army is alert).
-    for (const u of this.units) if (u.side === 'army') u.reactAt = this.time + (0.5 + this.rand()) * (1.4 - this.awareness * 0.8);
+    if (this.alarmMode === 'global') {
+      // Human reaction: nobody returns fire the instant the ambush opens (quicker when the army is alert).
+      for (const u of this.units)
+        if (u.side === 'army') {
+          u.reactAt = this.time + (0.5 + this.rand()) * (1.4 - this.awareness * 0.8);
+          u.alert = true;
+        }
+    } else if (by?.side === 'army') this.alert(by);
     if (by?.side === 'army') this.say(by, 'Ambush! Contact north!', 'contact');
   }
 
@@ -448,11 +507,10 @@ export class Sim {
     for (const o of input.orders || []) this.order(o.ids, o);
     this.driveConvoy(dt);
     // comms in flight
-    this.messages = this.messages.filter(m => {
-      if (m.at > this.time) return true;
-      if (m.to.alive) receive(this, m.to, m.belief);
-      return false;
-    });
+    // (split first: a delivery can send new messages, e.g. a radio operator relaying what he heard)
+    const due = this.messages.filter(m => m.at <= this.time);
+    this.messages = this.messages.filter(m => m.at > this.time);
+    for (const m of due) if (m.to.alive) receive(this, m.to, m.belief);
     for (const u of this.units) {
       if (!u.alive) continue;
       u.cd = Math.max(0, u.cd - dt);

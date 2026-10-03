@@ -601,7 +601,7 @@ function updateAi() {
     if (best) seg(u.x, u.z, best.x, best.z);
     // view fan: two edges of the cone (all-round once the ambush is sprung)
     const range = 42,
-      half = sim.alarm ? Math.PI : 1.25;
+      half = u.alert ? Math.PI : 1.25;
     if (half < Math.PI)
       for (const s of [-1, 1]) seg(u.x, u.z, u.x + Math.cos(u.facing + s * half) * range, u.z + Math.sin(u.facing + s * half) * range);
   }
@@ -674,6 +674,7 @@ function showDebrief(d) {
 // ---------- frame ----------
 function draw() {
   updateOrders();
+  for (const u of sim.units) if (!units.has(u)) units.set(u, unitMesh(u)); // reinforcements and waves arrive mid-mission
   for (const [u, g] of units) {
     g.visible = !u.escaped && u.state !== 'mounted';
     g.position.set(u.x, u.state === 'turret' || (u.role === 'turret' && !u.alive) ? u.vehicle.h * 1.2 : 0, u.z);
