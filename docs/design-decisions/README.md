@@ -50,5 +50,6 @@ Entries marked `planned` can be changed for free; `built` ones cost a code chang
 | [H-progression.md](H-progression.md) | WP-S22 to S26: XP, levels, equipment-gated upgrade trees, perks, abilities | planned |
 | [E-ai.md](E-ai.md) | WP-S15, S16: AI v2, morale, tuning harness | planned |
 | [F-quality.md](F-quality.md) | WP-S17 to S19: tests, performance, touch, docs | planned |
+| [I-graphics.md](I-graphics.md) | WP-V1 to V20: 2.5-D top-down sprites (RimWorld style), retro overworld map | planned |
 
 Decision count: see `grep -c "^### TAC-" docs/design-decisions/*.md`.

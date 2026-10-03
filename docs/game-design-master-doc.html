@@ -67,8 +67,8 @@ figure{margin:0}figcaption{font:12px/1.5 var(--mono);color:var(--dim);margin-top
 .pillars{counter-reset:p}
 /* moodboard */
 .mood{display:grid;gap:14px;grid-template-columns:repeat(12,1fr)}
-.mood figure{grid-column:span 6}.mood .wide{grid-column:span 12}.mood .third{grid-column:span 4}.mood .side{grid-column:span 8;align-self:center}.mood .side h3{margin:0 0 8px}.mood .side ul{margin:0;padding-left:18px;color:var(--dim);line-height:1.6}
-@media(max-width:760px){.mood figure,.mood .third,.mood .side{grid-column:span 12}}
+.mood figure{grid-column:span 6}.mood .wide{grid-column:span 12}.mood .third{grid-column:span 4}.mood .twothirds{grid-column:span 8}.mood .side{grid-column:span 8;align-self:center}.mood .side h3{margin:0 0 8px}.mood .side ul{margin:0;padding-left:18px;color:var(--dim);line-height:1.6}
+@media(max-width:760px){.mood figure,.mood .third,.mood .twothirds,.mood .side{grid-column:span 12}}
 .swatches{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:18px 0}
 .sw{border:1px solid var(--line);background:var(--panel);font:12px/1.4 var(--mono)}.sw i{display:block;height:54px}.sw span{display:block;padding:6px 8px;color:var(--dim)}.sw b{color:var(--text)}
 .rules{columns:2 340px;column-gap:30px;padding-left:22px}.rules li{margin:0 0 10px;break-inside:avoid;font-size:15.5px}
@@ -206,6 +206,15 @@ footer a{color:var(--olive)}
       <li><b>Few flat tones per surface</b> with a darker shade: it is close to the Art Style Lab's cel and ink looks, so we can test both before choosing.</li>
       <li><b>A real rifle shape</b> held across the body: the weapon family stays recognisable at small sizes.</li>
       <li>Candidate look for the top-down shooter's rebels and soldiers.</li>
+    </ul></div>
+    <figure><div class="frame" style="background:#16200f"><img src="moodboard/ref-2d-armour-sprites-1.png" alt="Layered 2D sprite sheet: a bare body, then the same figure with a hood, an open helmet, a visored helmet and a visored helmet with a red tabard, plus gloves and two torso pieces" width="400" height="261" loading="lazy" style="image-rendering:pixelated;object-fit:contain"></div><figcaption>Layered people: one body, many heads and torsos. The model for our paper-doll characters and loot-driven looks.</figcaption></figure>
+    <figure><div class="frame" style="background:#16200f"><img src="moodboard/ref-2d-armour-sprites-2.png" alt="More layered 2D sprites: three mail hoods, a kettle hat, and red and blue padded tunics" width="365" height="209" loading="lazy" style="image-rendering:pixelated;object-fit:contain"></div><figcaption>More layers: hoods, hats, tunics. Each is one swappable piece.</figcaption></figure>
+    <figure class="twothirds"><div class="frame"><img src="moodboard/ref-2d-topdown-map.jpg" alt="RimWorld-style top-down 2D map: ruins with walls and urns, trees, bushes, flowers, rocks and a wrecked cart on grass and sand, with long diagonal shadows" width="1500" height="1020" loading="lazy"></div><figcaption>The world: 32 px tiles, seeded scatter, dark outlines, long shadows, walls with a visible front face.</figcaption></figure>
+    <figure class="third"><div class="frame"><img src="moodboard/ref-retro-overworld-map.jpg" alt="Retro handheld-RPG region map of an island: banded green landmass on flat blue sea with yellow routes and small red-roofed towns" width="533" height="575" loading="lazy" style="max-height:520px;object-fit:contain;background:#222"></div><figcaption>The overworld: banded greens, flat sea, yellow routes, red-roofed towns.</figcaption></figure>
+    <div class="side" style="grid-column:span 12"><h3>2.5-D graphics direction</h3><ul>
+      <li><b>The shooter becomes RimWorld-style 2.5-D top-down sprites</b>: thick dark outlines, flat fills with a shade, layered people, long sun shadows. The simulation does not change.</li>
+      <li><b>The campaign map becomes a retro island map</b> like a handheld-RPG region map, with territory shown by tint and by shape.</li>
+      <li>The plan is in the <a href="https://github.com/VincentDN/partisan-project/blob/main/docs/graphics-roadmap.md">graphics roadmap</a> (WP-V1 to V20).</li>
     </ul></div>
   </div>
 

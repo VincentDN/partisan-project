@@ -55,7 +55,7 @@ Work in section order: each section ends playable and tested. Sizes: XS 3, S 8, 
 |---|---|---|---|
 | WP-S5 | M | **Level 2: Compound assault.** Walled farm compound: gate, two guard towers, barracks, armoury, radio mast. Starts quiet (patrols, suspicion, bodies can be found); alarm brings a reinforcement truck if the radio still works. Objectives: steal the armoury cache, destroy the mast (optional), extract | Winnable stealthy and loud in the headless harness (WP-S16); smoke test |
 | WP-S6 | M | **Level 3: Cave hideout defence.** Your camp in a cave: entrance, two tunnels, fallback chamber. Night; the army attacks in three waves (rifle squads, MG team, MRAP with searchlight). Before the fight you place your squad and spend the stash. Objective: hold until dawn (timer) or break the attack | Three waves run from data; winnable with a sensible loadout; smoke test |
-| WP-S7 | S | **Level visuals.** Roof cut-away when inside buildings, cave darkness with lamp light and muzzle flashes, night lighting and searchlight cone | Screenshots of each level in the contact sheet; still 60 fps on a mid laptop |
+| WP-S7 | S | **Level visuals** (retired: delivered by the 2-D renderer, [graphics-roadmap.md](graphics-roadmap.md) WP-V9 and V12). Roof cut-away when inside buildings, cave darkness with lamp light and muzzle flashes, night lighting and searchlight cone | Screenshots of each level in the contact sheet; still 60 fps on a mid laptop |
 
 ### Section G: Play as the whole squad (new; built right after A, before the new levels)
 
@@ -116,6 +116,10 @@ Work in section order: each section ends playable and tested. Sizes: XS 3, S 8, 
 6. **E** and **F** close it out; S16 starts as soon as S1 lands and is re-run after every level and AI change.
 
 About 360 BU in total (13 × M, 11 × S, 2 × XS), roughly three and a half usage windows. Section A (45 BU) is built.
+
+## Graphics
+
+The shooter is moving from 3-D to RimWorld-style 2.5-D sprites, and the campaign map gets a retro island look. See [graphics-roadmap.md](graphics-roadmap.md); it runs in parallel with everything above.
 
 ## Risks
 
