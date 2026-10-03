@@ -4,6 +4,10 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 ## [Unreleased]
 
+### Fixed (Weapon Modder fit pass)
+- Every attachment mount on every rifle snapped onto the gun by a ray-cast audit (`tools/workbench/fit-audit.mjs`, `apply-fit.mjs`): optics and sights sit on their rails, foregrips and drums on the gun, muzzle devices on the barrel. ADR 0014.
+- Bipod legs spread sideways; the AK drum follows its source; the GP-25 lost its loose grenade and clamps under the handguard; the hand stop and G3 scope sit right; the Spear's loose cartridge is gone; StG 44 and PPSh-41 mounts face the right way. Gun sprites re-rendered.
+
 ### Added (graphics test, round 2)
 - **Gun sprites for every Weapon Modder rifle** (AK-74M, AK-15K, RPK, M16A1, G3A3, Mk 14, SIG Spear, StG 44, PPSh-41, Bren, Chauchat), rendered from the 3-D models with a dark outline by `tools/sprites/render-weapons.mjs` into `assets/sprites/weapons/`. Rebels carry them in the sprite view; the army carries the AK-15K. TAC-J-33.
 - **Sprite cosmetics**: a Look panel per rebel (gun, body, skin, hair, shirt, outfit, headgear and their colours, from the placeholder layers) with a front and side preview, saved in the browser. TAC-J-34.

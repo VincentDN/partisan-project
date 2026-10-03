@@ -345,7 +345,8 @@ SOURCES_JSON = r'''{
       "unit": "du",
       "dir": "weapons",
       "strip": [
-        "277 ar-10 mag empty 30rnd (lancer)_2"
+        "277 ar-10 mag empty 30rnd (lancer)_2",
+        "277_0"
       ]
     },
     {

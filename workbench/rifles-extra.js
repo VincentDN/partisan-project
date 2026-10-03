@@ -1,6 +1,6 @@
 // Rifles from the Sketchfab batch (WP-A9, A12, A13, A15..A18). Same schema as models.js; this file only
 // keeps the repeated slot boilerplate out of the way. Sockets are in SOURCE units (muzzle along +x), like the
-// AK-74M's, and `scale` turns a source unit into metres (printed by tools/assets/import-sketchfab.mjs, or
+// AK-74M's (the StG 44 and PPSh-41 files face the other way: their muzzle is at -x), and `scale` turns a source unit into metres (printed by tools/assets/import-sketchfab.mjs, or
 // real length / source length for the skinned downloads).
 //
 // Models by D_U (CC BY 4.0) unless `author` says otherwise. Loose spare magazines and rounds were stripped
@@ -90,22 +90,22 @@ export const EXTRA = {
     // Where the support hand holds the rifle, in metres from the grip socket (muzzle +x, up +y): operator/operator.js.
     handguardAt: [0.4, 0.045, 0],
     sockets: [
-      ['muzzle', 'Muzzle', [4.95, 0.05, 0], [1, 0, 0]],
-      ['optic', 'Optic mount', [1.0, 0.33, 0], [0, 1, 0]],
-      ['buis', 'Back-up sight', [2.5, 0.4, 0], [0, 1, 0]],
+      ['muzzle', 'Muzzle', [5.023, -0.04247, 0], [1, 0, 0]],
+      ['optic', 'Optic mount', [1, 0.3718, 0], [0, 1, 0]],
+      ['buis', 'Back-up sight', [2.5, 0.3525, 0], [0, 1, 0]],
       ['trigger', 'Trigger', [-0.5, -0.4, 0], [0, -1, 0]],
       ['charging', 'Charging handle', [1.6, 0.12, 0.2], [0, 0, 1]],
       ['sling', 'Sling mount', [-4.7, -0.05, 0], [-1, 0, 0]],
-      ['foregrip', 'Under rail', [2.3, -0.25, 0], [0, -1, 0]],
-      ['side', 'Side rail', [2.3, 0.05, 0.22], [0, 0, 1]],
-      ['magazine', 'Mag well', [0.25, -0.3, 0], [0, -1, 0]],
+      ['foregrip', 'Under rail', [2.3, -0.19, 0], [0, -1, 0]],
+      ['side', 'Side rail', [2.3, 0.05, 0.2022], [0, 0, 1]],
+      ['magazine', 'Mag well', [0.25, -0.0726, 0], [0, -1, 0]],
       ['stock', 'Stock', [-2.4, 0.1, 0], [-1, 0, 0]],
       ['grip', 'Grip', [-1.55, -0.5, 0], [0, -1, 0]],
     ],
     slots: {
       muzzle: muzzle([{id: 'g3', grams: 90, label: 'G3 flash hider', original: true}]),
       optic: optic([
-        {id: 'scope', build: real('g3-scope.glb', {scale: 0.971672, rotation: Z_FWD, anchor: ['c', 'min', 'c']})},
+        {id: 'scope', build: real('g3-scope.glb', {scale: 0.971672, rotation: Z_FWD, anchor: ['c', 'min', 'c'], offset: [0, -0.012, 0]})},
         'micro',
         'holo',
       ]),
@@ -147,12 +147,12 @@ export const EXTRA = {
     // Where the support hand holds the rifle, in metres from the grip socket (muzzle +x, up +y): operator/operator.js.
     handguardAt: [0.4, 0.19, 0],
     sockets: [
-      ['muzzle', 'Muzzle', [108, 21.3, 0], [1, 0, 0]],
+      ['muzzle', 'Muzzle', [111.45, 18.779, 0], [1, 0, 0]],
       ['optic', 'Carry-handle mount', [-8, 45, 0], [0, 1, 0]],
       ['sling', 'Sling mount', [-81, 12, 0], [-1, 0, 0]],
-      ['foregrip', 'Under handguard', [55, 15, 0], [0, -1, 0]],
-      ['side', 'Side rail', [60, 22, 3.4], [0, 0, 1]],
-      ['magazine', 'Mag well', [-3, 8, 0], [0, -1, 0]],
+      ['foregrip', 'Under handguard', [55, 13.447, 0], [0, -1, 0]],
+      ['side', 'Side rail', [60, 22, 2.153], [0, 0, 1]],
+      ['magazine', 'Mag well', [-3, -6.233, 0], [0, -1, 0]],
       ['stock', 'Stock', [-35, 14, 0], [-1, 0, 0]],
       ['grip', 'Grip', [-28, -14, 0], [0, -1, 0]],
     ],
@@ -194,13 +194,13 @@ export const EXTRA = {
     // Where the support hand holds the rifle, in metres from the grip socket (muzzle +x, up +y): operator/operator.js.
     handguardAt: [0.357, 0.074, 0],
     sockets: [
-      ['muzzle', 'Muzzle', [170, 22, 0], [1, 0, 0]],
-      ['optic', 'Top rail', [10, 30, 0], [0, 1, 0]],
-      ['buis', 'Back-up sight rail', [95, 36, 0], [0, 1, 0]],
+      ['muzzle', 'Muzzle', [186.96, 21.774, 0], [1, 0, 0]],
+      ['optic', 'Top rail', [10, 31.592, 0], [0, 1, 0]],
+      ['buis', 'Back-up sight rail', [70, 32.797, 0], [0, 1, 0]],
       ['sling', 'Sling mount', [-185, 20, 0], [-1, 0, 0]],
-      ['foregrip', 'Under rail', [80, -4, 0], [0, -1, 0]],
-      ['side', 'Side rail', [90, 18, 10], [0, 0, 1]],
-      ['magazine', 'Mag well', [-8, 0, 0], [0, -1, 0]],
+      ['foregrip', 'Under rail', [80, 6.326, 0], [0, -1, 0]],
+      ['side', 'Side rail', [90, 18, 7.938], [0, 0, 1]],
+      ['magazine', 'Mag well', [-8, 2.792, 0], [0, -1, 0]],
       ['stock', 'Stock', [-80, 12, 0], [-1, 0, 0]],
       ['grip', 'Grip', [-100, -16, 0], [0, -1, 0]],
     ],
@@ -256,15 +256,15 @@ export const EXTRA = {
     // Where the support hand holds the rifle, in metres from the grip socket (muzzle +x, up +y): operator/operator.js.
     handguardAt: [0.384, 0.042, 0],
     sockets: [
-      ['muzzle', 'Muzzle', [4.93, 0.246, 0], [1, 0, 0]],
+      ['muzzle', 'Muzzle', [4.463, 0.1829, 0], [1, 0, 0]],
       ['optic', 'Optic rail', [0.55, 0.74, 0], [0, 1, 0]],
-      ['buis', 'Back-up sight rail', [1.9, 0.74, 0], [0, 1, 0]],
+      ['buis', 'Back-up sight rail', [1.9, 0.7059, 0], [0, 1, 0]],
       ['trigger', 'Trigger', [-0.65, -0.2, 0], [0, -1, 0]],
       ['charging', 'Charging handle', [-0.2, 0.64, 0], [0, 1, 0]],
       ['sling', 'Sling mount', [-4.6, 0, 0], [-1, 0, 0]],
-      ['foregrip', 'Under rail', [2.5, -0.09, 0], [0, -1, 0]],
-      ['side', 'Side rail', [2.6, 0.25, 0.25], [0, 0, 1]],
-      ['magazine', 'Mag well', [0.16, -0.3, 0], [0, -1, 0]],
+      ['foregrip', 'Under rail', [2.5, 0.02179, 0], [0, -1, 0]],
+      ['side', 'Side rail', [2.6, 0.25, 0.2308], [0, 0, 1]],
+      ['magazine', 'Mag well', [0.16, 0.03965, 0], [0, -1, 0]],
       ['grip', 'Grip', [-1.2, -0.15, 0], [0, -1, 0]],
       ['stock', 'Stock', [-2.0, 0.27, 0], [-1, 0, 0]],
     ],
@@ -282,7 +282,7 @@ export const EXTRA = {
       foregrip: foregrip(rail(-0.08, 0.02)),
       side,
       magazine: magazine([{id: '20', grams: 330, label: '20-rnd', original: true}], [drum50, 'none']),
-      grip: {factory: [{id: 'factory', grams: 90, label: 'MCX grip', original: true}], library: ['classic']},
+      grip: {factory: [{id: 'factory', grams: 90, label: 'MCX grip', original: true}], library: []},
       stock: {factory: [{id: 'extended', grams: 600, label: 'Extended', original: true}], library: ['none']},
     },
   },
@@ -305,11 +305,11 @@ export const EXTRA = {
     // Where the support hand holds the rifle, in metres from the grip socket (muzzle +x, up +y): operator/operator.js.
     handguardAt: [0.34, 0.047, 0],
     sockets: [
-      ['muzzle', 'Muzzle', [4.6, 0.45, 0], [1, 0, 0]],
-      ['optic', 'Optic mount', [-0.1, 1.0, 0], [0, 1, 0]],
-      ['sling', 'Sling mount', [-4.4, 0, 0], [-1, 0, 0]],
+      ['muzzle', 'Muzzle', [-4.479, 0.4161, 0], [-1, 0, 0]],
+      ['optic', 'Optic mount', [-0.1, 1.073, 0], [0, 1, 0]],
+      ['sling', 'Sling mount', [4.4, 0, 0], [1, 0, 0]],
       ['magazine', 'Mag well', [-0.37, 0.1, 0], [0, -1, 0]],
-      ['grip', 'Grip', [-1.5, -0.35, 0], [0, -1, 0]],
+      ['grip', 'Grip', [0.76, -0.35, 0], [0, -1, 0]],
     ],
     slots: {
       muzzle: muzzle(
@@ -340,11 +340,11 @@ export const EXTRA = {
     // Where the support hand holds the rifle, in metres from the grip socket (muzzle +x, up +y): operator/operator.js.
     handguardAt: [0.45, 0.02, 0],
     sockets: [
-      ['muzzle', 'Muzzle', [5.15, -0.2, 0], [1, 0, 0]],
-      ['optic', 'Optic mount', [-1.0, 1.25, 0], [0, 1, 0]],
-      ['sling', 'Sling mount', [-4.9, 0.5, 0], [-1, 0, 0]],
+      ['muzzle', 'Muzzle', [-5.008, 0.8934, 0], [-1, 0, 0]],
+      ['optic', 'Optic mount', [-1, 0.9535, 0], [0, 1, 0]],
+      ['sling', 'Sling mount', [4.95, -0.2, 0], [1, 0, 0]],
       ['magazine', 'Mag well', [-0.98, 0.3, 0], [0, -1, 0]],
-      ['grip', 'Grip', [-1.8, -0.4, 0], [0, -1, 0]],
+      ['grip', 'Grip', [0.3, -0.3, 0], [0, -1, 0]],
     ],
     slots: {
       muzzle: muzzle(
@@ -382,8 +382,8 @@ export const EXTRA = {
     // Where the support hand holds the rifle, in metres from the grip socket (muzzle +x, up +y): operator/operator.js.
     handguardAt: [0.39, 0.07, 0],
     sockets: [
-      ['muzzle', 'Muzzle', [0.6, -0.015, 0], [1, 0, 0]],
-      ['optic', 'Side mount', [0.2, 0.07, 0], [0, 1, 0]],
+      ['muzzle', 'Muzzle', [0.6093, -0.03155, 0], [1, 0, 0]],
+      ['optic', 'Side mount', [-0.28, 0.006129, 0], [0, 1, 0]],
       ['sling', 'Sling mount', [-0.62, -0.08, 0], [-1, 0, 0]],
       ['magazine', 'Mag well', [-0.095, 0.03, 0], [0, 1, 0]],
       ['grip', 'Grip', [-0.27, -0.09, 0], [0, -1, 0]],
@@ -394,7 +394,7 @@ export const EXTRA = {
       optic: optic(['scope'], rail(-0.04, 0.06)),
       sling: std.sling,
       magazine: magazine([{id: '30', grams: 1200, label: '30-rnd', original: true}], ['none']),
-      grip: {factory: [{id: 'factory', grams: 150, label: 'Bren grip', original: true}], library: ['classic']},
+      grip: {factory: [{id: 'factory', grams: 150, label: 'Bren grip', original: true}], library: []},
       stock: {factory: [{id: 'extended', grams: 900, label: 'Bren stock', original: true}], library: []},
     },
   },
@@ -423,7 +423,7 @@ export const EXTRA = {
     // Where the support hand holds the rifle, in metres from the grip socket (muzzle +x, up +y): operator/operator.js.
     handguardAt: [0.37, 0.067, 0],
     sockets: [
-      ['muzzle', 'Muzzle', [455, 52, 0], [1, 0, 0]],
+      ['muzzle', 'Muzzle', [468.19, 36.795, 0], [1, 0, 0]],
       ['optic', 'Optic mount', [-20, 66, 0], [0, 1, 0]],
       ['sling', 'Sling mount', [-455, 20, 0], [-1, 0, 0]],
       ['magazine', 'Mag well', [38, 33, 0], [0, -1, 0]],
@@ -483,13 +483,13 @@ export const EXTRA = {
     // Where the support hand holds the rifle, in metres from the grip socket (muzzle +x, up +y): operator/operator.js.
     handguardAt: [0.31, 0.06, 0],
     sockets: [
-      ['muzzle', 'Muzzle', [6.65, 0.18, 0], [1, 0, 0]],
+      ['muzzle', 'Muzzle', [6.685, 0.1267, 0], [1, 0, 0]],
       ['optic', 'Optic mount', [-0.2, 0.55, 0], [0, 1, 0]],
       ['sling', 'Sling mount', [-3.4, -0.3, 0], [-1, 0, 0]],
       ['trigger', 'Trigger', [-0.43, -0.3, 0], [0, -1, 0]],
-      ['foregrip', 'Bipod mount', [4.7, -0.19, 0], [0, -1, 0]],
+      ['foregrip', 'Bipod mount', [4.7, -0.01892, 0], [0, -1, 0]],
       ['magazine', 'Mag well', [0.4, -0.1, 0], [0, -1, 0]],
-      ['grip', 'Grip', [-0.9, -0.4, 0], [0, -1, 0]],
+      ['grip', 'Grip', [-0.75, -0.17, 0], [0, -1, 0]],
       ['stock', 'Stock', [-1.5, -0.2, 0], [-1, 0, 0]],
     ],
     slots: {
@@ -500,7 +500,7 @@ export const EXTRA = {
       foregrip: {
         rail: rail(-0.08, 0.02),
         factory: [{id: 'bipod', fp: [-0.05, 0.05], grams: 450, label: 'Bipod', original: true}],
-        library: ['vertical', 'angled', 'stop', 'gp25', 'none'],
+        library: ['vertical', 'angled', 'stop', 'none'],
       },
       magazine: magazine([{id: '40', grams: 360, label: '40-rnd', original: true}], ['none']),
       grip: {factory: [{id: 'factory', grams: 110, label: 'Wood grip', original: true}], library: ['classic']},

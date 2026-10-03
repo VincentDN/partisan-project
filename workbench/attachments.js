@@ -350,7 +350,8 @@ export const SLOTS = [
         grams: 450,
         label: 'Bipod',
         detail: 'Folding bipod on the lower rail.',
-        build: real('g3-bipod.glb', {scale: 0.995917, anchor: ['c', 'max', 'c']}),
+        // the file spreads its legs along x: a quarter turn spreads them sideways, as a deployed bipod stands
+        build: real('g3-bipod.glb', {scale: 0.995917, rotation: [0, Math.PI / 2, 0], anchor: ['c', 'max', 'c']}),
       },
       {
         id: 'gp25',
@@ -358,7 +359,13 @@ export const SLOTS = [
         grams: 1500,
         label: 'GP-25 launcher',
         detail: '40 mm underbarrel grenade launcher clamped under the handguard.',
-        build: real('gp25.glb', {scale: 0.103763, anchor: ['c', 'max', 'c'], offset: [0.05, 0, 0]}),
+        // without the loose VOG round the file shows beside it; the clamp sits under the handguard, the tube runs forward
+        build: real('gp25.glb', {
+          nodes: ['Cube_1', 'Cylinder004_2', 'Cylinder003_3', 'Cube003_4'],
+          scale: 0.103763,
+          anchor: ['c', 'max', 'c'],
+          offset: [-0.04, 0, 0],
+        }),
       },
       {
         id: 'stop',
@@ -366,7 +373,7 @@ export const SLOTS = [
         grams: 30,
         label: 'Hand stop',
         detail: 'Low hand stop at the front of the lower rail.',
-        build: real('ak-grips.glb', {nodes: ['RK-0_4'], scale: 1, anchor: ['c', 'max', 'c']}),
+        build: real('ak-grips.glb', {nodes: ['RK-0_4'], scale: 1, anchor: ['c', 'max', 'c'], offset: [0, 0.02, 0]}),
       },
       {id: 'none', fp: [0, 0], label: 'None', detail: 'Clean handguard, no foregrip.'},
     ],
@@ -437,7 +444,13 @@ export const SLOTS = [
         grams: 900,
         label: 'Drum',
         detail: 'Drum magazine with a short feed tower into a round drum.',
-        build: real('ak74-drum.glb', {nodes: ['11_AKDrumMag'], scale: 0.161309, anchor: ['c', 'max', 'c'], offset: [0, 0.025, 0]}),
+        build: real('ak74-drum.glb', {
+          nodes: ['11_AKDrumMag'],
+          scale: 0.161309,
+          rotation: Z_BACK,
+          anchor: ['c', 'max', 'c'],
+          offset: [0, 0.025, 0],
+        }),
       },
       {id: 'none', label: 'None', detail: 'Magazine removed.'},
     ],

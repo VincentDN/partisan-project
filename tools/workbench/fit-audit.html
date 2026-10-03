@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="robots" content="noindex, nofollow, noarchive"><title>Workbench fit audit</title>
+<script type="importmap">{"imports":{"three":"../../vendor/three/build/three.module.min.js","three/addons/":"../../vendor/three/examples/jsm/"}}</script></head>
+<body style="margin:0;background:#3b3a36">
+<script type="module">
+// Workbench fit audit (driven by tools/workbench/fit-audit.mjs):
+//  audit()      for every rifle and mount point, ray-cast from outside the gun along the mount direction onto the gun's own
+//               surface (the slot's own part excluded) and report where the mount should sit, in source units
+//  sheet(id)    close-up renders of every slot and option on one rifle, for a contact sheet
+import * as T from 'three';
+import {MODELS} from '../../workbench/models.js';
+import {loadRifle, applySlotState} from '../../workbench/rifle-instance.js';
+import {applyLoadout, emptyLoadout, installCamo} from '../../workbench/apply-loadout.js';
+
+const wait = ms => new Promise(r => setTimeout(r, ms));
+async function load(id) {
+  const wear = {value: 0};
+  const rifle = await loadRifle(id, {decorate: m => installCamo(m, wear)});
+  applyLoadout(rifle, emptyLoadout(id), wear);
+  rifle.model.updateMatrixWorld(true);
+  return rifle;
+}
+const visibleMeshes = (root, skip) => {
+  const out = [];
+  root.traverse(o => {
+    if (!o.isMesh) return;
+    for (let a = o; a; a = a.parent) if (!a.visible || skip.has(a)) return;
+    out.push(o);
+  });
+  return out;
+};
+
+// How each mount is snapped: the ray runs against the mount direction, from outside the gun.
+const RULES = {
+  optic: 'down',
+  buis: 'down',
+  foregrip: 'up',
+  magazine: 'up',
+  side: 'side',
+  muzzle: 'muzzle',
+};
+window.audit = async () => {
+  const report = {};
+  for (const id of Object.keys(MODELS)) {
+    const rifle = await load(id);
+    const root = rifle.model.children.find(c => c.isObject3D && c.children.some(k => k.name?.startsWith('socket:')));
+    const inv = root.matrixWorld.clone().invert();
+    const rows = [];
+    for (const [sid, slot] of Object.entries(rifle.slots)) {
+      const rule = RULES[sid];
+      if (!rule || !slot.options.some(o => o.object)) continue;
+      // everything visible except this slot's own container (its part and options) and every other slot's add-ons
+      const skip = new Set([slot.container]);
+      for (const other of Object.values(rifle.slots)) if (other !== slot) for (const o of other.options) if (o.object) skip.add(o.object);
+      const meshes = visibleMeshes(rifle.model, skip);
+      for (const m of meshes) m.material.side = T.DoubleSide; // some baked exports have flipped faces
+      const at = slot.base.clone(); // model space, metres
+      const ray = new T.Raycaster();
+      let hit = null;
+      const cast = (origin, dir) => {
+        ray.set(origin, dir);
+        return ray.intersectObjects(meshes, false)[0] || null;
+      };
+      let snapped = null;
+      if (rule === 'down') {
+        // the highest surface across the width (a rail's teeth, a carry handle's groove)
+        for (const z of [0, 0.004, -0.004, 0.008, -0.008]) {
+          const h = cast(new T.Vector3(at.x, at.y + 0.5, at.z + z), new T.Vector3(0, -1, 0));
+          if (h && (!hit || h.point.y > hit.point.y)) hit = h;
+        }
+        if (hit) snapped = new T.Vector3(at.x, hit.point.y, at.z);
+      } else if (rule === 'up') {
+        // probe a few points across the width so a slim rail or well is found
+        let best = null;
+        for (const z of [0, 0.004, -0.004, 0.008, -0.008]) {
+          const h = cast(new T.Vector3(at.x, at.y - 0.5, at.z + z), new T.Vector3(0, 1, 0));
+          if (h && (!best || h.point.y < best.point.y)) best = h;
+        }
+        hit = best;
+        if (hit) snapped = new T.Vector3(at.x, hit.point.y, at.z);
+      } else if (rule === 'side') {
+        for (const dy of [0, 0.004, -0.004]) {
+          const h = cast(new T.Vector3(at.x, at.y + dy, 0.5), new T.Vector3(0, 0, -1));
+          if (h && (!hit || h.point.z > hit.point.z)) hit = h;
+        }
+        if (hit) snapped = new T.Vector3(at.x, at.y, hit.point.z);
+      } else if (rule === 'muzzle') {
+        // the barrel axis: the height whose ray reaches furthest forward, then the middle of that band
+        const hits = [];
+        const box = new T.Box3();
+        for (const m of meshes) box.expandByObject(m);
+        for (let y = box.min.y; y <= box.max.y; y += 0.0005) {
+          const h = cast(new T.Vector3(box.max.x + 0.3, y, at.z), new T.Vector3(-1, 0, 0));
+          if (h) hits.push({y, x: h.point.x});
+        }
+        if (hits.length) {
+          // the muzzle is the front-most run of hits; its middle height is the bore
+          const maxX = Math.max(...hits.map(h => h.x));
+          const i0 = hits.findIndex(h => h.x === maxX);
+          let lo = i0,
+            hi = i0;
+          while (lo > 0 && hits[lo - 1].x > maxX - 0.004) lo--;
+          while (hi < hits.length - 1 && hits[hi + 1].x > maxX - 0.004) hi++;
+          const y = (hits[lo].y + hits[hi].y) / 2;
+          snapped = new T.Vector3(maxX, y, at.z);
+          hit = true;
+        }
+      }
+      const gap = snapped ? snapped.distanceTo(at) : null;
+      const source = snapped ? snapped.clone().applyMatrix4(rifle.model.matrixWorld).applyMatrix4(inv) : null;
+      rows.push({
+        slot: sid,
+        gapMm: gap === null ? null : Math.round(gap * 1000),
+        model: at.toArray().map(v => +v.toFixed(4)),
+        snapped: snapped?.toArray().map(v => +v.toFixed(4)) || null,
+        source: source?.toArray().map(v => +v.toPrecision(5)) || null,
+      });
+    }
+    report[id] = rows;
+  }
+  return report;
+};
+
+// ---------- contact sheet ----------
+const W = 320, H = 220;
+const renderer = new T.WebGLRenderer({antialias: true, preserveDrawingBuffer: true});
+renderer.setSize(W, H);
+renderer.outputColorSpace = T.SRGBColorSpace;
+const scene = new T.Scene();
+scene.background = new T.Color(0x5a5850);
+scene.add(new T.HemisphereLight(0xffffff, 0x6a6458, 2.4));
+const sun = new T.DirectionalLight(0xffffff, 1.6);
+sun.position.set(1, 2, 1.5);
+scene.add(sun);
+const VIEW = {
+  muzzle: [0.25, 0.15, 1],
+  optic: [-0.15, 0.35, 1],
+  buis: [-0.15, 0.35, 1],
+  foregrip: [0, -0.15, 1],
+  side: [0.2, 0.15, 1],
+  magazine: [0.1, -0.1, 1],
+  grip: [-0.2, -0.05, 1],
+  stock: [-0.3, 0.1, 1],
+  trigger: [0, -0.05, 1],
+  charging: [0, 0.3, 1],
+  sling: [-0.4, 0.05, 1],
+  rail: [-0.15, 0.35, 1],
+};
+window.sheet = async id => {
+  const rifle = await load(id);
+  scene.add(rifle.model);
+  const tiles = [];
+  const full = new T.Box3().setFromObject(rifle.model);
+  for (const [sid, slot] of Object.entries(rifle.slots)) {
+    for (const o of slot.options) {
+      applySlotState(rifle, sid, o.id, 0);
+      await wait(o.object ? 350 : 30);
+      rifle.model.updateMatrixWorld(true);
+      // frame the slot: the container and what it shows, plus a margin of gun
+      const box = new T.Box3();
+      slot.container.traverse(m => {
+        if (!m.isMesh) return;
+        for (let a = m; a; a = a.parent) if (!a.visible) return;
+        box.expandByObject(m);
+      });
+      if (box.isEmpty()) box.setFromCenterAndSize(slot.container.getWorldPosition(new T.Vector3()), new T.Vector3(0.1, 0.1, 0.1));
+      const c = box.getCenter(new T.Vector3()),
+        size = Math.max(0.16, box.getSize(new T.Vector3()).length() * 0.9);
+      const cam = new T.PerspectiveCamera(30, W / H, 0.01, 10);
+      const d = new T.Vector3(...(VIEW[sid] || [0, 0, 1])).normalize();
+      cam.position.copy(c).addScaledVector(d, size * 2.2);
+      cam.lookAt(c);
+      renderer.render(scene, cam);
+      tiles.push({slot: sid, option: o.id, label: o.label, png: renderer.domElement.toDataURL('image/png')});
+    }
+    // back to the default
+    applyLoadout(rifle, emptyLoadout(id));
+  }
+  scene.remove(rifle.model);
+  return tiles;
+};
+window.ready = true;
+</script></body></html>
