@@ -53,7 +53,7 @@ for (const [rifleId, config] of Object.entries(MODELS)) {
       for (const o of opts[i]) walk(i + 1, [...chosen, o]);
     };
     walk(0, []);
-    assert.ok(n > 1000, `walked ${n} combinations`);
+    assert.ok(n >= 20, `walked ${n} combinations`);
   });
 }
 

@@ -304,7 +304,8 @@ function placeWeapon(dt = 0) {
   const ik = rig.grip;
   for (const [side, gripId] of Object.entries(w.hands || {r: 'grip'})) {
     poleV.fromArray(w.pole?.[side] || POLES[side]).transformDirection(turn.matrixWorld);
-    ik.solve(side, gripId, pivot.matrixWorld, poleV, carry.w);
+    const at = weapon.rifle.config.handguardAt;
+    ik.solve(side, gripId === 'handguard' && at ? {...GRIPS.handguard, at} : gripId, pivot.matrixWorld, poleV, carry.w);
   }
   if (carry.w < 1) rig._dirty = true; // the next frame rewrites the pose before blending the IK in again
 }

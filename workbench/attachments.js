@@ -72,6 +72,14 @@ function group(...meshes) {
   }
   return g;
 }
+// The code-built attachments borrow the AK models' materials by name. Other rifles lack them, so these stand in.
+export const FALLBACK_MATERIALS = {
+  'h-190': new T.MeshStandardMaterial({name: 'h-190', color: '#1b1d1f', roughness: 0.6, metalness: 0.5}),
+  stell: new T.MeshStandardMaterial({name: 'stell', color: '#3a3d40', roughness: 0.55, metalness: 0.6}),
+  polymer: new T.MeshStandardMaterial({name: 'polymer', color: '#1d1e1f', roughness: 0.7}),
+  glass: new T.MeshStandardMaterial({name: 'glass', color: '#6f9db8', roughness: 0.1, metalness: 0.3, transparent: true, opacity: 0.45}),
+  red_emission: new T.MeshStandardMaterial({name: 'red_emission', color: '#ff2020', emissive: '#ff2020', emissiveIntensity: 2}),
+};
 const plum = new T.MeshStandardMaterial({name: 'polymer', color: '#3e1f22', roughness: 0.6});
 
 // Copy the source part with its transforms baked into slot-space geometry, then warp each vertex.
@@ -118,6 +126,7 @@ export const FINISHES = [
   {id: 'original', label: 'Original'},
   {id: 'plum', label: 'Plum', color: '#4a2427'},
   {id: 'fde', label: 'FDE', color: '#76603f'},
+  {id: 'wood', label: 'Walnut', color: '#5a3b24'},
   {id: 'od', label: 'OD green', color: '#3c4332'},
   // Camo finishes use the shared generated patterns (shared/camo.js), projected triplanar (the rifles have no UVs).
   {id: 'woodland', label: 'Woodland camo', color: '#5a6b3f', pattern: 'woodland'},

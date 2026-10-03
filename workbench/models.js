@@ -17,6 +17,7 @@
 // Meters per source unit, shared by both files: the AK-74M model is scaled to its published
 // 943 mm overall length, which puts the AK-15K at the same scale.
 // Which rail each railed slot rides on. Slots on one rail share space: workbench/rails.js keeps them from overlapping.
+import {EXTRA} from './rifles-extra.js';
 export const RAIL_OF = {optic: 'top', buis: 'top', foregrip: 'bottom', side: 'side'};
 
 const SCALE = 0.943 / 9.088;
@@ -314,25 +315,5 @@ export const MODELS = {
   },
 };
 
-// Modernised RPK (WP-A14): a data-only kitbash on the AK-74M geometry. The Zenitco handguard, PT-1
-// stock and red dot give the M-LOK / KPOS / back-up-sight look; the 45-round magazine and a flip-up
-// back-up sight are fitted by default. A longer-barrel mesh needs the Blender pass (kept in WP-A14 notes).
-const base = MODELS.ak74m;
-MODELS.rpk = {
-  ...base,
-  label: 'RPK modernised',
-  title: 'RPK modernised (kitbash)',
-  specs: [
-    ['Type', 'Light machine gun, kitbash'],
-    ['Cartridge', '5.45×39 mm'],
-    ['Magazine', '45-round polymer'],
-  ],
-  baseGrams: 3600,
-  // Heavier, steadier, slightly less handy than the carbine it is built from.
-  stats: {ergo: 34, recoil: 46, handling: 40, loud: 90, sighting: 42},
-  defaults: {
-    build: {muzzle: 'comp', buis: 'flip', magazine: '45', foregrip: 'angled'},
-    finish: base.defaults.finish,
-  },
-};
+Object.assign(MODELS, EXTRA);
 export const DEFAULT_MODEL = 'ak74m';

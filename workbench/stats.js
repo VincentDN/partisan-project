@@ -15,6 +15,15 @@ export const STATS = [
 export const MODIFIERS = {
   muzzle: {
     dtk1: {recoil: -12, loud: 8},
+    g3: {recoil: -6, loud: 4},
+    a1: {recoil: -4},
+    ebr: {recoil: -8},
+    cone: {recoil: -3},
+    hood: {},
+    nut: {},
+    shroud: {recoil: -5},
+    bren: {recoil: -6},
+    slx: {recoil: -6, loud: -45, handling: -10, ergo: -3},
     brake: {recoil: -8},
     ak74: {recoil: -8},
     comp: {recoil: -10, loud: 5},
@@ -23,6 +32,7 @@ export const MODIFIERS = {
   },
   optic: {
     reddot: {sighting: 22, handling: -2},
+    eotech: {sighting: 26, handling: -4},
     micro: {sighting: 18, handling: -1},
     holo: {sighting: 26, handling: -4},
     scope: {sighting: 55, handling: -12, ergo: -4},
@@ -35,6 +45,7 @@ export const MODIFIERS = {
   sling: {none: {}, swivel: {ergo: 1}, strap: {ergo: 3, handling: -1}},
   foregrip: {
     rk1: {ergo: 6, recoil: -4},
+    bipod: {recoil: -8, handling: -6},
     vertical: {ergo: 5, recoil: -5},
     angled: {ergo: 7, recoil: -3, handling: 2},
     stop: {ergo: 3, handling: 2},
@@ -42,7 +53,10 @@ export const MODIFIERS = {
   },
   side: {light: {handling: -2, ergo: -1}, laser: {ergo: 3, handling: -1}, combo: {ergo: 2, handling: -4}, none: {}},
   magazine: {
+    20: {rounds: 20},
     30: {rounds: 30},
+    drum71: {rounds: 71},
+    40: {rounds: 40},
     45: {rounds: 45, handling: -3, ergo: -2},
     60: {rounds: 60, handling: -6, ergo: -4},
     drum: {rounds: 95, handling: -12, ergo: -8},

@@ -99,7 +99,7 @@ export class Grip {
    */
   solve(side, gripId, rifleWorld, pole, weight = 1) {
     const arm = this.arms[side],
-      g = GRIPS[gripId];
+      g = typeof gripId === 'string' ? GRIPS[gripId] : gripId;
     if (!arm || !g || weight <= 0) return;
     const {U, L, H} = arm;
     const fk = weight < 1 ? [U.quaternion.clone(), L.quaternion.clone(), H.quaternion.clone()] : null;

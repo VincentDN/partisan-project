@@ -1,0 +1,41 @@
+<!doctype html><html><head><meta charset="utf-8"><title>GLB inspector</title>
+<script type="importmap">{"imports":{"three":"../../vendor/three/build/three.module.min.js","three/addons/":"../../vendor/three/examples/jsm/"}}</script>
+<style>body{margin:0;background:#16200f;color:#dbe5c3;font:11px ui-monospace,monospace}#v{display:grid;grid-template-columns:1fr 1fr;gap:4px}canvas{width:100%;background:#1c2616}#legend{columns:3;padding:6px 10px}#legend i{display:inline-block;width:10px;height:10px;margin-right:6px}</style></head>
+<body><div id="v"></div><div id="legend"></div>
+<script type="module">
+import * as T from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
+const q = new URLSearchParams(location.search), file = q.get('file'), pick = q.get('pick');
+const gltf = await new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).loadAsync(new URL(file, location.href).href);
+const root = gltf.scene;
+root.updateMatrixWorld(true);
+const meshes = [];
+root.traverse(o => { if (o.isMesh) meshes.push(o); });
+const topName = o => { let n = o.name; for (let p = o.parent; p && p !== root; p = p.parent) if (p.name) n = p.name; return n; };
+const info = meshes.map((m, i) => {
+  const b = new T.Box3().setFromObject(m), c = b.getCenter(new T.Vector3()), s = b.getSize(new T.Vector3());
+  const tris = (m.geometry.index ? m.geometry.index.count : m.geometry.attributes.position.count) / 3;
+  const hue = (i * 0.618033) % 1;
+  return {i, name: m.name, top: topName(m), parent: m.parent?.name, material: m.material?.name, tris, color: '#' + new T.Color().setHSL(hue, 0.7, 0.55).getHexString(),
+    min: b.min.toArray().map(n => +n.toFixed(3)), max: b.max.toArray().map(n => +n.toFixed(3)), size: s.toArray().map(n => +n.toFixed(3)), center: c.toArray().map(n => +n.toFixed(3))};
+});
+meshes.forEach((m, i) => { m.material = new T.MeshLambertMaterial({color: info[i].color, flatShading: true}); });
+const all = new T.Box3().setFromObject(root), size = all.getSize(new T.Vector3()), mid = all.getCenter(new T.Vector3());
+const scene = new T.Scene(); scene.background = new T.Color(0x1c2616);
+scene.add(root, new T.HemisphereLight(0xffffff, 0x445533, 1.6)); const sun = new T.DirectionalLight(0xffffff, 1.4); sun.position.set(2, 3, 4); scene.add(sun);
+const views = [['side (x-y, from +z)', [0, 0, 1], [0, 1, 0]], ['top (x-z, from +y)', [0, 1, 0], [0, 0, -1]], ['front (y-z, from +x)', [1, 0, 0], [0, 1, 0]], ['rear (y-z, from -x)', [-1, 0, 0], [0, 1, 0]]];
+const holder = document.getElementById('v');
+const axisOf = d => (d[0] ? 0 : d[1] ? 1 : 2);
+for (const [label, dir, up] of views) {
+  const W = 560, H = 340, wrap = document.createElement('div'); wrap.style.position = 'relative'; holder.append(wrap);
+  const r = new T.WebGLRenderer({antialias: true}); r.setSize(W, H); r.setPixelRatio(1); wrap.append(r.domElement);
+  const t = document.createElement('div'); t.textContent = label; t.style.cssText = 'position:absolute;left:8px;top:4px'; wrap.append(t);
+  const view = axisOf(dir), upAxis = axisOf(up), across = [0, 1, 2].find(a => a !== view && a !== upAxis);
+  const w = size.getComponent(across), h = size.getComponent(upAxis), ext = Math.max(h / 2, w / 2 / (W / H)) * 1.12;
+  const cam = new T.OrthographicCamera(-ext * (W / H), ext * (W / H), ext, -ext, -ext * 20, ext * 20);
+  cam.up.set(...up); cam.position.copy(mid).addScaledVector(new T.Vector3(...dir), Math.max(size.x, size.y, size.z) * 4); cam.lookAt(mid); r.render(scene, cam);
+}
+document.getElementById('legend').innerHTML = info.map(m => `<div><i style="background:${m.color}"></i>${m.i} ${m.parent || m.name}${m.name && m.name !== m.parent ? ' / ' + m.name : ''} · ${m.tris}t</div>`).join('');
+window.INSPECT = {file, size: size.toArray(), min: all.min.toArray(), max: all.max.toArray(), meshes: info};
+</script></body></html>

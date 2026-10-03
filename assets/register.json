@@ -715,6 +715,450 @@
    "source": "tools/assets/generate-studio-hdr.py",
    "attribution_required": false,
    "notes": "Generated from the full-size map by tools/assets/downscale-hdr.py."
+  },
+  {
+   "id": "muzzle-set",
+   "label": "low-poly Muzzle Device Set",
+   "path": "assets/models/weapons/muzzle-set.glb",
+   "kind": "weapon",
+   "status": "real",
+   "author": "DU1701",
+   "source": "https://sketchfab.com/3d-models/07f62ec5ca604446848d1a0238b11f1d",
+   "budget": {
+    "triangles": 4000
+   }
+  },
+  {
+   "id": "suppressor-ak",
+   "label": "Low-poly AK hexagon suppressor",
+   "path": "assets/models/weapons/suppressor-ak.glb",
+   "kind": "weapon",
+   "status": "real",
+   "author": "notcplkerry",
+   "source": "https://sketchfab.com/3d-models/67d899ced2614887850c9af820786a89",
+   "budget": {
+    "triangles": 5000
+   }
+  },
+  {
+   "id": "collimator-set",
+   "label": "low-poly Collimator Set",
+   "path": "assets/models/weapons/collimator-set.glb",
+   "kind": "weapon",
+   "status": "real",
+   "author": "DU1701",
+   "source": "https://sketchfab.com/3d-models/288373d26dd84db2898920222ac3e430",
+   "budget": {
+    "triangles": 13000
+   }
+  },
+  {
+   "id": "eotech",
+   "label": "EOTech HWS XPS2 Sight (Low-Poly)",
+   "path": "assets/models/weapons/eotech.glb",
+   "kind": "weapon",
+   "status": "real",
+   "author": "GoldbergR",
+   "source": "https://sketchfab.com/3d-models/5c8f29d9895e48e183a085fefabf0e14",
+   "budget": {
+    "triangles": 4000
+   }
+  },
+  {
+   "id": "scope-zf4",
+   "label": "ZF-4 Scope (Low-Poly)",
+   "path": "assets/models/weapons/scope-zf4.glb",
+   "kind": "weapon",
+   "status": "real",
+   "author": "GoldbergR",
+   "source": "https://sketchfab.com/3d-models/bd60e97c17fc42bbb9e1622caffc2a03",
+   "budget": {
+    "triangles": 3000
+   }
+  },
+  {
+   "id": "iron-sight-set",
+   "label": "low-poly Iron Sight Set",
+   "path": "assets/models/weapons/iron-sight-set.glb",
+   "kind": "weapon",
+   "status": "real",
+   "author": "DU1701",
+   "source": "https://sketchfab.com/3d-models/dd89d27a54474b2aa3bf1cadc699c556",
+   "budget": {
+    "triangles": 13000
+   }
+  },
+  {
+   "id": "rail-ak",
+   "label": "AK Optics Mount Rail (Low Poly)",
+   "path": "assets/models/weapons/rail-ak.glb",
+   "kind": "weapon",
+   "status": "real",
+   "author": "armoredwave",
+   "source": "https://sketchfab.com/3d-models/615c65f9670b42d3bcdd015119a771a4",
+   "budget": {
+    "triangles": 2000
+   }
+  },
+  {
+   "id": "grip-rvg",
+   "label": "Low-Poly Magpul RVG",
+   "path": "assets/models/weapons/grip-rvg.glb",
+   "kind": "weapon",
+   "status": "real",
+   "author": "notcplkerry",
+   "source": "https://sketchfab.com/3d-models/86b3580a65c441db9d3401712c5c9b6d",
+   "budget": {
+    "triangles": 1000
+   }
+  },
+  {
+   "id": "grip-afg",
+   "label": "Low-Poly Magpul AFG",
+   "path": "assets/models/weapons/grip-afg.glb",
+   "kind": "weapon",
+   "status": "real",
+   "author": "notcplkerry",
+   "source": "https://sketchfab.com/3d-models/a92a52cbb5854f7c8e33507f579073f7",
+   "budget": {
+    "triangles": 2000
+   }
+  },
+  {
+   "id": "peq15",
+   "label": "low-poly AN/PEQ 15",
+   "path": "assets/models/weapons/peq15.glb",
+   "kind": "weapon",
+   "status": "real",
+   "author": "DU1701",
+   "source": "https://sketchfab.com/3d-models/522f6a04c34946dbb168022187645c1a",
+   "budget": {
+    "triangles": 5000
+   }
+  },
+  {
+   "id": "peq2",
+   "label": "low-poly AN/PEQ 2",
+   "path": "assets/models/weapons/peq2.glb",
+   "kind": "weapon",
+   "status": "real",
+   "author": "DU1701",
+   "source": "https://sketchfab.com/3d-models/820ee672677a4f8daab617f1723820a2",
+   "budget": {
+    "triangles": 3000
+   }
+  },
+  {
+   "id": "light-surefire",
+   "label": "SureFire 660 Weapon Light with Pressure Switch",
+   "path": "assets/models/weapons/light-surefire.glb",
+   "kind": "weapon",
+   "status": "real",
+   "author": "haoliu95",
+   "source": "https://sketchfab.com/3d-models/09bba490e5e44ac6a412cc363eb2b41e",
+   "budget": {
+    "triangles": 6000
+   }
+  },
+  {
+   "id": "ak-grips",
+   "label": "Low-Poly AK grips",
+   "path": "assets/models/weapons/ak-grips.glb",
+   "kind": "weapon",
+   "status": "real",
+   "author": "notcplkerry",
+   "source": "https://sketchfab.com/3d-models/044c2b403fc341738b5af9f3b90fefc9",
+   "budget": {
+    "triangles": 3000
+   }
+  },
+  {
+   "id": "rpk-762",
+   "label": "low-poly RPK 7.62",
+   "path": "assets/models/weapons/rpk-762.glb",
+   "kind": "weapon",
+   "status": "real",
+   "author": "DU1701",
+   "source": "https://sketchfab.com/3d-models/628d823c021f4bfa814a66674ac658dc",
+   "budget": {
+    "triangles": 22000
+   }
+  },
+  {
+   "id": "ak74-drum",
+   "label": "Low poly Ak74 + drum mag + gl",
+   "path": "assets/models/weapons/ak74-drum.glb",
+   "kind": "weapon",
+   "status": "real",
+   "author": "aayushsahaywork",
+   "source": "https://sketchfab.com/3d-models/8ae00f51dc1649b8b5b592d153f3a3f4",
+   "budget": {
+    "triangles": 20000
+   }
+  },
+  {
+   "id": "gp25",
+   "label": "low-poly GP-25",
+   "path": "assets/models/weapons/gp25.glb",
+   "kind": "weapon",
+   "status": "real",
+   "author": "DU1701",
+   "source": "https://sketchfab.com/3d-models/8dbdec74bad944a9b7eca73b2a6269fa",
+   "budget": {
+    "triangles": 5000
+   }
+  },
+  {
+   "id": "g3",
+   "label": "low-poly HK G3",
+   "path": "assets/models/weapons/g3.glb",
+   "kind": "weapon",
+   "status": "real",
+   "author": "DU1701",
+   "source": "https://sketchfab.com/3d-models/86ff01824c394e349cda876a827fa69c",
+   "budget": {
+    "triangles": 9000
+   }
+  },
+  {
+   "id": "g3-drum",
+   "label": "Low-Poly .308 Drum Magazine",
+   "path": "assets/models/weapons/g3-drum.glb",
+   "kind": "weapon",
+   "status": "real",
+   "author": "notcplkerry",
+   "source": "https://sketchfab.com/3d-models/4acf799d7ec04383ae664937224d3537",
+   "budget": {
+    "triangles": 2000
+   }
+  },
+  {
+   "id": "g3-bipod",
+   "label": "HK G3 Steel Bipod (Low-Poly)",
+   "path": "assets/models/weapons/g3-bipod.glb",
+   "kind": "weapon",
+   "status": "real",
+   "author": "GoldbergR",
+   "source": "https://sketchfab.com/3d-models/b525a696d09d48a484db53c2002d02fb",
+   "budget": {
+    "triangles": 1000
+   }
+  },
+  {
+   "id": "g3-scope",
+   "label": "Hensoldt Z-24 Scope (Low-Poly)",
+   "path": "assets/models/weapons/g3-scope.glb",
+   "kind": "weapon",
+   "status": "real",
+   "author": "GoldbergR",
+   "source": "https://sketchfab.com/3d-models/c6d7df8cbe954a64a3e5bcbc324255b3",
+   "budget": {
+    "triangles": 3000
+   }
+  },
+  {
+   "id": "m16",
+   "label": "Low-Poly M16",
+   "path": "assets/models/weapons/m16.glb",
+   "kind": "weapon",
+   "status": "real",
+   "author": "TastyTony",
+   "source": "https://sketchfab.com/3d-models/f7eddeb852f84094a7ba26e293223d10",
+   "budget": {
+    "triangles": 8000
+   }
+  },
+  {
+   "id": "mk14",
+   "label": "Low-Poly Mk14 EBR",
+   "path": "assets/models/weapons/mk14.glb",
+   "kind": "weapon",
+   "status": "real",
+   "author": "TastyTony",
+   "source": "https://sketchfab.com/3d-models/0dc89b4028ef4a1bbc1ed2ec077f3d21",
+   "budget": {
+    "triangles": 15000
+   }
+  },
+  {
+   "id": "spear",
+   "label": "low-poly SIG MCX Spear",
+   "path": "assets/models/weapons/spear.glb",
+   "kind": "weapon",
+   "status": "real",
+   "author": "DU1701",
+   "source": "https://sketchfab.com/3d-models/36ac159795ae465e8a4d44068bbaf434",
+   "budget": {
+    "triangles": 30000
+   }
+  },
+  {
+   "id": "stg44",
+   "label": "low-poly Stg44",
+   "path": "assets/models/weapons/stg44.glb",
+   "kind": "weapon",
+   "status": "real",
+   "author": "DU1701",
+   "source": "https://sketchfab.com/3d-models/c343d3531806490e851976d4f0391c14",
+   "budget": {
+    "triangles": 7000
+   }
+  },
+  {
+   "id": "ppsh41",
+   "label": "low-poly PPSH-41",
+   "path": "assets/models/weapons/ppsh41.glb",
+   "kind": "weapon",
+   "status": "real",
+   "author": "DU1701",
+   "source": "https://sketchfab.com/3d-models/d610bf73066d4bb7a96834858772384a",
+   "budget": {
+    "triangles": 5000
+   }
+  },
+  {
+   "id": "bren",
+   "label": "Low-Poly Bren Gun",
+   "path": "assets/models/weapons/bren.glb",
+   "kind": "weapon",
+   "status": "real",
+   "author": "TastyTony",
+   "source": "https://sketchfab.com/3d-models/035555d607c142528e2eaf4c02af8c5b",
+   "budget": {
+    "triangles": 5000
+   }
+  },
+  {
+   "id": "chauchat",
+   "label": "Low-Poly Chauchat",
+   "path": "assets/models/weapons/chauchat.glb",
+   "kind": "weapon",
+   "status": "real",
+   "author": "TastyTony",
+   "source": "https://sketchfab.com/3d-models/ae9d3c2b5c3542e0829aac8d0cb7d6e5",
+   "budget": {
+    "triangles": 12000
+   }
+  },
+  {
+   "id": "checkpoint-barrier",
+   "label": "Checkpoint Stop Road Barrier lowpoly",
+   "path": "assets/models/environment/checkpoint-barrier.glb",
+   "kind": "environment",
+   "status": "real",
+   "author": "00amza",
+   "source": "https://sketchfab.com/3d-models/cd64979fc9774d729ac31e443a9f3935",
+   "budget": {
+    "triangles": 1000
+   }
+  },
+  {
+   "id": "jersey-barrier-damaged",
+   "label": "Damaged Concrete Barrier low poly",
+   "path": "assets/models/environment/jersey-barrier-damaged.glb",
+   "kind": "environment",
+   "status": "real",
+   "author": "malekabdeltwab",
+   "source": "https://sketchfab.com/3d-models/599abb4a62074fefafa788c0bcb71841",
+   "budget": {
+    "triangles": 1000
+   }
+  },
+  {
+   "id": "sandbag",
+   "label": "Sandbag [Low Poly Realist]",
+   "path": "assets/models/environment/sandbag.glb",
+   "kind": "environment",
+   "status": "real",
+   "author": "Islide",
+   "source": "https://sketchfab.com/3d-models/7d52600a15c747749d845d9f906045cf",
+   "budget": {
+    "triangles": 1000
+   }
+  },
+  {
+   "id": "containers",
+   "label": "Cargo Containers Very Low Poly",
+   "path": "assets/models/environment/containers.glb",
+   "kind": "environment",
+   "status": "real",
+   "author": "Nelesh_surve",
+   "source": "https://sketchfab.com/3d-models/4579520c83694ba18b3573192265276c",
+   "budget": {
+    "triangles": 2000
+   }
+  },
+  {
+   "id": "church-kit",
+   "label": "Low-Poly Church - Modular Kit",
+   "path": "assets/models/environment/church-kit.glb",
+   "kind": "environment",
+   "status": "real",
+   "author": "sj_memo",
+   "source": "https://sketchfab.com/3d-models/8b13eb65288c4ee58b128f47067f7998",
+   "budget": {
+    "triangles": 60000
+   }
+  },
+  {
+   "id": "radio-handheld",
+   "label": "[Low Poly] Handheld Radio/Phone",
+   "path": "assets/models/props/radio-handheld.glb",
+   "kind": "prop",
+   "status": "real",
+   "author": "that0neprogrammer",
+   "source": "https://sketchfab.com/3d-models/4ef0ec44f77e4d928791e245763e3f45",
+   "budget": {
+    "triangles": 2000
+   }
+  },
+  {
+   "id": "canister",
+   "label": "Military Gas Can | Low Poly",
+   "path": "assets/models/props/canister.glb",
+   "kind": "prop",
+   "status": "real",
+   "author": "alpha_Arts",
+   "source": "https://sketchfab.com/3d-models/7f9027faa52d4a0ba3a3c630a4013b4f",
+   "budget": {
+    "triangles": 1000
+   }
+  },
+  {
+   "id": "matv",
+   "label": "M-ATV (low-poly)",
+   "path": "assets/models/vehicles/matv.glb",
+   "kind": "vehicle",
+   "status": "real",
+   "author": "ScurvyWoof",
+   "source": "https://sketchfab.com/3d-models/32a28aaea1f048b0a70d5f215f288b04",
+   "budget": {
+    "triangles": 36000
+   }
+  },
+  {
+   "id": "army-truck",
+   "label": "low poly military truck",
+   "path": "assets/models/vehicles/army-truck.glb",
+   "kind": "vehicle",
+   "status": "real",
+   "author": "KolosStudios",
+   "source": "https://sketchfab.com/3d-models/9fd961a22cb84b9383570869b2f0efa9",
+   "budget": {
+    "triangles": 1000
+   }
+  },
+  {
+   "id": "humvee",
+   "label": "AM General HMMWV",
+   "path": "assets/models/vehicles/humvee.glb",
+   "kind": "vehicle",
+   "status": "real",
+   "author": "SoapEmi",
+   "source": "https://sketchfab.com/3d-models/e862680472b047528f1955683873181c",
+   "budget": {
+    "triangles": 16000
+   }
   }
  ],
  "pipeline": [

@@ -28,6 +28,68 @@ const triangles = doc =>
     .flatMap(m => m.listPrimitives())
     .reduce((s, p) => s + (p.getIndices()?.getCount() ?? p.getAttribute('POSITION').getCount()) / 3, 0);
 
+const mul = (a, b) => {
+  const o = new Array(16).fill(0);
+  for (let c = 0; c < 4; c++) for (let r = 0; r < 4; r++) for (let k = 0; k < 4; k++) o[c * 4 + r] += a[k * 4 + r] * b[c * 4 + k];
+  return o;
+};
+const IDENTITY = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
+
+/**
+ * Skinned downloads (FBX exports with an armature) keep their vertices in bone space, so size and position only
+ * make sense after skinning. Bake the bind pose into static meshes: vertices go to scene space, the skin goes,
+ * and the mesh node moves under `root` with an identity transform. Returns how many nodes were baked.
+ */
+export function bakeSkins(doc, root, scene) {
+  let n = 0;
+  for (const node of doc.getRoot().listNodes()) {
+    const skin = node.getSkin(),
+      mesh = node.getMesh();
+    if (!skin || !mesh) continue;
+    const ibm = skin.getInverseBindMatrices()?.getArray();
+    const jm = skin.listJoints().map((j, i) => mul(j.getWorldMatrix(), ibm ? Array.from(ibm.subarray(i * 16, i * 16 + 16)) : IDENTITY));
+    for (const prim of mesh.listPrimitives()) {
+      const pos = prim.getAttribute('POSITION'),
+        nor = prim.getAttribute('NORMAL'),
+        jn = prim.getAttribute('JOINTS_0'),
+        wt = prim.getAttribute('WEIGHTS_0');
+      if (!pos || !jn || !wt) continue;
+      const p = [0, 0, 0],
+        nv = [0, 0, 0],
+        j4 = [0, 0, 0, 0],
+        w4 = [0, 0, 0, 0];
+      for (let i = 0; i < pos.getCount(); i++) {
+        pos.getElement(i, p);
+        nor?.getElement(i, nv);
+        jn.getElement(i, j4);
+        wt.getElement(i, w4);
+        const m = new Array(16).fill(0);
+        for (let k = 0; k < 4; k++) if (w4[k]) for (let e = 0; e < 16; e++) m[e] += w4[k] * jm[j4[k]][e];
+        pos.setElement(i, [
+          m[0] * p[0] + m[4] * p[1] + m[8] * p[2] + m[12],
+          m[1] * p[0] + m[5] * p[1] + m[9] * p[2] + m[13],
+          m[2] * p[0] + m[6] * p[1] + m[10] * p[2] + m[14],
+        ]);
+        if (nor) {
+          const x = m[0] * nv[0] + m[4] * nv[1] + m[8] * nv[2],
+            y = m[1] * nv[0] + m[5] * nv[1] + m[9] * nv[2],
+            z = m[2] * nv[0] + m[6] * nv[1] + m[10] * nv[2],
+            l = Math.hypot(x, y, z) || 1;
+          nor.setElement(i, [x / l, y / l, z / l]);
+        }
+      }
+      prim.setAttribute('JOINTS_0', null);
+      prim.setAttribute('WEIGHTS_0', null);
+    }
+    node.setSkin(null);
+    node.setMatrix(IDENTITY);
+    (node.getParentNode() || scene).removeChild(node);
+    root.addChild(node);
+    n++;
+  }
+  return n;
+}
+
 /** Node tree with mesh triangle counts, for mapping parts. */
 function tree(node, depth = 0, out = []) {
   const mesh = node.getMesh();
@@ -55,11 +117,27 @@ export async function importSource(s, {inDir = null, outRoot = 'assets/models', 
     root.addChild(n);
   }
   scene.addChild(root);
+  bakeSkins(doc, root, scene);
+  // Loose spare magazines and rounds lying beside the rifle: drop them so they neither show nor skew the size.
+  for (const n of doc.getRoot().listNodes()) if ((s.strip || []).includes(n.getName())) n.dispose();
   const b = getBounds(scene);
   const extent = Math.max(...b.max.map((v, i) => v - b.min[i]));
   const scale = s.unit === 'du' ? DU_SCALE : s.length ? s.length / extent : 1;
   const bake = s.dir !== 'weapons';
   if (bake) root.setScale([scale, scale, scale]);
+  // Untextured white materials (some downloads ship unpainted) take the source's `tint` so they do not render as chalk.
+  if (s.tint) {
+    const c = [1, 2, 3].map(i => parseInt(s.tint.slice(i * 2 - 1, i * 2 + 1), 16) / 255);
+    for (const m of doc.getRoot().listMaterials())
+      if (
+        !m.getBaseColorTexture() &&
+        m
+          .getBaseColorFactor()
+          .slice(0, 3)
+          .every(v => v > 0.9)
+      )
+        m.setBaseColorFactor([...c.map(v => v ** 2.2), 1]);
+  }
   for (const m of doc.getRoot().listMaterials()) m.setRoughnessFactor(Math.max(m.getRoughnessFactor(), 0.6)); // matte, like the rest
   await doc.transform(
     prune(),
@@ -74,7 +152,17 @@ export async function importSource(s, {inDir = null, outRoot = 'assets/models', 
   if (register && fs.existsSync(register)) {
     const reg = JSON.parse(fs.readFileSync(register, 'utf8'));
     const list = Array.isArray(reg) ? reg : reg.assets || reg.models || Object.values(reg).find(Array.isArray);
-    const entry = {id: s.id, label: s.name, path: out.split(path.sep).join('/'), triangles: Math.round(tris)};
+    const kind = {weapons: 'weapon', props: 'prop', vehicles: 'vehicle', environment: 'environment'}[s.dir || 'weapons'];
+    const entry = {
+      id: s.id,
+      label: s.name,
+      path: out.split(path.sep).join('/'),
+      kind,
+      status: 'real',
+      author: s.author,
+      source: `https://sketchfab.com/3d-models/${s.uid}`,
+      budget: {triangles: Math.ceil((tris * 1.25) / 1000) * 1000},
+    };
     const i = list.findIndex(e => e.id === s.id);
     if (i >= 0) Object.assign(list[i], entry);
     else list.push(entry);

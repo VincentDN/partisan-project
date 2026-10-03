@@ -1,7 +1,7 @@
 import * as T from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
-import {SLOTS, FINISHES, FINISH_TARGETS} from './attachments.js';
+import {SLOTS, FINISHES, FINISH_TARGETS, FALLBACK_MATERIALS} from './attachments.js';
 import {MODELS} from './models.js';
 // Lay the longest axis along x with the muzzle (the slimmer end) at +x, scale to meters, center.
 export function normalize(root, scale) {
@@ -76,10 +76,11 @@ export async function loadRifle(id, {decorate = () => {}} = {}) {
     }
     return {...p, objects};
   });
-  const materials = {};
+  const own = {};
   model.traverse(o => {
-    if (o.isMesh && !materials[o.material.name]) materials[o.material.name] = o.material;
+    if (o.isMesh && !own[o.material.name]) own[o.material.name] = o.material;
   });
+  const materials = {...FALLBACK_MATERIALS, ...own};
   // Slots: a container at each mount point (model space, meters). The rifle's own part moves into
   // the container's "original" group so poses, rail offsets and swaps act on one object.
   const slots = {};
