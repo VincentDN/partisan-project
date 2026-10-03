@@ -1,0 +1,47 @@
+[
+  {
+    "id": "c_1791028063719_l3mlp",
+    "sectionId": "/docs/game-design-master-doc.html",
+    "sectionTitle": "Partisan Project | Field Handbook (Game Design Document)",
+    "quote": "Dress an operator\n      Strip a rifle\n      Read the roadmap\n    \n    Design note This page is both the in-universe handbook and the game design document. Grey boxes like this one step outside the fiction to say what is real, what is a placeholder and what is waiting on a decision.",
+    "start": 762,
+    "end": 1044,
+    "text": "remove all this text",
+    "images": [],
+    "createdAt": "2026-10-03T11:47:43.719Z"
+  },
+  {
+    "id": "c_1791028135929_w4jme",
+    "sectionId": "/docs/game-design-master-doc.html",
+    "sectionTitle": "Partisan Project | Field Handbook (Game Design Document)",
+    "quote": "DispatchesWhat you can use today\n  Each dispatch is a demo. Status is honest: live means it runs on this site; in build means partly there; planned means a drawing and a packet.",
+    "start": 1132,
+    "end": 1309,
+    "text": "replace this entire bundle of text to\n\nh2: UX Demos\np: The entire Partisan Project site works like an interactive game design document - each game module is explored below and is to be considered very heavy pre alpha studies and test cases.",
+    "images": [],
+    "createdAt": "2026-10-03T11:48:55.929Z"
+  },
+  {
+    "id": "c_1791028156088_lm4cj",
+    "sectionId": "/docs/game-design-master-doc.html",
+    "sectionTitle": "Partisan Project | Field Handbook (Game Design Document)",
+    "quote": "esign note Pillars 3 and 4 come from the earlier AI design compendium and audience study, kept on the portfolio site at vincentdenil.com/docs/partisan-ai. Pillars 1 and 2 come from the demos and the moodboar",
+    "start": 3143,
+    "end": 3350,
+    "text": "remove this entire block",
+    "images": [],
+    "createdAt": "2026-10-03T11:49:16.089Z",
+    "editedAt": "2026-10-03T11:49:25.949Z"
+  },
+  {
+    "id": "c_1791028187395_zu1z4",
+    "sectionId": "/docs/game-design-master-doc.html",
+    "sectionTitle": "Partisan Project | Field Handbook (Game Design Document)",
+    "quote": "visional Setting canon (WP-D1) is undecided, so fiction-dependent details below are placeholders. Mechanics follow the pillars and the AI comp",
+    "start": 3579,
+    "end": 3721,
+    "text": "remove this block",
+    "images": [],
+    "createdAt": "2026-10-03T11:49:47.395Z"
+  }
+]
