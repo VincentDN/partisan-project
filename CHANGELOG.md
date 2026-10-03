@@ -40,6 +40,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 - Separated campaign equipment ownership from catalogue unlocks and documented browser interruption rules.
 - Roadmap reconciled with Claude’s main at 8f30cf1; implementation above is on the working branch, not deployed.
 
+### Added (Generated Recon, WP-CG1)
+- Generated Recon joins the Operator Customiser as a separate roster entry, imported from the split inbound model with a fitted 26-bone rig. The 11,253-triangle, 281 KB model supports all 11 poses and three idle styles.
+- Eight equipment slots cover chest rigs, radio, neck wrap, back pouches, thigh equipment, knee pads, belt clip and all carried weapons/Workbench builds. Eight independent colour zones and four presets round-trip through look links.
+- A repeatable Blender importer closes segmentation cuts, removes the fused source rifle and restores its missing right glove from the mirrored left glove. The hood and face remain one generated mesh.
+- Pose changes now blend smoothly; reduced-motion mode keeps poses instant and disables idle movement. Added real-geometry and browser acceptance tests (`npm run test:operator`).
+
 ### Added (Sketchfab batch, WP-A2/A3/A5/A9/A12/A13/A15 to A18)
 - **Nine new rifles** in the Weapon Modder and the Operator Customiser: HK G3A3, M16A1, Mk 14 EBR, SIG Spear, StG 44, PPSh-41, Bren, Chauchat, and the real RPK 7.62×39 (replaces the kitbash).
 - **Real attachment parts** replace the code-built shapes: muzzle brake and suppressor, micro dot, EOTech, ZF-4 and G3 scopes, flip-up sight, vertical, angled and hand-stop grips, weapon light, laser, light and laser combo, drum magazines. New options: bipod, GP-25 grenade launcher, PMAG drum.

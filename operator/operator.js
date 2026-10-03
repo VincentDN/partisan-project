@@ -12,6 +12,7 @@ import {createStage, reduceMotion} from '../shared/stage.js';
 import {mountTopBar} from '../shared/topbar.js';
 import {camoFor, FABRIC} from '../shared/camo.js';
 import {Rig, blinkAt} from './rig.js';
+import {posesForProfile} from './pose-profile.js';
 import {Grip, GRIPS} from './grip.js';
 import {PALETTES, CAMO_IDS, VIEWS, HERO_AZIMUTH, TRIANGLE_BUDGET, ROSTER, BASES, DEFAULT_BASE, defaultsFor} from './config.js';
 import {loadRifle} from '../workbench/rifle-instance.js';
@@ -97,7 +98,7 @@ async function loadBase(id) {
   if (!baseCache.has(next.id)) {
     const gltf = await loader.loadAsync(next.model);
     // The rig captures the rest pose, so it must be created once, before any pose is applied, and cached with the scene.
-    const newRig = new Rig(gltf.scene, poseData);
+    const newRig = new Rig(gltf.scene, posesForProfile(poseData, next.poseProfile));
     newRig.grip = new Grip(newRig.bones, newRig.rest);
     for (const url of next.packs || []) bindPack((await loader.loadAsync(url)).scene, gltf.scene, newRig);
     gltf.scene.traverse(o => {
@@ -220,10 +221,10 @@ function applyEquipment() {
   $('#calls').textContent = String(calls);
   $('#tris-bar').style.width = Math.min(100, (tris / TRIANGLE_BUDGET) * 100) + '%';
 }
-function applyAll() {
+function applyAll(blendSeconds = 0) {
   applyEquipment();
   for (const zone of base.zones) paintZone(zone, state[`z.${zone.id}`]);
-  rig.setPose(state.pose, 0);
+  rig.setPose(state.pose, blendSeconds);
   syncWeapon();
 }
 
@@ -278,7 +279,7 @@ const anchorPos = new T.Vector3(),
   POLES = {r: [-0.5, -1, -0.45], l: [0.6, -1, -0.3]}; // elbows hang down, out and a little back
 let carry = null; // {p, q, w}: the rifle's blended placement (turn space) and the IK weight
 function placeWeapon(dt = 0) {
-  const pose = poseData.poses[state.pose];
+  const pose = rig.data.poses[state.pose];
   const w = pose.weapon;
   pivot.visible = !!weapon && !!w;
   if (!pivot.visible) {
@@ -329,7 +330,7 @@ function set(key, value, cameraView) {
     } catch {}
     state.build = encode(parseLegacy(stored));
   } else if (key === 'weapon') state.build = '';
-  applyAll();
+  applyAll(key === 'pose' && !reduceMotion ? 0.6 : 0);
   render();
   writeHash();
   if (cameraView) view(cameraView);

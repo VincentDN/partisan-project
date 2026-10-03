@@ -1159,6 +1159,17 @@
    "budget": {
     "triangles": 16000
    }
+  },
+  {
+   "id": "generated-recon",
+   "label": "Generated Recon",
+   "path": "assets/models/operators/generated-recon.glb",
+   "kind": "character",
+   "status": "real",
+   "budget": {
+    "triangles": 15000
+   },
+   "notes": "Fitted 26-bone deform rig, 27 modular meshes, 11253 triangles; runtime poses, idles and equipment slots."
   }
  ],
  "pipeline": [

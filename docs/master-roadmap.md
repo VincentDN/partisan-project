@@ -158,7 +158,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 |---|---|---|---|---|
 | **M0** Foundation | v0.3.0 | 10/10 | 130 BU | 100% |
 | **M1** Gun modder: real parts, three weapons | v0.4.0 | 9/11 | 143 BU | 89% |
-| **M2** Operator roster: Recon, Insurgent, Enforcer | v0.5.0 | 10/11 | 172 BU | 95% |
+| **M2** Operator roster: Recon, Insurgent, Enforcer | v0.5.0 | 11/12 | 192 BU | 96% |
 | **M3** Integration and sharing | v0.6.0 | 4/6 | 96 BU | 58% |
 | **M4** Weapon roster 2: modern and WW2 | v0.7.0 | 7/7 | 111 BU | 100% |
 | **M5** Production acceptance | v1.0.0 | 3/5 | 59 BU | 61% |
@@ -214,6 +214,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-C9` | Idle polish: blink and head-follow of the camera (reduced-motion safe) | M (20) | done | — | `WP-C1` |
 | `WP-C10` | More hairstyles and facial-hair options for bare-head looks | M (20) | done | bpy | `WP-C4` |
 | `WP-C11` | Secondary motion: scarf drape and strap follow-through on the idle | S (8) | done | bpy, browser | `WP-C9` |
+| `WP-CG1` | Generated Recon: import split model, fit animation rig and expose modular equipment | M (20) | done | bpy, browser | — |
 
 ### M3 · Integration and sharing
 

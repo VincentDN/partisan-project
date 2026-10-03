@@ -570,7 +570,7 @@
     ]
    },
    "curl": {
-    "r": 0.0,
+    "r": 0,
     "l": 0.4
    }
   },
@@ -952,7 +952,7 @@
     {
      "bone": "spine_04",
      "axis": "x",
-     "amp": 1.0,
+     "amp": 1,
      "hz": 0.19,
      "phase": 0.1,
      "offset": 2
@@ -1021,6 +1021,39 @@
      "phase": 0.1
     }
    ]
+  }
+ },
+ "profiles": {
+  "generatedRecon": {
+   "note": "Fitted generated rest has hanging arms; shared poses were authored against the Base Operator A-pose. Angles are character-space degrees.",
+   "offsets": {
+    "upperarm_r": [
+     0,
+     0,
+     -20
+    ],
+    "upperarm_l": [
+     0,
+     0,
+     20
+    ]
+   },
+   "poses": {
+    "relaxed": {
+     "bones": {
+      "lowerarm_r": [
+       0,
+       0,
+       0
+      ],
+      "lowerarm_l": [
+       0,
+       0,
+       0
+      ]
+     }
+    }
+   }
   }
  }
 }
