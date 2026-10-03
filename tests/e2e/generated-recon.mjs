@@ -55,7 +55,7 @@ try {
     ['kneel', ['r', 'l']],
   ]) {
     await page.evaluate(p => window.PARP_OPERATOR.set('pose', p), pose);
-    await page.waitForTimeout(200);
+    await page.waitForTimeout(1500);
     const distances = await page.evaluate(sides => {
       const o = window.PARP_OPERATOR,
         {Vector3: V, Quaternion: Q} = o.stage.T;
