@@ -99,7 +99,9 @@ test('objectives: reach, hold, protect (fails when the protected one falls) and 
   assert.equal(evaluate(prot), 'lost');
   const dead = new Sim({level: tiny([{id: 'h', type: 'hold', seconds: 60, label: 'Hold'}]), seed: 5});
   dead.player.alive = false;
-  assert.equal(evaluate(dead), 'lost');
+  assert.equal(evaluate(dead), null, 'another living rebel can take control');
+  dead.units.find(u => u.id === 'mila').alive = false;
+  assert.equal(evaluate(dead), 'lost', 'all rebels down ends the mission');
 });
 
 test('debrief: outcome, objectives, kills per partisan, what was taken', () => {

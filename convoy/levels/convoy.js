@@ -31,7 +31,7 @@ const COVER = [
 ];
 
 const PARTISAN_SPAWNS = [
-  {id: 'player', x: 6, z: -16, label: 'You'},
+  {id: 'player', x: 6, z: -16, label: 'Lead rebel'},
   {id: 'mila', x: 15, z: -18, label: 'Mila'},
   {id: 'dragan', x: -4, z: -18, label: 'Dragan'},
 ];

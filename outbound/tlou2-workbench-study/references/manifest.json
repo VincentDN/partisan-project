@@ -1,0 +1,74 @@
+[
+  {
+    "id": "R1",
+    "file": "references/01-supported-inspection.png",
+    "title": "Supported inspection",
+    "seconds": 11.312753,
+    "source": "https://www.youtube.com/watch?v=sibhkC6dDJs&t=11s",
+    "capture": "Paused browser screenshot; video-area crop only",
+    "dimensions": [
+      459,
+      259
+    ]
+  },
+  {
+    "id": "R2",
+    "file": "references/02-shoulder-occlusion.png",
+    "title": "Shoulder occlusion",
+    "seconds": 30,
+    "source": "https://www.youtube.com/watch?v=sibhkC6dDJs&t=30s",
+    "capture": "Paused browser screenshot; video-area crop only",
+    "dimensions": [
+      459,
+      259
+    ]
+  },
+  {
+    "id": "R3",
+    "file": "references/03-release-and-secondary-motion.png",
+    "title": "Independent hand release",
+    "seconds": 45,
+    "source": "https://www.youtube.com/watch?v=sibhkC6dDJs&t=45s",
+    "capture": "Paused browser screenshot; video-area crop only",
+    "dimensions": [
+      459,
+      259
+    ]
+  },
+  {
+    "id": "R4",
+    "file": "references/04-part-on-table.png",
+    "title": "Part placed on table",
+    "seconds": 75,
+    "source": "https://www.youtube.com/watch?v=sibhkC6dDJs&t=75s",
+    "capture": "Paused browser screenshot; video-area crop only",
+    "dimensions": [
+      459,
+      259
+    ]
+  },
+  {
+    "id": "R5",
+    "file": "references/05-rifle-inspection.png",
+    "title": "Rifle, hand and menu",
+    "seconds": 518.07557,
+    "source": "https://www.youtube.com/watch?v=sibhkC6dDJs&t=518s",
+    "capture": "Paused browser screenshot; video-area crop only",
+    "dimensions": [
+      863,
+      486
+    ]
+  },
+  {
+    "id": "R6",
+    "file": "references/06-clear-work-area.png",
+    "title": "Clear working surface",
+    "seconds": 538.07557,
+    "source": "https://www.youtube.com/watch?v=sibhkC6dDJs&t=538s",
+    "capture": "Paused browser screenshot; video-area crop only",
+    "dimensions": [
+      863,
+      486
+    ]
+  }
+]

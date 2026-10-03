@@ -1,4 +1,4 @@
-# G · Play as the whole squad (WP-S20, S21; planned)
+# G · Play as the whole squad (WP-S20 built, S21 verification pending)
 
 In Partisan you are not one hero but all of them. One rebel is yours at a time; the others follow orders. When yours
 falls you take another, and you can swap on purpose. Principles: [00-principles.md](00-principles.md).
@@ -6,7 +6,7 @@ falls you take another, and you can swap on purpose. Principles: [00-principles.
 ## Core rules (WP-S20)
 
 ### TAC-G-01 · You control one rebel at a time; the rest are your squad
-- Status: planned  ·  Packet: WP-S20
+- Status: built  ·  Packet: WP-S20
 - Decision: Every rebel is a full character with a name, loadout, health, ammo and (later) levels. Exactly one is the
   active rebel (the one WASD and the mouse drive). The others obey orders (section A, TAC-A-13).
 - Why: It is the owner's stated fantasy ("you don't play as one character but as all of them") and it fixes the
@@ -20,7 +20,7 @@ falls you take another, and you can swap on purpose. Principles: [00-principles.
 - Owner feedback: —
 
 ### TAC-G-02 · The player pointer is an alias; ids belong to characters
-- Status: planned  ·  Packet: WP-S20
+- Status: built  ·  Packet: WP-S20
 - Decision: `sim.active` holds the controlled rebel; `sim.player` returns it. The convoy's partisan `player` becomes a
   named rebel (it keeps the id `player` for old tests and level data, with a display name). New levels use rebel ids
   from the roster.
@@ -33,7 +33,7 @@ falls you take another, and you can swap on purpose. Principles: [00-principles.
 - Owner feedback: —
 
 ### TAC-G-03 · The mission is lost only when every rebel is down
-- Status: planned  ·  Packet: WP-S20  ·  Supersedes: TAC-A-11
+- Status: built  ·  Packet: WP-S20  ·  Supersedes: TAC-A-11
 - Decision: "The active rebel died" is a swap. The mission is lost when no rebel can act (all down), or when a required
   `protect` objective fails.
 - Why: Without this, swapping on death would be cosmetic. It also gives levels a meaningful squad-loss pressure
@@ -46,7 +46,7 @@ falls you take another, and you can swap on purpose. Principles: [00-principles.
 - Owner feedback: —
 
 ### TAC-G-04 · Each rebel keeps its own state: loadout, health, ammo, reloads, order
-- Status: planned  ·  Packet: WP-S20
+- Status: built  ·  Packet: WP-S20
 - Decision: Nothing is shared between rebels except the squad stash (section C). Swapping does not heal, reload or
   reset anything.
 - Why: Differences between rebels are what make swapping interesting (Mila's SVD, Dragan's PKM), and what makes
@@ -58,7 +58,7 @@ falls you take another, and you can swap on purpose. Principles: [00-principles.
 - Owner feedback: —
 
 ### TAC-G-05 · The rebel you leave becomes AI-controlled and keeps what it was doing
-- Status: planned  ·  Packet: WP-S20
+- Status: built  ·  Packet: WP-S20
 - Decision: On a swap, the previous rebel keeps its standing order if it had one. If it was player-controlled, it
   holds its position facing where it aimed, and defends itself (fires on visible enemies, takes cover if pinned).
 - Why: The least surprising behaviour: nobody wanders off or stands in the open. Holding keeps the squad's layout
@@ -71,7 +71,7 @@ falls you take another, and you can swap on purpose. Principles: [00-principles.
 - Owner feedback: —
 
 ### TAC-G-06 · Death forces a swap; voluntary swaps have a short cooldown
-- Status: planned  ·  Packet: WP-S20
+- Status: built  ·  Packet: WP-S20
 - Decision: When the active rebel dies, the game enters the swap sequence immediately (TAC-G-08) and you must pick a
   living rebel (it picks the nearest one if you do nothing for 3 s). A voluntary swap has a cooldown of 3 seconds of
   game time.
@@ -84,7 +84,7 @@ falls you take another, and you can swap on purpose. Principles: [00-principles.
 - Owner feedback: —
 
 ### TAC-G-07 · Order selection never includes the rebel you control
-- Status: planned  ·  Packet: WP-S20
+- Status: built  ·  Packet: WP-S20
 - Decision: Tab cycles through the other living rebels; the active rebel is excluded and is also what Follow follows.
 - Why: Orders to the rebel you are driving make no sense. After a swap the old active becomes selectable and the new
   active leaves the list.
@@ -169,3 +169,15 @@ falls you take another, and you can swap on purpose. Principles: [00-principles.
 - Cost to change: Low.
 - Revisit if: —
 - Owner feedback: —
+
+## 3 October implementation checkpoint
+
+S20 is implemented in `convoy/squad-control.js` with Sim adapters and seven focused tests.
+S21 UI is implemented, but remains open until normal-motion pointer, visual and accessibility verification finishes.
+The reduced-motion browser journey passed. The initial normal-motion test waited for moving projected buttons to
+stop; the test now sends immediate pointer actions, but its interrupted rerun has no retained result.
+The host scales the frame accumulator, keeping the simulation step at 1/60; it does not vary simulation dt.
+Host-time choice timeouts are explicit via `advanceSwap(seconds)` for headless reproducibility.
+Switching cancels a partial scripted hold-E search without granting its item; reload/ammo/health remain on each rebel.
+The original `player` ID is retained with the neutral display label Lead rebel. Audio filtering/heartbeat is deferred,
+as allowed by TAC-G-11; this checkpoint supplies visual feedback only.

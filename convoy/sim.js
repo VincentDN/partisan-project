@@ -3,6 +3,7 @@
 import {LEVELS, DEFAULT_LEVEL} from './levels/index.js';
 import {WEAPONS, ROLES, PARTISAN_LOADOUTS} from './weapons.js';
 import {initObjectives, evaluate} from './objectives.js';
+import {requestControl, selectControl, cancelControl, ensureControl, advanceControl} from './squad-control.js';
 import {bestBelief, compass, perceive, hear, decay, armyThink, armyAct, partisanThink, partisanAct, squadThink, receive} from './ai.js';
 
 /** mulberry32: small seeded PRNG so a run can be replayed exactly. */
@@ -133,7 +134,27 @@ export class Sim {
       u.state = 'hold';
       u.facing = p.facing ?? 0;
     }
-    this.player = this.units.find(u => u.id === 'player');
+    this.active = this.units.find(u => u.id === 'player') || this.units.find(u => u.side === 'partisan');
+    if (!this.active) throw new Error('level requires a playable rebel');
+    this.control = {readyAt: 0, pending: null, revision: 0};
+  }
+
+  /** Backward-compatible alias: identity stays on the unit, control moves between units. */
+  get player() {
+    return this.active;
+  }
+
+  requestSwap() {
+    return requestControl(this);
+  }
+  swapTo(id) {
+    return selectControl(this, id);
+  }
+  cancelSwap() {
+    return cancelControl(this);
+  }
+  advanceSwap(seconds) {
+    return advanceControl(this, seconds);
   }
 
   /** An army soldier on foot from level data: {name, role, x, z, facing, state?, ...}. */
@@ -308,7 +329,7 @@ export class Sim {
     u.reload = W.reload;
     u.reloading = wid;
     if (u.reserve[wid] !== Infinity) u.reserve[wid]--;
-    if (u.id !== 'player') this.say(u, 'Reloading!', 'reload', 6);
+    if (u !== this.player) this.say(u, 'Reloading!', 'reload', 6);
     return true;
   }
 
@@ -327,7 +348,7 @@ export class Sim {
     u.cd = W.cd;
     const base = Math.atan2(tz - u.z, tx - u.x);
     u.facing = base;
-    const sigma = W.spread * (u.id === 'player' ? 0.9 : 1.5) + u.supp * 0.1 * (u.armour ?? 1) + (u.moving ? 0.045 : 0) + extra;
+    const sigma = W.spread * (u === this.player ? 0.9 : 1.5) + u.supp * 0.1 * (u.armour ?? 1) + (u.moving ? 0.045 : 0) + extra;
     const g = (this.rand() + this.rand() + this.rand() - 1.5) * 1.15; // ~normal
     const a = base + g * sigma,
       dx = Math.cos(a),
@@ -403,7 +424,7 @@ export class Sim {
     const near = this.units
       .filter(o => o.alive && o.side !== by.side && Math.hypot(o.x - x, o.z - z) < 14)
       .sort((a, b) => Math.hypot(a.x - x, a.z - z) - Math.hypot(b.x - x, b.z - z))[0];
-    if (near && near.id !== 'player') this.say(near, word, 'blast', 3);
+    if (near && near !== this.player) this.say(near, word, 'blast', 3);
   }
 
   damageVehicle(v, amount, by) {
@@ -426,7 +447,7 @@ export class Sim {
     o.state = 'down';
     o.moveTo = null;
     if (by.side === 'partisan') this.kills[by.id] = (this.kills[by.id] || 0) + 1;
-    if (by.side === 'partisan' && by.id !== 'player') this.say(by, 'Target down!', 'kill', 3);
+    if (by.side === 'partisan' && by !== this.player) this.say(by, 'Target down!', 'kill', 3);
     if (o.role === 'rto') {
       const m = this.units.find(x => x.alive && x.side === 'army');
       if (m) this.say(m, "Radio's down!", 'radio', 99);
@@ -434,7 +455,7 @@ export class Sim {
     // The nearest comrade who can see the body calls it.
     const mates = this.units.filter(m => m.alive && m.side === o.side && m !== o).sort((a, b) => dist(a, o) - dist(b, o));
     if (mates[0] && dist(mates[0], o) < 25)
-      this.say(mates[0], o.side === 'army' ? 'Man down!' : o.id === 'player' ? "You're hit!" : `${o.name} is down!`, 'mandown', 2);
+      this.say(mates[0], o.side === 'army' ? 'Man down!' : o === this.player ? "You're hit!" : `${o.name} is down!`, 'mandown', 2);
   }
 
   /** Move u toward u.moveTo with sliding collision; returns true on arrival. */
@@ -503,6 +524,7 @@ export class Sim {
    */
   step(dt, input = {}) {
     if (this.outcome) return;
+    ensureControl(this);
     this.time += dt;
     for (const o of input.orders || []) this.order(o.ids, o);
     this.driveConvoy(dt);
@@ -598,6 +620,7 @@ export class Sim {
 
   checkOutcome() {
     this.outcome = evaluate(this);
+    ensureControl(this);
   }
 
   /** What the debrief shows. */

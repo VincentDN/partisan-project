@@ -47,7 +47,7 @@
    "version": null
   },
   "S": {
-   "name": "Partisan Tactical: three missions, looting, inventory, unlocks",
+   "name": "Partisan Tactical: extraction PvE, campaign and gated online research",
    "version": "0.8.0"
   }
  },
@@ -1152,11 +1152,11 @@
    "agent": "any",
    "needs": [],
    "inputs": [
-    "convoy/ai.js",
-    "convoy/sim.js",
-    "convoy/world.js",
     "docs/design-decisions/",
-    "docs/tactical-roadmap.md"
+    "docs/tactical-roadmap.md",
+    "convoy/sim.js",
+    "convoy/ai.js",
+    "convoy/world.js"
    ],
    "acceptance": "Convoy plays as before and its seeded replay test passes; a test level loads from data."
   },
@@ -1226,17 +1226,21 @@
    "bu": 20,
    "status": "planned",
    "deps": [
-    "WP-S2",
-    "WP-S4",
-    "WP-S20"
+    "WP-S35",
+    "WP-S32",
+    "WP-S4"
    ],
    "agent": "any",
    "needs": [],
    "inputs": [
     "docs/design-decisions/",
-    "docs/tactical-roadmap.md"
+    "docs/tactical-roadmap.md",
+    "convoy/levels/index.js",
+    "convoy/levels/convoy.js",
+    "convoy/objectives.js",
+    "convoy/ai.js"
    ],
-   "acceptance": "Winnable stealthy and loud in the headless harness; smoke test."
+   "acceptance": "Compound supports stealth and loud routes with owned kit, physical cache, reachable exits and radio-dependent QRF; destructible static mast has a typed target rule; headless and browser smoke pass. Vehicle QRF presentation is separately refined if it exceeds M."
   },
   {
    "id": "WP-S6",
@@ -1247,18 +1251,22 @@
    "bu": 20,
    "status": "planned",
    "deps": [
-    "WP-S2",
+    "WP-S35",
+    "WP-S31",
+    "WP-S32",
     "WP-S3",
-    "WP-S4",
-    "WP-S20"
+    "WP-S4"
    ],
    "agent": "any",
    "needs": [],
    "inputs": [
     "docs/design-decisions/",
-    "docs/tactical-roadmap.md"
+    "docs/tactical-roadmap.md",
+    "convoy/levels/index.js",
+    "convoy/ai.js",
+    "convoy/objectives.js"
    ],
-   "acceptance": "Three waves from data; winnable with a sensible loadout; smoke test."
+   "acceptance": "Cave wave scheduler is data-driven; sensible owned loadout can defend or withdraw with carried supplies; off-map stash survives defeat; pathing, timer and browser smoke tests pass."
   },
   {
    "id": "WP-S7",
@@ -1282,24 +1290,27 @@
   },
   {
    "id": "WP-S8",
-   "title": "Item model and inventory core: weapons with attachments, ammo, grenades, gear; loadout slots; squad stash; versioned saves",
+   "title": "Inventory domain: unique items, ownership, loadout slots, compatible magazines, capacity and schema",
    "track": "Tactical",
    "milestone": "S",
    "size": "M",
    "bu": 20,
    "status": "planned",
    "deps": [
-    "WP-S1"
+    "WP-S28"
    ],
    "agent": "any",
    "needs": [],
    "inputs": [
-    "convoy/weapons.js",
     "docs/design-decisions/",
     "docs/tactical-roadmap.md",
+    "convoy/weapons.js",
+    "shared/loadout.js",
+    "workbench/stats.js",
+    "workbench/rails.js",
     "workbench/attachments.js"
    ],
-   "acceptance": "Unit tests: equip, install/remove attachment with Workbench rules, capacity, save/load, migration."
+   "acceptance": "Pure unit tests preserve single ownership and rounds across equip/transfer/attachment changes; explicit tactical-to-catalogue ID map; capacity and invalid definition checks; serialization round trip. Transactional storage is S29."
   },
   {
    "id": "WP-S9",
@@ -1317,9 +1328,11 @@
    "needs": [],
    "inputs": [
     "docs/design-decisions/",
-    "docs/tactical-roadmap.md"
+    "docs/tactical-roadmap.md",
+    "convoy/sim.js",
+    "convoy/levels/convoy.js"
    ],
-   "acceptance": "Loot tables per role and vehicle; unit tests; smoke test loots a body."
+   "acceptance": "Body and cargo contents roll once per seed; exposed hold-E search interrupts on movement/release/death; player and teammate transfers validate range, line of sight, capacity and ownership; no duplicated corpse kit."
   },
   {
    "id": "WP-S10",
@@ -1331,56 +1344,67 @@
    "status": "planned",
    "deps": [
     "WP-S8",
-    "WP-S9"
+    "WP-S9",
+    "WP-S29"
    ],
    "agent": "any",
    "needs": [],
    "inputs": [
     "docs/design-decisions/",
-    "docs/tactical-roadmap.md"
+    "docs/tactical-roadmap.md",
+    "convoy/game.js",
+    "convoy/index.html",
+    "convoy/convoy.css"
    ],
-   "acceptance": "Keyboard operable; axe passes; smoke test equips a looted PKM on Dragan."
+   "acceptance": "I opens keyboard/click-operable inventory while Tab keeps squad selection; owned kit only; field search and stash/loadout screens show rounds, capacity and compatibility reasons; axe plus browser equip journey pass."
   },
   {
    "id": "WP-S11",
-   "title": "Loadouts drive the fight: teammate AI uses equipped weapon and attachments, ammo consumption, sidearm fallback",
+   "title": "Finite combat loadouts: player and AI use owned weapons, attachments, partial magazines and consumable ammunition",
    "track": "Tactical",
    "milestone": "S",
-   "size": "S",
-   "bu": 8,
+   "size": "M",
+   "bu": 20,
    "status": "planned",
    "deps": [
-    "WP-S10",
+    "WP-S8",
     "WP-S3"
    ],
    "agent": "any",
    "needs": [],
    "inputs": [
     "docs/design-decisions/",
-    "docs/tactical-roadmap.md"
+    "docs/tactical-roadmap.md",
+    "convoy/sim.js",
+    "convoy/ai.js",
+    "convoy/weapons.js"
    ],
-   "acceptance": "Unit tests: a suppressor shrinks enemy hearing; ammo runs out."
+   "acceptance": "Both player and AI use chosen kit; suppressors affect hearing; reload/swap/cancel preserve remaining rounds; no infinite reserves in campaign; incompatible ammo is rejected and empty units retreat or switch to an owned usable weapon."
   },
   {
    "id": "WP-S12",
-   "title": "Campaign flow: three missions, persistent squad, stash and wounds, briefing and debrief, recruit, reset",
+   "title": "Campaign controller: briefing, durable deployment, debrief settlement, squad availability, recruit and reset",
    "track": "Tactical",
    "milestone": "S",
-   "size": "S",
-   "bu": 8,
+   "size": "M",
+   "bu": 20,
    "status": "planned",
    "deps": [
-    "WP-S2",
+    "WP-S29",
+    "WP-S30",
     "WP-S10",
-    "WP-S20"
+    "WP-S11"
    ],
    "agent": "any",
    "needs": [],
    "inputs": [
     "docs/design-decisions/",
-    "docs/tactical-roadmap.md"
+    "docs/tactical-roadmap.md",
+    "convoy/game.js",
+    "convoy/objectives.js",
+    "convoy/levels/index.js"
    ],
-   "acceptance": "Save survives reload; unit test of the campaign state machine."
+   "acceptance": "Deploy-loot-extract-reload-redeploy and death/abandonment run through one campaign controller; returned rounds and injuries persist; incomplete contracts can be retried; starter kit/recruit are granted once; practice cannot mutate campaign. All-down, not active-rebel death, loses the raid; minimal non-bankable recovery loadout prevents an empty-stash deadlock."
   },
   {
    "id": "WP-S13",
@@ -1391,17 +1415,19 @@
    "bu": 20,
    "status": "planned",
    "deps": [
-    "WP-S12"
+    "WP-S12",
+    "WP-S33"
    ],
    "agent": "any",
    "needs": [],
    "inputs": [
     "docs/design-decisions/",
     "docs/tactical-roadmap.md",
-    "workbench/attachments.js",
-    "workbench/models.js"
+    "shared/loadout.js",
+    "workbench/models.js",
+    "workbench/attachments.js"
    ],
-   "acceptance": "Steal a part in the shooter, see it unlocked in the Modder (smoke); locked items cannot be equipped."
+   "acceptance": "Successful extraction grants catalogue discovery once; possession still gates campaign equip; lost copies remain discovered; unsupported model mappings are explicit; practice and ?unlock=all cannot mint items; browser integration test passes."
   },
   {
    "id": "WP-S14",
@@ -1421,7 +1447,7 @@
     "docs/tactical-roadmap.md",
     "operator/config.js"
    ],
-   "acceptance": "Smoke test: a looted helmet unlocks in the Customiser."
+   "acceptance": "Extracted gear becomes visible in the Operator Customiser; campaign possession stays separate from cosmetic discovery; gallery bypass cannot modify campaign and browser integration passes."
   },
   {
    "id": "WP-S15",
@@ -1432,15 +1458,18 @@
    "bu": 20,
    "status": "planned",
    "deps": [
-    "WP-S4"
+    "WP-S4",
+    "WP-S32"
    ],
    "agent": "any",
    "needs": [],
    "inputs": [
     "docs/design-decisions/",
-    "docs/tactical-roadmap.md"
+    "docs/tactical-roadmap.md",
+    "convoy/ai.js",
+    "tests/tactical.test.mjs"
    ],
-   "acceptance": "Unit tests per behaviour; AI view replays the last 30 s."
+   "acceptance": "Extend existing search/retreat with body discovery, bounded search, squad morale and surrender; tests prohibit clairvoyant tracking and duplicate surrendered kit; diagnostic belief timeline stays separate from normal play."
   },
   {
    "id": "WP-S16",
@@ -1449,7 +1478,7 @@
    "milestone": "S",
    "size": "S",
    "bu": 8,
-   "status": "planned",
+   "status": "ready",
    "deps": [
     "WP-S1"
    ],
@@ -1457,29 +1486,46 @@
    "needs": [],
    "inputs": [
     "docs/design-decisions/",
-    "docs/tactical-roadmap.md"
+    "docs/tactical-roadmap.md",
+    "convoy/sim.js",
+    "convoy/levels/index.js",
+    "tests/convoy.test.mjs",
+    "tests/tactical.test.mjs"
    ],
-   "acceptance": "Each level winnable 40-70% by the scripted player at 50% awareness."
+   "acceptance": "Seeded headless baseline reports contract completion, casualties, time and stuck units; extraction/loot/resource metrics added as those systems land; cautious/aggressive/retreat policies on fixed seeds. Script win rate is diagnostic, not a substitute for playtests."
   },
   {
    "id": "WP-S17",
    "title": "Tactical tests and performance: smoke per level, inventory and unlock e2e, phone budget, CI under 10 min",
    "track": "Quality",
    "milestone": "S",
-   "size": "S",
-   "bu": 8,
+   "size": "M",
+   "bu": 20,
    "status": "planned",
    "deps": [
-    "WP-S13",
-    "WP-S6"
+    "WP-S5",
+    "WP-S6",
+    "WP-S7",
+    "WP-S14",
+    "WP-S15",
+    "WP-S18",
+    "WP-S31",
+    "WP-S33",
+    "WP-S34",
+    "WP-S35",
+    "WP-S25",
+    "WP-S26"
    ],
    "agent": "any",
    "needs": [],
    "inputs": [
     "docs/design-decisions/",
-    "docs/tactical-roadmap.md"
+    "docs/tactical-roadmap.md",
+    "tests/e2e/smoke.mjs",
+    "tests/e2e/a11y.mjs",
+    "tools/build-site.mjs"
    ],
-   "acceptance": "Green CI; perf numbers recorded."
+   "acceptance": "Three-map campaign smoke, save fault cases, collection isolation, navigation and ten-raid resource-growth checks pass; desktop/phone frame and load measurements recorded; CI under 10 minutes; npm test/build/check, relevant lint/type checks green."
   },
   {
    "id": "WP-S18",
@@ -1490,16 +1536,20 @@
    "bu": 8,
    "status": "planned",
    "deps": [
-    "WP-S3",
-    "WP-S10"
+    "WP-S35",
+    "WP-S10",
+    "WP-S3"
    ],
    "agent": "any",
    "needs": [],
    "inputs": [
     "docs/design-decisions/",
-    "docs/tactical-roadmap.md"
+    "docs/tactical-roadmap.md",
+    "convoy/game.js",
+    "convoy/index.html",
+    "convoy/convoy.css"
    ],
-   "acceptance": "Playable on a phone in the emulator test."
+   "acceptance": "Touch movement/aim/orders/loot work together; focus loss clears held inputs; UI fits phone landscape/portrait without inaccessible controls; emulator smoke plus real-phone acceptance recorded before claiming mobile ready."
   },
   {
    "id": "WP-S19",
@@ -1510,7 +1560,7 @@
    "bu": 3,
    "status": "planned",
    "deps": [
-    "WP-S13"
+    "WP-S17"
    ],
    "agent": "any",
    "needs": [],
@@ -1518,7 +1568,7 @@
     "docs/design-decisions/",
     "docs/tactical-roadmap.md"
    ],
-   "acceptance": "Doc renders; links work."
+   "acceptance": "GDD/player help accurately distinguish practice, persistent PvE and unbuilt multiplayer; loss/refresh/extraction rules documented; changelog and index consistent; links work."
   },
   {
    "id": "WP-S20",
@@ -1527,7 +1577,7 @@
    "milestone": "S",
    "size": "M",
    "bu": 20,
-   "status": "planned",
+   "status": "done",
    "deps": [
     "WP-S1",
     "WP-S3"
@@ -1548,7 +1598,7 @@
    "milestone": "S",
    "size": "S",
    "bu": 8,
-   "status": "planned",
+   "status": "ready",
    "deps": [
     "WP-S20"
    ],
@@ -1558,7 +1608,7 @@
     "docs/tactical-roadmap.md",
     "docs/design-decisions/G-squad-play.md"
    ],
-   "acceptance": "Smoke test swaps by hover and by death; with reduced motion it is an instant cut with a highlight; axe passes."
+   "acceptance": "Smoke test swaps by hover and by death; with reduced motion it is an instant cut with a highlight; axe passes. Checkpoint 2026-10-03: implementation exists and reduced-motion browser journey passed; normal-motion pointer test was adjusted for moving buttons but its rerun result was not recovered after interruption. Complete browser/visual/axe checks before marking done."
   },
   {
    "id": "WP-S22",
@@ -1658,6 +1708,364 @@
     "docs/design-decisions/H-progression.md"
    ],
    "acceptance": "Keyboard operable; axe passes; smoke test picks a perk."
+  },
+  {
+   "id": "WP-S27",
+   "title": "Extraction roadmap: repository audit, staged delivery gates and synchronized work packets",
+   "track": "Tactical",
+   "milestone": "S",
+   "size": "S",
+   "bu": 8,
+   "status": "done",
+   "deps": [],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/design-decisions/I-extraction.md",
+    "docs/tactical-roadmap.md",
+    "docs/master-roadmap.md",
+    "docs/agent-ops/packets.json"
+   ],
+   "acceptance": "Roadmap grounded in main 8f30cf1 (initial code audit 3cc236b); existing S1-S4 retained; dependency graph valid and generated master table synchronized; npm test/build/check results and handoff recorded."
+  },
+  {
+   "id": "WP-S28",
+   "title": "Tactical boundaries: extract lifecycle/render/input seams while preserving seeded practice behaviour",
+   "track": "Tactical",
+   "milestone": "S",
+   "size": "M",
+   "bu": 20,
+   "status": "ready",
+   "deps": [
+    "WP-S1",
+    "WP-S2",
+    "WP-S3",
+    "WP-S4",
+    "WP-S20",
+    "WP-S21"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/design-decisions/I-extraction.md",
+    "convoy/game.js",
+    "convoy/sim.js",
+    "convoy/ai.js",
+    "tests/convoy.test.mjs",
+    "tests/tactical.test.mjs"
+   ],
+   "acceptance": "Stage small module extraction for incoming inventory/raid code; practice replay and controls unchanged; new modules have purpose headers and incremental type coverage; do not rewrite the renderer or all AI."
+  },
+  {
+   "id": "WP-S29",
+   "title": "Persistence transactions: profile schema, reservation, idempotent settlement, migration and concurrent-tab ownership",
+   "track": "Tactical",
+   "milestone": "S",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-S8"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/design-decisions/I-extraction.md",
+    "docs/tactical-roadmap.md",
+    "shared/loadout.js",
+    "tests/loadout.test.mjs"
+   ],
+   "acceptance": "Record storage ADR; durable deployment removes kit once; failed write prevents start; same raid settles once atomically across stash/discoveries/roster; expected-revision and two-tab tests; migration/invalid/future-version fixtures."
+  },
+  {
+   "id": "WP-S30",
+   "title": "Extraction lifecycle: countdown, deadline, early retreat and explicit squad abandonment",
+   "track": "Tactical",
+   "milestone": "S",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-S2",
+    "WP-S9",
+    "WP-S29"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/design-decisions/I-extraction.md",
+    "docs/tactical-roadmap.md",
+    "convoy/objectives.js",
+    "convoy/sim.js",
+    "convoy/levels/convoy.js"
+   ],
+   "acceptance": "Campaign convoy requires extraction instead of elimination; exits/countdown/deadline are data; early retreat keeps carried loot without contract progress; zone departure cancels; all-down/deadline wins same-tick ties; lost squad gear is not banked."
+  },
+  {
+   "id": "WP-S31",
+   "title": "Hardcore survival: bleeding, finite medical supplies, treatment, simple armour and squad wounds",
+   "track": "Tactical",
+   "milestone": "S",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-S35"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/design-decisions/I-extraction.md",
+    "docs/tactical-roadmap.md",
+    "convoy/sim.js",
+    "convoy/weapons.js"
+   ],
+   "acceptance": "One bleeding state and interrupted finite treatment; bounded armour mitigation/wear; casualties affect the next completed raid; recovered kit follows item ownership; recovery remains possible with all companions unavailable."
+  },
+  {
+   "id": "WP-S32",
+   "title": "Raid readability and navigation: reachable loot/exits, squad pathing and contact visibility",
+   "track": "Tactical",
+   "milestone": "S",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-S35"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/design-decisions/I-extraction.md",
+    "docs/tactical-roadmap.md",
+    "convoy/sim.js",
+    "convoy/ai.js",
+    "convoy/game.js"
+   ],
+   "acceptance": "Seed corpus verifies spawn/loot/exit reachability; squad routes around walls without teleporting; stuck recovery bounded; normal play hides unknown contacts, distinguishes last-known positions and explains extraction state; AI debug remains practice-only."
+  },
+  {
+   "id": "WP-S33",
+   "title": "Repeatable scavenging economy: raid variants, restricted recovery kit and stash overflow",
+   "track": "Tactical",
+   "milestone": "S",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-S35"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/design-decisions/I-extraction.md",
+    "docs/tactical-roadmap.md",
+    "convoy/levels/convoy.js",
+    "convoy/weapons.js"
+   ],
+   "acceptance": "Seeded repeat raids yield useful choices; recovery loaner cannot be banked/stripped/duplicated; starter kit only once; overflow resolved without lost/duplicated rewards; multi-raid supply and gear-loss metrics recorded; no shopping economy."
+  },
+  {
+   "id": "WP-S34",
+   "title": "Browser campaign resilience: refresh loss, hidden-tab pause, failed saves and backup/import",
+   "track": "Tactical",
+   "milestone": "S",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-S12"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/design-decisions/I-extraction.md",
+    "docs/tactical-roadmap.md",
+    "convoy/game.js",
+    "shared/frame.js",
+    "shell.js",
+    "tests/e2e/smoke.mjs"
+   ],
+   "acceptance": "Browser journeys cover reload/close recovery as abandonment, menu/frame navigation, focus input reset, failed settlement retry, export/import and blocked storage fallback; no silent save reset or free restart."
+  },
+  {
+   "id": "WP-S35",
+   "title": "Convoy extraction gate: end-to-end second deployment, loss accounting and first playtest",
+   "track": "Tactical",
+   "milestone": "S",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-S12",
+    "WP-S34",
+    "WP-S16"
+   ],
+   "agent": "any",
+   "needs": [
+    "browser",
+    "human"
+   ],
+   "inputs": [
+    "docs/design-decisions/I-extraction.md",
+    "docs/tactical-roadmap.md",
+    "tests/convoy.test.mjs",
+    "tests/tactical.test.mjs",
+    "tests/e2e/smoke.mjs"
+   ],
+   "acceptance": "Browser extract-reload-equip-redeploy-death journey preserves exact gear/ammo and commits once; fault/duplicate checks pass; 3-5 human testers report understood exits/losses and continue-vs-extract choices before more maps."
+  },
+  {
+   "id": "WP-S36",
+   "title": "Owner decision: local PvE or funded live co-op; region, concurrency and operating budget",
+   "track": "Online research",
+   "milestone": "S",
+   "size": "XS",
+   "bu": 3,
+   "status": "blocked",
+   "deps": [
+    "WP-S17"
+   ],
+   "agent": "human",
+   "needs": [
+    "human"
+   ],
+   "inputs": [
+    "docs/design-decisions/I-extraction.md",
+    "docs/tactical-roadmap.md"
+   ],
+   "acceptance": "Owner explicitly records online mode, monthly cost cap, expected concurrency, region and incident owner in an ADR; if declined, keep online work blocked without blocking local release."
+  },
+  {
+   "id": "WP-S37",
+   "title": "Conditional online spike: authoritative simulation protocol and server tick benchmark",
+   "track": "Online research",
+   "milestone": "S",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-S36"
+   ],
+   "agent": "any",
+   "needs": [
+    "net"
+   ],
+   "inputs": [
+    "docs/design-decisions/I-extraction.md",
+    "docs/tactical-roadmap.md",
+    "convoy/sim.js",
+    "convoy/ai.js"
+   ],
+   "acceptance": "Headless authoritative simulation validates commands and owns RNG/time; versioned protocol and bounded tick/load benchmark recorded before choosing hosting; no production launch claim."
+  },
+  {
+   "id": "WP-S38",
+   "title": "Conditional online profiles: identity, server-owned inventory and durable settlement",
+   "track": "Online research",
+   "milestone": "S",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-S37",
+    "WP-S29"
+   ],
+   "agent": "any",
+   "needs": [
+    "net"
+   ],
+   "inputs": [
+    "docs/design-decisions/I-extraction.md",
+    "docs/tactical-roadmap.md"
+   ],
+   "acceptance": "Authenticate players; atomic deploy/settle and duplicate/concurrent request tests on server-owned profiles; local exports, URL codes and debug unlocks cannot grant online gear; refine server file inputs after S37."
+  },
+  {
+   "id": "WP-S39",
+   "title": "Conditional co-op closed alpha: lobbies, replication, reconnect and squad loot ownership",
+   "track": "Online research",
+   "milestone": "S",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-S38"
+   ],
+   "agent": "any",
+   "needs": [
+    "browser",
+    "net"
+   ],
+   "inputs": [
+    "docs/design-decisions/I-extraction.md",
+    "docs/tactical-roadmap.md"
+   ],
+   "acceptance": "2-4-player closed test covers validated loadouts, movement/loot replication, per-player extraction and documented reconnect/body vulnerability; no tactical pause in live raids; refine concrete server/client inputs after S37."
+  },
+  {
+   "id": "WP-S40",
+   "title": "Conditional online operational gate: abuse tests, hidden-state filtering, restore and load costs",
+   "track": "Online research",
+   "milestone": "S",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-S39"
+   ],
+   "agent": "any",
+   "needs": [
+    "net"
+   ],
+   "inputs": [
+    "docs/design-decisions/I-extraction.md",
+    "docs/tactical-roadmap.md"
+   ],
+   "acceptance": "Reject forged inventory and duplicate loot claims; filter unseen enemy state; rate limits, logs, backup restore and server-crash settlement tests; concurrency/latency and cost per raid meet S36 limits."
+  },
+  {
+   "id": "WP-S41",
+   "title": "Owner decision: approve a PvPvE experiment after co-op retention, fairness and cost review",
+   "track": "Online research",
+   "milestone": "S",
+   "size": "XS",
+   "bu": 3,
+   "status": "blocked",
+   "deps": [
+    "WP-S40"
+   ],
+   "agent": "human",
+   "needs": [
+    "human"
+   ],
+   "inputs": [
+    "docs/design-decisions/I-extraction.md",
+    "docs/tactical-roadmap.md"
+   ],
+   "acceptance": "Owner records evidence on population, latency, economy disparity and operating cost; explicit approval required; retain co-op/PvE if gate fails."
+  },
+  {
+   "id": "WP-S42",
+   "title": "Conditional PvPvE experiment: small closed raid population and fairness evaluation",
+   "track": "Online research",
+   "milestone": "S",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-S41"
+   ],
+   "agent": "any",
+   "needs": [
+    "browser",
+    "net"
+   ],
+   "inputs": [
+    "docs/design-decisions/I-extraction.md",
+    "docs/tactical-roadmap.md"
+   ],
+   "acceptance": "Closed experiment measures encounter frequency, latency, gear disparity, camping and cheating reports; adversarial extraction/loot tests pass; exit review decides continue/stop; public launch requires a separately scoped plan."
   }
  ]
 }

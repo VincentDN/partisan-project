@@ -4,6 +4,7 @@
 //   ROOT=_site node tests/e2e/smoke.mjs   (the built artifact)
 import assert from 'node:assert/strict';
 import {launch, open, startServer} from './browser.mjs';
+import {checkSquadControl} from './squad-control.mjs';
 
 import {execFileSync} from 'node:child_process';
 const live = process.argv.includes('--url') ? process.argv[process.argv.indexOf('--url') + 1] : null;
@@ -397,6 +398,9 @@ await check('art style lab: every style renders over the operator and switching 
   noProblems(page);
   await page.close();
 });
+
+await check('squad control: keyboard, death transfer, all-down and reduced motion', () => checkSquadControl(browser, server.url));
+await check('squad control: timed slow-motion selection', () => checkSquadControl(browser, server.url, 'no-preference'));
 
 await check('convoy ambush: the convoy drives, the ambush springs, soldiers dismount and call out', async () => {
   const page = await open(browser, server.url + 'convoy/?seed=7&ai');

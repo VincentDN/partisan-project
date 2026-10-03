@@ -2,6 +2,24 @@
 
 Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer; `VERSION` and `index.html` change together.
 
+## [Unreleased]
+
+### Added · 2026-10-03 (checkpoint)
+- Whole-squad control: change the active rebel without copying health, ammunition, reloads or orders;
+  the mission fails on all-down rather than the first rebel's death.
+- Q/button squad picker with slow-motion framing, keyboard choices, forced death selection and reduced-motion path.
+  UI implementation is checkpointed; normal-motion/visual/accessibility verification remains open.
+- Recovered original TLOU2 workbench analysis, illustrated HTML, reference board and six screenshots in
+  `outbound/tlou2-workbench-study/`, excluded from deployment.
+
+### Documentation · 2026-10-03
+- Expanded the Partisan Tactical roadmap from the inspected shooter into staged extraction PvE: finite gear,
+  looting, timed exits, permanent equipment loss, transactional saves, recovery runs and repeatable raids.
+- Reordered the work queue to prove the convoy extraction loop before compound/cave content; preserved completed
+  S1–S4 and added explicit acceptance gates and optional, owner-gated online research.
+- Separated campaign equipment ownership from catalogue unlocks and documented browser interruption rules.
+- Roadmap reconciled with Claude’s main at 8f30cf1; implementation above is on the working branch, not deployed.
+
 ## [0.3.1] · 2026-10-01
 
 ### Added (Partisan Tactical, roadmap round 2)

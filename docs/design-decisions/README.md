@@ -51,4 +51,6 @@ Entries marked `planned` can be changed for free; `built` ones cost a code chang
 | [E-ai.md](E-ai.md) | WP-S15, S16: AI v2, morale, tuning harness | planned |
 | [F-quality.md](F-quality.md) | WP-S17 to S19: tests, performance, touch, docs | planned |
 
+| [I-extraction.md](I-extraction.md) | WP-S27–S42: persistent extraction, survival, browser resilience and optional online gates | planned |
+
 Decision count: see `grep -c "^### TAC-" docs/design-decisions/*.md`.
