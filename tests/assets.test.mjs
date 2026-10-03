@@ -58,7 +58,8 @@ test('outbound/sketchfab-download.py is the current standalone build of the down
 test('the downloader shows * while a token is typed or pasted and handles backspace', async () => {
   const {execFileSync} = await import('node:child_process');
   const code = [
-    'import importlib.util',
+    'import sys, importlib.util',
+    'sys.dont_write_bytecode = True',
     "spec = importlib.util.spec_from_file_location('d', 'outbound/sketchfab-download.py')",
     'm = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)',
     'keys = iter(list("ab") + ["\\x08"] + list("c") + ["\\r"])',
