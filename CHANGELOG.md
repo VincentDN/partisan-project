@@ -4,6 +4,10 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 ## [0.3.1] · 2026-10-01
 
+### Added (graphics roadmap)
+- **Graphics roadmap** (`docs/graphics-roadmap.md`, milestone V, WP-V1 to V20, about 250 budget units): the shooter moves from 3-D to RimWorld-style 2.5-D top-down sprites (outlined, layered paper-doll people, long shadows, 2.5-D structures, lighting, effects) and the campaign gets a retro handheld-RPG island map. The simulation is untouched, so it runs in parallel with the gameplay roadmap. The 27 graphics decisions are in `docs/design-decisions/I-graphics.md`. WP-S7 (level visuals) is retired in favour of it.
+- Moodboard: layered 2-D armour sprite sheets, a RimWorld-style top-down map and a retro overworld map.
+
 ### Changed (design doc)
 - The Game Design Doc opens with the pitch: *Escape from Tarkov meets Mount and Blade with guns*, inspired by the Antistasi mod for Arma 3: a PvE loop where you play a group of units and level your characters and Resistance on a Mount and Blade style overworld, so stealing weapons and attachments levels up different characters, escalating from ambushes and raids to vehicle warfare against the Invader.
 

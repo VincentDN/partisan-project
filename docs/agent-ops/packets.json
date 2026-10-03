@@ -49,6 +49,10 @@
   "S": {
    "name": "Partisan Tactical: three missions, looting, inventory, unlocks",
    "version": "0.8.0"
+  },
+  "V": {
+   "name": "Graphics: 2.5D top-down sprites and the retro overworld",
+   "version": "0.9.0"
   }
  },
  "packets": [
@@ -1262,23 +1266,20 @@
   },
   {
    "id": "WP-S7",
-   "title": "Level visuals: roof cut-away indoors, cave darkness and lamp light, night lighting and searchlight",
+   "title": "Level visuals (retired: delivered by WP-V9 structures and WP-V12 lighting in the 2-D renderer)",
    "track": "Tactical",
    "milestone": "S",
    "size": "S",
    "bu": 8,
-   "status": "planned",
-   "deps": [
-    "WP-S5",
-    "WP-S6"
-   ],
+   "status": "blocked",
+   "deps": [],
    "agent": "any",
    "needs": [],
    "inputs": [
     "docs/design-decisions/",
     "docs/tactical-roadmap.md"
    ],
-   "acceptance": "Contact-sheet screenshots of each level; 60 fps on a mid laptop."
+   "acceptance": "Superseded by WP-V9 and WP-V12 (TAC-B-12 -> TAC-I-15, TAC-I-18)."
   },
   {
    "id": "WP-S8",
@@ -1658,6 +1659,404 @@
     "docs/design-decisions/H-progression.md"
    ],
    "acceptance": "Keyboard operable; axe passes; smoke test picks a perk."
+  },
+  {
+   "id": "WP-V1",
+   "title": "Art bible: palette, outline rule, 1 m = 32 px scale, sun direction, shadow rule, sprite sizes, layer order",
+   "track": "Graphics",
+   "milestone": "V",
+   "size": "S",
+   "bu": 8,
+   "status": "ready",
+   "deps": [],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/graphics-roadmap.md",
+    "docs/design-decisions/I-graphics.md",
+    "docs/moodboard/ref-2d-armour-sprites-1.png",
+    "docs/moodboard/ref-2d-topdown-map.jpg",
+    "docs/moodboard/ref-retro-overworld-map.jpg"
+   ],
+   "acceptance": "One page the other packets obey; palette as data with a test that every colour is in it."
+  },
+  {
+   "id": "WP-V2",
+   "title": "Renderer interface: extract the draw calls from convoy/game.js; the three.js code becomes renderer-3d behind ?view=3d",
+   "track": "Graphics",
+   "milestone": "V",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-V1"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/graphics-roadmap.md",
+    "docs/design-decisions/I-graphics.md",
+    "convoy/game.js"
+   ],
+   "acceptance": "The game plays identically through the interface; the seeded fingerprint is unchanged."
+  },
+  {
+   "id": "WP-V3",
+   "title": "Canvas 2-D renderer: integer zoom and pan, y-sorted layers, picking, DPR; today's level with placeholder sprites",
+   "track": "Graphics",
+   "milestone": "V",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-V2"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/graphics-roadmap.md",
+    "docs/design-decisions/I-graphics.md",
+    "convoy/game.js"
+   ],
+   "acceptance": "The convoy plays in ?view=2d with orders, pause and AI view; smoke test."
+  },
+  {
+   "id": "WP-V4",
+   "title": "Sprite tooling and Sprite Lab: atlas and manifest build, a viewer for layers, animations and palette swaps",
+   "track": "Graphics",
+   "milestone": "V",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-V3"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/graphics-roadmap.md",
+    "docs/design-decisions/I-graphics.md",
+    "tools/"
+   ],
+   "acceptance": "Atlas build reproducible; manifest validated by tests; Sprite Lab opens every sprite."
+  },
+  {
+   "id": "WP-V5",
+   "title": "Paper-doll people: layered soldiers in front/back/side views with the outline pass; role silhouettes and factions",
+   "track": "Graphics",
+   "milestone": "V",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-V4"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/graphics-roadmap.md",
+    "docs/design-decisions/I-graphics.md",
+    "docs/moodboard/ref-2d-armour-sprites-1.png",
+    "docs/moodboard/ref-2d-topdown-map.jpg",
+    "docs/moodboard/ref-retro-overworld-map.jpg"
+   ],
+   "acceptance": "Every role and rebel renders; contact sheet reviewed against the references."
+  },
+  {
+   "id": "WP-V6",
+   "title": "Equipment layers: item id to sprite layers; weapons and vehicles baked from 3-D models by a top-down render-to-sprite pass",
+   "track": "Graphics",
+   "milestone": "V",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-V5"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/graphics-roadmap.md",
+    "docs/design-decisions/I-graphics.md",
+    "workbench/models.js",
+    "workbench/attachments.js"
+   ],
+   "acceptance": "Every Workbench weapon has an in-hand sprite and attachments show on it."
+  },
+  {
+   "id": "WP-V7",
+   "title": "Animation and states: walk, sneak, aim, recoil, reload, search, wounded, down; free-rotating weapon layer; swap highlight and selection brackets",
+   "track": "Graphics",
+   "milestone": "V",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-V5"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/graphics-roadmap.md",
+    "docs/design-decisions/I-graphics.md"
+   ],
+   "acceptance": "Each state visible in the Sprite Lab and in play; reduced-motion safe."
+  },
+  {
+   "id": "WP-V8",
+   "title": "Terrain: 32 px tiles with variants and soft transitions, seeded scatter with long shadows, chunk-baked ground",
+   "track": "Graphics",
+   "milestone": "V",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-V4"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/graphics-roadmap.md",
+    "docs/design-decisions/I-graphics.md",
+    "convoy/levels/convoy.js"
+   ],
+   "acceptance": "The convoy valley looks like the world reference; no per-frame ground cost."
+  },
+  {
+   "id": "WP-V9",
+   "title": "Structures and cover: 2.5-D walls, doors, floors, fading roofs, towers, cave walls, cover props",
+   "track": "Graphics",
+   "milestone": "V",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-V8"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/graphics-roadmap.md",
+    "docs/design-decisions/I-graphics.md"
+   ],
+   "acceptance": "A building reads as a building; the roof fades when entered; cover looks like what it is."
+  },
+  {
+   "id": "WP-V10",
+   "title": "Vehicles: jeep, truck, MRAP with a rotating turret layer, damage and wreck states, searchlight",
+   "track": "Graphics",
+   "milestone": "V",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-V4"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/graphics-roadmap.md",
+    "docs/design-decisions/I-graphics.md"
+   ],
+   "acceptance": "All convoy vehicles in 2-D, wrecks included."
+  },
+  {
+   "id": "WP-V11",
+   "title": "Effects: tracers, muzzle flash, sparks, dust, smoke, explosions, casings, suppression pulses (no gore)",
+   "track": "Graphics",
+   "milestone": "V",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-V3"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/graphics-roadmap.md",
+    "docs/design-decisions/I-graphics.md"
+   ],
+   "acceptance": "Every weapon has a readable effect; particle budget enforced."
+  },
+  {
+   "id": "WP-V12",
+   "title": "Lighting: time-of-day tint, darkness mask with lights, cave darkness, searchlight cone",
+   "track": "Graphics",
+   "milestone": "V",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-V9",
+    "WP-V11"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/graphics-roadmap.md",
+    "docs/design-decisions/I-graphics.md"
+   ],
+   "acceptance": "Night and cave look right; frame time within budget."
+  },
+  {
+   "id": "WP-V13",
+   "title": "World-space UI: selection brackets, order markers, health pips, callouts and the AI-view overlay in 2-D",
+   "track": "Graphics",
+   "milestone": "V",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-V3"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/graphics-roadmap.md",
+    "docs/design-decisions/I-graphics.md"
+   ],
+   "acceptance": "Everything the 3-D view shows is available in 2-D."
+  },
+  {
+   "id": "WP-V14",
+   "title": "Overworld island renderer: low-res height grid in banded greens, coast outline, flat sea, nearest-neighbour scaling",
+   "track": "Graphics",
+   "milestone": "V",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-V4",
+    "WP-V17"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/graphics-roadmap.md",
+    "docs/design-decisions/I-graphics.md",
+    "docs/moodboard/ref-retro-overworld-map.jpg"
+   ],
+   "acceptance": "The island looks like the overworld reference."
+  },
+  {
+   "id": "WP-V15",
+   "title": "Overworld icons and routes: red-roofed towns, yellow land routes, blue sea routes, territory tint with non-colour cue, squad marker",
+   "track": "Graphics",
+   "milestone": "V",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-V14"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/graphics-roadmap.md",
+    "docs/design-decisions/I-graphics.md"
+   ],
+   "acceptance": "Every node type has an icon; routes are drawn from data."
+  },
+  {
+   "id": "WP-V16",
+   "title": "Overworld UI and transitions: integer pan/zoom, node panel, travel, clock, zoom into the tactical map",
+   "track": "Graphics",
+   "milestone": "V",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-V15"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/graphics-roadmap.md",
+    "docs/design-decisions/I-graphics.md"
+   ],
+   "acceptance": "The overworld is a page you can click through and enter a mission from."
+  },
+  {
+   "id": "WP-V17",
+   "title": "Overworld data: island.js format (nodes, routes, regions, starting control), reachability test, first island",
+   "track": "Graphics",
+   "milestone": "V",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-V1"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/graphics-roadmap.md",
+    "docs/design-decisions/I-graphics.md"
+   ],
+   "acceptance": "Format documented; every node reachable (test)."
+  },
+  {
+   "id": "WP-V18",
+   "title": "Parity and switch: parity checklist, per-level contact sheets, 2-D default, 3-D behind ?view=3d for one release then removed",
+   "track": "Graphics",
+   "milestone": "V",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-V5",
+    "WP-V9",
+    "WP-V10",
+    "WP-V11",
+    "WP-V12",
+    "WP-V13"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/graphics-roadmap.md",
+    "docs/design-decisions/I-graphics.md"
+   ],
+   "acceptance": "Checklist green; deploy with 2-D as default."
+  },
+  {
+   "id": "WP-V19",
+   "title": "Performance and phones: sprite and draw-call budget, caches, particle caps, 30 fps floor on a mid phone, non-colour cues",
+   "track": "Graphics",
+   "milestone": "V",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-V12"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/graphics-roadmap.md",
+    "docs/design-decisions/I-graphics.md"
+   ],
+   "acceptance": "Budget numbers recorded and checked by a test."
+  },
+  {
+   "id": "WP-V20",
+   "title": "Docs: Game Design Doc visuals section, changelog, moodboard, decision log",
+   "track": "Graphics",
+   "milestone": "V",
+   "size": "XS",
+   "bu": 3,
+   "status": "planned",
+   "deps": [
+    "WP-V18"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/graphics-roadmap.md",
+    "docs/design-decisions/I-graphics.md"
+   ],
+   "acceptance": "Doc renders; links work."
   }
  ]
 }

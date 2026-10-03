@@ -65,4 +65,5 @@ test('decisions: packets that point at the log point at documents that exist', (
 test('decisions: every planned packet range is covered by a decision (S5-S26 appear in a document)', () => {
   const all = files.map(text).join('\n');
   for (let n = 1; n <= 26; n++) assert.ok(new RegExp(`WP-S${n}\\b`).test(all), `WP-S${n} has no decision referencing it`);
+  for (let n = 1; n <= 19; n++) assert.ok(new RegExp(`WP-V${n}\\b`).test(all), `WP-V${n} has no decision referencing it`);
 });

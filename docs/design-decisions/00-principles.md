@@ -104,7 +104,7 @@ The rules every section inherits. Section documents refer to these by ID instead
 - Owner feedback: —
 
 ### TAC-X-09 · One visual language: Nokia greens, flat low-poly, readable at a glance
-- Status: built
+- Status: built (UI panels and the 3-D pages; the shooter's world moves to 2-D sprites, TAC-I-01)
 - Decision: Panels use the shared tokens (`shared/tokens.css`); the shooter uses flat-shaded low-poly shapes with
   distinct silhouettes per role; the Art Style Lab shows the alternatives.
 - Why: Consistency across the whole project (the owner asked for it) and design pillar 2: a role must be readable from
@@ -127,7 +127,7 @@ The rules every section inherits. Section documents refer to these by ID instead
 - Owner feedback: —
 
 ### TAC-X-11 · A 2D sprite look is a candidate for the shooter's characters
-- Status: planned
+- Status: superseded by TAC-I-01 (the owner chose 2.5-D top-down sprites)
 - Decision: The moodboard now holds a 2D sprite soldier reference (thick black outlines, chunky gear, a big pack, a
   readable rifle: `docs/moodboard/ref-2d-sprite-soldier.jpg`). The shooter keeps its simple 3-D shapes for now; the sprite look is
   to be tried against them (and against the Art Style Lab's cel and ink styles) before real models arrive.

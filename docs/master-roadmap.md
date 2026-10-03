@@ -125,6 +125,12 @@ The shooter becomes the demo of the whole loop: three missions (convoy ambush, c
 looting from soldiers and vehicles, a squad inventory to equip your people, and unlocks that carry stolen weapons and
 parts into the Weapon Modder and the Operator Customiser. You play the whole squad (swap rebels by button or on death), and rebels level up on equipment-gated upgrade trees. Full plan and sections: [tactical-roadmap.md](tactical-roadmap.md). Every decision and its reasoning: [design-decisions/](design-decisions/README.md).
 
+### 5.7 Graphics (2.5-D sprites and the retro overworld)
+
+The shooter's world becomes RimWorld-style 2.5-D top-down sprites (thick outlines, paper-doll people, long shadows) and the
+campaign map a retro handheld-RPG island map. The simulation is untouched, so it runs in parallel with the gameplay work.
+Plan: [graphics-roadmap.md](graphics-roadmap.md) (milestone V, WP-V1 to V20). Reasoning: [design-decisions/I-graphics.md](design-decisions/I-graphics.md).
+
 ### 5.5 Design documentation
 
 Setting reconciliation (`WP-D1`) comes first: the earlier premise (Yantis, 2012, a *WW2044* prologue) and the
@@ -149,6 +155,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | **D** Design docs | — | 3/5 | 59 BU | 61% |
 | **H27** 2027 horizon | — | 0/3 | 48 BU | 0% |
 | **S** Partisan Tactical: three missions, looting, inventory, unlocks | v0.8.0 | 4/26 | 359 BU | 16% |
+| **V** Graphics: 2.5D top-down sprites and the retro overworld | v0.9.0 | 0/20 | 251 BU | 0% |
 
 ### M0 · Foundation
 
@@ -240,7 +247,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-S4` | AI behaviours for new scenarios: guard posts, patrols, alarm propagation, radio reinforcements, bounding attack waves | S (8) | done | — | `WP-S1` |
 | `WP-S5` | Level 2 Compound assault: walled compound, towers, armoury cache, radio mast, stealth then alarm, extract | M (20) | planned | — | `WP-S2`, `WP-S4`, `WP-S20` |
 | `WP-S6` | Level 3 Cave hideout defence: cave, tunnels, fallback chamber, night, three attack waves, hold until dawn | M (20) | planned | — | `WP-S2`, `WP-S3`, `WP-S4`, `WP-S20` |
-| `WP-S7` | Level visuals: roof cut-away indoors, cave darkness and lamp light, night lighting and searchlight | S (8) | planned | — | `WP-S5`, `WP-S6` |
+| `WP-S7` | Level visuals (retired: delivered by WP-V9 structures and WP-V12 lighting in the 2-D renderer) | S (8) | blocked | — | — |
 | `WP-S8` | Item model and inventory core: weapons with attachments, ammo, grenades, gear; loadout slots; squad stash; versioned saves | M (20) | planned | — | `WP-S1` |
 | `WP-S9` | Looting in levels: soldiers drop kit, vehicle cargo, hold E to search (exposed), carry limits, order a teammate to loot | M (20) | planned | — | `WP-S8`, `WP-S2` |
 | `WP-S10` | Inventory UI: field loot panel, between-mission squad screen, attachment install with compatibility reasons, stat deltas | M (20) | planned | — | `WP-S8`, `WP-S9` |
@@ -260,6 +267,31 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-S24` | Perks and abilities: passive perks per level, active abilities with cooldowns unlocked by branch | M (20) | planned | — | `WP-S23` |
 | `WP-S25` | Teammate AI uses abilities; progression balance pass with the tuning harness | S (8) | planned | — | `WP-S24`, `WP-S16` |
 | `WP-S26` | Rebel sheet UI: level, XP, tree with locked branches and the gear they need, perk picks | S (8) | planned | — | `WP-S23`, `WP-S10` |
+
+### V · Graphics: 2.5D top-down sprites and the retro overworld
+
+| ID | Packet | Size | Status | Needs | Depends on |
+|---|---|---|---|---|---|
+| `WP-V1` | Art bible: palette, outline rule, 1 m = 32 px scale, sun direction, shadow rule, sprite sizes, layer order | S (8) | ready | — | — |
+| `WP-V2` | Renderer interface: extract the draw calls from convoy/game.js; the three.js code becomes renderer-3d behind ?view=3d | S (8) | planned | — | `WP-V1` |
+| `WP-V3` | Canvas 2-D renderer: integer zoom and pan, y-sorted layers, picking, DPR; today's level with placeholder sprites | M (20) | planned | — | `WP-V2` |
+| `WP-V4` | Sprite tooling and Sprite Lab: atlas and manifest build, a viewer for layers, animations and palette swaps | S (8) | planned | — | `WP-V3` |
+| `WP-V5` | Paper-doll people: layered soldiers in front/back/side views with the outline pass; role silhouettes and factions | M (20) | planned | — | `WP-V4` |
+| `WP-V6` | Equipment layers: item id to sprite layers; weapons and vehicles baked from 3-D models by a top-down render-to-sprite pass | S (8) | planned | — | `WP-V5` |
+| `WP-V7` | Animation and states: walk, sneak, aim, recoil, reload, search, wounded, down; free-rotating weapon layer; swap highlight and selection brackets | S (8) | planned | — | `WP-V5` |
+| `WP-V8` | Terrain: 32 px tiles with variants and soft transitions, seeded scatter with long shadows, chunk-baked ground | M (20) | planned | — | `WP-V4` |
+| `WP-V9` | Structures and cover: 2.5-D walls, doors, floors, fading roofs, towers, cave walls, cover props | M (20) | planned | — | `WP-V8` |
+| `WP-V10` | Vehicles: jeep, truck, MRAP with a rotating turret layer, damage and wreck states, searchlight | M (20) | planned | — | `WP-V4` |
+| `WP-V11` | Effects: tracers, muzzle flash, sparks, dust, smoke, explosions, casings, suppression pulses (no gore) | S (8) | planned | — | `WP-V3` |
+| `WP-V12` | Lighting: time-of-day tint, darkness mask with lights, cave darkness, searchlight cone | M (20) | planned | — | `WP-V9`, `WP-V11` |
+| `WP-V13` | World-space UI: selection brackets, order markers, health pips, callouts and the AI-view overlay in 2-D | S (8) | planned | — | `WP-V3` |
+| `WP-V14` | Overworld island renderer: low-res height grid in banded greens, coast outline, flat sea, nearest-neighbour scaling | M (20) | planned | — | `WP-V4`, `WP-V17` |
+| `WP-V15` | Overworld icons and routes: red-roofed towns, yellow land routes, blue sea routes, territory tint with non-colour cue, squad marker | S (8) | planned | — | `WP-V14` |
+| `WP-V16` | Overworld UI and transitions: integer pan/zoom, node panel, travel, clock, zoom into the tactical map | M (20) | planned | — | `WP-V15` |
+| `WP-V17` | Overworld data: island.js format (nodes, routes, regions, starting control), reachability test, first island | S (8) | planned | — | `WP-V1` |
+| `WP-V18` | Parity and switch: parity checklist, per-level contact sheets, 2-D default, 3-D behind ?view=3d for one release then removed | S (8) | planned | — | `WP-V5`, `WP-V9`, `WP-V10`, `WP-V11`, `WP-V12`, `WP-V13` |
+| `WP-V19` | Performance and phones: sprite and draw-call budget, caches, particle caps, 30 fps floor on a mid phone, non-colour cues | S (8) | planned | — | `WP-V12` |
+| `WP-V20` | Docs: Game Design Doc visuals section, changelog, moodboard, decision log | XS (3) | planned | — | `WP-V18` |
 
 ### TD · Tech debt (fill windows)
 
