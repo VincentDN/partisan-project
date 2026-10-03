@@ -4,6 +4,10 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 ## [0.3.1] · 2026-10-01
 
+### Added (Partisan Tactical, roadmap round 2)
+- **Play as the whole squad** (roadmap sections G and H, packets WP-S20 to S26): you control one rebel at a time, swap by button (slow-motion zoom-out, hover the rebel, take control) or automatically when yours falls, and lose only when every rebel is down. Rebels level up on Bannerlord-style upgrade trees whose branches need the right equipment, with perks and abilities.
+- **Design decision log** (`docs/design-decisions/`): every decision per build with the reasoning, alternatives, cost and a feedback line, under stable IDs (`TAC-A-07`). A test keeps it complete.
+
 ### Added (Partisan Tactical, section A)
 - **Partisan Tactical**: the top-down shooter, renamed. It has a mission select (convoy ambush now; compound assault and cave defence listed as coming).
 - **Levels are data** (`convoy/levels/`): map, cover, squad, convoy, foot soldiers, items, objectives. The convoy is level 1, and its seeded replays are identical to before.

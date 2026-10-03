@@ -29,3 +29,5 @@ Things only the project owner can do. Agents cannot, or must not, do these. The 
 - Credits and licences: pages point to the GitHub docs or vincent@kaisercatcinema.com.
 
 - **Sketchfab models**: the API does not reach the agent sessions. On your computer run `python3 tools/assets/sketchfab-bulk-download.py` (asks for the token), then commit and push `inbound/sketchfab`. Earlier note, **Sketchfab token**: it is not visible to the session that was running when you added it (secrets reach new sessions). In a new session run `node tools/assets/sketchfab-fetch.mjs` then `node tools/assets/import-sketchfab.mjs` to download and import all 39 chosen models (`tools/assets/sketchfab-sources.json`). They cover every procedural attachment, the G3, M16, Mk14, SIG Spear, StG 44, PPSh-41, Bren, Chauchat, the RPK, the environment kit, Recon props and the convoy vehicles.
+
+- **Feedback on the design decisions**: read `docs/design-decisions/` (start with README.md, 106 decisions) and answer by ID, for example `TAC-G-06: change, no cooldown` or `TAC-C-03: change, use weight`. Entries marked planned are free to change; built ones say what a change costs.

@@ -1152,10 +1152,11 @@
    "agent": "any",
    "needs": [],
    "inputs": [
-    "docs/tactical-roadmap.md",
-    "convoy/sim.js",
     "convoy/ai.js",
-    "convoy/world.js"
+    "convoy/sim.js",
+    "convoy/world.js",
+    "docs/design-decisions/",
+    "docs/tactical-roadmap.md"
    ],
    "acceptance": "Convoy plays as before and its seeded replay test passes; a test level loads from data."
   },
@@ -1173,6 +1174,7 @@
    "agent": "any",
    "needs": [],
    "inputs": [
+    "docs/design-decisions/",
     "docs/tactical-roadmap.md"
    ],
    "acceptance": "Each objective type has a unit test; the convoy ends on its objectives."
@@ -1191,6 +1193,7 @@
    "agent": "any",
    "needs": [],
    "inputs": [
+    "docs/design-decisions/",
     "docs/tactical-roadmap.md"
    ],
    "acceptance": "Orders work under pause; a unit test per order."
@@ -1209,6 +1212,7 @@
    "agent": "any",
    "needs": [],
    "inputs": [
+    "docs/design-decisions/",
     "docs/tactical-roadmap.md"
    ],
    "acceptance": "Unit tests: patrol, alarm, reinforcements need a living radio operator, bounding advance."
@@ -1223,11 +1227,13 @@
    "status": "planned",
    "deps": [
     "WP-S2",
-    "WP-S4"
+    "WP-S4",
+    "WP-S20"
    ],
    "agent": "any",
    "needs": [],
    "inputs": [
+    "docs/design-decisions/",
     "docs/tactical-roadmap.md"
    ],
    "acceptance": "Winnable stealthy and loud in the headless harness; smoke test."
@@ -1243,11 +1249,13 @@
    "deps": [
     "WP-S2",
     "WP-S3",
-    "WP-S4"
+    "WP-S4",
+    "WP-S20"
    ],
    "agent": "any",
    "needs": [],
    "inputs": [
+    "docs/design-decisions/",
     "docs/tactical-roadmap.md"
    ],
    "acceptance": "Three waves from data; winnable with a sensible loadout; smoke test."
@@ -1267,6 +1275,7 @@
    "agent": "any",
    "needs": [],
    "inputs": [
+    "docs/design-decisions/",
     "docs/tactical-roadmap.md"
    ],
    "acceptance": "Contact-sheet screenshots of each level; 60 fps on a mid laptop."
@@ -1285,9 +1294,10 @@
    "agent": "any",
    "needs": [],
    "inputs": [
+    "convoy/weapons.js",
+    "docs/design-decisions/",
     "docs/tactical-roadmap.md",
-    "workbench/attachments.js",
-    "convoy/weapons.js"
+    "workbench/attachments.js"
    ],
    "acceptance": "Unit tests: equip, install/remove attachment with Workbench rules, capacity, save/load, migration."
   },
@@ -1306,6 +1316,7 @@
    "agent": "any",
    "needs": [],
    "inputs": [
+    "docs/design-decisions/",
     "docs/tactical-roadmap.md"
    ],
    "acceptance": "Loot tables per role and vehicle; unit tests; smoke test loots a body."
@@ -1325,6 +1336,7 @@
    "agent": "any",
    "needs": [],
    "inputs": [
+    "docs/design-decisions/",
     "docs/tactical-roadmap.md"
    ],
    "acceptance": "Keyboard operable; axe passes; smoke test equips a looted PKM on Dragan."
@@ -1344,6 +1356,7 @@
    "agent": "any",
    "needs": [],
    "inputs": [
+    "docs/design-decisions/",
     "docs/tactical-roadmap.md"
    ],
    "acceptance": "Unit tests: a suppressor shrinks enemy hearing; ammo runs out."
@@ -1358,11 +1371,13 @@
    "status": "planned",
    "deps": [
     "WP-S2",
-    "WP-S10"
+    "WP-S10",
+    "WP-S20"
    ],
    "agent": "any",
    "needs": [],
    "inputs": [
+    "docs/design-decisions/",
     "docs/tactical-roadmap.md"
    ],
    "acceptance": "Save survives reload; unit test of the campaign state machine."
@@ -1381,9 +1396,10 @@
    "agent": "any",
    "needs": [],
    "inputs": [
+    "docs/design-decisions/",
     "docs/tactical-roadmap.md",
-    "workbench/models.js",
-    "workbench/attachments.js"
+    "workbench/attachments.js",
+    "workbench/models.js"
    ],
    "acceptance": "Steal a part in the shooter, see it unlocked in the Modder (smoke); locked items cannot be equipped."
   },
@@ -1401,6 +1417,7 @@
    "agent": "any",
    "needs": [],
    "inputs": [
+    "docs/design-decisions/",
     "docs/tactical-roadmap.md",
     "operator/config.js"
    ],
@@ -1420,6 +1437,7 @@
    "agent": "any",
    "needs": [],
    "inputs": [
+    "docs/design-decisions/",
     "docs/tactical-roadmap.md"
    ],
    "acceptance": "Unit tests per behaviour; AI view replays the last 30 s."
@@ -1438,6 +1456,7 @@
    "agent": "any",
    "needs": [],
    "inputs": [
+    "docs/design-decisions/",
     "docs/tactical-roadmap.md"
    ],
    "acceptance": "Each level winnable 40-70% by the scripted player at 50% awareness."
@@ -1457,6 +1476,7 @@
    "agent": "any",
    "needs": [],
    "inputs": [
+    "docs/design-decisions/",
     "docs/tactical-roadmap.md"
    ],
    "acceptance": "Green CI; perf numbers recorded."
@@ -1476,6 +1496,7 @@
    "agent": "any",
    "needs": [],
    "inputs": [
+    "docs/design-decisions/",
     "docs/tactical-roadmap.md"
    ],
    "acceptance": "Playable on a phone in the emulator test."
@@ -1494,9 +1515,149 @@
    "agent": "any",
    "needs": [],
    "inputs": [
+    "docs/design-decisions/",
     "docs/tactical-roadmap.md"
    ],
    "acceptance": "Doc renders; links work."
+  },
+  {
+   "id": "WP-S20",
+   "title": "Play as the whole squad: active-rebel pointer, loss when every rebel is down, forced swap on death, AI takes over the one you leave",
+   "track": "Tactical",
+   "milestone": "S",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-S1",
+    "WP-S3"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/tactical-roadmap.md",
+    "docs/design-decisions/G-squad-play.md",
+    "convoy/sim.js"
+   ],
+   "acceptance": "Unit tests: swap hands control and orders correctly; the mission is lost only when all rebels are down; each rebel keeps its own loadout, health and ammo."
+  },
+  {
+   "id": "WP-S21",
+   "title": "Swap UX: switch button, slow-motion zoom-out, hover the new rebel, take control (reduced-motion safe)",
+   "track": "Tactical",
+   "milestone": "S",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-S20"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/tactical-roadmap.md",
+    "docs/design-decisions/G-squad-play.md"
+   ],
+   "acceptance": "Smoke test swaps by hover and by death; with reduced motion it is an instant cut with a highlight; axe passes."
+  },
+  {
+   "id": "WP-S22",
+   "title": "Progression core: XP from kills, objectives and looting; levels 1-10 per rebel; perk points; persistent in the campaign save",
+   "track": "Tactical",
+   "milestone": "S",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-S12",
+    "WP-S20"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/tactical-roadmap.md",
+    "docs/design-decisions/H-progression.md"
+   ],
+   "acceptance": "Unit tests: XP awards, level thresholds, save/load; XP is only banked for rebels that took part."
+  },
+  {
+   "id": "WP-S23",
+   "title": "Upgrade trees: Bannerlord-style tiers per rebel with two branches, gated by the equipment carried",
+   "track": "Tactical",
+   "milestone": "S",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-S8",
+    "WP-S22"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/tactical-roadmap.md",
+    "docs/design-decisions/H-progression.md"
+   ],
+   "acceptance": "A rebel with an SVD can take the Marksman branch and one without cannot (unit test); the tree is data."
+  },
+  {
+   "id": "WP-S24",
+   "title": "Perks and abilities: passive perks per level, active abilities with cooldowns unlocked by branch",
+   "track": "Tactical",
+   "milestone": "S",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-S23"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/tactical-roadmap.md",
+    "docs/design-decisions/H-progression.md"
+   ],
+   "acceptance": "Each ability and perk has a unit test of its effect; none changes enemy health or aim."
+  },
+  {
+   "id": "WP-S25",
+   "title": "Teammate AI uses abilities; progression balance pass with the tuning harness",
+   "track": "Tactical",
+   "milestone": "S",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-S24",
+    "WP-S16"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/tactical-roadmap.md",
+    "docs/design-decisions/H-progression.md"
+   ],
+   "acceptance": "Harness report: levelled squads win more but never trivialise a level (win rate stays under 90%)."
+  },
+  {
+   "id": "WP-S26",
+   "title": "Rebel sheet UI: level, XP, tree with locked branches and the gear they need, perk picks",
+   "track": "Tactical",
+   "milestone": "S",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-S23",
+    "WP-S10"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/tactical-roadmap.md",
+    "docs/design-decisions/H-progression.md"
+   ],
+   "acceptance": "Keyboard operable; axe passes; smoke test picks a perk."
   }
  ]
 }
