@@ -263,7 +263,7 @@ function frame(id) {
     up = new T.Vector3(0, 1, 0);
   target.add(new T.Vector3(...aim).applyAxisAngle(up, rifle.model.rotation.y));
   const dir = new T.Vector3(...direction).normalize().applyAxisAngle(up, rifle.model.rotation.y);
-  st.moveCamera(target, target.clone().addScaledVector(dir, distance), 0.45);
+  st.moveCamera(target, target.clone().addScaledVector(dir, distance));
 }
 
 // Camo on the rifle: it has no UVs, so recolourable materials get a triplanar projection in the

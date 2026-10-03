@@ -403,7 +403,7 @@ function render() {
         applyAll();
         render();
         writeHash();
-        view('full');
+        view(p.view || 'full');
       }),
     ),
   );

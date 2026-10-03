@@ -673,6 +673,58 @@
     }
    }
   },
+  "gunner": {
+   "label": "Gunner · low angle",
+   "detail": "Machine gun across the chest, muzzle up and to the left, both hands on, chin down to the lens: made for the Low angle view.",
+   "bones": {
+    "pelvis": [
+     0,
+     -6,
+     2
+    ],
+    "thigh_r": [
+     -4,
+     0,
+     6
+    ],
+    "thigh_l": [
+     3,
+     0,
+     -4
+    ],
+    "head": [
+     5,
+     5,
+     0
+    ]
+   },
+   "curl": {
+    "r": 0.9,
+    "l": 0.75
+   },
+   "weapon": {
+    "anchor": "spine_03",
+    "hold": [
+     -0.15,
+     -0.08,
+     0.24
+    ],
+    "muzzle": [
+     0.62,
+     0.72,
+     0.3
+    ],
+    "up": [
+     0,
+     0.1,
+     -1
+    ],
+    "hands": {
+     "r": "grip",
+     "l": "handguard"
+    }
+   }
+  },
   "herotwo": {
    "label": "Hero · both hands",
    "detail": "The hero pose with the support hand up on the handguard, rifle upright in front of the right shoulder.",

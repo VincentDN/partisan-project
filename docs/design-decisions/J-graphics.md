@@ -342,3 +342,13 @@ The 2.5-D top-down sprite look for the shooter (RimWorld style) and the retro ov
 - Revisit if: Section C (inventory and looting) lands: the equipped item then decides the sprite.
 - Owner feedback: —
 
+
+### TAC-J-35 · Modder cameras snap like a garage camera; a low-angle gunner shot in the Operator Modder
+- Status: built  ·  Packet: WP-V5 (early)
+- Decision: Every camera move in the Operator and Weapon Modders (`shared/stage.js` `moveCamera`) winds up, accelerates hard, swings around the subject (direction slerped, distance lerped) instead of cutting through it, overshoots its mark by about 3 % and clicks into place, in 0.55 s, after the mod-shop camera of Need for Speed: Underground 2. Reduced motion still jumps. The Operator Modder gains a **Low angle** view (lens at knee height, medium close-up on the chest and face), a **Gunner · low angle** pose (machine gun across the chest, muzzle up and to the left, both hands on) and a **Gunner · low angle** look preset that combines them with a balaclava, black shirt, olive plate carrier and mag pouches, olive trousers and an RPK with the drum (now offered on the RPK).
+- Why: The owner asked for a snap feel when switching cameras and for a shot matching a reference photo of a masked gunner seen from below.
+- Alternatives rejected: A spring simulation per frame (harder to time and to test); the old ease-out glide (no snap).
+- Cost / risk: The overshoot can clip near geometry on very close views; the swing makes back-to-front moves longer arcs.
+- Cost to change: Low (three constants in `shared/stage.js`).
+- Revisit if: Owner feedback on the feel, or the in-game camera needs the same moves.
+- Owner feedback: —

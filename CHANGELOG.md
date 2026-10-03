@@ -4,6 +4,10 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 ## [Unreleased]
 
+### Added (Operator and Weapon Modder cameras)
+- **Snap camera**: switching views in the Operator Modder and framing a slot in the Weapon Modder now accelerates, swings around the model, overshoots a touch and snaps into place, like the NFSU2 mod shop. TAC-J-35.
+- **Low angle** view, **Gunner · low angle** pose and look preset in the Operator Modder: balaclava, black shirt, olive carrier and trousers, RPK with the drum across the chest, seen from knee height. The RPK now takes the drum in the Weapon Modder.
+
 ### Fixed (Weapon Modder fit pass)
 - Every attachment mount on every rifle snapped onto the gun by a ray-cast audit (`tools/workbench/fit-audit.mjs`, `apply-fit.mjs`): optics and sights sit on their rails, foregrips and drums on the gun, muzzle devices on the barrel. ADR 0014.
 - Bipod legs spread sideways; the AK drum follows its source; the GP-25 lost its loose grenade and clamps under the handguard; the hand stop and G3 scope sit right; the Spear's loose cartridge is gone; StG 44 and PPSh-41 mounts face the right way. Gun sprites re-rendered.

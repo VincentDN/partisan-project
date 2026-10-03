@@ -502,7 +502,7 @@ export const EXTRA = {
         factory: [{id: 'bipod', fp: [-0.05, 0.05], grams: 450, label: 'Bipod', original: true}],
         library: ['vertical', 'angled', 'stop', 'none'],
       },
-      magazine: magazine([{id: '40', grams: 360, label: '40-rnd', original: true}], ['none']),
+      magazine: magazine([{id: '40', grams: 360, label: '40-rnd', original: true}], ['drum', 'none']),
       grip: {factory: [{id: 'factory', grams: 110, label: 'Wood grip', original: true}], library: ['classic']},
       stock: {factory: [{id: 'extended', grams: 700, label: 'Wood stock', original: true}], library: ['none']},
     },

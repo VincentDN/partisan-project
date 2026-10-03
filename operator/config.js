@@ -269,6 +269,8 @@ export const VIEWS = {
   torso: {label: 'Torso', target: [0, 1.25, 0.05], distance: 2.3, height: 1.3},
   legs: {label: 'Legs', target: [0, 0.55, 0.05], distance: 2.6, height: 0.6},
   back: {label: 'Back', target: [0, 1.15, 0], distance: 3.2, height: 1.2, azimuth: 180},
+  // Unusual low angle, medium close-up: lens at knee height, looking up past the rifle at the face.
+  low: {label: 'Low angle', target: [0, 1.38, 0.05], distance: 1.25, height: 0.42, azimuth: -14},
 };
 export const HERO_AZIMUTH = 24; // degrees, front-right three-quarter: the hero angle used by the character sheets
 
@@ -293,6 +295,29 @@ export const PRESETS = [
       guards: 'knee',
       weapon: 'ak15k',
       'z.top': 'olive',
+      'z.pants': 'olive',
+      'z.armor': 'olive',
+      'z.gear': 'olive',
+    },
+  },
+  {
+    id: 'gunner',
+    label: 'Gunner · low angle',
+    view: 'low',
+    state: {
+      pose: 'gunner',
+      head: 'bare',
+      comms: 'off',
+      face: 'mask',
+      armor: 'plates',
+      rig: 'mags',
+      belt: 'on',
+      pack: 'off',
+      holsters: 'none',
+      guards: 'none',
+      weapon: 'bench',
+      build: 'P1.eyJyIjoicnBrIiwiYiI6eyJtYWdhemluZSI6ImRydW0ifX0', // RPK with the drum (shared/loadout.js encode)
+      'z.top': 'black',
       'z.pants': 'olive',
       'z.armor': 'olive',
       'z.gear': 'olive',

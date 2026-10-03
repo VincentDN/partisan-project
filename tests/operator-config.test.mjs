@@ -2,7 +2,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import {decode} from '../shared/loadout.js';
 import {PARTS, SLOTS, ZONES, PALETTES, VIEWS, TRIANGLE_BUDGET, PRESETS, ROSTER, BASES, defaultsFor} from '../operator/config.js';
+const POSES = JSON.parse(fs.readFileSync(new URL('../operator/poses.json', import.meta.url), 'utf8')).poses;
+// Preset keys that are not slots: a pose and an encoded Workbench build.
+const special = (k, v) => (k === 'pose' ? !!POSES[v] : k === 'build' ? decode(v) !== null : null);
 
 const manifest = JSON.parse(fs.readFileSync('assets/models/operators/base-operator.manifest.json', 'utf8'));
 const readManifest = n => JSON.parse(fs.readFileSync(`assets/models/operators/${n}.manifest.json`, 'utf8'));
@@ -68,7 +72,8 @@ test('colour zones target real materials and real palettes', () => {
 test('presets only use known slot and zone values', () => {
   for (const p of PRESETS)
     for (const [k, v] of Object.entries(p.state)) {
-      if (k.startsWith('z.'))
+      if (special(k, v) !== null) assert.ok(special(k, v), `${p.id}: ${k}=${v}`);
+      else if (k.startsWith('z.'))
         assert.ok(
           ZONES.find(z => z.id === k.slice(2)),
           `${p.id}: zone ${k}`,
@@ -123,7 +128,8 @@ for (const base of Object.values(BASES)) {
     }
     for (const p of base.presets)
       for (const [k, v] of Object.entries(p.state)) {
-        if (k.startsWith('z.'))
+        if (special(k, v) !== null) assert.ok(special(k, v), `${p.id}: ${k}=${v}`);
+        else if (k.startsWith('z.'))
           assert.ok(
             base.zones.find(z => z.id === k.slice(2)),
             `${p.id}: zone ${k}`,

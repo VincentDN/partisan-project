@@ -190,8 +190,22 @@ export async function createStage(container, opts = {}) {
     controls.update();
   });
 
-  /** Glide the camera to look at `target` from `position` (instant under reduced motion). */
-  function moveCamera(target, position, seconds = 0.45) {
+  // Garage-camera snap (think NFSU2's mod shop): the move winds up, accelerates hard, overshoots its mark a
+  // touch and clicks into place. A quadratic ease-in to two thirds of the way, then a back-out whose starting speed
+  // matches, so there is no hitch at the seam.
+  const SNAP_SPLIT = 0.45,
+    SNAP_AT = 0.658,
+    SNAP_BACK = 1.7;
+  const snapEase = t => {
+    if (t < SNAP_SPLIT) return SNAP_AT * (t / SNAP_SPLIT) ** 2;
+    const x = (t - SNAP_SPLIT) / (1 - SNAP_SPLIT) - 1;
+    return SNAP_AT + (1 - SNAP_AT) * (1 + (SNAP_BACK + 1) * x ** 3 + SNAP_BACK * x ** 2);
+  };
+  const swingQ = new T.Quaternion(),
+    identityQ = new T.Quaternion();
+
+  /** Snap the camera to look at `target` from `position` (instant under reduced motion). */
+  function moveCamera(target, position, seconds = 0.55) {
     wake(Math.max(1500, seconds * 1000 + 300));
     if (reduceMotion) {
       controls.target.copy(target);
@@ -199,13 +213,19 @@ export async function createStage(container, opts = {}) {
       controls.update();
       return;
     }
+    const fromOffset = camera.position.clone().sub(controls.target),
+      toOffset = position.clone().sub(target),
+      fromDir = fromOffset.clone().normalize();
     cameraMove = {
       t: 0,
       seconds,
       fromTarget: controls.target.clone(),
-      fromPosition: camera.position.clone(),
       toTarget: target.clone(),
       toPosition: position.clone(),
+      fromDir,
+      fromDistance: fromOffset.length(),
+      toDistance: toOffset.length(),
+      swing: new T.Quaternion().setFromUnitVectors(fromDir, toOffset.normalize()),
     };
   }
 
@@ -265,11 +285,22 @@ export async function createStage(container, opts = {}) {
     const dt = Math.min(clock.getDelta(), 1 / 30);
     for (const fn of hooks) fn(dt, clock.elapsedTime);
     if (cameraMove) {
-      cameraMove.t = Math.min(1, cameraMove.t + dt / cameraMove.seconds);
-      const e = 1 - (1 - cameraMove.t) ** 4;
-      controls.target.lerpVectors(cameraMove.fromTarget, cameraMove.toTarget, e);
-      camera.position.lerpVectors(cameraMove.fromPosition, cameraMove.toPosition, e);
-      if (cameraMove.t >= 1) cameraMove = null;
+      const m = cameraMove;
+      m.t = Math.min(1, m.t + dt / m.seconds);
+      const e = snapEase(m.t);
+      // Swing around the subject (direction slerped, distance lerped) rather than cutting through it.
+      controls.target.lerpVectors(m.fromTarget, m.toTarget, e);
+      swingQ.slerpQuaternions(identityQ, m.swing, e);
+      camera.position
+        .copy(m.fromDir)
+        .applyQuaternion(swingQ)
+        .multiplyScalar(m.fromDistance + (m.toDistance - m.fromDistance) * e)
+        .add(controls.target);
+      if (m.t >= 1) {
+        controls.target.copy(m.toTarget);
+        camera.position.copy(m.toPosition);
+        cameraMove = null;
+      }
     }
     key.target.updateMatrixWorld();
     if (controls.update()) wake(400); // damping still gliding
