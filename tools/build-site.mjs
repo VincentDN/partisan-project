@@ -30,8 +30,12 @@ const ALLOW = [
   'convoy',
   'docs/game-design-master-doc.html',
   'docs/moodboard',
+  'docs',
+  'inbound',
+  'outbound',
 ];
-const SKIP_FILES = [/\.manifest\.json$/, /\.md$/, /\.test\.m?js$/, /\.DS_Store$/];
+// Layered PSDs stay in the repository; outbound/flatten-psd.py writes a PNG beside each one and the build ships those.
+const SKIP_FILES = [/\.psd$/i, /\.manifest\.json$/, /\.md$/, /\.test\.m?js$/, /\.DS_Store$/];
 
 fs.rmSync(out, {recursive: true, force: true});
 fs.mkdirSync(out, {recursive: true});
