@@ -1,6 +1,6 @@
 partisan-project — Comments export
-Generated: 10/3/2026, 1:49:47 PM
-4 comments
+Generated: 10/3/2026, 1:51:42 PM
+5 comments
 
 ────────────────────────────────────
 1. [Partisan Project | Field Handbook (Game Design Document) — /docs/game-design-master-doc.html]
@@ -33,3 +33,9 @@ Added: Oct 3, 2026, 01:49 PM (edited Oct 3, 2026, 01:49 PM)
 Quoted: "visional Setting canon (WP-D1) is undecided, so fiction-dependent details below are placeholders. Mechanics follow the pillars and the AI comp"
 Comment: remove this block
 Added: Oct 3, 2026, 01:49 PM
+
+────────────────────────────────────
+5. [Partisan Project | Field Handbook (Game Design Document) — /docs/game-design-master-doc.html]
+Quoted: "LIVE"
+Comment: remove these live labels
+Added: Oct 3, 2026, 01:51 PM

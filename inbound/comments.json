@@ -43,5 +43,16 @@
     "text": "remove this block",
     "images": [],
     "createdAt": "2026-10-03T11:49:47.395Z"
+  },
+  {
+    "id": "c_1791028302565_rxmuc",
+    "sectionId": "/docs/game-design-master-doc.html",
+    "sectionTitle": "Partisan Project | Field Handbook (Game Design Document)",
+    "quote": "LIVE",
+    "start": 5332,
+    "end": 5336,
+    "text": "remove these live labels",
+    "images": [],
+    "createdAt": "2026-10-03T11:51:42.565Z"
   }
 ]
