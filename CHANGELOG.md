@@ -4,6 +4,11 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 ## [Unreleased]
 
+### Added (Partisan Tactical, levels 2 and 3)
+- **Compound assault** (`convoy/levels/compound.js`): a walled farm compound with a gate, a breach, a drain behind the armoury, two corner towers, patrols, a machine-gun post, a radio operator and a radio mast. Steal the cache (hold E), optionally cut the mast (it gates the reinforcements), then everyone and the cache back to the forest. Quiet start, local alarm.
+- **Cave hideout defence** (`convoy/levels/cave.js`): night, a cavern with a mouth, a west tunnel to a fallback chamber and an east flanking tunnel. Three waves (rifle squad; machine-gun team plus a flanking party; MRAP with a searchlight), hold until dawn (4 minutes) or break the attack, and keep the army out of the chamber.
+- Simulation: destructible `targets` (the mast), scheduled `waves`, loot that must be carried out and drops when its carrier falls, `defend` and hold-or-clear objectives, night sight and lamp lights. Decisions TAC-B-13 and B-14. Tests in `tests/levels.test.mjs`.
+
 ### Added · 2026-10-03 (checkpoint)
 - Whole-squad control: change the active rebel without copying health, ammunition, reloads or orders;
   the mission fails on all-down rather than the first rebel's death.

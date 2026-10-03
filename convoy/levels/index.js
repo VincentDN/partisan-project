@@ -8,14 +8,19 @@
 //   partisans [{id, label, x, z, facing, weapons?}]   your squad; weapons default to PARTISAN_LOADOUTS
 //   convoy {startX, z, speed, stopX, vehicles} | null   a column driving east that stops at stopX
 //   units  [{name, role, x, z, facing, ...}]   army soldiers on foot (guards, patrols; see convoy/ai.js)
+//   targets [{id, label, kind, x, z, w, d, h, hp, radio?}]   destructible structures (the radio mast)
+//   items  [{id, label, x, z, search}] things to steal (hold E)    alarm 'global' | 'local'    reinforcements {...}
+//   waves  [{at, text, squads: [{group, goal, units}], vehicle?}]   scheduled attacks      night, sight    darkness
 //   objectives [...]                   what wins and loses the mission (convoy/objectives.js)
 import convoy from './convoy.js';
+import compound from './compound.js';
+import cave from './cave.js';
 
-export const LEVELS = {convoy};
+export const LEVELS = {convoy, compound, cave};
 // Mission order in the campaign; levels not built yet are listed so the select can show what is coming.
 export const MISSIONS = [
   {id: 'convoy', title: 'Convoy ambush'},
-  {id: 'compound', title: 'Compound assault', soon: 'Coming next: a walled compound, stealth then alarm.'},
-  {id: 'cave', title: 'Cave hideout defence', soon: 'Coming next: hold the cave until dawn.'},
+  {id: 'compound', title: 'Compound assault'},
+  {id: 'cave', title: 'Cave hideout defence'},
 ];
 export const DEFAULT_LEVEL = 'convoy';

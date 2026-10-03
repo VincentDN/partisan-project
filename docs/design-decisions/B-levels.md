@@ -21,7 +21,7 @@ Built on [A-foundations.md](A-foundations.md) and designed around swapping ([G-s
 ## Level 2: Compound assault (WP-S5)
 
 ### TAC-B-02 · A walled farm compound with a gate, two towers, a barracks, an armoury and a radio mast
-- Status: planned  ·  Packet: WP-S5
+- Status: built (convoy/levels/)  ·  Packet: WP-S5
 - Decision: A single walled compound about 70 by 50 m. A gate to the south, an observation tower at two corners, a
   barracks building, an armoury building holding the cache, and a radio mast in the courtyard.
 - Why: Every element is a decision for the player: which side to enter, who to remove first (tower guards see far),
@@ -34,7 +34,7 @@ Built on [A-foundations.md](A-foundations.md) and designed around swapping ([G-s
 - Owner feedback: —
 
 ### TAC-B-03 · The radio mast gates the reinforcements
-- Status: planned  ·  Packet: WP-S5
+- Status: built (convoy/levels/)  ·  Packet: WP-S5
 - Decision: Reinforcements (the truck) can only be called while the mast stands and a radio operator survives his call.
   Destroying the mast is an optional objective that removes the threat.
 - Why: It gives the player two ways to prevent the worst outcome (kill the operator quietly, or cut the mast) and
@@ -46,7 +46,7 @@ Built on [A-foundations.md](A-foundations.md) and designed around swapping ([G-s
 - Owner feedback: —
 
 ### TAC-B-04 · Stealth first, loud by choice
-- Status: planned  ·  Packet: WP-S5
+- Status: built (convoy/levels/)  ·  Packet: WP-S5
 - Decision: The level starts quiet (patrols, guards, suspicion by sight and proximity, TAC-A-24). A body that a patrol
   finds raises a local alarm (TAC-E-02). The player can finish it loudly.
 - Why: Stealth makes the local alarm model worth building, and a loud option stops stealth from being a requirement.
@@ -58,7 +58,7 @@ Built on [A-foundations.md](A-foundations.md) and designed around swapping ([G-s
 - Owner feedback: —
 
 ### TAC-B-05 · Objectives: steal the cache (required), destroy the mast (optional), then extract
-- Status: planned  ·  Packet: WP-S5
+- Status: built (convoy/levels/)  ·  Packet: WP-S5
 - Decision: `steal` the cache (hold E in the armoury), optional `destroy` the mast, then `extract` (everyone in the
   exit zone, locked until the cache is taken).
 - Why: It is a heist: go in, take, leave. The locked extraction gives a second phase with the army alerted.
@@ -69,7 +69,7 @@ Built on [A-foundations.md](A-foundations.md) and designed around swapping ([G-s
 - Owner feedback: —
 
 ### TAC-B-06 · The compound is winnable both quietly and loudly in the harness
-- Status: planned  ·  Packet: WP-S5, S16
+- Status: built: scripted quiet pass-through in tests/levels.test.mjs; the loud side is covered by the stationary bot (about half the seeds survive), tuning continues  ·  Packet: WP-S5, S16
 - Decision: The tuning harness must show both a quiet and a loud scripted player finding the level winnable.
 - Why: A level that is only winnable one way is a puzzle, not a sandbox.
 - Alternatives rejected: Tuning by feel.
@@ -81,7 +81,7 @@ Built on [A-foundations.md](A-foundations.md) and designed around swapping ([G-s
 ## Level 3: Cave hideout defence (WP-S6)
 
 ### TAC-B-07 · You defend your own camp at night until dawn
-- Status: planned  ·  Packet: WP-S6
+- Status: built (convoy/levels/)  ·  Packet: WP-S6
 - Decision: A cave camp with an entrance, two tunnels and a fallback chamber. It is night. The objective is to hold
   until dawn (a timer of about four minutes) or break the attack.
 - Why: It flips the player's role from attacker to defender, uses the bounding-assault AI (TAC-A-23) as a threat, and
@@ -94,7 +94,7 @@ Built on [A-foundations.md](A-foundations.md) and designed around swapping ([G-s
 - Owner feedback: —
 
 ### TAC-B-08 · Three attack waves with different shapes
-- Status: planned  ·  Packet: WP-S6
+- Status: built (convoy/levels/)  ·  Packet: WP-S6
 - Decision: Wave 1: rifle squads bounding in. Wave 2: a machine-gun team that suppresses the entrance while others
   flank through the east tunnel. Wave 3: an MRAP with a searchlight and a turret.
 - Why: Each wave asks for a different answer (cover and crossfire; kill the gunner or use the tunnel; use the RPG), and
@@ -106,7 +106,7 @@ Built on [A-foundations.md](A-foundations.md) and designed around swapping ([G-s
 - Owner feedback: —
 
 ### TAC-B-09 · A pre-fight placement phase where you place the squad and spend the stash
-- Status: planned  ·  Packet: WP-S6 (needs S10)
+- Status: planned: needs the inventory (section C); until then the 40 s before wave one are for orders  ·  Packet: WP-S6 (needs S10)
 - Decision: Before wave 1 you get a calm minute: place your rebels, give orders, and equip them from the stash
   (looted gear from missions 1 and 2).
 - Why: It pays off looting and the inventory (section C) in the one mission where you can prepare. It makes the
@@ -118,7 +118,7 @@ Built on [A-foundations.md](A-foundations.md) and designed around swapping ([G-s
 - Owner feedback: —
 
 ### TAC-B-10 · A fallback chamber to retreat to and rest
-- Status: planned  ·  Packet: WP-S6
+- Status: built (convoy/levels/)  ·  Packet: WP-S6
 - Decision: A small chamber at the cave's end where wounded rebels recover slowly and ammo can be shared (using the
   stash).
 - Why: A defender needs somewhere to fall back to, and it gives a reason to swap to a rebel in the back to heal and
@@ -130,7 +130,7 @@ Built on [A-foundations.md](A-foundations.md) and designed around swapping ([G-s
 - Owner feedback: —
 
 ### TAC-B-11 · Losing: every rebel down, or the chamber is overrun
-- Status: planned  ·  Packet: WP-S6
+- Status: built (convoy/levels/)  ·  Packet: WP-S6
 - Decision: Lost when every rebel is down (TAC-G-03) or enemy soldiers hold the chamber for a few seconds.
 - Why: Two ways to lose give the squad a clear last line.
 - Alternatives rejected: Only all-down (no sense of a last stand).
@@ -142,7 +142,7 @@ Built on [A-foundations.md](A-foundations.md) and designed around swapping ([G-s
 ## Visuals (WP-S7)
 
 ### TAC-B-12 · Roof cut-away indoors, darkness and lamp light in the cave, searchlight and muzzle flash at night
-- Status: superseded by TAC-J-15 and TAC-J-18 (delivered by WP-V9 and WP-V12 in the 2-D renderer)  ·  Packet: WP-S7 (retired)
+- Status: planned (partly built: night light, lamps and the searchlight; roof cut-away waits for the 2-D renderer (WP-V9))  ·  Packet: WP-S7 (retired)
 - Decision: Roofs fade out when a rebel is inside; the cave is dark with a small light around each rebel and the lamps;
   muzzle flashes briefly light the scene; the MRAP's searchlight is a cone.
 - Why: Readability from above is the constraint (pillar 2). Lighting gives mood and tells you what you can see.
@@ -151,4 +151,24 @@ Built on [A-foundations.md](A-foundations.md) and designed around swapping ([G-s
 - Cost / risk: Cheap lighting tricks (light sprites and a darkness overlay) can look flat; verify in screenshots.
 - Cost to change: Medium.
 - Revisit if: Frame rate drops on phones (WP-S17 sets a budget).
+- Owner feedback: —
+
+### TAC-B-13 · The simulation grows four small features instead of per-level code
+- Status: built  ·  Packet: WP-S5, WP-S6
+- Decision: Levels stay pure data. The simulation gains `targets` (destructible structures such as the radio mast), `waves` (scheduled attacks with squads, tunnel paths and a parked vehicle), `lights` and a `sight` factor for night, and two objective types: `defend` (fails when the army holds a zone for a grace period) and `extract` with `carry` (the loot must be in a living rebel's hands in the zone). A casualty drops what he carried.
+- Why: The compound needs a mast you can shoot and loot you must bring home; the cave needs a clock, waves and a last line. Putting them in the engine keeps every later level a data file (TAC-X-02), and the tests cover each rule once.
+- Alternatives rejected: Scripting each level in code (not data, not testable the same way); a general trigger system (too much for two levels).
+- Cost / risk: More fields for level authors to learn; they are listed at the top of `convoy/levels/index.js`.
+- Cost to change: Low.
+- Revisit if: A level needs a rule these do not cover.
+- Owner feedback: —
+
+### TAC-B-14 · Towers are cover boxes outside the corners, and the north is the quiet way in
+- Status: built  ·  Packet: WP-S5
+- Decision: Sight is 2-D (no height), so a tower on a wall would be blind. The towers stand just outside the north-west and south-east corners, their guards face away from the north approach, and a drain through the north wall behind the armoury gives a route that walls and facing hide. The gate and the breach are watched.
+- Why: It keeps the stealth route real (patience and timing, not luck) and the loud routes costly, without adding elevation to the simulation.
+- Alternatives rejected: Height in line of sight (a large change to a tested AI); towers that see through walls (breaks the stealth route).
+- Cost / risk: A tower reads as a lookout post, not a tall one; the 2-D renderer can draw it taller later.
+- Cost to change: Low.
+- Revisit if: Elevation is added to the simulation.
 - Owner feedback: —

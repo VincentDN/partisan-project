@@ -68,7 +68,15 @@ export function perceive(sim, u) {
   // Sight by role (a marksman's optic, the gunner's height on the MRAP); riders in a moving vehicle see little.
   // Before the ambush the MRAP gunner watches the road ahead from his hatch: farther than the riders, not all round.
   const scanning = u.state === 'turret' && !u.alert;
-  const range = mounted ? 24 : scanning ? 32 : u.side === 'army' ? ROLES[u.role]?.sight || 42 : u.weapon === 'svd' ? 60 : 48;
+  const range = mounted
+    ? 24
+    : scanning
+      ? 32
+      : u.side === 'army'
+        ? (ROLES[u.role]?.sight || 42) * (sim.level.sight ?? 1)
+        : u.weapon === 'svd'
+          ? 60
+          : 48;
   const halfFov = scanning ? 1.6 : u.side === 'partisan' || mounted || u.state === 'turret' || u.alert ? Math.PI : 1.25;
   u.visible = [];
   for (const e of sim.enemiesOf(u)) {
@@ -478,6 +486,10 @@ export function partisanAct(sim, u, dt) {
 function reinforce(sim) {
   const R = sim.reinforcements;
   if (!R || R.state === 'arrived' || R.state === 'lost') return;
+  if (sim.radioDown) {
+    R.state = 'lost'; // the mast is down: the call never goes out
+    return;
+  }
   const rto = sim.units.find(u => u.side === 'army' && u.role === 'rto' && u.alive && u.alert);
   if (R.state === 'idle') {
     if (!rto) return;

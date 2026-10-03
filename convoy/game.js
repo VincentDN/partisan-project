@@ -27,7 +27,8 @@ const scene = new T.Scene();
 scene.background = new T.Color(0x2a3320);
 scene.fog = new T.Fog(0x2a3320, 70, 130);
 const camera = new T.PerspectiveCamera(36, 1, 0.5, 300);
-scene.add(new T.HemisphereLight(0xe4ecd0, 0x2f3622, 1.5));
+const hemi = new T.HemisphereLight(0xe4ecd0, 0x2f3622, 1.5);
+scene.add(hemi);
 const sun = new T.DirectionalLight(0xfff0d4, 1.7);
 sun.castShadow = true;
 sun.shadow.mapSize.setScalar(2048);
@@ -35,10 +36,26 @@ Object.assign(sun.shadow.camera, {left: -45, right: 45, top: 45, bottom: -45, ne
 scene.add(sun, sun.target);
 
 const flat = color => new T.MeshLambertMaterial({color, flatShading: true});
-const KIND = {rock: 0x7d7a6c, wall: 0x8c846f, wreck: 0x4b4236, barn: 0x7a5a3a, log: 0x6b4a2a};
+const KIND = {
+  rock: 0x7d7a6c,
+  wall: 0x8c846f,
+  wreck: 0x4b4236,
+  barn: 0x7a5a3a,
+  log: 0x6b4a2a,
+  building: 0x8a7e66,
+  tower: 0x6d6a5e,
+  crate: 0x7a6840,
+  sandbag: 0x8a7d5a,
+  truck: 0x54594a,
+  tank: 0x4e5a4a,
+  cave: 0x5a574e,
+  mast: 0x77786f,
+};
 
 // The map: ground, patches, roads and cover, rebuilt from level data when the mission changes.
-let mapGroup = null;
+let mapGroup = null,
+  targetMeshes = [],
+  itemMeshes = [];
 function plane(w, d, color, x, z, y) {
   const m = new T.Mesh(new T.PlaneGeometry(w, d), flat(color));
   m.rotation.x = -Math.PI / 2;
@@ -53,6 +70,22 @@ function coverMesh(c) {
     mesh.scale.set(c.w * 1.1, c.h * 1.6, c.d * 1.1);
     mesh.position.y = c.h * 0.5;
     mesh.rotation.y = (c.x * 7 + c.z) % 3;
+  } else if (c.kind === 'tree') {
+    mesh = new T.Group();
+    const trunk = new T.Mesh(new T.CylinderGeometry(0.25, 0.35, c.h * 0.4, 6), flat(0x4a3a28));
+    trunk.position.y = c.h * 0.2;
+    const crown = new T.Mesh(new T.ConeGeometry(1.5 + ((c.x * 3 + c.z) % 1) * 0.5, c.h * 0.8, 7), flat(0x2f4a28));
+    crown.position.y = c.h * 0.6;
+    mesh.add(trunk, crown);
+  } else if (c.kind === 'mast') {
+    mesh = new T.Group();
+    const pole = new T.Mesh(new T.CylinderGeometry(0.12, 0.2, c.h, 6), flat(KIND.mast));
+    pole.position.y = c.h / 2;
+    const bar = new T.Mesh(new T.BoxGeometry(2.4, 0.12, 0.12), flat(KIND.mast));
+    bar.position.y = c.h * 0.8;
+    const hut = new T.Mesh(new T.BoxGeometry(c.w, 1.6, c.d), flat(0x4e5148));
+    hut.position.y = 0.8;
+    mesh.add(pole, bar, hut);
   } else if (c.kind === 'log') {
     mesh = new T.Mesh(new T.CylinderGeometry(c.h / 2, c.h / 2, Math.max(c.w, c.d), 7), flat(KIND.log));
     if (c.d >= c.w) mesh.rotation.x = Math.PI / 2;
@@ -61,6 +94,17 @@ function coverMesh(c) {
   } else {
     mesh = new T.Mesh(new T.BoxGeometry(c.w, c.h, c.d), flat(c.color ?? KIND[c.kind] ?? KIND.wall));
     mesh.position.y = c.h / 2;
+    if (c.kind === 'tower') {
+      const cabin = new T.Mesh(new T.BoxGeometry(c.w + 1, 1.8, c.d + 1), flat(0x55524a));
+      cabin.position.y = c.h / 2 + 0.9;
+      const roof = new T.Mesh(new T.BoxGeometry(c.w + 1.6, 0.3, c.d + 1.6), flat(0x3d3a33));
+      roof.position.y = c.h / 2 + 2;
+      mesh.add(cabin, roof);
+    } else if (c.kind === 'building') {
+      const roof = new T.Mesh(new T.BoxGeometry(c.w + 0.4, 0.25, c.d + 0.4), flat(0x4f4a40));
+      roof.position.y = c.h / 2 + 0.12;
+      mesh.add(roof);
+    }
     if (c.kind === 'barn') {
       const roof = new T.Mesh(new T.ConeGeometry(Math.hypot(c.w, c.d) / 2, 1.8, 4), flat(0x4a3a2c));
       roof.rotation.y = Math.PI / 4;
@@ -83,6 +127,14 @@ function buildMap(level) {
     });
   }
   mapGroup = new T.Group();
+  // Night missions: dim cold light and a dark sky.
+  hemi.color.set(level.night ? 0x8090b8 : 0xe4ecd0);
+  hemi.groundColor.set(level.night ? 0x262c3c : 0x2f3622);
+  hemi.intensity = level.night ? 1.0 : 1.5;
+  sun.color.set(level.night ? 0x8a9ccc : 0xfff0d4);
+  sun.intensity = level.night ? 0.7 : 1.7;
+  scene.background.set(level.night ? 0x0b0e14 : 0x2a3320);
+  scene.fog.color.set(level.night ? 0x0b0e14 : 0x2a3320);
   const B = level.bounds,
     G = level.ground;
   mapGroup.add(plane(B.maxX - B.minX + 60, B.maxZ - B.minZ + 60, G.color, (B.minX + B.maxX) / 2, (B.minZ + B.maxZ) / 2, 0));
@@ -90,6 +142,16 @@ function buildMap(level) {
   for (const r of G.roads || []) mapGroup.add(plane(r.w, r.d, r.color ?? 0x6e6553, r.x, r.z, 0.02));
   for (const c of level.cover) mapGroup.add(coverMesh(c));
   scene.add(mapGroup);
+  for (const l of (level.lights || []).slice(0, 8)) {
+    const lamp = new T.PointLight(l.color ?? 0xffc477, l.intensity ?? 260, l.distance ?? 30, 1.4);
+    lamp.position.set(l.x, l.y ?? 3, l.z);
+    mapGroup.add(lamp);
+  }
+  targetMeshes = (level.targets || []).map(t => {
+    const m = coverMesh({...t, kind: t.kind || 'crate'});
+    mapGroup.add(m);
+    return m;
+  });
 }
 
 const ARMY = 0x6b6e62,
@@ -118,6 +180,16 @@ function mrapMesh(v, g) {
   gun.rotation.z = Math.PI / 2;
   gun.position.set(1.1, 0.22, 0);
   turret.add(shield, gun);
+  if (v.searchlight) {
+    const lamp = new T.SpotLight(0xfff2cc, 600, 90, 0.2, 0.6);
+    lamp.position.set(0.9, 0.5, 0);
+    lamp.target.position.set(30, -2, 0);
+    turret.add(lamp, lamp.target);
+    const bulb = new T.Mesh(new T.CylinderGeometry(0.22, 0.22, 0.2, 8), flat(0xfff2cc));
+    bulb.rotation.z = Math.PI / 2;
+    bulb.position.set(0.95, 0.5, 0);
+    turret.add(bulb);
+  }
   g.add(hull, belly, cab, glass, ring, turret);
   g.userData.turret = turret;
   for (const sx of [-1, 1])
@@ -323,6 +395,14 @@ function newGame() {
   sim = new Sim({level, seed: Number(params.get('seed')) || Math.floor(Math.random() * 1e6), awareness});
   units = new Map(sim.units.map(u => [u, unitMesh(u)]));
   vehicles = sim.vehicles.map(vehicleMesh);
+  for (const m of itemMeshes) scene.remove(m);
+  itemMeshes = sim.items.map(i => {
+    const m = new T.Mesh(new T.BoxGeometry(1.1, 0.7, 0.8), flat(0xc9a53a));
+    m.position.set(i.x, 0.35, i.z);
+    m.castShadow = true;
+    scene.add(m);
+    return m;
+  });
   updateLabels.last = -1;
   labelsEl.replaceChildren();
   bubbles.clear();
@@ -629,8 +709,20 @@ function updateHud() {
   const mark = {active: '○', locked: '·', done: '✓', failed: '✗'};
   const objectives = sim.objectives
     .filter(o => o.state !== 'locked')
-    .map(o => `<span class="obj ${o.state}">${mark[o.state]} ${o.label}${o.optional ? ' <i>(optional)</i>' : ''}</span>`)
+    .map(o => {
+      const left =
+        o.type === 'hold' && o.state === 'active'
+          ? Math.max(0, Math.ceil(o.seconds - (sim.time - (o.from === 'alarm' ? sim.alarmAt : 0))))
+          : null;
+      return `<span class="obj ${o.state}">${mark[o.state]} ${o.label}${left !== null ? ` · ${left} s` : ''}${o.optional ? ' <i>(optional)</i>' : ''}</span>`;
+    })
     .join('<br>');
+  const next = sim.waves.find(w => !w.spawned);
+  const waveLine = sim.waves.length
+    ? next
+      ? `<br><i>Wave ${sim.waves.indexOf(next) + 1} of ${sim.waves.length} in ${Math.max(0, Math.ceil(next.at - sim.time))} s</i>`
+      : '<br><i>Final wave is here</i>'
+    : '';
   const ORDER = {hold: 'holding', follow: 'following', move: 'moving', attack: 'attacking', cover: 'covering'};
   const squadLine = sim.units
     .filter(u => u.side === 'partisan')
@@ -643,7 +735,7 @@ function updateHud() {
     ? `<br><b>Taking ${p.searching.label}… ${Math.min(100, Math.round((p.searching.progress / (p.searching.search ?? 3)) * 100))}%</b>`
     : '';
   $('#hud').innerHTML =
-    `<b>${status}</b><br>${objectives}${searching}<br>Health ${Math.max(0, p.hp)}<br>${squadLine}<br>` +
+    `<b>${status}</b><br>${objectives}${waveLine}${searching}<br>Health ${Math.max(0, p.hp)}<br>${squadLine}<br>` +
     p.weapons
       .map((w, i) => {
         const W = WEAPONS[w],
@@ -688,6 +780,15 @@ function showDebrief(d) {
 function draw() {
   updateOrders();
   for (const u of sim.units) if (!units.has(u)) units.set(u, unitMesh(u)); // reinforcements and waves arrive mid-mission
+  while (vehicles.length < sim.vehicles.length) vehicles.push(vehicleMesh(sim.vehicles[vehicles.length]));
+  sim.targets.forEach((t, i) => {
+    if (targetMeshes[i]) targetMeshes[i].visible = !t.destroyed;
+  });
+  sim.items.forEach((it, i) => {
+    if (!itemMeshes[i]) return;
+    itemMeshes[i].visible = !it.taken;
+    itemMeshes[i].position.set(it.x, 0.35, it.z);
+  });
   for (const [u, g] of units) {
     g.visible = !u.escaped && u.state !== 'mounted';
     if (g.userData.controlRing) g.userData.controlRing.visible = u === sim.player && u.alive;

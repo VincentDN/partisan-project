@@ -88,6 +88,10 @@ export class Sim {
     // Alarm: 'global' (the convoy: one shot and the whole column knows) or 'local' (word travels by voice, radio, gunfire)
     this.alarmMode = this.level.alarm || 'global';
     this.reinforcements = this.level.reinforcements ? {...this.level.reinforcements, state: 'idle'} : null;
+    // Destructible structures from level data (a radio mast): {id, x, z, w, d, h, hp, radio?}. They block like cover until destroyed.
+    this.targets = (this.level.targets || []).map(t => ({...t, maxHp: t.hp, destroyed: false}));
+    this.radioDown = false; // the radio mast is gone: no reinforcements, and word no longer travels by radio
+    this.waves = (this.level.waves || []).map(w => ({...w, spawned: false})); // scheduled attacks (the cave defence)
     this.assaults = []; // bounding groups: {group, goal, moving: 0 | 1}
     this.kills = {}; // partisan id -> soldiers they put down
     this.vehicles = [];
@@ -96,29 +100,7 @@ export class Sim {
     let x = L.convoy?.startX ?? 0;
     for (const v of L.convoy?.vehicles || []) {
       x -= v.gap;
-      const z = L.convoy.z;
-      const veh = {...v, x, z, maxHp: v.hp, destroyed: false, stopped: false, stopAt: Infinity, crew: []};
-      this.vehicles.push(veh);
-      v.crew.forEach((c, i) => {
-        const role = ROLES[c.role];
-        const u = this.unit({
-          id: `${v.id}-${i}`,
-          name: c.name,
-          role: c.role,
-          side: 'army',
-          x,
-          z,
-          weapons: [role.weapon, ...(role.launcher ? [role.launcher] : [])],
-        });
-        u.state = c.role === 'turret' ? 'turret' : 'mounted';
-        u.vehicle = veh;
-        u.leader = c.role === 'leader';
-        if (c.role === 'turret') {
-          u.r = 0.32; // only head and shoulders show above the hatch
-          u.armour = 0.5; // the gun shield halves suppression
-        }
-        veh.crew.push(u);
-      });
+      this.addVehicle(v, x, L.convoy.z);
     }
     (L.units || []).forEach((f, i) => this.footSoldier(f, i));
     for (const p of L.partisans) {
@@ -157,6 +139,33 @@ export class Sim {
     return advanceControl(this, seconds);
   }
 
+  /** A vehicle with its crew at (x, z); the convoy builds one per entry, a wave can park one. */
+  addVehicle(v, x, z) {
+    const veh = {...v, x, z, maxHp: v.hp, destroyed: false, stopped: false, stopAt: Infinity, crew: []};
+    this.vehicles.push(veh);
+    v.crew.forEach((c, i) => {
+      const role = ROLES[c.role];
+      const u = this.unit({
+        id: `${v.id}-${i}`,
+        name: c.name,
+        role: c.role,
+        side: 'army',
+        x,
+        z,
+        weapons: [role.weapon, ...(role.launcher ? [role.launcher] : [])],
+      });
+      u.state = c.role === 'turret' ? 'turret' : 'mounted';
+      u.vehicle = veh;
+      u.leader = c.role === 'leader';
+      if (c.role === 'turret') {
+        u.r = 0.32; // only head and shoulders show above the hatch
+        u.armour = 0.5; // the gun shield halves suppression
+      }
+      veh.crew.push(u);
+    });
+    return veh;
+  }
+
   /** An army soldier on foot from level data: {name, role, x, z, facing, state?, ...}. */
   footSoldier(f, i) {
     const role = ROLES[f.role];
@@ -175,6 +184,7 @@ export class Sim {
     u.group = f.group || null;
     u.post = {x: f.x, z: f.z, facing: f.facing || 0};
     if (f.patrol) Object.assign(u, {route: f.patrol, routeI: 0});
+    if (f.path) u.path = f.path.map(p => ({...p})); // waypoints to walk first (a tunnel); see the 'flank' state
     return u;
   }
 
@@ -213,7 +223,11 @@ export class Sim {
 
   /** Static cover plus the vehicles, as boxes. */
   boxes() {
-    return [...this.level.cover, ...this.vehicles.map(v => ({x: v.x, z: v.z, w: v.w, d: v.d, h: v.h, kind: 'vehicle', vehicle: v}))];
+    return [
+      ...this.level.cover,
+      ...this.targets.filter(t => !t.destroyed).map(t => ({x: t.x, z: t.z, w: t.w, d: t.d, h: t.h, kind: 'target', target: t})),
+      ...this.vehicles.map(v => ({x: v.x, z: v.z, w: v.w, d: v.d, h: v.h, kind: 'vehicle', vehicle: v})),
+    ];
   }
 
   /** Line of sight between two points (eye height is implied: every obstacle is taller than a crouching man). */
@@ -276,7 +290,8 @@ export class Sim {
    * Local alarm: a shout reaches soldiers within 30 m; the radio reaches everyone, but only while a radio operator lives.
    */
   shareLocal(from, belief) {
-    const radio = from.side === 'army' && this.units.some(u => u.side === 'army' && u.alive && u.role === 'rto' && u.alert);
+    const radio =
+      from.side === 'army' && !this.radioDown && this.units.some(u => u.side === 'army' && u.alive && u.role === 'rto' && u.alert);
     for (const to of this.units) {
       if (to === from || !to.alive || to.side !== from.side) continue;
       const voice = dist(to, from) < 30;
@@ -294,7 +309,10 @@ export class Sim {
   /** Spawn army soldiers on foot (reinforcements, attack waves) and, with a goal, send them in as a bounding assault. */
   spawnGroup(defs, {group, goal, beliefs = []} = {}) {
     const made = defs.map((f, i) => {
-      const u = this.footSoldier({...f, id: f.id || `${group}-${i}`, group, state: goal ? 'bound' : 'secure'}, this.units.length);
+      const u = this.footSoldier(
+        {...f, id: f.id || `${group}-${i}`, group, state: f.state || (goal ? 'bound' : 'secure')},
+        this.units.length,
+      );
       u.alert = true;
       u.reactAt = this.time + 0.5;
       for (const b of beliefs) u.beliefs.push({...b});
@@ -302,6 +320,34 @@ export class Sim {
     });
     if (goal) this.assaults.push({group, goal: {...goal}, moving: 0, since: this.time});
     return made;
+  }
+
+  /**
+   * Scheduled attacks (level.waves): {at, text?, squads: [{group, units, goal?, state?}], vehicle?: {...convoy entry, x, z}}.
+   * A squad's units carry their own spawn points; the goal defaults to where the nearest rebel stands.
+   */
+  runWaves() {
+    for (const w of this.waves) {
+      if (w.spawned || this.time < w.at) continue;
+      w.spawned = true;
+      this.alarm || this.raiseAlarm(null);
+      let first = null;
+      for (const sq of w.squads || []) {
+        const g = sq.goal || this.player;
+        const made = this.spawnGroup(sq.units, {group: sq.group, goal: sq.goal === null ? null : {x: g.x, z: g.z}});
+        first ||= made[0];
+      }
+      if (w.vehicle) {
+        const v = this.addVehicle(w.vehicle, w.vehicle.x, w.vehicle.z);
+        v.stopped = true;
+        v.stopAt = this.time;
+        first ||= v.crew[0];
+      }
+      if (first && w.text) this.say(first, w.text, 'wave-' + w.at, 99);
+    }
+  }
+  get wavesDone() {
+    return this.waves.every(w => w.spawned);
   }
 
   raiseAlarm(by) {
@@ -400,6 +446,7 @@ export class Sim {
     }
     if (W.splash) this.explode(x1, z1, W, u, hitBox);
     else if (hit) this.damage(hit, u, W.damage);
+    else if (hitBox?.target && u.side === 'partisan') this.damageTarget(hitBox.target, W.damage * 0.5, u);
     return true;
   }
 
@@ -419,12 +466,34 @@ export class Sim {
       const near = Math.max(Math.abs(x - v.x) - v.w / 2, Math.abs(z - v.z) - v.d / 2, 0);
       if (direct || near < W.splash.r * 0.4) this.damageVehicle(v, W.vehicle * (direct ? 1 : 0.3), by);
     }
+    for (const t of this.targets) {
+      if (t.destroyed) continue;
+      const direct = hitBox?.target === t;
+      const near = Math.max(Math.abs(x - t.x) - t.w / 2, Math.abs(z - t.z) - t.d / 2, 0);
+      if (direct || near < W.splash.r * 0.5) this.damageTarget(t, (W.vehicle || W.splash.damage) * (direct ? 1 : 0.4), by);
+    }
     // Whoever is close shouts what it was.
     const word = W.lob ? 'Grenade!' : 'RPG!';
     const near = this.units
       .filter(o => o.alive && o.side !== by.side && Math.hypot(o.x - x, o.z - z) < 14)
       .sort((a, b) => Math.hypot(a.x - x, a.z - z) - Math.hypot(b.x - x, b.z - z))[0];
     if (near && near !== this.player) this.say(near, word, 'blast', 3);
+  }
+
+  /** Damage a destructible structure; the radio mast going down cuts the army's radio. */
+  damageTarget(t, amount, by) {
+    if (t.destroyed || !amount) return;
+    t.hp -= amount;
+    if (t.hp > 0) return;
+    t.hp = 0;
+    t.destroyed = true;
+    this.explosions.push({x: t.x, z: t.z, r: 3, t: this.time});
+    if (t.radio) {
+      this.radioDown = true;
+      const mate = this.units.filter(m => m.alive && m.side === 'army').sort((a, b) => dist(a, t) - dist(b, t))[0];
+      if (mate) this.say(mate, "The mast's down! No radio!", 'mast', 99);
+    }
+    if (by?.side === 'partisan') this.raiseAlarm(null);
   }
 
   damageVehicle(v, amount, by) {
@@ -446,6 +515,9 @@ export class Sim {
     o.alive = false;
     o.state = 'down';
     o.moveTo = null;
+    // Whatever the casualty was carrying drops where he fell, to be picked up again (hold E).
+    for (const it of this.items)
+      if (it.taken && it.takenBy === o.id) Object.assign(it, {taken: false, takenBy: null, progress: 0, x: o.x, z: o.z});
     if (by.side === 'partisan') this.kills[by.id] = (this.kills[by.id] || 0) + 1;
     if (by.side === 'partisan' && by !== this.player) this.say(by, 'Target down!', 'kill', 3);
     if (o.role === 'rto') {
@@ -528,6 +600,7 @@ export class Sim {
     this.time += dt;
     for (const o of input.orders || []) this.order(o.ids, o);
     this.driveConvoy(dt);
+    this.runWaves();
     // comms in flight
     // (split first: a delivery can send new messages, e.g. a radio operator relaying what he heard)
     const due = this.messages.filter(m => m.at <= this.time);
@@ -613,6 +686,7 @@ export class Sim {
     item.progress += dt;
     if (item.progress >= (item.search ?? 3)) {
       item.taken = true;
+      item.takenBy = u.id;
       this.taken.add(item.id);
       this.say(u, `Got the ${item.label.toLowerCase()}!`, 'taken-' + item.id, 99);
     }
