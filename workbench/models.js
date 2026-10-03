@@ -136,7 +136,7 @@ export const MODELS = {
       foregrip: {
         rail: {min: -0.08, max: 0, step: 0.01},
         factory: [{id: 'rk1', fp: [-0.02, 0.02], grams: 85, label: 'RK-1', original: true}],
-        library: ['vertical', 'angled', 'stop', 'none'],
+        library: ['vertical', 'angled', 'stop', 'bipod', 'gp25', 'none'],
       },
       magazine: {
         factory: [{id: '30', grams: 230, label: '30-rnd', original: true}],
@@ -277,7 +277,7 @@ export const MODELS = {
       foregrip: {
         rail: {min: -0.06, max: 0.02, step: 0.01},
         factory: [{id: 'none', label: 'None', detail: 'Clean handguard, no foregrip.'}],
-        library: ['vertical', 'angled', 'stop'],
+        library: ['vertical', 'angled', 'stop', 'bipod', 'gp25'],
       },
       magazine: {
         factory: [{id: '30', grams: 250, label: '30-rnd', original: true}],

@@ -46,6 +46,7 @@ export const MODIFIERS = {
   foregrip: {
     rk1: {ergo: 6, recoil: -4},
     bipod: {recoil: -8, handling: -6},
+    gp25: {ergo: -10, handling: -12, recoil: -3},
     vertical: {ergo: 5, recoil: -5},
     angled: {ergo: 7, recoil: -3, handling: 2},
     stop: {ergo: 3, handling: 2},

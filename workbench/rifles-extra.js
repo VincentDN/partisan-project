@@ -6,6 +6,8 @@
 // Models by D_U (CC BY 4.0) unless `author` says otherwise. Loose spare magazines and rounds were stripped
 // at import time (`strip` in tools/assets/sketchfab-sources.json).
 
+import {real, Z_FWD} from './attachments.js';
+
 const DU = {name: 'D_U', url: 'https://sketchfab.com/DU1701'};
 const rail = (min, max) => ({min, max, step: 0.01});
 const std = {
@@ -22,7 +24,7 @@ const buis = {rail: rail(-0.1, 0.12), factory: [{id: 'none', fp: [0, 0], label: 
 const foregrip = (travel = rail(-0.06, 0.02)) => ({
   rail: travel,
   factory: [{id: 'none', fp: [0, 0], label: 'None', detail: 'Clean handguard, no foregrip.'}],
-  library: ['vertical', 'angled', 'stop'],
+  library: ['vertical', 'angled', 'stop', 'bipod'],
 });
 // Iron sights are part of the model, so the factory optic is "Irons" and optics clamp onto the top.
 const optic = (library = ['micro', 'holo', 'scope'], travel = rail(-0.05, 0.05)) => ({
@@ -34,6 +36,13 @@ const muzzle = (factory, library = ['comp', 'can', 'bare']) => ({factory, librar
 const magazine = (factory, library = ['none']) => ({factory, library});
 const part = (id, label, detail, nodes = []) => ({id, label, detail, nodes});
 // The slot parts a rifle has no separate mesh for: empty parts that still give the slot a mount.
+// 7.62 NATO rifles take the PMAG drum instead of the AK drum.
+const drum50 = {
+  id: 'drum',
+  label: '50-rnd drum',
+  rounds: 50,
+  build: real('g3-drum.glb', {scale: 0.966152, rotation: Z_FWD, anchor: ['c', 'max', 'c']}),
+};
 const EMPTY = {
   optic: part('optic', 'Optic', 'Top of the receiver: takes an optic.'),
   buis: part('buis', 'Back-up sight', 'Top-rail position for a folding back-up sight.'),
@@ -95,14 +104,18 @@ export const EXTRA = {
     ],
     slots: {
       muzzle: muzzle([{id: 'g3', grams: 90, label: 'G3 flash hider', original: true}]),
-      optic: optic(),
+      optic: optic([
+        {id: 'scope', build: real('g3-scope.glb', {scale: 0.971672, rotation: Z_FWD, anchor: ['c', 'min', 'c']})},
+        'micro',
+        'holo',
+      ]),
       buis,
       trigger: std.trigger,
       charging: std.charging,
       sling: std.sling,
       foregrip: foregrip(),
       side,
-      magazine: magazine([{id: '20', grams: 330, label: '20-rnd steel', original: true}], ['drum', 'none']),
+      magazine: magazine([{id: '20', grams: 330, label: '20-rnd steel', original: true}], [drum50, 'none']),
       stock: {factory: [{id: 'extended', grams: 1300, label: 'G3 furniture', original: true}], library: []},
     },
   },
@@ -137,7 +150,7 @@ export const EXTRA = {
       ['muzzle', 'Muzzle', [108, 21.3, 0], [1, 0, 0]],
       ['optic', 'Carry-handle mount', [-8, 45, 0], [0, 1, 0]],
       ['sling', 'Sling mount', [-81, 12, 0], [-1, 0, 0]],
-      ['foregrip', 'Under handguard', [55, 8, 0], [0, -1, 0]],
+      ['foregrip', 'Under handguard', [55, 15, 0], [0, -1, 0]],
       ['side', 'Side rail', [60, 22, 3.4], [0, 0, 1]],
       ['magazine', 'Mag well', [-3, 8, 0], [0, -1, 0]],
       ['stock', 'Stock', [-35, 14, 0], [-1, 0, 0]],
@@ -149,7 +162,7 @@ export const EXTRA = {
       sling: std.sling,
       foregrip: foregrip(rail(-0.06, 0.02)),
       side,
-      magazine: magazine([{id: '20', grams: 270, label: '20-rnd', original: true}], ['drum', 'none']),
+      magazine: magazine([{id: '20', grams: 270, label: '20-rnd', original: true}], [drum50, 'none']),
       stock: {factory: [{id: 'extended', grams: 900, label: 'A1 furniture', original: true}], library: []},
     },
   },
@@ -198,7 +211,7 @@ export const EXTRA = {
       sling: std.sling,
       foregrip: foregrip(rail(-0.08, 0.04)),
       side,
-      magazine: magazine([{id: '20', grams: 310, label: '20-rnd', original: true}], ['drum', 'none']),
+      magazine: magazine([{id: '20', grams: 310, label: '20-rnd', original: true}], [drum50, 'none']),
       stock: {factory: [{id: 'extended', grams: 1500, label: 'EBR chassis', original: true}], library: []},
     },
   },
@@ -268,7 +281,7 @@ export const EXTRA = {
       sling: std.sling,
       foregrip: foregrip(rail(-0.08, 0.02)),
       side,
-      magazine: magazine([{id: '20', grams: 330, label: '20-rnd', original: true}], ['drum', 'none']),
+      magazine: magazine([{id: '20', grams: 330, label: '20-rnd', original: true}], [drum50, 'none']),
       grip: {factory: [{id: 'factory', grams: 90, label: 'MCX grip', original: true}], library: ['classic']},
       stock: {factory: [{id: 'extended', grams: 600, label: 'Extended', original: true}], library: ['none']},
     },
@@ -487,7 +500,7 @@ export const EXTRA = {
       foregrip: {
         rail: rail(-0.08, 0.02),
         factory: [{id: 'bipod', fp: [-0.05, 0.05], grams: 450, label: 'Bipod', original: true}],
-        library: ['vertical', 'angled', 'stop', 'none'],
+        library: ['vertical', 'angled', 'stop', 'gp25', 'none'],
       },
       magazine: magazine([{id: '40', grams: 360, label: '40-rnd', original: true}], ['none']),
       grip: {factory: [{id: 'factory', grams: 110, label: 'Wood grip', original: true}], library: ['classic']},

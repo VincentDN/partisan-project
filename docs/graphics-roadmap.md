@@ -81,6 +81,10 @@ Sizes: XS 3, S 8, M 20 budget units.
 | WP-V19 | S | **Performance and phones.** Draw-call and sprite budget, cached ground and structures, particle caps, 60 fps on a desktop and a 30 fps floor on a mid phone, reduced-motion and non-colour cues | Budget numbers recorded and checked by a test |
 | WP-V20 | XS | **Docs.** Game Design Doc visuals section, changelog, moodboard, decision log | Doc renders; links work |
 
+## Placeholder art
+
+The owner's RimWorld-style placeholder set (`inbound/Placeholder Assets/`) covers most of sections B and C as interim art: paper-doll layers, 31 weapon sprites, ruins and wrecks, wall atlases, terrain textures and plants. What is usable, what is missing and how each packet uses it is in [placeholder-assets.md](placeholder-assets.md); decisions TAC-I-28 to TAC-I-31.
+
 ## Order of work
 
 1. **A** first and in order: V1 → V2 → V3 → V4. After V3 the 2-D view is playable with placeholders.

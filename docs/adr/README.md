@@ -16,3 +16,4 @@ One short file per decision that would be expensive to rediscover. Format: Conte
 | [0010](0010-shell-and-opening-scene.md) | The shell, the opening scene and the Nokia index on the table |
 | [0011](0011-original-opening-scene.md) | The original opening scene and advanced animations replace the rebuilt versions (supersedes 0008) |
 | [0012](0012-no-credits-tooling.md) | No credits page and no licence audit; one pointer line instead; express agent instruction (supersedes 0004 and 0007 rules) |
+| [0013](0013-sketchfab-weapon-batch.md) | The Sketchfab batch: nine new rifles, real attachment parts and the importer options behind them |

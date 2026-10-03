@@ -271,3 +271,43 @@ The 2.5-D top-down sprite look for the shooter (RimWorld style) and the retro ov
 - Cost to change: Low.
 - Revisit if: —
 - Owner feedback: —
+
+### TAC-I-28 · The RimWorld-style placeholder set is the interim art for the 2-D renderer
+- Status: planned  ·  Packet: WP-V3, WP-V5, WP-V6, WP-V8, WP-V9, WP-V10
+- Decision: The owner's `inbound/Placeholder Assets/` set (about 5,400 files, RimWorld-style) stands in for hand-made art while the renderer, paper dolls and levels are built. Its conventions become ours: a 128 px canvas per character layer, three drawn directions (south, east, north; west is east mirrored), grey layers tinted by palette, 4×4 auto-tile atlases for walls and cover. The survey and the file-to-packet mapping are in `docs/placeholder-assets.md`.
+- Why: It matches the references already on the moodboard (outlined paper-doll layers, armour and helmet sets, top-down ruins and wrecks), so the look is right from day one and gameplay is never blocked on art (TAC-I-27).
+- Alternatives rejected: Waiting for generated or hand-drawn art (a long wait with no playable result); drawing all placeholders procedurally (slower and looks worse than the set).
+- Cost / risk: The set appears to be RimWorld's own textures, so it is a stand-in only and must be replaced before any public release; the swap path is the manifest in TAC-I-29.
+- Cost to change: Low.
+- Revisit if: Owner-made or licensed art arrives, or before the first public release.
+- Owner feedback: —
+
+### TAC-I-29 · The raw set stays out of the site; only converted, listed sprites ship
+- Status: planned  ·  Packet: WP-V4
+- Decision: The 987 MB set stays in `inbound/` (never deployed: the Pages build is an allowlist). A converter in `tools/sprites/` flattens PSDs, trims, quantises to the palette and writes atlases plus a manifest that lists every source file used. Only the atlases and the manifest enter `assets/`.
+- Why: The set is mostly layered PSDs and 512 px textures. Shipping it would bloat the site by about a gigabyte and tie us to files we need to replace. The manifest makes the replacement list exact.
+- Alternatives rejected: Copying PNGs into `assets/` by hand (no record, no palette pass); committing the PSDs to `assets/`.
+- Cost / risk: The repository itself is heavy (a gigabyte of binary history); the owner may want to move `inbound/` out of git.
+- Cost to change: Low.
+- Revisit if: Repository size becomes a problem.
+- Owner feedback: —
+
+### TAC-I-30 · Paper dolls are built from the set's layers; weapons come from the set first, our own rifles from render-to-sprite
+- Status: planned  ·  Packet: WP-V5, WP-V6
+- Decision: Bodies (thin, average, female, fat, hulk), heads, hair, beards and the apparel pieces (flak vest, recon armour, helmets, hoods, parka, duster, pants, shirts, masks) are the layer stack, tinted by faction palette. Side-view weapon sprites (assault rifle, LMG, sniper, bolt action, shotgun, machine pistol, heavy SMG, rocket launcher, pistols, grenades) cover the first loadouts; rifles the set lacks (G3, Mk 14, SIG Spear, StG 44, PPSh-41, Bren, Chauchat, our AKs) come from the render-to-sprite pass on the Workbench models (TAC-I-10).
+- Why: The set gives a complete layered character and a convincing first weapon roster; the Workbench models cover what it lacks and keep the rifle in the shooter identical to the rifle on the bench.
+- Alternatives rejected: Only render-to-sprite (loses the hand-drawn outline look); only the set (no G3, Spear or AK).
+- Cost / risk: Two weapon styles side by side until the render pass gets the same outline treatment.
+- Cost to change: Low.
+- Revisit if: The mix looks inconsistent in the Sprite Lab.
+- Owner feedback: —
+
+### TAC-I-31 · Terrain, cover and wrecks come from the set, downscaled and palette-snapped to 32 px per metre
+- Status: planned  ·  Packet: WP-V8, WP-V9, WP-V10
+- Decision: The 512 px surface textures (soil, rich soil, packed dirt, gravel, sand, concrete, asphalt, flagstone, wood floor, mud, mossy) are scaled down to 32 px tiles and snapped to the art-bible palette, with edge-blend variants made by the converter. Walls, sandbags, barricades and fences use the set's 4×4 atlases. Cover and wrecks use the ruins: concrete barriers, crates, military crates, tank traps, razor wire, rusted military jeep, truck, APC and tank wrecks. Trees, bushes and grass come from the plant sprites. Intact vehicles are recoloured wrecks or render-to-sprite from the Sketchfab MATV, Humvee and army truck.
+- Why: Every piece the convoy valley, compound and cave need exists in some form, and the wrecks give the vehicle wreck state (WP-V10) for free.
+- Alternatives rejected: Hand-drawing terrain tiles; using the textures at full size (blurry against the sprites, heavy).
+- Cost / risk: The textures are photographic next to the outlined sprites; the palette snap must hide that.
+- Cost to change: Low.
+- Revisit if: The snapped terrain looks muddy in the contact sheet.
+- Owner feedback: —

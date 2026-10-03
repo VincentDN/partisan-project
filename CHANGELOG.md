@@ -2,6 +2,14 @@
 
 Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer; `VERSION` and `index.html` change together.
 
+## [Unreleased]
+
+### Added (Sketchfab batch, WP-A2/A3/A5/A9/A12/A13/A15 to A18)
+- **Nine new rifles** in the Weapon Modder and the Operator Customiser: HK G3A3, M16A1, Mk 14 EBR, SIG Spear, StG 44, PPSh-41, Bren, Chauchat, and the real RPK 7.62×39 (replaces the kitbash).
+- **Real attachment parts** replace the code-built shapes: muzzle brake and suppressor, micro dot, EOTech, ZF-4 and G3 scopes, flip-up sight, vertical, angled and hand-stop grips, weapon light, laser, light and laser combo, drum magazines. New options: bipod, GP-25 grenade launcher, PMAG drum.
+- Props, vehicles and environment pieces (MATV, army truck, Humvee, barriers, sandbags, containers, church kit, radio, canister) imported and listed in the Asset Viewer.
+- Importer options (`strip`, `tint`, skin baking) and an inspector (`tools/assets/inspect-glb.mjs`) that maps unnamed meshes.
+
 ## [0.3.1] · 2026-10-01
 
 ### Added (graphics roadmap)

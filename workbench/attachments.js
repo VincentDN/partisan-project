@@ -49,6 +49,63 @@ export const glb =
     return group;
   };
 
+// A real part out of one of the downloaded Sketchfab files in assets/models/weapons/ (CC BY 4.0 / CC0, see the register).
+//   file     the GLB; `nodes` picks some nodes out of a set (names as in the file, sanitised like the rifles' parts)
+//   scale    metres per source unit (printed by the importer)
+//   rotation Euler radians that lay the part's forward axis along +x, its up axis along +y
+//   anchor   which point of the rotated part sits at the slot origin, per axis: 'min', 'max' or 'c' (centre)
+//   offset   metres, added after anchoring
+const nodeId = name => T.PropertyBinding.sanitizeNodeName(name);
+export const real =
+  (file, {nodes, scale = 1, rotation = [0, 0, 0], anchor = ['min', 'c', 'c'], offset = [0, 0, 0]} = {}) =>
+  () => {
+    const group = new T.Group();
+    partLoader.load(
+      new URL(`../assets/models/weapons/${file}`, import.meta.url).href,
+      gltf => {
+        const src = gltf.scene;
+        src.updateMatrixWorld(true);
+        let part = src;
+        if (nodes) {
+          part = new T.Group();
+          for (const n of nodes) {
+            const found = src.getObjectByName(nodeId(n));
+            if (found) part.attach(found);
+          }
+        }
+        const wrap = new T.Group();
+        wrap.add(part);
+        wrap.rotation.set(...rotation);
+        wrap.scale.setScalar(scale);
+        wrap.updateMatrixWorld(true);
+        const box = new T.Box3().setFromObject(wrap);
+        wrap.position.set(
+          ...anchor.map(
+            (a, i) =>
+              (a === 'min'
+                ? -box.min.getComponent(i)
+                : a === 'max'
+                  ? -box.max.getComponent(i)
+                  : -(box.min.getComponent(i) + box.max.getComponent(i)) / 2) + offset[i],
+          ),
+        );
+        wrap.traverse(m => {
+          if (m.isMesh) {
+            m.castShadow = m.receiveShadow = true;
+            m.material = m.material.clone();
+          }
+        });
+        group.add(wrap);
+      },
+      undefined,
+      err => console.error(`attachment ${file} failed to load`, err),
+    );
+    return group;
+  };
+// Forward is +z in most of the downloaded parts and -z in the AK kit; these turn either onto +x.
+export const Z_FWD = [0, Math.PI / 2, 0];
+export const Z_BACK = [0, -Math.PI / 2, 0];
+
 const merge = geos => mergeGeometries(geos.map(g => (g.index ? g.toNonIndexed() : g)));
 const box = (w, h, d, [x, y, z] = [0, 0, 0]) => new T.BoxGeometry(w, h, d).translate(x, y, z);
 // Cylinder along x from x0 to x1.
@@ -189,29 +246,14 @@ export const SLOTS = [
         grams: 95,
         label: 'Compensator',
         detail: 'Short three-port compensator; ports vent upward to hold the muzzle down.',
-        build: ({materials}) =>
-          group(
-            [[tube(0.0135, -0.004, 0.052, [0, 0], 8)], materials.stell],
-            [
-              [
-                box(0.008, 0.005, 0.012, [0.012, 0.012, 0]),
-                box(0.008, 0.005, 0.012, [0.026, 0.012, 0]),
-                box(0.008, 0.005, 0.012, [0.04, 0.012, 0]),
-              ],
-              materials['h-190'],
-            ],
-          ),
+        build: real('muzzle-set.glb', {nodes: ['mb_556mm_2'], scale: 0.103763, anchor: ['min', 'c', 'c']}),
       },
       {
         id: 'can',
         grams: 540,
         label: 'Suppressor',
         detail: 'Full-length sound suppressor, 190 mm, on a quick-detach collar.',
-        build: ({materials}) =>
-          group(
-            [[tube(0.016, -0.004, 0.024, [0, 0], 12)], materials.stell],
-            [[tube(0.0195, 0.024, 0.19, [0, 0], 12), tube(0.017, 0.19, 0.198, [0, 0], 12, 0.0195)], materials['h-190']],
-          ),
+        build: real('muzzle-set.glb', {nodes: ['sil_556m_8'], scale: 0.103763, anchor: ['min', 'c', 'c']}),
       },
       {id: 'bare', grams: 0, label: 'Bare', detail: 'Bare 24×1.5 mm threaded muzzle.'},
     ],
@@ -242,26 +284,7 @@ export const SLOTS = [
         sightHeight: 0.034,
         label: 'Micro dot',
         detail: 'Compact tube red dot on a low mount.',
-        build: ({materials}) => {
-          const g = group(
-            [
-              [
-                box(0.042, 0.01, 0.03, [0, 0.005, 0]),
-                box(0.03, 0.012, 0.018, [0, 0.016, 0]),
-                tube(0.0155, -0.024, 0.024, [0.034, 0], 12),
-                tube(0.0175, 0.018, 0.026, [0.034, 0], 12),
-                tube(0.0175, -0.026, -0.018, [0.034, 0], 12),
-                new T.CylinderGeometry(0.006, 0.006, 0.012, 8).translate(0, 0.054, 0),
-              ],
-              materials['h-190'],
-            ],
-            [tube(0.0145, 0.0245, 0.0255, [0.034, 0], 12), materials.glass],
-          );
-          const dot = new T.Mesh(new T.SphereGeometry(0.001, 6, 4), materials.red_emission);
-          dot.position.set(0, 0.034, 0);
-          g.add(dot);
-          return g;
-        },
+        build: real('collimator-set.glb', {nodes: ['holosun_403r_1'], scale: 0.103763, anchor: ['c', 'min', 'c']}),
       },
       {
         id: 'holo',
@@ -270,26 +293,7 @@ export const SLOTS = [
         sightHeight: 0.04,
         label: 'Holographic',
         detail: 'Box-hooded holographic sight with a wide window.',
-        build: ({materials}) => {
-          const g = group(
-            [
-              [
-                box(0.08, 0.012, 0.032, [0, 0.006, 0]),
-                box(0.028, 0.026, 0.036, [-0.02, 0.025, 0]),
-                box(0.05, 0.004, 0.036, [0.012, 0.058, 0]),
-                box(0.05, 0.046, 0.004, [0.012, 0.035, 0.017]),
-                box(0.05, 0.046, 0.004, [0.012, 0.035, -0.017]),
-                box(0.012, 0.012, 0.012, [-0.02, 0.044, 0.02]),
-              ],
-              materials['h-190'],
-            ],
-            [box(0.002, 0.034, 0.03, [0.03, 0.037, 0]), materials.glass],
-          );
-          const dot = new T.Mesh(new T.SphereGeometry(0.0012, 6, 4), materials.red_emission);
-          dot.position.set(0.03, 0.04, 0);
-          g.add(dot);
-          return g;
-        },
+        build: real('eotech.glb', {scale: 1.0, rotation: Z_FWD, anchor: ['c', 'min', 'c']}),
       },
       {
         id: 'scope',
@@ -298,26 +302,7 @@ export const SLOTS = [
         sightHeight: 0.046,
         label: '4× scope',
         detail: '4× fixed-power scope in two rings, 280 mm long.',
-        build: ({materials}) =>
-          group(
-            [
-              [
-                tube(0.0127, -0.07, 0.07, [0.046, 0], 12),
-                tube(0.021, 0.07, 0.12, [0.046, 0], 12, 0.0127),
-                tube(0.021, 0.12, 0.15, [0.046, 0], 12),
-                tube(0.0127, -0.12, -0.07, [0.046, 0], 12, 0.019),
-                tube(0.019, -0.155, -0.12, [0.046, 0], 12),
-                new T.CylinderGeometry(0.009, 0.009, 0.018, 8).translate(0, 0.066, 0),
-                new T.CylinderGeometry(0.009, 0.009, 0.018, 8).rotateX(Math.PI / 2).translate(0, 0.046, 0.02),
-                box(0.016, 0.03, 0.028, [-0.05, 0.021, 0]),
-                box(0.016, 0.03, 0.028, [0.05, 0.021, 0]),
-                box(0.026, 0.008, 0.03, [-0.05, 0.004, 0]),
-                box(0.026, 0.008, 0.03, [0.05, 0.004, 0]),
-              ],
-              materials['h-190'],
-            ],
-            [[tube(0.019, 0.1495, 0.151, [0.046, 0], 12), tube(0.0165, -0.1555, -0.1545, [0.046, 0], 12)], materials.glass],
-          ),
+        build: real('scope-zf4.glb', {scale: 1.1, rotation: Z_FWD, anchor: ['c', 'min', 'c']}),
       },
       {id: 'none', fp: [0, 0], sightHeight: 0.012, label: 'Irons', detail: 'No optic: the rifle falls back to its iron sights.'},
     ],
@@ -333,16 +318,7 @@ export const SLOTS = [
         grams: 55,
         label: 'Flip-up sight',
         detail: 'Folding back-up iron sight on a rail clamp. It rides ahead of the optic; a long scope pushes it forward.',
-        build: ({materials}) =>
-          group([
-            [
-              box(0.034, 0.008, 0.03, [0, 0.004, 0]),
-              box(0.006, 0.02, 0.004, [0, 0.018, 0.011]),
-              box(0.006, 0.02, 0.004, [0, 0.018, -0.011]),
-              box(0.006, 0.004, 0.026, [0, 0.03, 0]),
-            ],
-            materials['h-190'],
-          ]),
+        build: real('iron-sight-set.glb', {nodes: ['kac_folding_rear_sight_9'], scale: 0.103763, anchor: ['c', 'min', 'c']}),
       },
       {id: 'none', fp: [0, 0], label: 'None', detail: 'No back-up sight.'},
     ],
@@ -358,15 +334,7 @@ export const SLOTS = [
         grams: 90,
         label: 'Vertical',
         detail: 'Plain vertical foregrip on a rail clamp.',
-        build: ({materials}) =>
-          group([
-            [
-              box(0.046, 0.01, 0.028, [0, -0.005, 0]),
-              new T.CylinderGeometry(0.0145, 0.013, 0.085, 8).translate(0, -0.052, 0),
-              new T.CylinderGeometry(0.015, 0.015, 0.006, 8).translate(0, -0.096, 0),
-            ],
-            materials.polymer,
-          ]),
+        build: real('grip-rvg.glb', {scale: 1.46184, anchor: ['c', 'max', 'c']}),
       },
       {
         id: 'angled',
@@ -374,21 +342,23 @@ export const SLOTS = [
         grams: 60,
         label: 'Angled',
         detail: 'Angled foregrip: a thumb ramp for a high, straight-arm hold.',
-        build: ({materials}) =>
-          group([
-            profile(
-              [
-                [-0.048, 0],
-                [0.042, 0],
-                [0.038, -0.012],
-                [-0.028, -0.046],
-                [-0.046, -0.042],
-              ],
-              0.028,
-              0.003,
-            ),
-            materials.polymer,
-          ]),
+        build: real('grip-afg.glb', {nodes: ['normal_0'], scale: 0.9, rotation: Z_FWD, anchor: ['c', 'max', 'c']}),
+      },
+      {
+        id: 'bipod',
+        fp: [-0.14, 0.14],
+        grams: 450,
+        label: 'Bipod',
+        detail: 'Folding bipod on the lower rail.',
+        build: real('g3-bipod.glb', {scale: 0.995917, anchor: ['c', 'max', 'c']}),
+      },
+      {
+        id: 'gp25',
+        fp: [-0.14, 0.2],
+        grams: 1500,
+        label: 'GP-25 launcher',
+        detail: '40 mm underbarrel grenade launcher clamped under the handguard.',
+        build: real('gp25.glb', {scale: 0.103763, anchor: ['c', 'max', 'c'], offset: [0.05, 0, 0]}),
       },
       {
         id: 'stop',
@@ -396,21 +366,7 @@ export const SLOTS = [
         grams: 30,
         label: 'Hand stop',
         detail: 'Low hand stop at the front of the lower rail.',
-        build: ({materials}) =>
-          group([
-            profile(
-              [
-                [-0.016, 0],
-                [0.02, 0],
-                [0.02, -0.016],
-                [0.008, -0.021],
-                [-0.016, -0.008],
-              ],
-              0.024,
-              0.002,
-            ),
-            materials.polymer,
-          ]),
+        build: real('ak-grips.glb', {nodes: ['RK-0_4'], scale: 1, anchor: ['c', 'max', 'c']}),
       },
       {id: 'none', fp: [0, 0], label: 'None', detail: 'Clean handguard, no foregrip.'},
     ],
@@ -427,28 +383,7 @@ export const SLOTS = [
         grams: 110,
         label: 'Weapon light',
         detail: 'Compact weapon light on a rail clamp; its beam lights the scene.',
-        build: ({materials}) => {
-          const g = group(
-            [
-              [
-                box(0.03, 0.012, 0.016, [0, 0, 0.008]),
-                tube(0.013, -0.045, 0.035, [0, 0.03], 10),
-                tube(0.016, 0.035, 0.05, [0, 0.03], 10, 0.013),
-              ],
-              materials['h-190'],
-            ],
-            [
-              tube(0.0145, 0.0505, 0.0515, [0, 0.03], 10),
-              new T.MeshStandardMaterial({color: '#fff6de', emissive: '#fff1c4', emissiveIntensity: 2}),
-            ],
-          );
-          // Beam: a soft spotlight along the barrel.
-          const beam = new T.SpotLight(0xfff1d6, 6, 6, 0.28, 0.6, 1.5);
-          beam.position.set(0.052, 0, 0.03);
-          beam.target.position.set(2, 0, 0.03);
-          g.add(beam, beam.target);
-          return g;
-        },
+        build: real('light-surefire.glb', {scale: 0.00638423, rotation: Z_FWD, anchor: ['c', 'c', 'min']}),
       },
       {
         id: 'laser',
@@ -456,19 +391,7 @@ export const SLOTS = [
         grams: 80,
         label: 'Laser',
         detail: 'Visible laser aiming module; the dot helps from the hip.',
-        build: ({materials}) => {
-          const g = group(
-            [[box(0.03, 0.012, 0.016, [0, 0, 0.008]), box(0.06, 0.028, 0.026, [0.005, 0.02, 0.025])], materials['h-190']],
-            [box(0.002, 0.008, 0.008, [0.036, 0.02, 0.025]), materials.red_emission],
-          );
-          const ray = new T.Mesh(
-            new T.CylinderGeometry(0.0006, 0.0006, 1.4, 4).rotateZ(-Math.PI / 2).translate(0.037 + 0.7, 0.02, 0.025),
-            new T.MeshBasicMaterial({color: '#ff2a2a', transparent: true, opacity: 0.55, depthWrite: false}),
-          );
-          ray.userData.visualEffect = true;
-          g.add(ray);
-          return g;
-        },
+        build: real('peq15.glb', {scale: 0.103763, anchor: ['c', 'c', 'min']}),
       },
       {
         id: 'combo',
@@ -476,21 +399,7 @@ export const SLOTS = [
         grams: 190,
         label: 'Light + laser',
         detail: 'Combined light and laser unit.',
-        build: ({materials}) => {
-          const g = group(
-            [[box(0.03, 0.012, 0.016, [0, 0, 0.008]), box(0.065, 0.028, 0.028, [0, 0.022, 0.026])], materials['h-190']],
-            [
-              tube(0.0105, 0.0325, 0.0335, [0.026, 0.026], 10),
-              new T.MeshStandardMaterial({color: '#fff6de', emissive: '#fff1c4', emissiveIntensity: 2}),
-            ],
-            [box(0.002, 0.006, 0.006, [0.0335, 0.012, 0.026]), materials.red_emission],
-          );
-          const beam = new T.SpotLight(0xfff1d6, 6, 6, 0.28, 0.6, 1.5);
-          beam.position.set(0.034, 0.026, 0.026);
-          beam.target.position.set(2, 0.026, 0.026);
-          g.add(beam, beam.target);
-          return g;
-        },
+        build: real('peq2.glb', {scale: 0.103763, anchor: ['c', 'c', 'min']}),
       },
       {id: 'none', fp: [0, 0], label: 'None', detail: 'Bare side rail.'},
     ],
@@ -527,36 +436,8 @@ export const SLOTS = [
         id: 'drum',
         grams: 900,
         label: 'Drum',
-        detail: 'Drum magazine: a short feed tower into a 136 mm drum with a winding key on the right face.',
-        build: ({materials}) =>
-          group(
-            [
-              [
-                profile(
-                  [
-                    [-0.062, 0.03],
-                    [0.014, 0.03],
-                    [0.02, -0.02],
-                    [0.03, -0.07],
-                    [-0.042, -0.07],
-                    [-0.056, -0.02],
-                  ],
-                  0.026,
-                  0.002,
-                ),
-                new T.CylinderGeometry(0.068, 0.068, 0.05, 16).rotateX(Math.PI / 2).translate(-0.008, -0.118, 0),
-              ],
-              materials.polymer,
-            ],
-            [
-              [
-                new T.CylinderGeometry(0.064, 0.064, 0.058, 16).rotateX(Math.PI / 2).translate(-0.008, -0.118, 0),
-                new T.CylinderGeometry(0.018, 0.018, 0.066, 10).rotateX(Math.PI / 2).translate(-0.008, -0.118, 0),
-                box(0.03, 0.006, 0.006, [-0.008, -0.118, 0.035]),
-              ],
-              materials['h-190'],
-            ],
-          ),
+        detail: 'Drum magazine with a short feed tower into a round drum.',
+        build: real('ak74-drum.glb', {nodes: ['11_AKDrumMag'], scale: 0.161309, anchor: ['c', 'max', 'c'], offset: [0, 0.025, 0]}),
       },
       {id: 'none', label: 'None', detail: 'Magazine removed.'},
     ],

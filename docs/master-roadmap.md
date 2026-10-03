@@ -146,10 +146,10 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | Milestone | Target | Packets | Budget | Progress |
 |---|---|---|---|---|
 | **M0** Foundation | v0.3.0 | 10/10 | 130 BU | 100% |
-| **M1** Gun modder: real parts, three weapons | v0.4.0 | 4/11 | 143 BU | 48% |
+| **M1** Gun modder: real parts, three weapons | v0.4.0 | 9/11 | 143 BU | 89% |
 | **M2** Operator roster: Recon, Insurgent, Enforcer | v0.5.0 | 10/11 | 172 BU | 95% |
 | **M3** Integration and sharing | v0.6.0 | 4/6 | 96 BU | 58% |
-| **M4** Weapon roster 2: modern and WW2 | v0.7.0 | 2/7 | 111 BU | 21% |
+| **M4** Weapon roster 2: modern and WW2 | v0.7.0 | 7/7 | 111 BU | 100% |
 | **M5** Production acceptance | v1.0.0 | 3/5 | 59 BU | 61% |
 | **TD** Tech debt (fill windows) | — | 4/4 | 44 BU | 100% |
 | **D** Design docs | — | 3/5 | 59 BU | 61% |
@@ -176,15 +176,15 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 
 | ID | Packet | Size | Status | Needs | Depends on |
 |---|---|---|---|---|---|
-| `WP-A1` | Fetch the chosen Sketchfab sources into assets-incoming/ (node tools/assets/sketchfab-fetch.mjs, needs SKETCHFAB_TOKEN) | XS (3) | ready | owner, net | — |
-| `WP-A2` | Import and normalise attachment parts (magazine, muzzle device, optic) from the CC0 packs | S (8) | planned | bpy | `WP-A1` |
-| `WP-A3` | Wire real parts through glb() for magazines, one muzzle device and one optic | S (8) | planned | — | `WP-A2` |
+| `WP-A1` | Fetch the chosen Sketchfab sources into assets-incoming/ (node tools/assets/sketchfab-fetch.mjs, needs SKETCHFAB_TOKEN) | XS (3) | done | owner, net | — |
+| `WP-A2` | Import and normalise attachment parts (magazine, muzzle device, optic) from the CC0 packs | S (8) | done | bpy | `WP-A1` |
+| `WP-A3` | Wire real parts through glb() for magazines, one muzzle device and one optic | S (8) | done | — | `WP-A2` |
 | `WP-A4` | Generalise finishes/camo to real-asset material names | S (8) | planned | — | `WP-A3` |
-| `WP-A5` | Convert remaining attachment families to real parts (foregrip, grip, stock, side rail, suppressor, brake) | M (20) | planned | bpy | `WP-A3` |
+| `WP-A5` | Convert remaining attachment families to real parts (foregrip, grip, stock, side rail, suppressor, brake) | M (20) | done | bpy | `WP-A3` |
 | `WP-A6` | Rail footprints: parts on one rail cannot overlap (footprints, travel, auto-slide, repair on load) | M (20) | done | — | — |
 | `WP-A7` | New slots: sling mount, charging handle, trigger, dust-cover rail | M (20) | done | — | `WP-A6` |
 | `WP-A8` | Stat consistency pass: ergonomics, recoil, mass, length, ADS, sound signature, hover deltas for every option | S (8) | done | — | — |
-| `WP-A9` | G3A3: import D_U low-poly HK G3 (+ .308 drum, bipod, Z-24 scope), models.js entry | M (20) | ready | bpy | `WP-A1` |
+| `WP-A9` | G3A3: import D_U low-poly HK G3 (+ .308 drum, bipod, Z-24 scope), models.js entry | M (20) | done | bpy | `WP-A1` |
 | `WP-A10` | Weapon-depth exit tests: >=3 weapons, visible compatibility reasons, hover deltas, presets, regression | S (8) | planned | — | `WP-A9`, `WP-A7`, `WP-A8` |
 | `WP-A11` | Handling sounds from cleared CC0 recordings (optional upgrade over synthesis) | M (20) | done | net | — |
 
@@ -219,12 +219,12 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 
 | ID | Packet | Size | Status | Needs | Depends on |
 |---|---|---|---|---|---|
-| `WP-A12` | M16: import TastyTony Low-Poly M16, models.js entry | M (20) | ready | bpy, net | — |
-| `WP-A13` | Mk14 EBR: import TastyTony Low-Poly Mk14 EBR, models.js entry | M (20) | ready | bpy, net | — |
+| `WP-A12` | M16: import TastyTony Low-Poly M16, models.js entry | M (20) | done | bpy, net | — |
+| `WP-A13` | Mk14 EBR: import TastyTony Low-Poly Mk14 EBR, models.js entry | M (20) | done | bpy, net | — |
 | `WP-A14` | Modernised RPK (D_U catalogue, else kitbash from AK-74M/AK-15K) | M (20) | done | bpy | — |
-| `WP-A15` | SIG Spear: import D_U low-poly SIG MCX Spear (free download, no purchase) | S (8) | ready | owner | — |
-| `WP-A16` | StG 44 modernised: D_U low-poly Stg44 as the base | M (20) | ready | bpy, net | — |
-| `WP-A17` | PPSh-41 modernised: D_U low-poly PPSH-41 as the base | M (20) | ready | bpy, net | — |
+| `WP-A15` | SIG Spear: import D_U low-poly SIG MCX Spear (free download, no purchase) | S (8) | done | owner | — |
+| `WP-A16` | StG 44 modernised: D_U low-poly Stg44 as the base | M (20) | done | bpy, net | — |
+| `WP-A17` | PPSh-41 modernised: D_U low-poly PPSH-41 as the base | M (20) | done | bpy, net | — |
 | `WP-A18` | Bren and Chauchat: sources confirmed (TastyTony Low-Poly Bren Gun, Low-Poly Chauchat) | XS (3) | done | owner, net | — |
 
 ### M5 · Production acceptance

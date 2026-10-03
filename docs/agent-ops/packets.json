@@ -212,7 +212,7 @@
    "milestone": "M1",
    "size": "XS",
    "bu": 3,
-   "status": "ready",
+   "status": "done",
    "deps": [],
    "agent": "human",
    "needs": [
@@ -232,7 +232,7 @@
    "milestone": "M1",
    "size": "S",
    "bu": 8,
-   "status": "planned",
+   "status": "done",
    "deps": [
     "WP-A1"
    ],
@@ -255,7 +255,7 @@
    "milestone": "M1",
    "size": "S",
    "bu": 8,
-   "status": "planned",
+   "status": "done",
    "deps": [
     "WP-A2"
    ],
@@ -295,7 +295,7 @@
    "milestone": "M1",
    "size": "M",
    "bu": 20,
-   "status": "planned",
+   "status": "done",
    "deps": [
     "WP-A3"
    ],
@@ -362,7 +362,7 @@
    "milestone": "M1",
    "size": "M",
    "bu": 20,
-   "status": "ready",
+   "status": "done",
    "deps": [
     "WP-A1"
    ],
@@ -682,7 +682,7 @@
    "milestone": "M4",
    "size": "M",
    "bu": 20,
-   "status": "ready",
+   "status": "done",
    "deps": [],
    "agent": "any",
    "needs": [
@@ -701,7 +701,7 @@
    "milestone": "M4",
    "size": "M",
    "bu": 20,
-   "status": "ready",
+   "status": "done",
    "deps": [],
    "agent": "any",
    "needs": [
@@ -739,7 +739,7 @@
    "milestone": "M4",
    "size": "S",
    "bu": 8,
-   "status": "ready",
+   "status": "done",
    "deps": [],
    "agent": "human",
    "needs": [
@@ -757,7 +757,7 @@
    "milestone": "M4",
    "size": "M",
    "bu": 20,
-   "status": "ready",
+   "status": "done",
    "deps": [],
    "agent": "any",
    "needs": [
@@ -776,7 +776,7 @@
    "milestone": "M4",
    "size": "M",
    "bu": 20,
-   "status": "ready",
+   "status": "done",
    "deps": [],
    "agent": "any",
    "needs": [

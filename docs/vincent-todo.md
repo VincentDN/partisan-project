@@ -9,7 +9,8 @@ Things only the project owner can do. Agents cannot, or must not, do these. The 
 ## Unblocks the weapon work
 - [ ] **Network access for agents** (or do WP-A1 yourself). The sandbox blocks the model sites. To let an agent download weapons, edit the cloud environment's network access and allow: `kenney.nl`, `quaternius.com`, `poly.pizza`, `opengameart.org`, `itch.io` and their download CDNs. Sketchfab needs a login, so those stay manual.
 - [ ] **Foley archive.** Download `foley-cuts-unshipped.zip` from the `archive/foley-cuts` branch (https://github.com/VincentDN/partisan-project/tree/archive/foley-cuts), then delete the branch.
-- [ ] **WP-A1, CC0 packs.** Download the weapon packs listed in `docs/assets/REGISTER.md` into `assets-incoming/`. This unblocks WP-A2 to A5 (real attachments) and A9 to A18 (more weapons).
+- [ ] **Re-run the Sketchfab downloader for `aks74` and `pallet`** (the only two of 39 missing from `inbound/sketchfab/`), push them, and ask an agent to import them.
+- [x] **WP-A1, CC0 packs** (done: the Sketchfab batch is imported, see ADR 0013). Was: Download the weapon packs listed in `docs/assets/REGISTER.md` into `assets-incoming/`. This unblocks WP-A2 to A5 (real attachments) and A9 to A18 (more weapons).
 - [ ] **WP-A15, SIG Spear.** Decide: buy a model, or ship a placeholder.
 - [ ] **WP-A18, Bren and Chauchat.** Confirm which sources are acceptable.
 
