@@ -34,6 +34,12 @@ export const ITEMS = [
     help: 'Top-down missions: convoy ambush, compound assault, cave defence. Loot the army, equip your squad. A test bed for the enemy AI.',
   },
   {
+    label: 'Tactical 2.5-D',
+    href: '../convoy/sprites.html',
+    icon: px('1111110001101011000111111'),
+    help: 'Test. The same missions drawn in the RimWorld style: paper-doll rebels, sprite guns and vehicles. Dress your squad.',
+  },
+  {
     label: 'Advanced animations',
     href: '../intro/advanced.html',
     icon: px('1111101010111110101011111'),

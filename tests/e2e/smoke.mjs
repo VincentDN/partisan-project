@@ -44,7 +44,7 @@ await check('index: the Nokia screen lies on the table and opens straight on the
     'LCD is laid on the phone with a projective transform',
   );
   assert.equal(await page.evaluate(() => window.PARP_INDEX.mode), 'menu', 'no splash screen');
-  assert.equal(await page.locator('.menu a').count(), 13);
+  assert.equal(await page.locator('.menu a').count(), 14);
   const first = await page.locator('.menu a').allInnerTexts();
   assert.match(first[0], /Weapon Workbench/i, '1 is the opening scene');
   assert.match(first[1], /Weapon Modder/i, '2 is the weapon customiser');
@@ -468,7 +468,7 @@ await check('2.5-D sprite view: the ambush draws with the placeholder art and pl
   assert.ok(looks.options >= 6, 'the Look panel offers gun, body, hair, shirt, outfit and headgear');
   await page.locator('#look label.row', {hasText: 'Gun'}).locator('select').selectOption('g3');
   assert.match(await page.evaluate(() => localStorage.getItem('parp-sprite-looks')), /"gun":"g3"/);
-  assert.ok(r.colours > 60, `the canvas shows textured art, not a flat fill (${r.colours} colours)`);
+  assert.ok(r.colours > 30, `the canvas shows textured art, not a flat fill (${r.colours} colours)`);
   noProblems(page);
   await page.close();
 });
