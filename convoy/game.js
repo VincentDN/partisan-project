@@ -7,6 +7,7 @@ import {mountTopBar} from '../shared/topbar.js';
 import {Sim} from './sim.js';
 import {WEAPONS, ROLES} from './weapons.js';
 import {LEVELS, MISSIONS, DEFAULT_LEVEL} from './levels/index.js';
+import {createSquadPicker} from './squad-picker.js';
 import {bestBelief} from './ai.js';
 
 mountTopBar({title: 'Partisan Tactical', scene: 'viewer'});
@@ -227,14 +228,13 @@ function unitMesh(u) {
     head.position.y = 0.85;
     for (const m of Object.values(g.userData.weapons)) m.visible = false; // the DShK is on the vehicle
   }
-  if (u.id === 'player') {
+  if (u.side === 'partisan') {
     const ring = new T.Mesh(new T.RingGeometry(0.55, 0.7, 20), new T.MeshBasicMaterial({color: 0xef8f39}));
     ring.rotation.x = -Math.PI / 2;
     ring.position.y = 0.04;
     g.add(ring);
-  } else if (u.side === 'partisan') {
-    // selection ring: shown while the teammate is selected for orders
-    const sel = new T.Mesh(new T.RingGeometry(0.6, 0.72, 20), new T.MeshBasicMaterial({color: 0xc8e0a0}));
+    g.userData.controlRing = ring;
+    const sel = new T.Mesh(new T.RingGeometry(0.75, 0.88, 20), new T.MeshBasicMaterial({color: 0xc8e0a0}));
     sel.rotation.x = -Math.PI / 2;
     sel.position.y = 0.04;
     sel.visible = false;
@@ -331,6 +331,8 @@ function newGame() {
   started = false;
   selected = [];
   setPaused(false);
+  clearInput();
+  picker.sync();
   $('#card-title').textContent = level.title;
   $('#card-text').textContent = level.brief;
   $('#start').textContent = 'Start';
@@ -378,6 +380,12 @@ const aim = new T.Vector3(),
   groundPlane = new T.Plane(new T.Vector3(0, 1, 0), 0);
 let hasAim = false;
 addEventListener('keydown', e => {
+  if (picker.key(e)) return;
+  if (e.key.toLowerCase() === 'q' && started && !sim.outcome) {
+    e.preventDefault();
+    if (!e.repeat) picker.open();
+    return;
+  }
   if (e.target.closest?.('aside, nav')) return;
   const k = e.key.toLowerCase();
   if (['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'shift', ' '].includes(k)) e.preventDefault();
@@ -438,8 +446,7 @@ function setPaused(on) {
 }
 addEventListener('keyup', e => keys.delete(e.key.toLowerCase()));
 addEventListener('blur', () => {
-  keys.clear();
-  fire = false;
+  clearInput();
 });
 renderer.domElement.addEventListener('pointermove', e => {
   const r = renderer.domElement.getBoundingClientRect();
@@ -447,19 +454,20 @@ renderer.domElement.addEventListener('pointermove', e => {
   hasAim = true;
 });
 renderer.domElement.addEventListener('pointerdown', e => {
-  if (e.button === 0 && started) fire = true;
+  if (e.button === 0 && started && !sim.control.pending) fire = true;
 });
 addEventListener('pointerup', () => (fire = false));
 renderer.domElement.addEventListener('contextmenu', e => {
   e.preventDefault();
   // right-click: attack the enemy under the cursor, otherwise move there
-  const point = started && !sim.outcome && selected.length ? aimPoint() : null;
+  const point = started && !sim.outcome && !sim.control.pending && selected.length ? aimPoint() : null;
   if (!point) return;
   const t = enemyNear(point);
   giveOrder(t ? {type: 'attack', target: t.id} : {type: 'move', x: point.x, z: point.z});
 });
 
 function input() {
+  if (sim.control.pending) return {};
   const has = k => keys.has(k);
   const mx = (has('d') || has('arrowright') ? 1 : 0) - (has('a') || has('arrowleft') ? 1 : 0);
   const mz = (has('s') || has('arrowdown') ? 1 : 0) - (has('w') || has('arrowup') ? 1 : 0);
@@ -476,6 +484,7 @@ function input() {
 // ---------- panel ----------
 $('#start').onclick = () => (sim.outcome ? newGame() : start());
 $('#restart').onclick = () => newGame();
+$('#switch-rebel').onclick = () => picker.open();
 function toggleAi(on = !aiView) {
   aiView = on;
   aiGroup.visible = on;
@@ -574,7 +583,8 @@ function updateOrders() {
   }
   orderGeo.setDrawRange(0, n * 2);
   orderGeo.attributes.position.needsUpdate = true;
-  for (const [u, g] of units) if (g.userData.sel) g.userData.sel.visible = selected.includes(u.id) && u.alive;
+  for (const [u, g] of units)
+    if (g.userData.sel) g.userData.sel.visible = (selected.includes(u.id) || picker.hovered === u.id) && u.alive && u !== sim.player;
 }
 
 function updateAi() {
@@ -613,6 +623,8 @@ function updateAi() {
 function updateHud() {
   const p = sim.player,
     s = sim.stats();
+  $('#switch-rebel').disabled =
+    !started || !!sim.outcome || !!sim.control.pending || sim.time < sim.control.readyAt || teammates().length === 0;
   const status = sim.outcome ? (sim.outcome === 'won' ? 'Mission accomplished' : 'Mission failed') : !sim.alarm ? 'Quiet' : 'Contact';
   const mark = {active: '○', locked: '·', done: '✓', failed: '✗'};
   const objectives = sim.objectives
@@ -620,10 +632,11 @@ function updateHud() {
     .map(o => `<span class="obj ${o.state}">${mark[o.state]} ${o.label}${o.optional ? ' <i>(optional)</i>' : ''}</span>`)
     .join('<br>');
   const ORDER = {hold: 'holding', follow: 'following', move: 'moving', attack: 'attacking', cover: 'covering'};
-  const squadLine = teammates()
+  const squadLine = sim.units
+    .filter(u => u.side === 'partisan')
     .map(
       u =>
-        `${selected.includes(u.id) ? '<b>▸ ' : ''}${u.name}: ${ORDER[u.order?.type] || 'holding'}${u.state === 'duck' ? ', pinned' : ''}${selected.includes(u.id) ? '</b>' : ''}`,
+        `${selected.includes(u.id) ? '<b>▸ ' : ''}${u.name} (${Math.max(0, Math.ceil(u.hp))} HP): ${!u.alive ? 'down' : u === p ? 'YOU' : ORDER[u.order?.type] || 'holding'}${u.state === 'duck' ? ', pinned' : ''}${selected.includes(u.id) ? '</b>' : ''}`,
     )
     .join('<br>');
   const searching = p.searching
@@ -677,6 +690,7 @@ function draw() {
   for (const u of sim.units) if (!units.has(u)) units.set(u, unitMesh(u)); // reinforcements and waves arrive mid-mission
   for (const [u, g] of units) {
     g.visible = !u.escaped && u.state !== 'mounted';
+    if (g.userData.controlRing) g.userData.controlRing.visible = u === sim.player && u.alive;
     g.position.set(u.x, u.state === 'turret' || (u.role === 'turret' && !u.alive) ? u.vehicle.h * 1.2 : 0, u.z);
     if (u.role !== 'turret') for (const [w, m] of Object.entries(g.userData.weapons)) m.visible = w === u.weapon;
     g.rotation.y = -u.facing;
@@ -733,7 +747,22 @@ function draw() {
   const tx = Math.max(B.minX + 12, Math.min(B.maxX - 12, p.x)),
     tz = Math.max(B.minZ + 6, Math.min(B.maxZ - 6, p.z + 12)); // look a little south of you, toward the road
   const k = reduceMotion ? 1 : 0.08;
-  camera.position.lerp(v3.set(tx, 44, tz + 24), k);
+  let cx = tx,
+    cz = tz,
+    height = 44;
+  if (sim.control.pending && !reduceMotion) {
+    const alive = sim.units.filter(u => u.side === 'partisan' && u.alive);
+    const xs = alive.map(u => u.x),
+      zs = alive.map(u => u.z);
+    const minX = Math.min(...xs),
+      maxX = Math.max(...xs),
+      minZ = Math.min(...zs),
+      maxZ = Math.max(...zs);
+    cx = (minX + maxX) / 2;
+    cz = (minZ + maxZ) / 2;
+    height = Math.max(50, (maxZ - minZ + 18) * 1.6, ((maxX - minX + 18) / camera.aspect) * 1.6);
+  }
+  camera.position.lerp(v3.set(cx, height, cz + 24), k);
   camera.lookAt(camera.position.x, 0, camera.position.z - 24);
   sun.position.set(camera.position.x - 20, 50, camera.position.z - 30);
   sun.target.position.set(camera.position.x, 0, camera.position.z - 24);
@@ -742,6 +771,7 @@ function draw() {
   updateAi();
   updateLabels();
   updateHud();
+  picker.sync();
 }
 
 function resize() {
@@ -754,12 +784,37 @@ function resize() {
 addEventListener('resize', resize);
 new ResizeObserver(resize).observe(stageEl);
 
+function clearInput() {
+  keys.clear();
+  fire = false;
+  reload = false;
+  wantWeapon = null;
+}
+const picker = createSquadPicker({
+  root: $('#squad-picker'),
+  getSim: () => sim,
+  project,
+  reducedMotion: reduceMotion,
+  onOpen: open => {
+    clearInput();
+    if (open) selected = [];
+    else stageEl.focus({preventScroll: true});
+  },
+  onChange: () => {
+    clearInput();
+    selected = [];
+  },
+});
+addEventListener('visibilitychange', clearInput);
+
 let acc = 0,
   last = performance.now();
 const STEP = 1 / 60;
 renderer.setAnimationLoop(() => {
   const now = performance.now();
-  acc = Math.min(acc + (now - last) / 1000, 0.25);
+  const elapsed = Math.min((now - last) / 1000, 0.25);
+  if (started && !document.hidden) picker.update(elapsed);
+  acc = Math.min(acc + elapsed * picker.scale, 0.25);
   last = now;
   if (started && !paused && !document.hidden)
     while (acc >= STEP) {
@@ -786,5 +841,6 @@ window.PARP_CONVOY = {
   start,
   newGame,
   toggleAi,
+  openSwap: () => picker.open(),
   ready: true,
 };

@@ -6,7 +6,7 @@ The campaign map becomes a **retro handheld-RPG island map** (the Pokémon regio
 landmass shaded in height bands, flat blue sea, yellow routes, red-roofed towns.
 
 Milestone **V** in `docs/agent-ops/packets.json`; packets `WP-V1` to `WP-V20`, none bigger than M (20 BU), about 250 BU in
-total. Every decision and its reasoning is in [design-decisions/I-graphics.md](design-decisions/I-graphics.md)
+total. Every decision and its reasoning is in [design-decisions/J-graphics.md](design-decisions/J-graphics.md)
 (IDs `TAC-I-nn`). A packet is not done until its decisions are logged there.
 
 References (on the moodboard in the Game Design Doc):
@@ -21,7 +21,7 @@ References (on the moodboard in the Game Design Doc):
 |---|---|
 | The whole simulation, AI, levels-as-data, objectives, orders ([TAC-X-02](design-decisions/00-principles.md)) | The shooter's renderer: three.js scene → Canvas 2-D sprite renderer |
 | The Nokia-green side panels, comms log, HUD | Characters, vehicles, terrain, cover, effects, lighting |
-| The Workbench, Operator Customiser, Asset Viewer, Art Style Lab (they stay 3-D on purpose, [TAC-I-25](design-decisions/I-graphics.md)) | The campaign map (a new retro island renderer) |
+| The Workbench, Operator Customiser, Asset Viewer, Art Style Lab (they stay 3-D on purpose, [TAC-J-25](design-decisions/J-graphics.md)) | The campaign map (a new retro island renderer) |
 
 Because the simulation never touches the renderer, this runs **in parallel** with the gameplay roadmap
 ([tactical-roadmap.md](tactical-roadmap.md)). WP-V3 gets the existing convoy mission playable in 2-D with placeholder
@@ -83,7 +83,7 @@ Sizes: XS 3, S 8, M 20 budget units.
 
 ## Placeholder art
 
-The owner's RimWorld-style placeholder set (`inbound/Placeholder Assets/`) covers most of sections B and C as interim art: paper-doll layers, 31 weapon sprites, ruins and wrecks, wall atlases, terrain textures and plants. What is usable, what is missing and how each packet uses it is in [placeholder-assets.md](placeholder-assets.md); decisions TAC-I-28 to TAC-I-31.
+The owner's RimWorld-style placeholder set (`inbound/Placeholder Assets/`) covers most of sections B and C as interim art: paper-doll layers, 31 weapon sprites, ruins and wrecks, wall atlases, terrain textures and plants. What is usable, what is missing and how each packet uses it is in [placeholder-assets.md](placeholder-assets.md); decisions TAC-J-28 to TAC-J-31.
 
 ## Order of work
 
@@ -102,8 +102,8 @@ The owner's RimWorld-style placeholder set (`inbound/Placeholder Assets/`) cover
 
 ## Risks
 
-- **Art volume.** Dozens of sprites with animations. Mitigation: procedural paper dolls first (TAC-I-09), atlas that lets hand-drawn art replace any layer later, and render-to-sprite for weapons and vehicles.
+- **Art volume.** Dozens of sprites with animations. Mitigation: procedural paper dolls first (TAC-J-09), atlas that lets hand-drawn art replace any layer later, and render-to-sprite for weapons and vehicles.
 - **Looking generic.** Procedural sprites can read as clip art. Mitigation: the art bible's outline and palette rules, review against the four references in the Sprite Lab, and a swap path to hand-drawn or generated layers.
-- **Two looks in one product** (3-D Workbench, 2-D shooter). Mitigation: shared palette, shared outline, and baked weapon sprites so a rifle looks like the same rifle in both (TAC-I-25).
+- **Two looks in one product** (3-D Workbench, 2-D shooter). Mitigation: shared palette, shared outline, and baked weapon sprites so a rifle looks like the same rifle in both (TAC-J-25).
 - **Phone performance.** Canvas 2-D is cheap for hundreds of sprites, but lighting and particles are not. Mitigation: chunk caches, budgets and a test (WP-V19).
 - **Renderer switch regressions.** Mitigation: the interface (V2), the unchanged simulation fingerprint, and the parity checklist (V18).

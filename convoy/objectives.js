@@ -11,7 +11,7 @@
 //   extract   {zone}               every living partisan stands in zone (usually `after` the main goal)
 //
 // An objective is 'locked' until everything in `after` is done, then 'active', then 'done' or 'failed'.
-// The mission is won when every non-optional objective is done; lost when the player dies or a non-optional fails.
+// The mission is won when every non-optional objective is done; lost when every rebel is down or a non-optional fails.
 import {inBox} from './sim.js';
 
 const squad = sim => sim.units.filter(u => u.side === 'partisan' && u.alive);
@@ -55,7 +55,7 @@ export function evaluate(sim) {
       o.doneAt = sim.time;
     }
   }
-  if (!sim.player.alive) return 'lost';
+  if (!squad(sim).length) return 'lost';
   const required = sim.objectives.filter(o => !o.optional);
   if (required.some(o => o.state === 'failed')) return 'lost';
   const goals = required.filter(o => o.type !== 'protect');

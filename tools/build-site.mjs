@@ -34,6 +34,8 @@ const ALLOW = [
   'outbound',
 ];
 // Layered PSDs stay in the repository; outbound/flatten-psd.py writes a PNG beside each one and the build ships those.
+// The Codex workbench study links to repository Markdown, which is not published.
+const SKIP_DIRS = [/^outbound\/tlou2-workbench-study\//];
 const SKIP_FILES = [/\.psd$/i, /\.manifest\.json$/, /\.md$/, /\.test\.m?js$/, /\.DS_Store$/];
 
 fs.rmSync(out, {recursive: true, force: true});
@@ -46,7 +48,7 @@ function copy(rel) {
     for (const e of fs.readdirSync(src)) copy(path.join(rel, e));
     return;
   }
-  if (SKIP_FILES.some(re => re.test(rel))) return;
+  if (SKIP_FILES.some(re => re.test(rel)) || SKIP_DIRS.some(re => re.test(rel))) return;
   const dest = path.join(out, rel);
   fs.mkdirSync(path.dirname(dest), {recursive: true});
   fs.copyFileSync(src, dest);

@@ -4,6 +4,22 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 ## [Unreleased]
 
+### Added · 2026-10-03 (checkpoint)
+- Whole-squad control: change the active rebel without copying health, ammunition, reloads or orders;
+  the mission fails on all-down rather than the first rebel's death.
+- Q/button squad picker with slow-motion framing, keyboard choices, forced death selection and reduced-motion path.
+  UI implementation is checkpointed; normal-motion/visual/accessibility verification remains open.
+- Recovered original TLOU2 workbench analysis, illustrated HTML, reference board and six screenshots in
+  `outbound/tlou2-workbench-study/`, excluded from deployment.
+
+### Documentation · 2026-10-03
+- Expanded the Partisan Tactical roadmap from the inspected shooter into staged extraction PvE: finite gear,
+  looting, timed exits, permanent equipment loss, transactional saves, recovery runs and repeatable raids.
+- Reordered the work queue to prove the convoy extraction loop before compound/cave content; preserved completed
+  S1–S4 and added explicit acceptance gates and optional, owner-gated online research.
+- Separated campaign equipment ownership from catalogue unlocks and documented browser interruption rules.
+- Roadmap reconciled with Claude’s main at 8f30cf1; implementation above is on the working branch, not deployed.
+
 ### Added (Sketchfab batch, WP-A2/A3/A5/A9/A12/A13/A15 to A18)
 - **Nine new rifles** in the Weapon Modder and the Operator Customiser: HK G3A3, M16A1, Mk 14 EBR, SIG Spear, StG 44, PPSh-41, Bren, Chauchat, and the real RPK 7.62×39 (replaces the kitbash).
 - **Real attachment parts** replace the code-built shapes: muzzle brake and suppressor, micro dot, EOTech, ZF-4 and G3 scopes, flip-up sight, vertical, angled and hand-stop grips, weapon light, laser, light and laser combo, drum magazines. New options: bipod, GP-25 grenade launcher, PMAG drum.
@@ -13,7 +29,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 ## [0.3.1] · 2026-10-01
 
 ### Added (graphics roadmap)
-- **Graphics roadmap** (`docs/graphics-roadmap.md`, milestone V, WP-V1 to V20, about 250 budget units): the shooter moves from 3-D to RimWorld-style 2.5-D top-down sprites (outlined, layered paper-doll people, long shadows, 2.5-D structures, lighting, effects) and the campaign gets a retro handheld-RPG island map. The simulation is untouched, so it runs in parallel with the gameplay roadmap. The 27 graphics decisions are in `docs/design-decisions/I-graphics.md`. WP-S7 (level visuals) is retired in favour of it.
+- **Graphics roadmap** (`docs/graphics-roadmap.md`, milestone V, WP-V1 to V20, about 250 budget units): the shooter moves from 3-D to RimWorld-style 2.5-D top-down sprites (outlined, layered paper-doll people, long shadows, 2.5-D structures, lighting, effects) and the campaign gets a retro handheld-RPG island map. The simulation is untouched, so it runs in parallel with the gameplay roadmap. The 27 graphics decisions are in `docs/design-decisions/J-graphics.md`. WP-S7 (level visuals) is retired in favour of it.
 - Moodboard: layered 2-D armour sprite sheets, a RimWorld-style top-down map and a retro overworld map.
 
 ### Changed (design doc)

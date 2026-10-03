@@ -1,31 +1,40 @@
 # Agent state
 
-**Do not spend tokens on credits or licences** (express instruction, see AGENTS.md). Small on purpose. Read this first, then `AGENTS.md`. Plan and sizes: [`README.md`](README.md). Work: [`packets.json`](packets.json).
+Read `AGENTS.md` first. Work queue: [packets.json](packets.json); full plan: [tactical roadmap](../tactical-roadmap.md).
 
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-02 12:44 UTC · agent · (no packet) · partial**
+**2026-10-03 · Codex · WP-S20 done / WP-S21 verification pending**
 
-- Branch `claude/friendly-dijkstra-4ky9w6` at `c20d7b1`; **34 uncommitted file(s)** (commit before stopping): M .github/workflows/pages.yml,  M AGENTS.md,  M CHANGELOG.md,  M CLAUDE.md,  M README.md,  D assets/REGISTER.md.
-- Last commits: c20d7b1 Fix the M0 test now that Pages is live · 7da5602 Update packet statuses: Pages live, foley restored · bffb980 Chiptune cover with synced crossfade on the Nokia index, blips +50%, game design doc section 'Low poly and loud'
-- What happened: (write one or two sentences)
-- Next step: (name the exact next action, file and command)
+- Branch: `codex/extraction-roadmap`, based on Claude’s `main` at `8f30cf1`. Do not overwrite Claude’s S20–S26 plans.
+- Owner requested a checkpoint commit of all work and a roadmap for later; no merge or deployment requested.
+- Built S20: active-rebel alias, retained per-rebel state, AI handoff, forced choice, all-down loss; seven focused tests.
+- S21 interface exists: Q/button, slow-motion framing, projected choices, 1–4, cooldown, forced timeout, reduced-motion path.
+- Verified earlier: 142 tests, build/check, lint/typecheck and reduced-motion browser journey passed. Checkpoint checks rerun below.
+- Normal-motion test initially waited for moving buttons to become stable; pointer actions now bypass that animation wait.
+  Its rerun was interrupted and has no retained result. Do not claim full S21, visual review or axe acceptance yet.
+- Recovered byte-for-byte study from `vincentdenil-site` commit `042383bbaffa405f708b513154eddb04fe80bf7e`:
+  `outbound/tlou2-workbench-study/` (Markdown, illustrated HTML, board, six screenshots and manifest). Not deployed.
+- Roadmap/packets now define finite loot, timed extraction, save transactions, recovery economy, maps, progression and gated online work.
 <!-- handoff:end -->
 
-## Active this week
+## Resume here
 
-| Packet | Owner | Status |
-|---|---|---|
-| `WP-A1` download CC0 packs | owner | ready |
-| `WP-C1` skeleton contract + tests | any | ready (fits 10 BU) |
-| `WP-T4` Workbench unit tests | any | ready (fill-in) |
+1. Fetch latest main and inspect changes before reconciling this branch. Preserve both agents’ work.
+2. Run `npm ci` if needed. Install Chromium, then run `CHROMIUM=/path/to/chrome node tests/e2e/squad-control.mjs`.
+   The previously working browser was Chromium 134 / Playwright build 1161; the default v1243 download returned a corrupt archive.
+   Do not change locked project dependencies merely to select a test browser.
+3. Inspect the picker visually in normal/reduced motion, keyboard and touch; check clumped/distant rebels and all-down during selection.
+   Relevant files: `convoy/squad-picker.js`, `convoy/squad-control.js`, `convoy/game.js`, `tests/e2e/squad-control.mjs`.
+4. Run `npm run test:a11y`, relevant smoke tests, `npm test`, `npm run build`, `npm run check`, lint/typecheck.
+   Mark S21 done only once its acceptance is met, update `G-squad-play.md` and regenerate the packet table.
+5. Continue S28 (small module boundaries), S16 (headless metrics), S8 (item instances) and S29 (persistence transactions).
+   The first extraction gate is S35. New maps follow that gate; live multiplayer remains behind owner decisions S36/S41.
 
-## Blockers
+## Known limits
 
-- Pages is not live until the branch is merged to `main` and Pages source is set to *GitHub Actions* (`WP-F8`).
-- `WP-A15` SIG Spear: owner decision (pay or placeholder).
-
-## Decisions since the last review
-
-- 2026-10-01: project renamed Partisan Project; deployed from an allowlist build, not the repo root (ADR 0003).
+- This checkpoint is squad-control groundwork, not a finished extraction loop: ammo/stash/loot/persistence still need implementation.
+- Squad-switch sound filtering is deferred; existing medical/permanent loss rules are planned, not implemented.
+- Local browser saves cannot serve as trusted online inventory. Practice and campaign ownership must stay separate.
+- No usage-meter values were available; no budget calibration was invented.

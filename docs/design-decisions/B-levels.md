@@ -142,7 +142,7 @@ Built on [A-foundations.md](A-foundations.md) and designed around swapping ([G-s
 ## Visuals (WP-S7)
 
 ### TAC-B-12 · Roof cut-away indoors, darkness and lamp light in the cave, searchlight and muzzle flash at night
-- Status: superseded by TAC-I-15 and TAC-I-18 (delivered by WP-V9 and WP-V12 in the 2-D renderer)  ·  Packet: WP-S7 (retired)
+- Status: superseded by TAC-J-15 and TAC-J-18 (delivered by WP-V9 and WP-V12 in the 2-D renderer)  ·  Packet: WP-S7 (retired)
 - Decision: Roofs fade out when a rebel is inside; the cave is dark with a small light around each rebel and the lamps;
   muzzle flashes briefly light the scene; the MRAP's searchlight is a cone.
 - Why: Readability from above is the constraint (pillar 2). Lighting gives mood and tells you what you can see.

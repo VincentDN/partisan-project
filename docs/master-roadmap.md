@@ -1,6 +1,6 @@
 # Partisan Project master roadmap
 
-**Partisan Project** · version 0.3.0 · updated 1 October 2026 · single maintained roadmap
+**Partisan Project** · version 0.3.0 · updated 3 October 2026 · master index and generated work queue
 
 This document supersedes the four earlier plans (customiser, Partisan, content roster, workbench animation) and
 the 30 September 2026 master roadmap, which is kept for traceability in
@@ -121,15 +121,26 @@ register, guided first run, release checklist. Targets: 60 fps desktop / 30 fps 
 
 ### 5.6 Partisan Tactical (the top-down shooter)
 
-The shooter becomes the demo of the whole loop: three missions (convoy ambush, compound assault, cave hideout defence),
-looting from soldiers and vehicles, a squad inventory to equip your people, and unlocks that carry stolen weapons and
-parts into the Weapon Modder and the Operator Customiser. You play the whole squad (swap rebels by button or on death), and rebels level up on equipment-gated upgrade trees. Full plan and sections: [tactical-roadmap.md](tactical-roadmap.md). Every decision and its reasoning: [design-decisions/](design-decisions/README.md).
+**3 October review:** S1–S4 are implemented on main: level data, objectives, squad orders and new AI behaviours.
+The current convoy is still a disposable combat scenario. The next goal is a complete **persistent extraction loop
+on that map**: risk owned kit, search bodies/cargo, survive a timed exit, bank once, and redeploy with recovered gear.
+Defeat, timeout and abandonment lose deployed equipment. More maps follow that playable gate.
+
+The [tactical roadmap](tactical-roadmap.md) now contains the code audit, loss rules, save/transaction design,
+packet dependencies, survival/economy work, three-mission progression, customiser integration and acceptance matrix.
+Physical gear and permanent catalogue discoveries are separate. The initial browser release is solo PvE with AI
+squadmates; authoritative co-op and PvPvE are gated research, not existing features or v0.8.0 promises.
+Start with WP-S20/WP-S21 (whole-squad control), then WP-S28 and WP-S16, then WP-S8/WP-S29. Milestone S totals include optional online research and are relative
+BU estimates, not dates or subscription-window guarantees. This tactical work supersedes the older horizon wording
+above only for the now-existing shooter; other modules retain their own priorities.
+
+Claude’s merged WP-S20–S26 remain: switch between rebels, lose only on all-down, then per-rebel XP and equipment-gated branches. Their decision log is retained.
 
 ### 5.7 Graphics (2.5-D sprites and the retro overworld)
 
 The shooter's world becomes RimWorld-style 2.5-D top-down sprites (thick outlines, paper-doll people, long shadows) and the
 campaign map a retro handheld-RPG island map. The simulation is untouched, so it runs in parallel with the gameplay work.
-Plan: [graphics-roadmap.md](graphics-roadmap.md) (milestone V, WP-V1 to V20). Reasoning: [design-decisions/I-graphics.md](design-decisions/I-graphics.md).
+Plan: [graphics-roadmap.md](graphics-roadmap.md) (milestone V, WP-V1 to V20). Reasoning: [design-decisions/J-graphics.md](design-decisions/I-graphics.md).
 
 ### 5.5 Design documentation
 
@@ -154,7 +165,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | **TD** Tech debt (fill windows) | — | 4/4 | 44 BU | 100% |
 | **D** Design docs | — | 3/5 | 59 BU | 61% |
 | **H27** 2027 horizon | — | 0/3 | 48 BU | 0% |
-| **S** Partisan Tactical: three missions, looting, inventory, unlocks | v0.8.0 | 4/26 | 359 BU | 16% |
+| **S** Partisan Tactical: extraction PvE, campaign and gated online research | v0.8.0 | 6/42 | 645 BU | 13% |
 | **V** Graphics: 2.5D top-down sprites and the retro overworld | v0.9.0 | 0/20 | 251 BU | 0% |
 
 ### M0 · Foundation
@@ -237,7 +248,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-Q5` | Release checklist and v1.0.0 tag for the 2026 demo | S (8) | done | — | `WP-Q1` |
 | `WP-Q6` | Manual accessibility pass: screen reader (NVDA/VoiceOver), zoom 200 %, high-contrast mode, a real phone | XS (3) | planned | owner | `WP-Q1` |
 
-### S · Partisan Tactical: three missions, looting, inventory, unlocks
+### S · Partisan Tactical: extraction PvE, campaign and gated online research
 
 | ID | Packet | Size | Status | Needs | Depends on |
 |---|---|---|---|---|---|
@@ -245,28 +256,44 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-S2` | Objectives and outcomes: eliminate, reach, destroy, steal, hold, protect, extract; debrief screen | S (8) | done | — | `WP-S1` |
 | `WP-S3` | Squad orders: select teammates, follow/hold/move/attack/cover, tactical pause, order markers | M (20) | done | — | `WP-S1` |
 | `WP-S4` | AI behaviours for new scenarios: guard posts, patrols, alarm propagation, radio reinforcements, bounding attack waves | S (8) | done | — | `WP-S1` |
-| `WP-S5` | Level 2 Compound assault: walled compound, towers, armoury cache, radio mast, stealth then alarm, extract | M (20) | planned | — | `WP-S2`, `WP-S4`, `WP-S20` |
-| `WP-S6` | Level 3 Cave hideout defence: cave, tunnels, fallback chamber, night, three attack waves, hold until dawn | M (20) | planned | — | `WP-S2`, `WP-S3`, `WP-S4`, `WP-S20` |
+| `WP-S5` | Level 2 Compound assault: walled compound, towers, armoury cache, radio mast, stealth then alarm, extract | M (20) | planned | — | `WP-S35`, `WP-S32`, `WP-S4` |
+| `WP-S6` | Level 3 Cave hideout defence: cave, tunnels, fallback chamber, night, three attack waves, hold until dawn | M (20) | planned | — | `WP-S35`, `WP-S31`, `WP-S32`, `WP-S3`, `WP-S4` |
 | `WP-S7` | Level visuals (retired: delivered by WP-V9 structures and WP-V12 lighting in the 2-D renderer) | S (8) | blocked | — | — |
-| `WP-S8` | Item model and inventory core: weapons with attachments, ammo, grenades, gear; loadout slots; squad stash; versioned saves | M (20) | planned | — | `WP-S1` |
+| `WP-S8` | Inventory domain: unique items, ownership, loadout slots, compatible magazines, capacity and schema | M (20) | planned | — | `WP-S28` |
 | `WP-S9` | Looting in levels: soldiers drop kit, vehicle cargo, hold E to search (exposed), carry limits, order a teammate to loot | M (20) | planned | — | `WP-S8`, `WP-S2` |
-| `WP-S10` | Inventory UI: field loot panel, between-mission squad screen, attachment install with compatibility reasons, stat deltas | M (20) | planned | — | `WP-S8`, `WP-S9` |
-| `WP-S11` | Loadouts drive the fight: teammate AI uses equipped weapon and attachments, ammo consumption, sidearm fallback | S (8) | planned | — | `WP-S10`, `WP-S3` |
-| `WP-S12` | Campaign flow: three missions, persistent squad, stash and wounds, briefing and debrief, recruit, reset | S (8) | planned | — | `WP-S2`, `WP-S10`, `WP-S20` |
-| `WP-S13` | Unlocks into the Weapon Modder: first extraction unlocks; locked parts greyed with where to steal them; ?unlock=all | M (20) | planned | — | `WP-S12` |
+| `WP-S10` | Inventory UI: field loot panel, between-mission squad screen, attachment install with compatibility reasons, stat deltas | M (20) | planned | — | `WP-S8`, `WP-S9`, `WP-S29` |
+| `WP-S11` | Finite combat loadouts: player and AI use owned weapons, attachments, partial magazines and consumable ammunition | M (20) | planned | — | `WP-S8`, `WP-S3` |
+| `WP-S12` | Campaign controller: briefing, durable deployment, debrief settlement, squad availability, recruit and reset | M (20) | planned | — | `WP-S29`, `WP-S30`, `WP-S10`, `WP-S11` |
+| `WP-S13` | Unlocks into the Weapon Modder: first extraction unlocks; locked parts greyed with where to steal them; ?unlock=all | M (20) | planned | — | `WP-S12`, `WP-S33` |
 | `WP-S14` | Unlocks into the Operator Customiser: looted helmets, vests, NVGs, patches | S (8) | planned | — | `WP-S13` |
-| `WP-S15` | AI v2: investigate noises and bodies, search patterns, squad morale (fall back, surrender), AI timeline view | M (20) | planned | — | `WP-S4` |
-| `WP-S16` | AI tuning harness: headless runs over seeds x awareness x player styles per level, report table | S (8) | planned | — | `WP-S1` |
-| `WP-S17` | Tactical tests and performance: smoke per level, inventory and unlock e2e, phone budget, CI under 10 min | S (8) | planned | — | `WP-S13`, `WP-S6` |
-| `WP-S18` | Touch controls: twin-stick, tap to loot, long-press orders | S (8) | planned | — | `WP-S3`, `WP-S10` |
-| `WP-S19` | Docs: design doc sections (scenarios, loot loop, unlock economy), changelog, index entry renamed Partisan Tactical | XS (3) | planned | — | `WP-S13` |
-| `WP-S20` | Play as the whole squad: active-rebel pointer, loss when every rebel is down, forced swap on death, AI takes over the one you leave | M (20) | planned | — | `WP-S1`, `WP-S3` |
-| `WP-S21` | Swap UX: switch button, slow-motion zoom-out, hover the new rebel, take control (reduced-motion safe) | S (8) | planned | — | `WP-S20` |
+| `WP-S15` | AI v2: investigate noises and bodies, search patterns, squad morale (fall back, surrender), AI timeline view | M (20) | planned | — | `WP-S4`, `WP-S32` |
+| `WP-S16` | AI tuning harness: headless runs over seeds x awareness x player styles per level, report table | S (8) | ready | — | `WP-S1` |
+| `WP-S17` | Tactical tests and performance: smoke per level, inventory and unlock e2e, phone budget, CI under 10 min | M (20) | planned | — | `WP-S5`, `WP-S6`, `WP-S7`, `WP-S14`, `WP-S15`, `WP-S18`, `WP-S31`, `WP-S33`, `WP-S34`, `WP-S35`, `WP-S25`, `WP-S26` |
+| `WP-S18` | Touch controls: twin-stick, tap to loot, long-press orders | S (8) | planned | — | `WP-S35`, `WP-S10`, `WP-S3` |
+| `WP-S19` | Docs: design doc sections (scenarios, loot loop, unlock economy), changelog, index entry renamed Partisan Tactical | XS (3) | planned | — | `WP-S17` |
+| `WP-S20` | Play as the whole squad: active-rebel pointer, loss when every rebel is down, forced swap on death, AI takes over the one you leave | M (20) | done | — | `WP-S1`, `WP-S3` |
+| `WP-S21` | Swap UX: switch button, slow-motion zoom-out, hover the new rebel, take control (reduced-motion safe) | S (8) | ready | — | `WP-S20` |
 | `WP-S22` | Progression core: XP from kills, objectives and looting; levels 1-10 per rebel; perk points; persistent in the campaign save | M (20) | planned | — | `WP-S12`, `WP-S20` |
 | `WP-S23` | Upgrade trees: Bannerlord-style tiers per rebel with two branches, gated by the equipment carried | M (20) | planned | — | `WP-S8`, `WP-S22` |
 | `WP-S24` | Perks and abilities: passive perks per level, active abilities with cooldowns unlocked by branch | M (20) | planned | — | `WP-S23` |
 | `WP-S25` | Teammate AI uses abilities; progression balance pass with the tuning harness | S (8) | planned | — | `WP-S24`, `WP-S16` |
 | `WP-S26` | Rebel sheet UI: level, XP, tree with locked branches and the gear they need, perk picks | S (8) | planned | — | `WP-S23`, `WP-S10` |
+| `WP-S27` | Extraction roadmap: repository audit, staged delivery gates and synchronized work packets | S (8) | done | — | — |
+| `WP-S28` | Tactical boundaries: extract lifecycle/render/input seams while preserving seeded practice behaviour | M (20) | ready | — | `WP-S1`, `WP-S2`, `WP-S3`, `WP-S4`, `WP-S20`, `WP-S21` |
+| `WP-S29` | Persistence transactions: profile schema, reservation, idempotent settlement, migration and concurrent-tab ownership | M (20) | planned | — | `WP-S8` |
+| `WP-S30` | Extraction lifecycle: countdown, deadline, early retreat and explicit squad abandonment | M (20) | planned | — | `WP-S2`, `WP-S9`, `WP-S29` |
+| `WP-S31` | Hardcore survival: bleeding, finite medical supplies, treatment, simple armour and squad wounds | M (20) | planned | — | `WP-S35` |
+| `WP-S32` | Raid readability and navigation: reachable loot/exits, squad pathing and contact visibility | M (20) | planned | — | `WP-S35` |
+| `WP-S33` | Repeatable scavenging economy: raid variants, restricted recovery kit and stash overflow | M (20) | planned | — | `WP-S35` |
+| `WP-S34` | Browser campaign resilience: refresh loss, hidden-tab pause, failed saves and backup/import | S (8) | planned | — | `WP-S12` |
+| `WP-S35` | Convoy extraction gate: end-to-end second deployment, loss accounting and first playtest | S (8) | planned | browser | `WP-S12`, `WP-S34`, `WP-S16` |
+| `WP-S36` | Owner decision: local PvE or funded live co-op; region, concurrency and operating budget | XS (3) | blocked | owner | `WP-S17` |
+| `WP-S37` | Conditional online spike: authoritative simulation protocol and server tick benchmark | M (20) | planned | net | `WP-S36` |
+| `WP-S38` | Conditional online profiles: identity, server-owned inventory and durable settlement | M (20) | planned | net | `WP-S37`, `WP-S29` |
+| `WP-S39` | Conditional co-op closed alpha: lobbies, replication, reconnect and squad loot ownership | M (20) | planned | browser, net | `WP-S38` |
+| `WP-S40` | Conditional online operational gate: abuse tests, hidden-state filtering, restore and load costs | M (20) | planned | net | `WP-S39` |
+| `WP-S41` | Owner decision: approve a PvPvE experiment after co-op retention, fairness and cost review | XS (3) | blocked | owner | `WP-S40` |
+| `WP-S42` | Conditional PvPvE experiment: small closed raid population and fairness evaluation | M (20) | planned | browser, net | `WP-S41` |
 
 ### V · Graphics: 2.5D top-down sprites and the retro overworld
 

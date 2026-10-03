@@ -1,8 +1,8 @@
 # Placeholder assets: survey for the 2.5-D top-down look
 
-The owner added `inbound/Placeholder Assets/` (987 MB, about 3,400 PSD, 1,660 PNG and 30 JPG files, RimWorld-style). This page says what is in it and which graphics packets (`docs/graphics-roadmap.md`, WP-V1 to V20) can use it. Decisions are TAC-I-28 to TAC-I-31 in [design-decisions/I-graphics.md](design-decisions/I-graphics.md).
+The owner added `inbound/Placeholder Assets/` (987 MB, about 3,400 PSD, 1,660 PNG and 30 JPG files, RimWorld-style). This page says what is in it and which graphics packets (`docs/graphics-roadmap.md`, WP-V1 to V20) can use it. Decisions are TAC-J-28 to TAC-J-31 in [design-decisions/J-graphics.md](design-decisions/J-graphics.md).
 
-**Provenance.** The folder layout and names (Things, Terrain, World, UI, Damage, Weather, Designations, `Recon armor`, `Thrumbo`) match RimWorld's own texture set, so treat it as a stand-in for development only. It is never deployed (the Pages build is an allowlist), and the swap list is exact once the converter writes its manifest (TAC-I-29).
+**Provenance.** The folder layout and names (Things, Terrain, World, UI, Damage, Weather, Designations, `Recon armor`, `Thrumbo`) match RimWorld's own texture set, so treat it as a stand-in for development only. It is never deployed (the Pages build is an allowlist), and the swap list is exact once the converter writes its manifest (TAC-J-29).
 
 ## What is in it
 
@@ -37,8 +37,8 @@ About two thirds of the files are layered PSDs. `convert file.psd[0]` (ImageMagi
 | Packet | Use from the set | Notes |
 |---|---|---|
 | WP-V1 art bible | Outline weight, 128 px layers, three directions plus mirror | Use as the measured reference for outline and proportion |
-| WP-V3 renderer | Anything as placeholder sprites | Lets gameplay packets play in 2-D at once (TAC-I-27) |
-| WP-V4 sprite tooling | Converter: flatten PSD, trim, palette-quantise, atlas, manifest | The set is far too big to ship as is (TAC-I-29) |
+| WP-V3 renderer | Anything as placeholder sprites | Lets gameplay packets play in 2-D at once (TAC-J-27) |
+| WP-V4 sprite tooling | Converter: flatten PSD, trim, palette-quantise, atlas, manifest | The set is far too big to ship as is (TAC-J-29) |
 | WP-V5 paper dolls | Bodies, heads, hair, beards, apparel (flak vest, recon armour, helmets, hood, parka, duster, pants, shirts, mask) | Faction by tint; PSD-only pieces need flattening first |
 | WP-V6 equipment | 31 weapon sprites, melee, grenades; projectiles | Rifles the set lacks come from render-to-sprite of the Workbench models |
 | WP-V7 animation | Static poses only; bob, recoil and kneel are code | Same as the original game; wounds and scratch overlays help |
@@ -55,7 +55,7 @@ About two thirds of the files are layered PSDs. `convert file.psd[0]` (ImageMagi
 
 - No intact military vehicles (wrecks only), no soldiers in modern fatigues (the apparel is sci-fi, tribal and colonial: recolour the flak vest, helmets, hood and duster), no jungle or island terrain tiles beyond soil, sand, gravel and mossy, no retro overworld tiles.
 - Several PSD-only pieces (hood, parka, plate armour, most of Things/Building) need a flatten step.
-- Two weapon styles will sit side by side until render-to-sprite gets the outline pass (TAC-I-30).
+- Two weapon styles will sit side by side until render-to-sprite gets the outline pass (TAC-J-30).
 
 ## Housekeeping
 
