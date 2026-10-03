@@ -445,6 +445,7 @@ export class Sim {
   step(dt, input = {}) {
     if (this.outcome) return;
     this.time += dt;
+    for (const o of input.orders || []) this.order(o.ids, o);
     this.driveConvoy(dt);
     // comms in flight
     this.messages = this.messages.filter(m => {
@@ -503,6 +504,22 @@ export class Sim {
       squadThink(this);
     }
     this.checkOutcome();
+  }
+
+  /**
+   * Give teammates an order (see partisanThink in convoy/ai.js): {type: 'hold'|'follow'|'move'|'attack'|'cover', x?, z?, target?, angle?}.
+   * @param {string[]} ids partisan ids (the player is ignored)
+   */
+  order(ids, order) {
+    const ACK = {hold: 'Holding.', follow: 'On you.', move: 'Moving.', attack: 'Engaging.', cover: 'Watching that sector.'};
+    for (const u of this.units) {
+      if (u.side !== 'partisan' || u === this.player || !u.alive || !ids.includes(u.id)) continue;
+      u.order = {...order};
+      if (order.type === 'hold' && order.x === undefined) Object.assign(u.order, {x: u.x, z: u.z});
+      u.moveTo = null;
+      u.thinkAt = this.time; // react on this step
+      this.say(u, ACK[order.type] || 'Copy.', 'ack', 0);
+    }
   }
 
   /** Hold E next to an item to take it: progress fills over item.search seconds, and resets if you let go or move off. */

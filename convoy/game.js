@@ -232,6 +232,14 @@ function unitMesh(u) {
     ring.rotation.x = -Math.PI / 2;
     ring.position.y = 0.04;
     g.add(ring);
+  } else if (u.side === 'partisan') {
+    // selection ring: shown while the teammate is selected for orders
+    const sel = new T.Mesh(new T.RingGeometry(0.6, 0.72, 20), new T.MeshBasicMaterial({color: 0xc8e0a0}));
+    sel.rotation.x = -Math.PI / 2;
+    sel.position.y = 0.04;
+    sel.visible = false;
+    g.add(sel);
+    g.userData.sel = sel;
   }
   g.traverse(o => (o.castShadow = true));
   scene.add(g);
@@ -321,6 +329,8 @@ function newGame() {
   stateLabels.clear();
   $('#comms').replaceChildren();
   started = false;
+  selected = [];
+  setPaused(false);
   $('#card-title').textContent = level.title;
   $('#card-text').textContent = level.brief;
   $('#start').textContent = 'Start';
@@ -359,7 +369,9 @@ function start() {
 const keys = new Set();
 let fire = false,
   reload = false,
-  wantWeapon = null;
+  wantWeapon = null,
+  paused = false,
+  selected = []; // teammate ids that orders go to
 const aim = new T.Vector3(),
   ray = new T.Raycaster(),
   ndc = new T.Vector2(),
@@ -375,7 +387,55 @@ addEventListener('keydown', e => {
   if (['1', '2', '3'].includes(k)) wantWeapon = sim.player.weapons[Number(k) - 1];
   if (k === 'v') toggleAi();
   if (k === 'enter') started && !sim.outcome ? null : sim.outcome ? newGame() : start();
+  if (!started || sim.outcome) return;
+  if (k === ' ') setPaused(!paused);
+  if (k === 'tab') {
+    e.preventDefault();
+    cycleSelection();
+  }
+  // orders to the selected teammates: F follow, H hold, G go to the cursor, T attack under the cursor, C cover toward it
+  const point = aimPoint();
+  if (selected.length && point) {
+    if (k === 'f') giveOrder({type: 'follow'});
+    if (k === 'h') giveOrder({type: 'hold'});
+    if (k === 'g') giveOrder({type: 'move', x: point.x, z: point.z});
+    if (k === 't') {
+      const t = enemyNear(point);
+      if (t) giveOrder({type: 'attack', target: t.id});
+    }
+    if (k === 'c') giveOrder({type: 'cover', angle: coverAngle(point)});
+  }
 });
+const teammates = () => sim.units.filter(u => u.side === 'partisan' && u !== sim.player && u.alive);
+/** Tab: nobody, then each teammate in turn, then everyone. */
+function cycleSelection() {
+  const ids = teammates().map(u => u.id);
+  const steps = [[], ...ids.map(id => [id]), ids];
+  const at = steps.findIndex(s => s.length === selected.length && s.every(id => selected.includes(id)));
+  selected = steps[(at + 1) % steps.length];
+}
+function aimPoint() {
+  if (!hasAim) return null;
+  ray.setFromCamera(ndc, camera);
+  return ray.ray.intersectPlane(groundPlane, new T.Vector3());
+}
+const enemyNear = p =>
+  sim.units
+    .filter(u => u.side === 'army' && u.alive && !u.escaped && u.state !== 'mounted' && Math.hypot(u.x - p.x, u.z - p.z) < 2.5)
+    .sort((a, b) => Math.hypot(a.x - p.x, a.z - p.z) - Math.hypot(b.x - p.x, b.z - p.z))[0];
+function coverAngle(p) {
+  const team = sim.units.filter(u => selected.includes(u.id));
+  const cx = team.reduce((s, u) => s + u.x, 0) / team.length,
+    cz = team.reduce((s, u) => s + u.z, 0) / team.length;
+  return Math.atan2(p.z - cz, p.x - cx);
+}
+function giveOrder(o) {
+  sim.order(selected, o);
+}
+function setPaused(on) {
+  paused = on;
+  $('#paused').hidden = !on;
+}
 addEventListener('keyup', e => keys.delete(e.key.toLowerCase()));
 addEventListener('blur', () => {
   keys.clear();
@@ -390,7 +450,14 @@ renderer.domElement.addEventListener('pointerdown', e => {
   if (e.button === 0 && started) fire = true;
 });
 addEventListener('pointerup', () => (fire = false));
-renderer.domElement.addEventListener('contextmenu', e => e.preventDefault());
+renderer.domElement.addEventListener('contextmenu', e => {
+  e.preventDefault();
+  // right-click: attack the enemy under the cursor, otherwise move there
+  const point = started && !sim.outcome && selected.length ? aimPoint() : null;
+  if (!point) return;
+  const t = enemyNear(point);
+  giveOrder(t ? {type: 'attack', target: t.id} : {type: 'move', x: point.x, z: point.z});
+});
 
 function input() {
   const has = k => keys.has(k);
@@ -476,6 +543,40 @@ function updateLabels() {
   }
 }
 
+// Order markers: where each teammate was told to go or hold, who it attacks, the sector it covers.
+const MAX_ORDER_LINES = 60;
+const orderGeo = new T.BufferGeometry();
+orderGeo.setAttribute('position', new T.BufferAttribute(new Float32Array(MAX_ORDER_LINES * 6), 3));
+const orderLines = new T.LineSegments(orderGeo, new T.LineBasicMaterial({color: 0xc8e0a0, transparent: true, opacity: 0.7}));
+orderLines.frustumCulled = false;
+scene.add(orderLines);
+function updateOrders() {
+  const pos = orderGeo.attributes.position.array;
+  let n = 0;
+  const seg = (x0, z0, x1, z1) => {
+    if (n < MAX_ORDER_LINES) pos.set([x0, 0.1, z0, x1, 0.1, z1], n++ * 6);
+  };
+  const cross = (x, z) => {
+    seg(x - 0.5, z - 0.5, x + 0.5, z + 0.5);
+    seg(x - 0.5, z + 0.5, x + 0.5, z - 0.5);
+  };
+  for (const u of teammates()) {
+    const o = u.order || {};
+    if (o.type === 'move') {
+      seg(u.x, u.z, o.x, o.z);
+      cross(o.x, o.z);
+    } else if (o.type === 'hold' && o.x !== undefined && Math.hypot(o.x - u.x, o.z - u.z) > 0.8) cross(o.x, o.z);
+    else if (o.type === 'attack') {
+      const t = sim.units.find(x => x.id === o.target);
+      if (t?.alive) seg(u.x, u.z, t.x, t.z);
+    } else if (o.type === 'cover')
+      for (const s of [-0.9, 0.9]) seg(u.x, u.z, u.x + Math.cos(o.angle + s) * 9, u.z + Math.sin(o.angle + s) * 9);
+  }
+  orderGeo.setDrawRange(0, n * 2);
+  orderGeo.attributes.position.needsUpdate = true;
+  for (const [u, g] of units) if (g.userData.sel) g.userData.sel.visible = selected.includes(u.id) && u.alive;
+}
+
 function updateAi() {
   if (!aiView) return;
   let r = 0,
@@ -518,11 +619,18 @@ function updateHud() {
     .filter(o => o.state !== 'locked')
     .map(o => `<span class="obj ${o.state}">${mark[o.state]} ${o.label}${o.optional ? ' <i>(optional)</i>' : ''}</span>`)
     .join('<br>');
+  const ORDER = {hold: 'holding', follow: 'following', move: 'moving', attack: 'attacking', cover: 'covering'};
+  const squadLine = teammates()
+    .map(
+      u =>
+        `${selected.includes(u.id) ? '<b>▸ ' : ''}${u.name}: ${ORDER[u.order?.type] || 'holding'}${u.state === 'duck' ? ', pinned' : ''}${selected.includes(u.id) ? '</b>' : ''}`,
+    )
+    .join('<br>');
   const searching = p.searching
     ? `<br><b>Taking ${p.searching.label}… ${Math.min(100, Math.round((p.searching.progress / (p.searching.search ?? 3)) * 100))}%</b>`
     : '';
   $('#hud').innerHTML =
-    `<b>${status}</b><br>${objectives}${searching}<br>Health ${Math.max(0, p.hp)}<br>` +
+    `<b>${status}</b><br>${objectives}${searching}<br>Health ${Math.max(0, p.hp)}<br>${squadLine}<br>` +
     p.weapons
       .map((w, i) => {
         const W = WEAPONS[w],
@@ -565,6 +673,7 @@ function showDebrief(d) {
 
 // ---------- frame ----------
 function draw() {
+  updateOrders();
   for (const [u, g] of units) {
     g.visible = !u.escaped && u.state !== 'mounted';
     g.position.set(u.x, u.state === 'turret' || (u.role === 'turret' && !u.alive) ? u.vehicle.h * 1.2 : 0, u.z);
@@ -651,7 +760,7 @@ renderer.setAnimationLoop(() => {
   const now = performance.now();
   acc = Math.min(acc + (now - last) / 1000, 0.25);
   last = now;
-  if (started && !document.hidden)
+  if (started && !paused && !document.hidden)
     while (acc >= STEP) {
       sim.step(STEP, input());
       acc -= STEP;

@@ -116,3 +116,80 @@ test('debrief: outcome, objectives, kills per partisan, what was taken', () => {
     ['done'],
   );
 });
+
+// ---------- WP-S3: squad orders ----------
+const squadLevel = extra =>
+  tiny([{id: 'h', type: 'hold', seconds: 999, label: 'wait'}], {
+    cover: [],
+    partisans: [
+      {id: 'player', label: 'You', x: -10, z: 0},
+      {id: 'mila', label: 'Mila', x: -12, z: 4},
+      {id: 'dragan', label: 'Dragan', x: -14, z: -4},
+    ],
+    units: [],
+    ...extra,
+  });
+const mate = (sim, id) => sim.units.find(u => u.id === id);
+
+test('orders: move goes to the point then holds there; hold keeps the spot', () => {
+  const sim = new Sim({level: squadLevel(), seed: 7});
+  sim.step(1 / 60, {orders: [{ids: ['mila'], type: 'move', x: 5, z: 5}]});
+  assert.equal(mate(sim, 'mila').order.type, 'move');
+  steps(sim, 8);
+  const m = mate(sim, 'mila');
+  assert.ok(Math.hypot(m.x - 5, m.z - 5) < 0.6, `arrived (${m.x.toFixed(2)}, ${m.z.toFixed(2)})`);
+  assert.equal(m.order.type, 'hold', 'then holds');
+  sim.order(['dragan'], {type: 'hold'});
+  const d = mate(sim, 'dragan');
+  const at = [d.x, d.z];
+  steps(sim, 2);
+  assert.deepEqual([d.x, d.z], at);
+  assert.ok(sim.callouts.some(c => c.text === 'Moving.') && sim.callouts.some(c => c.text === 'In position.'));
+});
+
+test('orders: follow keeps teammates in slots behind the player, at the player’s pace', () => {
+  const sim = new Sim({level: squadLevel(), seed: 8});
+  sim.order(['mila', 'dragan'], {type: 'follow'});
+  steps(sim, 6, {mx: 1}); // walk east
+  const p = sim.player;
+  for (const id of ['mila', 'dragan']) {
+    const u = mate(sim, id);
+    assert.ok(Math.hypot(u.x - p.x, u.z - p.z) < 5, `${id} keeps up`);
+    assert.ok(u.x < p.x, `${id} stays behind`);
+  }
+  steps(sim, 1, {mx: 1, sneak: true});
+  assert.equal(mate(sim, 'mila').speed, p.speed, 'sneaks when you sneak');
+});
+
+test('orders: attack closes on the target and opens fire even before the alarm', () => {
+  const sim = new Sim({level: squadLevel({units: [{id: 'g', name: 'Guard', role: 'rifleman', x: 15, z: 0, facing: 0}]}), seed: 9});
+  sim.order(['mila'], {type: 'attack', target: 'g'});
+  steps(sim, 12);
+  const g = sim.units.find(u => u.id === 'g');
+  assert.ok(
+    sim.tracers.some(t => t.side === 'partisan'),
+    'Mila fired',
+  );
+  assert.ok(!g.alive || sim.alarm, 'the attack sprang the ambush or killed the guard');
+});
+
+test('orders: cover only engages targets inside the sector', () => {
+  const lvl = squadLevel({
+    units: [
+      {id: 'east', name: 'East', role: 'rifleman', x: 10, z: 4, facing: Math.PI},
+      {id: 'south', name: 'South', role: 'rifleman', x: -12, z: 25, facing: -Math.PI / 2},
+    ],
+  });
+  const sim = new Sim({level: lvl, seed: 10});
+  sim.order(['mila'], {type: 'cover', angle: 0}); // watch east
+  sim.raiseAlarm(null);
+  const shotAt = new Set();
+  const orig = sim.shoot.bind(sim);
+  sim.shoot = (u, tx, tz, ...rest) => {
+    if (u.id === 'mila') shotAt.add(Math.abs(tz - 25) < 3 ? 'south' : 'east');
+    return orig(u, tx, tz, ...rest);
+  };
+  steps(sim, 4);
+  assert.ok(shotAt.has('east'), 'engages the soldier in the sector');
+  assert.ok(!shotAt.has('south'), 'never turns to the south soldier');
+});

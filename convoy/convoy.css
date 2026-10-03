@@ -21,3 +21,5 @@ button.primary{background:var(--accent);color:#14100a;border-color:var(--accent)
 .obj.failed{color:var(--bad);text-decoration:line-through}
 .obj i{opacity:.7}
 .debrief{margin:6px 0 10px;padding-left:18px}
+#stage .paused{position:absolute;left:50%;top:14px;transform:translateX(-50%);padding:6px 12px;background:#12170fe8;border:1px solid var(--accent);color:var(--text);font:11px/1.4 ui-monospace,monospace;letter-spacing:.06em;border-radius:var(--radius);white-space:nowrap;max-width:94%;overflow:hidden;text-overflow:ellipsis}
+#stage .paused[hidden]{display:none}
