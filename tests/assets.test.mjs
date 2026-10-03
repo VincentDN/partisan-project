@@ -54,3 +54,19 @@ test('outbound/sketchfab-download.py is the current standalone build of the down
   assert.ok(sources.length >= 39);
   for (const s of sources) assert.match(s.uid, /^[0-9a-f]{32}$/, `${s.id}: bad uid`);
 });
+
+test('the downloader shows * while a token is typed or pasted and handles backspace', async () => {
+  const {execFileSync} = await import('node:child_process');
+  const code = [
+    'import sys, importlib.util',
+    'sys.dont_write_bytecode = True',
+    "spec = importlib.util.spec_from_file_location('d', 'outbound/sketchfab-download.py')",
+    'm = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)',
+    'keys = iter(list("ab") + ["\\x08"] + list("c") + ["\\r"])',
+    'print("RESULT=" + m.read_secret("t ", getwch=lambda: next(keys)))',
+  ].join('\n');
+  const out = execFileSync('python3', ['-c', code], {encoding: 'utf8'});
+  assert.match(out, /RESULT=ac\n?$/);
+  assert.match(out, /\*/, 'prints asterisks');
+  assert.doesNotMatch(out, /abc|RESULT=ab/, 'never echoes the secret itself');
+});

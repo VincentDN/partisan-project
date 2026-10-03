@@ -35,6 +35,35 @@ API = "https://api.sketchfab.com/v3/models/{uid}/download"
 UA = "partisan-project-asset-fetch/1.0"
 
 
+def read_secret(prompt, getwch=None):
+    """Read a secret and show one * per character (a plain hidden prompt looks frozen, especially on Windows).
+    Paste works (right-click or Ctrl+Shift+V). Enter finishes, Backspace deletes. `getwch` is injectable for tests."""
+    if getwch is None:
+        try:
+            import msvcrt  # Windows
+            getwch = msvcrt.getwch
+        except ImportError:
+            return getpass.getpass(prompt + "(hidden, paste then press Enter): ")
+    print(prompt + "(paste it, then press Enter; you will see * as it arrives): ", end="", flush=True)
+    chars = []
+    while True:
+        ch = getwch()
+        if ch in ("\r", "\n"):
+            print()
+            return "".join(chars)
+        if ch == "\x03":
+            raise KeyboardInterrupt
+        if ch in ("\x08", "\x7f"):
+            if chars:
+                chars.pop()
+                print("\b \b", end="", flush=True)
+        elif ch in ("\x00", "\xe0"):
+            getwch()  # swallow the second half of a function or arrow key
+        elif ch >= " ":
+            chars.append(ch)
+            print("*", end="", flush=True)
+
+
 def request(url, token=None, retries=3):
     headers = {"User-Agent": UA}
     if token:  # only ever for api.sketchfab.com
@@ -102,6 +131,7 @@ def main():
     p = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     p.add_argument("ids", nargs="*", help="source ids from sketchfab-sources.json (default: all)")
     p.add_argument("--list", action="store_true", help="list the sources and exit")
+    p.add_argument("--no-pause", action="store_true", help="do not wait for Enter at the end (Windows)")
     p.add_argument("--out", default=str(REPO / "inbound" / "sketchfab"), help="where to put them (default: inbound/sketchfab)")
     a = p.parse_args()
     sources = json.loads(SOURCES.read_text())["sources"]
@@ -114,7 +144,7 @@ def main():
         for s in sources:
             print(f"{s['id']:24} {s['author']:18} {s['name']}")
         return
-    token = os.environ.get("SKETCHFAB_TOKEN") or getpass.getpass("Sketchfab API token (hidden): ").strip()
+    token = os.environ.get("SKETCHFAB_TOKEN") or read_secret("Sketchfab API token ").strip()
     if not token:
         raise SystemExit("No token given.")
     out_root = Path(a.out)
@@ -140,5 +170,25 @@ def main():
     sys.exit(1 if failed else 0)
 
 
+def pause_before_closing():
+    """A double-clicked script's window vanishes when it ends; on Windows wait so the result can be read."""
+    if os.name == "nt" and sys.stdin and sys.stdin.isatty() and "--no-pause" not in sys.argv:
+        try:
+            input("\nPress Enter to close this window.")
+        except (EOFError, KeyboardInterrupt):
+            pass
+
+
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except SystemExit as e:
+        if e.code not in (None, 0) and isinstance(e.code, str):
+            print(e.code)  # show the message before the window closes
+        pause_before_closing()
+        raise SystemExit(0 if e.code in (None, 0) else 1)
+    except KeyboardInterrupt:
+        print("\nCancelled.")
+        pause_before_closing()
+        raise SystemExit(1)
+    pause_before_closing()
