@@ -117,7 +117,7 @@ The rules every section inherits. Section documents refer to these by ID instead
 
 ### TAC-X-10 · Credits and licences are out of scope here
 - Status: built
-- Decision: Nothing in this project spends effort on credits, licences or provenance (ADR 0012). Pages point to the
+- Decision: Nothing in this project spends effort on credits, licences or provenance. Pages point to the
   GitHub documentation or the owner's contact address.
 - Why: A hidden, SEO-excluded test project; the owner asked to stop spending tokens on it.
 - Alternatives rejected: A credits page and an audit tool (removed).

@@ -354,7 +354,7 @@ A passing test certifies mechanics, never art quality.
 
 1. **Setting canon** for demos: Yantis / WW2044 prologue, or the modern low-poly world? (`WP-D1`)
 2. **Roster naming** from the keyframes (proposal in `art-direction.md` §4).
-3. **Credits and licences:** out of scope for the tooling; the pages point to the GitHub documentation or the owner (ADR 0012).
+3. **Credits and licences:** out of scope for the tooling; the pages point to the GitHub documentation or the owner.
 4. **Indexing:** pages are `noindex` (link-only) like the portfolio's projects. Flip when Partisan Project should be discoverable.
 5. **Budget calibration:** which plan meters to read, and the weekly window count, after the first two weeks.
 

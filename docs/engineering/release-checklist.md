@@ -1,7 +1,7 @@
 # Release checklist: 2026 demo
 
 Run before any release. The v1.0.0 tag is the owner's call; do not create it from an agent session.
-Credits and licences are out of scope (see ADR 0012).
+Credits and licences are out of scope.
 
 ## Automated
 - [ ] `npx prettier --check .`, `npx eslint .`, `npm run typecheck`
