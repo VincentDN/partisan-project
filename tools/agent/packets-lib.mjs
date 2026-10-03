@@ -4,7 +4,7 @@ import fs from 'node:fs';
 export const FILE = 'docs/agent-ops/packets.json';
 export const STATUSES = ['done', 'ready', 'planned', 'blocked'];
 export const SIZES = {XS: 3, S: 8, M: 20};
-export const MILESTONE_ORDER = ['M0', 'M1', 'M2', 'M3', 'M4', 'M5', 'TD', 'D', 'H27'];
+export const MILESTONE_ORDER = ['M0', 'M1', 'M2', 'M3', 'M4', 'M5', 'S', 'TD', 'D', 'H27'];
 export const load = (file = FILE) => JSON.parse(fs.readFileSync(file, 'utf8'));
 
 /** Structural problems. An empty array means the plan is sound. */

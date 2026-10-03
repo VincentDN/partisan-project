@@ -119,6 +119,12 @@ Done: the Workbench build carries onto the operator ("Workbench build" weapon op
 Accessibility (WCAG 2.2 AA target), performance acceptance on a real mid-range phone, credits generated from the
 register, guided first run, release checklist. Targets: 60 fps desktop / 30 fps mid-range phone *as goals, not measured claims*.
 
+### 5.6 Partisan Tactical (the top-down shooter)
+
+The shooter becomes the demo of the whole loop: three missions (convoy ambush, compound assault, cave hideout defence),
+looting from soldiers and vehicles, a squad inventory to equip your people, and unlocks that carry stolen weapons and
+parts into the Weapon Modder and the Operator Customiser. Full plan, decisions and sections: [tactical-roadmap.md](tactical-roadmap.md).
+
 ### 5.5 Design documentation
 
 Setting reconciliation (`WP-D1`) comes first: the earlier premise (Yantis, 2012, a *WW2044* prologue) and the
@@ -142,6 +148,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | **TD** Tech debt (fill windows) | — | 4/4 | 44 BU | 100% |
 | **D** Design docs | — | 3/5 | 59 BU | 61% |
 | **H27** 2027 horizon | — | 0/3 | 48 BU | 0% |
+| **S** Partisan Tactical: three missions, looting, inventory, unlocks | v0.8.0 | 0/19 | 255 BU | 0% |
 
 ### M0 · Foundation
 
@@ -222,6 +229,30 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-Q4` | Short guided first run across demos (preset > part > stat; look > pose) | S (8) | done | — | — |
 | `WP-Q5` | Release checklist and v1.0.0 tag for the 2026 demo | S (8) | done | — | `WP-Q1` |
 | `WP-Q6` | Manual accessibility pass: screen reader (NVDA/VoiceOver), zoom 200 %, high-contrast mode, a real phone | XS (3) | planned | owner | `WP-Q1` |
+
+### S · Partisan Tactical: three missions, looting, inventory, unlocks
+
+| ID | Packet | Size | Status | Needs | Depends on |
+|---|---|---|---|---|---|
+| `WP-S1` | Level framework: level data format, Sim takes a level, convoy as level 1, mission select (module named Partisan Tactical) | M (20) | ready | — | — |
+| `WP-S2` | Objectives and outcomes: eliminate, reach, destroy, steal, hold, protect, extract; debrief screen | S (8) | planned | — | `WP-S1` |
+| `WP-S3` | Squad orders: select teammates, follow/hold/move/attack/cover, tactical pause, order markers | M (20) | planned | — | `WP-S1` |
+| `WP-S4` | AI behaviours for new scenarios: guard posts, patrols, alarm propagation, radio reinforcements, bounding attack waves | S (8) | planned | — | `WP-S1` |
+| `WP-S5` | Level 2 Compound assault: walled compound, towers, armoury cache, radio mast, stealth then alarm, extract | M (20) | planned | — | `WP-S2`, `WP-S4` |
+| `WP-S6` | Level 3 Cave hideout defence: cave, tunnels, fallback chamber, night, three attack waves, hold until dawn | M (20) | planned | — | `WP-S2`, `WP-S3`, `WP-S4` |
+| `WP-S7` | Level visuals: roof cut-away indoors, cave darkness and lamp light, night lighting and searchlight | S (8) | planned | — | `WP-S5`, `WP-S6` |
+| `WP-S8` | Item model and inventory core: weapons with attachments, ammo, grenades, gear; loadout slots; squad stash; versioned saves | M (20) | planned | — | `WP-S1` |
+| `WP-S9` | Looting in levels: soldiers drop kit, vehicle cargo, hold E to search (exposed), carry limits, order a teammate to loot | M (20) | planned | — | `WP-S8`, `WP-S2` |
+| `WP-S10` | Inventory UI: field loot panel, between-mission squad screen, attachment install with compatibility reasons, stat deltas | M (20) | planned | — | `WP-S8`, `WP-S9` |
+| `WP-S11` | Loadouts drive the fight: teammate AI uses equipped weapon and attachments, ammo consumption, sidearm fallback | S (8) | planned | — | `WP-S10`, `WP-S3` |
+| `WP-S12` | Campaign flow: three missions, persistent squad, stash and wounds, briefing and debrief, recruit, reset | S (8) | planned | — | `WP-S2`, `WP-S10` |
+| `WP-S13` | Unlocks into the Weapon Modder: first extraction unlocks; locked parts greyed with where to steal them; ?unlock=all | M (20) | planned | — | `WP-S12` |
+| `WP-S14` | Unlocks into the Operator Customiser: looted helmets, vests, NVGs, patches | S (8) | planned | — | `WP-S13` |
+| `WP-S15` | AI v2: investigate noises and bodies, search patterns, squad morale (fall back, surrender), AI timeline view | M (20) | planned | — | `WP-S4` |
+| `WP-S16` | AI tuning harness: headless runs over seeds x awareness x player styles per level, report table | S (8) | planned | — | `WP-S1` |
+| `WP-S17` | Tactical tests and performance: smoke per level, inventory and unlock e2e, phone budget, CI under 10 min | S (8) | planned | — | `WP-S13`, `WP-S6` |
+| `WP-S18` | Touch controls: twin-stick, tap to loot, long-press orders | S (8) | planned | — | `WP-S3`, `WP-S10` |
+| `WP-S19` | Docs: design doc sections (scenarios, loot loop, unlock economy), changelog, index entry renamed Partisan Tactical | XS (3) | planned | — | `WP-S13` |
 
 ### TD · Tech debt (fill windows)
 

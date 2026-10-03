@@ -45,6 +45,10 @@
   "H27": {
    "name": "2027 horizon",
    "version": null
+  },
+  "S": {
+   "name": "Partisan Tactical: three missions, looting, inventory, unlocks",
+   "version": "0.8.0"
   }
  },
  "packets": [
@@ -1135,6 +1139,364 @@
     "intro/bench-session.js"
    ],
    "acceptance": "Owner signs off hand contacts, handling sounds and a phone performance check."
+  },
+  {
+   "id": "WP-S1",
+   "title": "Level framework: level data format, Sim takes a level, convoy as level 1, mission select (module named Partisan Tactical)",
+   "track": "Tactical",
+   "milestone": "S",
+   "size": "M",
+   "bu": 20,
+   "status": "ready",
+   "deps": [],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/tactical-roadmap.md",
+    "convoy/sim.js",
+    "convoy/ai.js",
+    "convoy/world.js"
+   ],
+   "acceptance": "Convoy plays as before and its seeded replay test passes; a test level loads from data."
+  },
+  {
+   "id": "WP-S2",
+   "title": "Objectives and outcomes: eliminate, reach, destroy, steal, hold, protect, extract; debrief screen",
+   "track": "Tactical",
+   "milestone": "S",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-S1"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/tactical-roadmap.md"
+   ],
+   "acceptance": "Each objective type has a unit test; the convoy ends on its objectives."
+  },
+  {
+   "id": "WP-S3",
+   "title": "Squad orders: select teammates, follow/hold/move/attack/cover, tactical pause, order markers",
+   "track": "Tactical",
+   "milestone": "S",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-S1"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/tactical-roadmap.md"
+   ],
+   "acceptance": "Orders work under pause; a unit test per order."
+  },
+  {
+   "id": "WP-S4",
+   "title": "AI behaviours for new scenarios: guard posts, patrols, alarm propagation, radio reinforcements, bounding attack waves",
+   "track": "Tactical",
+   "milestone": "S",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-S1"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/tactical-roadmap.md"
+   ],
+   "acceptance": "Unit tests: patrol, alarm, reinforcements need a living radio operator, bounding advance."
+  },
+  {
+   "id": "WP-S5",
+   "title": "Level 2 Compound assault: walled compound, towers, armoury cache, radio mast, stealth then alarm, extract",
+   "track": "Tactical",
+   "milestone": "S",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-S2",
+    "WP-S4"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/tactical-roadmap.md"
+   ],
+   "acceptance": "Winnable stealthy and loud in the headless harness; smoke test."
+  },
+  {
+   "id": "WP-S6",
+   "title": "Level 3 Cave hideout defence: cave, tunnels, fallback chamber, night, three attack waves, hold until dawn",
+   "track": "Tactical",
+   "milestone": "S",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-S2",
+    "WP-S3",
+    "WP-S4"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/tactical-roadmap.md"
+   ],
+   "acceptance": "Three waves from data; winnable with a sensible loadout; smoke test."
+  },
+  {
+   "id": "WP-S7",
+   "title": "Level visuals: roof cut-away indoors, cave darkness and lamp light, night lighting and searchlight",
+   "track": "Tactical",
+   "milestone": "S",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-S5",
+    "WP-S6"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/tactical-roadmap.md"
+   ],
+   "acceptance": "Contact-sheet screenshots of each level; 60 fps on a mid laptop."
+  },
+  {
+   "id": "WP-S8",
+   "title": "Item model and inventory core: weapons with attachments, ammo, grenades, gear; loadout slots; squad stash; versioned saves",
+   "track": "Tactical",
+   "milestone": "S",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-S1"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/tactical-roadmap.md",
+    "workbench/attachments.js",
+    "convoy/weapons.js"
+   ],
+   "acceptance": "Unit tests: equip, install/remove attachment with Workbench rules, capacity, save/load, migration."
+  },
+  {
+   "id": "WP-S9",
+   "title": "Looting in levels: soldiers drop kit, vehicle cargo, hold E to search (exposed), carry limits, order a teammate to loot",
+   "track": "Tactical",
+   "milestone": "S",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-S8",
+    "WP-S2"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/tactical-roadmap.md"
+   ],
+   "acceptance": "Loot tables per role and vehicle; unit tests; smoke test loots a body."
+  },
+  {
+   "id": "WP-S10",
+   "title": "Inventory UI: field loot panel, between-mission squad screen, attachment install with compatibility reasons, stat deltas",
+   "track": "Tactical",
+   "milestone": "S",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-S8",
+    "WP-S9"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/tactical-roadmap.md"
+   ],
+   "acceptance": "Keyboard operable; axe passes; smoke test equips a looted PKM on Dragan."
+  },
+  {
+   "id": "WP-S11",
+   "title": "Loadouts drive the fight: teammate AI uses equipped weapon and attachments, ammo consumption, sidearm fallback",
+   "track": "Tactical",
+   "milestone": "S",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-S10",
+    "WP-S3"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/tactical-roadmap.md"
+   ],
+   "acceptance": "Unit tests: a suppressor shrinks enemy hearing; ammo runs out."
+  },
+  {
+   "id": "WP-S12",
+   "title": "Campaign flow: three missions, persistent squad, stash and wounds, briefing and debrief, recruit, reset",
+   "track": "Tactical",
+   "milestone": "S",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-S2",
+    "WP-S10"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/tactical-roadmap.md"
+   ],
+   "acceptance": "Save survives reload; unit test of the campaign state machine."
+  },
+  {
+   "id": "WP-S13",
+   "title": "Unlocks into the Weapon Modder: first extraction unlocks; locked parts greyed with where to steal them; ?unlock=all",
+   "track": "Tactical",
+   "milestone": "S",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-S12"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/tactical-roadmap.md",
+    "workbench/models.js",
+    "workbench/attachments.js"
+   ],
+   "acceptance": "Steal a part in the shooter, see it unlocked in the Modder (smoke); locked items cannot be equipped."
+  },
+  {
+   "id": "WP-S14",
+   "title": "Unlocks into the Operator Customiser: looted helmets, vests, NVGs, patches",
+   "track": "Tactical",
+   "milestone": "S",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-S13"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/tactical-roadmap.md",
+    "operator/config.js"
+   ],
+   "acceptance": "Smoke test: a looted helmet unlocks in the Customiser."
+  },
+  {
+   "id": "WP-S15",
+   "title": "AI v2: investigate noises and bodies, search patterns, squad morale (fall back, surrender), AI timeline view",
+   "track": "Tactical",
+   "milestone": "S",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-S4"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/tactical-roadmap.md"
+   ],
+   "acceptance": "Unit tests per behaviour; AI view replays the last 30 s."
+  },
+  {
+   "id": "WP-S16",
+   "title": "AI tuning harness: headless runs over seeds x awareness x player styles per level, report table",
+   "track": "Tactical",
+   "milestone": "S",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-S1"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/tactical-roadmap.md"
+   ],
+   "acceptance": "Each level winnable 40-70% by the scripted player at 50% awareness."
+  },
+  {
+   "id": "WP-S17",
+   "title": "Tactical tests and performance: smoke per level, inventory and unlock e2e, phone budget, CI under 10 min",
+   "track": "Quality",
+   "milestone": "S",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-S13",
+    "WP-S6"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/tactical-roadmap.md"
+   ],
+   "acceptance": "Green CI; perf numbers recorded."
+  },
+  {
+   "id": "WP-S18",
+   "title": "Touch controls: twin-stick, tap to loot, long-press orders",
+   "track": "Tactical",
+   "milestone": "S",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-S3",
+    "WP-S10"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/tactical-roadmap.md"
+   ],
+   "acceptance": "Playable on a phone in the emulator test."
+  },
+  {
+   "id": "WP-S19",
+   "title": "Docs: design doc sections (scenarios, loot loop, unlock economy), changelog, index entry renamed Partisan Tactical",
+   "track": "Docs",
+   "milestone": "S",
+   "size": "XS",
+   "bu": 3,
+   "status": "planned",
+   "deps": [
+    "WP-S13"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/tactical-roadmap.md"
+   ],
+   "acceptance": "Doc renders; links work."
   }
  ]
 }
