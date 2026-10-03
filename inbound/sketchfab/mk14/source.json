@@ -1,0 +1,12 @@
+{
+ "id": "mk14",
+ "for": [
+  "weapon: Mk14 EBR (WP-A13)"
+ ],
+ "uid": "0dc89b4028ef4a1bbc1ed2ec077f3d21",
+ "name": "Low-Poly Mk14 EBR",
+ "author": "TastyTony",
+ "faces": 11746,
+ "length": 0.889,
+ "dir": "weapons"
+}

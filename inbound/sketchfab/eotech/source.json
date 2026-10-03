@@ -1,0 +1,12 @@
+{
+ "id": "eotech",
+ "for": [
+  "attachments: holo (alternative)"
+ ],
+ "uid": "5c8f29d9895e48e183a085fefabf0e14",
+ "name": "EOTech HWS XPS2 Sight (Low-Poly)",
+ "author": "GoldbergR",
+ "faces": 3146,
+ "length": 0.16,
+ "dir": "weapons"
+}

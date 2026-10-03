@@ -1,0 +1,12 @@
+{
+ "id": "iron-sight-set",
+ "for": [
+  "attachments: flip (back-up sight)"
+ ],
+ "uid": "dd89d27a54474b2aa3bf1cadc699c556",
+ "name": "low-poly Iron Sight Set",
+ "author": "DU1701",
+ "faces": 10104,
+ "unit": "du",
+ "dir": "weapons"
+}

@@ -1,0 +1,13 @@
+{
+ "id": "gp25",
+ "for": [
+  "convoy: grenadier launcher",
+  "attachments: under-barrel launcher (new)"
+ ],
+ "uid": "8dbdec74bad944a9b7eca73b2a6269fa",
+ "name": "low-poly GP-25",
+ "author": "DU1701",
+ "faces": 3954,
+ "unit": "du",
+ "dir": "weapons"
+}

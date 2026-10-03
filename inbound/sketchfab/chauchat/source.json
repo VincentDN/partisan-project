@@ -1,0 +1,12 @@
+{
+ "id": "chauchat",
+ "for": [
+  "weapon: Chauchat (WP-A18)"
+ ],
+ "uid": "ae9d3c2b5c3542e0829aac8d0cb7d6e5",
+ "name": "Low-Poly Chauchat",
+ "author": "TastyTony",
+ "faces": 9373,
+ "length": 1.143,
+ "dir": "weapons"
+}

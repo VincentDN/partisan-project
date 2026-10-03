@@ -1,0 +1,12 @@
+{
+ "id": "g3-drum",
+ "for": [
+  "G3 attachment: .308 drum"
+ ],
+ "uid": "4acf799d7ec04383ae664937224d3537",
+ "name": "Low-Poly .308 Drum Magazine",
+ "author": "notcplkerry",
+ "faces": 996,
+ "length": 0.2,
+ "dir": "weapons"
+}

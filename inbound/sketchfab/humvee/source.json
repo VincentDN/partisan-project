@@ -1,0 +1,12 @@
+{
+ "id": "humvee",
+ "for": [
+  "convoy: jeeps"
+ ],
+ "uid": "e862680472b047528f1955683873181c",
+ "name": "AM General HMMWV",
+ "author": "SoapEmi",
+ "faces": 12774,
+ "length": 4.57,
+ "dir": "vehicles"
+}

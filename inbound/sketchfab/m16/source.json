@@ -1,0 +1,12 @@
+{
+ "id": "m16",
+ "for": [
+  "weapon: M16 (WP-A12)"
+ ],
+ "uid": "f7eddeb852f84094a7ba26e293223d10",
+ "name": "Low-Poly M16",
+ "author": "TastyTony",
+ "faces": 5989,
+ "length": 1.0,
+ "dir": "weapons"
+}

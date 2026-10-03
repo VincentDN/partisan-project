@@ -1,0 +1,12 @@
+{
+ "id": "ppsh41",
+ "for": [
+  "weapon: PPSh-41 modernised (WP-A17)"
+ ],
+ "uid": "d610bf73066d4bb7a96834858772384a",
+ "name": "low-poly PPSH-41",
+ "author": "DU1701",
+ "faces": 5620,
+ "unit": "du",
+ "dir": "weapons"
+}

@@ -1,0 +1,12 @@
+{
+ "id": "army-truck",
+ "for": [
+  "convoy: truck"
+ ],
+ "uid": "9fd961a22cb84b9383570869b2f0efa9",
+ "name": "low poly military truck",
+ "author": "KolosStudios",
+ "faces": 696,
+ "length": 7.0,
+ "dir": "vehicles"
+}

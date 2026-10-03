@@ -1,0 +1,12 @@
+{
+ "id": "light-surefire",
+ "for": [
+  "attachments: light (weapon light)"
+ ],
+ "uid": "09bba490e5e44ac6a412cc363eb2b41e",
+ "name": "SureFire 660 Weapon Light with Pressure Switch",
+ "author": "haoliu95",
+ "faces": 4410,
+ "length": 0.17,
+ "dir": "weapons"
+}

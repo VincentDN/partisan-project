@@ -1,0 +1,13 @@
+{
+ "id": "peq15",
+ "for": [
+  "attachments: laser",
+  "attachments: combo (light + laser)"
+ ],
+ "uid": "522f6a04c34946dbb168022187645c1a",
+ "name": "low-poly AN/PEQ 15",
+ "author": "DU1701",
+ "faces": 3552,
+ "unit": "du",
+ "dir": "weapons"
+}

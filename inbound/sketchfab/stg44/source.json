@@ -1,0 +1,12 @@
+{
+ "id": "stg44",
+ "for": [
+  "weapon: StG 44 modernised (WP-A16)"
+ ],
+ "uid": "c343d3531806490e851976d4f0391c14",
+ "name": "low-poly Stg44",
+ "author": "DU1701",
+ "faces": 6146,
+ "unit": "du",
+ "dir": "weapons"
+}

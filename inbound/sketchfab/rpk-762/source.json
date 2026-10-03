@@ -1,0 +1,14 @@
+{
+ "id": "rpk-762",
+ "for": [
+  "attachments: 45 (RPK magazine)",
+  "weapon: RPK (replaces the AK-74M kitbash, WP-A14)"
+ ],
+ "take": "magazine and the whole rifle",
+ "uid": "628d823c021f4bfa814a66674ac658dc",
+ "name": "low-poly RPK 7.62",
+ "author": "DU1701",
+ "faces": 20699,
+ "unit": "du",
+ "dir": "weapons"
+}

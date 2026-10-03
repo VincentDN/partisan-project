@@ -1,0 +1,12 @@
+{
+ "id": "matv",
+ "for": [
+  "convoy: MRAP"
+ ],
+ "uid": "32a28aaea1f048b0a70d5f215f288b04",
+ "name": "M-ATV (low-poly)",
+ "author": "ScurvyWoof",
+ "faces": 28391,
+ "length": 6.27,
+ "dir": "vehicles"
+}

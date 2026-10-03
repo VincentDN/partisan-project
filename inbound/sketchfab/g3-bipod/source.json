@@ -1,0 +1,12 @@
+{
+ "id": "g3-bipod",
+ "for": [
+  "G3 attachment: steel bipod"
+ ],
+ "uid": "b525a696d09d48a484db53c2002d02fb",
+ "name": "HK G3 Steel Bipod (Low-Poly)",
+ "author": "GoldbergR",
+ "faces": 576,
+ "length": 0.3,
+ "dir": "weapons"
+}

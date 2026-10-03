@@ -1,0 +1,12 @@
+{
+ "id": "g3",
+ "for": [
+  "weapon: G3A3 (WP-A9)"
+ ],
+ "uid": "86ff01824c394e349cda876a827fa69c",
+ "name": "low-poly HK G3",
+ "author": "DU1701",
+ "faces": 8926,
+ "length": 1.025,
+ "dir": "weapons"
+}

@@ -1,0 +1,13 @@
+{
+ "id": "sandbag",
+ "for": [
+  "environment kit (WP-E1)",
+  "convoy cover"
+ ],
+ "uid": "7d52600a15c747749d845d9f906045cf",
+ "name": "Sandbag [Low Poly Realist]",
+ "author": "Islide",
+ "faces": 712,
+ "length": 0.7,
+ "dir": "environment"
+}

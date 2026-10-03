@@ -1,0 +1,13 @@
+{
+ "id": "collimator-set",
+ "for": [
+  "attachments: micro (micro dot)",
+  "attachments: holo (holographic)"
+ ],
+ "uid": "288373d26dd84db2898920222ac3e430",
+ "name": "low-poly Collimator Set",
+ "author": "DU1701",
+ "faces": 10330,
+ "unit": "du",
+ "dir": "weapons"
+}

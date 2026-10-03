@@ -1,0 +1,12 @@
+{
+ "id": "spear",
+ "for": [
+  "weapon: SIG Spear (WP-A15, no purchase needed)"
+ ],
+ "uid": "36ac159795ae465e8a4d44068bbaf434",
+ "name": "low-poly SIG MCX Spear",
+ "author": "DU1701",
+ "faces": 25668,
+ "unit": "du",
+ "dir": "weapons"
+}

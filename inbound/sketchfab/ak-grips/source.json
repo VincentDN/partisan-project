@@ -1,0 +1,12 @@
+{
+ "id": "ak-grips",
+ "for": [
+  "attachments: classic (plum pistol grip)",
+  "attachments: stop (hand stop, from the set if present)"
+ ],
+ "uid": "044c2b403fc341738b5af9f3b90fefc9",
+ "name": "Low-Poly AK grips",
+ "author": "notcplkerry",
+ "faces": 1990,
+ "dir": "weapons"
+}

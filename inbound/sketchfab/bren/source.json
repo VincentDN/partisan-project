@@ -1,0 +1,12 @@
+{
+ "id": "bren",
+ "for": [
+  "weapon: Bren (WP-A18)"
+ ],
+ "uid": "035555d607c142528e2eaf4c02af8c5b",
+ "name": "Low-Poly Bren Gun",
+ "author": "TastyTony",
+ "faces": 4048,
+ "length": 1.15,
+ "dir": "weapons"
+}

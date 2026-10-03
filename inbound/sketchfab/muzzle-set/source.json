@@ -1,0 +1,13 @@
+{
+ "id": "muzzle-set",
+ "for": [
+  "attachments: ak74 brake",
+  "attachments: comp"
+ ],
+ "uid": "07f62ec5ca604446848d1a0238b11f1d",
+ "name": "low-poly Muzzle Device Set",
+ "author": "DU1701",
+ "faces": 2642,
+ "unit": "du",
+ "dir": "weapons"
+}

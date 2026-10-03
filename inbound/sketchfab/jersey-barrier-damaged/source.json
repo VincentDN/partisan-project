@@ -1,0 +1,12 @@
+{
+ "id": "jersey-barrier-damaged",
+ "for": [
+  "environment kit (WP-E1)"
+ ],
+ "uid": "599abb4a62074fefafa788c0bcb71841",
+ "name": "Damaged Concrete Barrier low poly",
+ "author": "malekabdeltwab",
+ "faces": 412,
+ "length": 3.0,
+ "dir": "environment"
+}

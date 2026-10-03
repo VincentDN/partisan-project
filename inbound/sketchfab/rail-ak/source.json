@@ -1,0 +1,12 @@
+{
+ "id": "rail-ak",
+ "for": [
+  "attachments: rail (top rail mount)"
+ ],
+ "uid": "615c65f9670b42d3bcdd015119a771a4",
+ "name": "AK Optics Mount Rail (Low Poly)",
+ "author": "armoredwave",
+ "faces": 1500,
+ "length": 0.15,
+ "dir": "weapons"
+}

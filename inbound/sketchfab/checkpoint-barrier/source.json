@@ -1,0 +1,13 @@
+{
+ "id": "checkpoint-barrier",
+ "for": [
+  "environment kit (WP-E1)",
+  "convoy roadblock"
+ ],
+ "uid": "cd64979fc9774d729ac31e443a9f3935",
+ "name": "Checkpoint Stop Road Barrier lowpoly",
+ "author": "00amza",
+ "faces": 356,
+ "length": 3.5,
+ "dir": "environment"
+}
