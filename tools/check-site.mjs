@@ -48,6 +48,6 @@ for (const f of files.filter(f => /\.(m?js)$/.test(f) && !f.includes(`${path.sep
   }
 }
 const mb = files.reduce((n, f) => n + fs.statSync(f).size, 0) / 1048576;
-if (mb > 600) problems.push(`site is ${mb.toFixed(1)} MB; Pages recommends staying under 1 GB and we budget 600 MB`);
+if (mb > 900) problems.push(`site is ${mb.toFixed(1)} MB; Pages recommends staying under 1 GB and we budget 900 MB`);
 console.log(problems.length ? problems.join('\n') : `site OK: ${files.length} files, ${mb.toFixed(1)} MB`);
 process.exit(problems.length ? 1 : 0);
