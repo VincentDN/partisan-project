@@ -23,7 +23,7 @@ const pages = [
   ['index (menu)', 'menu/', async p => p.waitForFunction(() => window.PARP_INDEX?.ready && window.PARP_MENU?.ready)],
   ['workbench', 'workbench/', async p => p.waitForSelector('#build .slot', {timeout: 60000})],
   ['operator', 'operator/', async p => p.waitForFunction(() => window.PARP_OPERATOR?.ready, null, {timeout: 60000})],
-  ['operator (recon)', 'operator/#base=recon', async p => p.waitForFunction(() => window.PARP_OPERATOR?.ready, null, {timeout: 60000})],
+  ['operator (base)', 'operator/#base=base', async p => p.waitForFunction(() => window.PARP_OPERATOR?.ready, null, {timeout: 60000})],
   ['partisan tactical', 'convoy/', async p => p.waitForFunction(() => window.PARP_SPRITES?.ready, null, {timeout: 60000})],
   [
     'partisan tactical, old 3-D view',

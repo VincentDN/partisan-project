@@ -191,21 +191,22 @@ export async function createStage(container, opts = {}) {
   });
 
   // Garage-camera snap (think NFSU2's mod shop): the move winds up, accelerates hard, overshoots its mark a
-  // touch and clicks into place. A quadratic ease-in to two thirds of the way, then a back-out whose starting speed
-  // matches, so there is no hitch at the seam.
-  const SNAP_SPLIT = 0.45,
-    SNAP_AT = 0.658,
-    SNAP_BACK = 1.7;
-  const snapEase = t => {
-    if (t < SNAP_SPLIT) return SNAP_AT * (t / SNAP_SPLIT) ** 2;
+  // touch and clicks into place. A quadratic ease-in, then a back-out whose starting speed matches, so there is no
+  // hitch at the seam.
+  // `back` sets the overshoot (1.7: about 3 % past the mark; lower is tighter); the ease-in reaches the share of
+  // the way where its speed matches the back-out's starting speed.
+  const SNAP_SPLIT = 0.4;
+  const snapEase = (t, back) => {
+    const at = (back + 3) / (1 - SNAP_SPLIT) / (2 / SNAP_SPLIT + (back + 3) / (1 - SNAP_SPLIT));
+    if (t < SNAP_SPLIT) return at * (t / SNAP_SPLIT) ** 2;
     const x = (t - SNAP_SPLIT) / (1 - SNAP_SPLIT) - 1;
-    return SNAP_AT + (1 - SNAP_AT) * (1 + (SNAP_BACK + 1) * x ** 3 + SNAP_BACK * x ** 2);
+    return at + (1 - at) * (1 + (back + 1) * x ** 3 + back * x ** 2);
   };
   const swingQ = new T.Quaternion(),
     identityQ = new T.Quaternion();
 
   /** Snap the camera to look at `target` from `position` (instant under reduced motion). */
-  function moveCamera(target, position, seconds = 0.55) {
+  function moveCamera(target, position, seconds = 0.55, back = 1.7) {
     wake(Math.max(1500, seconds * 1000 + 300));
     if (reduceMotion) {
       controls.target.copy(target);
@@ -219,6 +220,7 @@ export async function createStage(container, opts = {}) {
     cameraMove = {
       t: 0,
       seconds,
+      back,
       fromTarget: controls.target.clone(),
       toTarget: target.clone(),
       toPosition: position.clone(),
@@ -287,7 +289,7 @@ export async function createStage(container, opts = {}) {
     if (cameraMove) {
       const m = cameraMove;
       m.t = Math.min(1, m.t + dt / m.seconds);
-      const e = snapEase(m.t);
+      const e = snapEase(m.t, m.back);
       // Swing around the subject (direction slerped, distance lerped) rather than cutting through it.
       controls.target.lerpVectors(m.fromTarget, m.toTarget, e);
       swingQ.slerpQuaternions(identityQ, m.swing, e);

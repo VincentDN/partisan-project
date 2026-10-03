@@ -1,7 +1,7 @@
 // Workbench intro: an over-the-shoulder opening shot in the style of The Last of Us Part II's
 // workbench. The operator from the AK customiser leans over a table with the rifle lying flat,
-// hands on it. "Start customising" pushes the camera in on the rifle, fades to black and hands
-// over to the normal 3D viewer at /3d/partisan-project/ak15-workbench-intro/ak15-weapon-customiser/.
+// hands on it. "Load all demos" pushes the camera down onto the Nokia beside it, fades to black and hands
+// over to the index (menu/), the same phone close up with every demo on its screen.
 // Scene space: operator's feet on y=0 facing +z, right side -x (see operator.js); meters.
 import * as T from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
@@ -13,7 +13,7 @@ import {solveArm} from './ak15-weapon-customiser/field.js';
 import {mountTopBar} from '../shared/topbar.js';
 import * as mech from './ak15-weapon-customiser/mech.js';
 
-const CUSTOMISER='../workbench/';// the weapon customiser (the current one)
+const INDEX='../menu/';// the Nokia index: every demo
 const TABLE={top:.86,x:[-.95,.95],z:[.24,1.04]};
 const RIFLE_AT=new T.Vector3(.04,0,.47);// x/z on the table; y comes from the rifle's own thickness
 // Camera behind and above the right shoulder, looking down at the rifle.
@@ -86,6 +86,37 @@ const radio=new T.Group();radio.position.copy(RADIO_AT);radio.rotation.y=.25;sce
  for(const x of [.2,.38])part(new T.CylinderGeometry(.017,.019,.018,10).rotateX(Math.PI/2),std(0x201a15,.4),[W*x+W*.03,H*.26,-D/2-.009]);// knobs
  part(new T.TorusGeometry(.07,.008,5,10,Math.PI),std(0x2a2522,.5,{metalness:.4}),[0,H+.002,0]);// handle
 }
+
+// The Nokia, face up on the bench with its screen lit: "Load all demos" pushes in on it and opens the index on its LCD
+// (menu/ shows the same phone close up). Built like the menu's phone, at half its size; local +y is the top of the phone.
+const PHONE_AT=new T.Vector3(-.37,TABLE.top,.66),PHONE={w:.135,l:.3,t:.025,screen:{w:.1,h:.083,y:.085}};
+const phone=new T.Group();phone.position.copy(PHONE_AT);phone.rotation.order='YXZ';phone.rotation.set(-Math.PI/2,Math.PI-.5,0);scene.add(phone);
+{
+ const mat=(color,rough=.55,extra={})=>new T.MeshStandardMaterial({color,roughness:rough,...extra});
+ const shape=new T.Shape(),w=PHONE.w/2,h=PHONE.l/2,r=.035;
+ shape.moveTo(-w+r,-h);shape.lineTo(w-r,-h);shape.quadraticCurveTo(w,-h,w,-h+r);shape.lineTo(w,h-r);shape.quadraticCurveTo(w,h,w-r,h);
+ shape.lineTo(-w+r,h);shape.quadraticCurveTo(-w,h,-w,h-r);shape.lineTo(-w,-h+r);shape.quadraticCurveTo(-w,-h,-w+r,-h);
+ const body=new T.Mesh(new T.ExtrudeGeometry(shape,{depth:PHONE.t,bevelEnabled:true,bevelThickness:.004,bevelSize:.004,bevelSegments:3,curveSegments:10}),mat(0x1f251c,.5));
+ body.castShadow=body.receiveShadow=true;phone.add(body);
+ const top=PHONE.t+.004,sc=PHONE.screen;
+ const add=(geo,material,x,y,z)=>{const m=new T.Mesh(geo,material);m.position.set(x,y,z);m.castShadow=m.receiveShadow=true;phone.add(m);return m;};
+ add(new T.PlaneGeometry(sc.w+.02,sc.h+.02),mat(0x0c100a,.3),0,sc.y,top+.0005);
+ // The LCD: Nokia green, dark pixels, glowing a little in the lamp-lit dark.
+ const c=document.createElement('canvas');c.width=180;c.height=150;const g=c.getContext('2d');
+ g.fillStyle='#9fb184';g.fillRect(0,0,180,150);g.fillStyle='#1f2a14';
+ for(let i=0;i<4;i++)g.fillRect(8+i*7,30-i*5,5,6+i*5);// signal bars
+ for(let i=0;i<4;i++)g.fillRect(150,10+i*7,22-i*4,5);// battery
+ g.font='bold 22px monospace';g.textAlign='center';g.fillText('PARTISAN',90,74);
+ g.font='bold 16px monospace';g.fillText('ALL DEMOS',90,98);g.fillRect(40,124,100,3);g.font='bold 14px monospace';g.fillText('Menu',90,144);
+ const lcdTex=new T.CanvasTexture(c);lcdTex.colorSpace=T.SRGBColorSpace;
+ add(new T.PlaneGeometry(sc.w,sc.h),new T.MeshStandardMaterial({map:lcdTex,emissive:0x9fb184,emissiveMap:lcdTex,emissiveIntensity:.55,roughness:.35}),0,sc.y,top+.001).castShadow=false;
+ add(new T.BoxGeometry(.03,.004,.002),mat(0x0a0c09),0,sc.y+sc.h/2+.025,top+.0005);
+ const key=mat(0x3a4234,.45);
+ add(new T.CylinderGeometry(.027,.027,.006,24).rotateX(Math.PI/2),mat(0x2b3126,.4),0,-.02,top+.003);
+ for(const x of[-.042,.042])add(new T.CylinderGeometry(.015,.015,.005,18).rotateX(Math.PI/2),key,x,-.012,top+.0025);
+ for(let row=0;row<4;row++)for(let col=0;col<3;col++)add(new T.BoxGeometry(.031,.017,.006),key,(col-1)*.035,-.065-row*.0225,top+.003);
+}
+const phoneScreen=()=>new T.Vector3(0,PHONE.screen.y,PHONE.t+.005).applyMatrix4(phone.matrixWorld);
 
 // FIA flag (Altis) draped over the near edge of the bench: most of it lies flat on the table
 // top under the rifle and the rest hangs down towards the operator's knees, swaying a little. The cloth is a grid
@@ -184,9 +215,10 @@ let push=null;
 function begin(){
  if(push||start.disabled)return;
  start.disabled=true;document.body.classList.add('leaving');
- mech.charge();// picks it up and racks it before going in
- const focus=rifle.getWorldPosition(new T.Vector3());
- push={start:performance.now()/1000,from:camera.position.clone(),fromTarget:currentTarget.clone(),to:focus.clone().add(new T.Vector3(-.08,.3,-.16)),toTarget:focus,faded:false};
+ mech.tap();// a key press on the phone
+ phone.updateMatrixWorld(true);
+ const focus=phoneScreen();// straight down onto the LCD, from the operator's side
+ push={start:performance.now()/1000,from:camera.position.clone(),fromTarget:currentTarget.clone(),to:focus.clone().add(new T.Vector3(0,.2,-.07)),toTarget:focus,faded:false};
  if(reduceMotion)push.start-=PUSH_IN.duration*PUSH_IN.fadeAt;
 }
 start.addEventListener('click',begin);
@@ -215,7 +247,7 @@ function frame(){
   camera.position.lerpVectors(push.from,push.to,e);currentTarget.lerpVectors(push.fromTarget,push.toTarget,e);
   if(u>=PUSH_IN.fadeAt&&!push.faded){push.faded=true;fade.classList.remove('clear');}
   // Fully black: stop rendering so the main thread is free for the navigation.
-  if(t>=PUSH_IN.duration+.5){if(!sound.shared)sound.music.handoff();location.href=CUSTOMISER+location.hash;return;}
+  if(t>=PUSH_IN.duration+.5){if(!sound.shared)sound.music.handoff();location.href=INDEX;return;}
  }else{
   const sway=reduceMotion?0:Math.sin(time*.6)*.006;
   camera.position.set(SHOT.position.x+look.x*.05,SHOT.position.y-look.y*.03+sway,SHOT.position.z);

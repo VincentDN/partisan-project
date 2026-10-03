@@ -184,9 +184,8 @@ export const SLOTS = [
     id: 'weapon',
     label: 'Carried weapon',
     camera: 'full',
-    default: 'none',
+    default: 'ak74m', // the operator always holds a gun: the AK-74M, or the user's Workbench build (operator.js)
     options: [
-      {id: 'none', label: 'None', show: on()},
       {id: 'ak74m', label: 'AK-74M', show: on(), weapon: 'ak74m'},
       {id: 'ak15k', label: 'AK-15K', show: on(), weapon: 'ak15k'},
       {id: 'rpk', label: 'RPK 7.62×39', show: on(), weapon: 'rpk'},
@@ -368,7 +367,7 @@ export const PRESETS = [
 
 // A base = one skinned character on the shared skeleton (docs/engineering/skeleton-contract.md) plus the
 // equipment slots, colour zones and looks that fit it. Adding Recon/Insurgent/Enforcer = adding an entry.
-export const DEFAULT_BASE = 'base';
+export const DEFAULT_BASE = 'generated-recon'; // the Recon (generated); the kitbashed Recon is deprecated
 // ---- Recon: the Base Operator skeleton and meshes plus the Recon pack (hood, houndstooth scarf, chest radio) ----
 const RECON_PARTS = {
   ...PARTS,
@@ -476,9 +475,10 @@ export const BASES = {
     defaults: {'z.top': 'olive', 'z.pants': 'olive'},
     status: 'available',
   },
+  // Deprecated: the kitbashed Recon (Base Operator plus the hood pack). Off the roster; old links still load it.
   recon: {
     id: 'recon',
-    label: 'Recon',
+    label: 'Recon (old)',
     model: '../assets/models/operators/base-operator.glb',
     packs: [
       '../assets/models/operators/core-pack.glb',
@@ -490,7 +490,7 @@ export const BASES = {
     zones: RECON_ZONES,
     presets: RECON_PRESETS,
     defaults: {pose: 'hero'},
-    status: 'available',
+    status: 'deprecated',
   },
 };
 // ---- Insurgent and Enforcer: both wear the headwear pack (knit beanie, shemagh); Enforcer is otherwise Base parts in black ----
@@ -612,7 +612,10 @@ BASES.enforcer = {
 BASES['generated-recon'] = generatedRecon(SLOTS.find(s => s.id === 'weapon'));
 
 export const ROSTER = [
-  ...Object.values(BASES).map(b => ({id: b.id, label: b.label, status: b.status})),
+  ...Object.values(BASES)
+    .filter(b => b.status !== 'deprecated')
+    .sort((a, b) => Number(b.id === DEFAULT_BASE) - Number(a.id === DEFAULT_BASE))
+    .map(b => ({id: b.id, label: b.label, status: b.status})),
   ...PLANNED.filter(p => !BASES[p.id]),
 ];
 

@@ -4,6 +4,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 ## [Unreleased]
 
+### Changed (Operator Modder and opening scene)
+- **Recon is the default operator**: the generated Recon, renamed from "Generated Recon", opens the Operator Modder; the kitbashed Recon is deprecated (off the roster, old links still work). TAC-J-38.
+- **Always armed**: the AK-74M by default, or your Workbench build if you made one; rifle-less poses carry it slung across the back. No more "None" weapon.
+- Faster, tighter camera moves in the Operator Modder, and Workbench handling sounds on every operator change (gear, colours, poses, weapons, presets).
+- **Opening scene**: a lit Nokia on the bench; the button is now "Load all demos", which pushes in on the phone and opens the index. TAC-J-39.
+
 ### Changed (Partisan Tactical)
 - **The 2.5-D RimWorld-style view is now Partisan Tactical** at `convoy/` and in the index; the old 3-D top-down page moved to `convoy/3d.html` and is deprecated. `convoy/sprites.html` redirects. TAC-J-36.
 

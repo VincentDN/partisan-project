@@ -69,7 +69,7 @@ await check('opening scene: the table, the rifle, one button; the shell keeps on
   assert.equal(await page.locator('.prompt a, .prompt button').count(), 1, 'one action on the scene');
   assert.deepEqual(
     labels.map(l => l.replace(/\s*E$/, '').trim().toLowerCase()),
-    ['customize this weapon'],
+    ['load all demos'],
     'the orange button is the only action; the rest is in the top bar',
   );
   assert.equal(await page.locator('.pbar a[href$="menu/"]').count(), 1, 'top bar has INDEX');
@@ -107,7 +107,7 @@ await check('opening scene: the table, the rifle, one button; the shell keeps on
 });
 
 await check('operator: loads, equipment toggles, zones are independent, hash round-trips, poses and weapon', async () => {
-  const page = await open(browser, server.url + 'operator/');
+  const page = await open(browser, server.url + 'operator/#base=base');
   await page.waitForFunction(() => window.PARP_OPERATOR?.ready, null, {timeout: 60000});
   const vis = mat => page.evaluate(n => window.PARP_OPERATOR.meshes.filter(m => m.material.name === n).some(m => m.visible), mat);
   assert.equal(await vis('M_Helmet'), true);
@@ -137,7 +137,11 @@ await check('operator: loads, equipment toggles, zones are independent, hash rou
   // roster switching keeps working (reload the same base) and resets looks to the base defaults
   await page.evaluate(() => window.PARP_OPERATOR.switchBase('base'));
   assert.equal(await page.evaluate(() => window.PARP_OPERATOR.state.head), 'nvg');
-  assert.equal(await page.locator('#roster button').count(), 5, 'Base, Recon, Insurgent, Enforcer and Generated Recon in the roster');
+  assert.equal(
+    await page.locator('#roster button').count(),
+    4,
+    'Recon, Base, Insurgent and Enforcer in the roster (the old Recon is deprecated)',
+  );
   // pose + weapon prop
   await page.evaluate(() => {
     window.PARP_OPERATOR.set('weapon', 'ak74m');
@@ -224,7 +228,7 @@ await check('operator: Insurgent and Enforcer load; plaid paints the shirt torso
 });
 
 await check('operator: the share card downloads a PNG with the carried weapon', async () => {
-  const page = await open(browser, server.url + 'operator/');
+  const page = await open(browser, server.url + 'operator/#base=base');
   await page.waitForSelector('#slots .slot', {timeout: 60000});
   await page.evaluate(() => window.PARP_OPERATOR.set('weapon', 'ak74m'));
   await page.waitForFunction(() => window.PARP_OPERATOR.weapon, null, {timeout: 60000});
@@ -236,7 +240,7 @@ await check('operator: the share card downloads a PNG with the carried weapon', 
 });
 
 await check('operator: idle animation moves bones; reduced motion freezes them', async () => {
-  const page = await open(browser, server.url + 'operator/#idle=alert', {reducedMotion: 'no-preference'});
+  const page = await open(browser, server.url + 'operator/#base=base&idle=alert', {reducedMotion: 'no-preference'});
   await page.waitForFunction(() => window.PARP_OPERATOR?.ready, null, {timeout: 60000});
   const head = () => page.evaluate(() => window.PARP_OPERATOR.rig.bones.get('head').quaternion.toArray());
   const a = await head();
@@ -247,7 +251,7 @@ await check('operator: idle animation moves bones; reduced motion freezes them',
     'head moved with idle',
   );
   await page.close();
-  const still = await open(browser, server.url + 'operator/#idle=alert', {reducedMotion: 'reduce'});
+  const still = await open(browser, server.url + 'operator/#base=base&idle=alert', {reducedMotion: 'reduce'});
   await still.waitForFunction(() => window.PARP_OPERATOR?.ready, null, {timeout: 60000});
   const c = await still.evaluate(() => window.PARP_OPERATOR.rig.bones.get('head').quaternion.toArray());
   await still.waitForTimeout(1200);
@@ -257,7 +261,7 @@ await check('operator: idle animation moves bones; reduced motion freezes them',
 });
 
 await check('operator: carries the Workbench build (P1 code) onto the character', async () => {
-  const page = await open(browser, server.url + 'operator/');
+  const page = await open(browser, server.url + 'operator/#base=base');
   await page.waitForFunction(() => window.PARP_OPERATOR?.ready, null, {timeout: 60000});
   await page.evaluate(() => localStorage.setItem('parp-loadout', 'rifle=ak15k&muzzle=brake&optic=scope@-20&stock-finish=fde&wear=40'));
   await page.evaluate(() => window.PARP_OPERATOR.set('weapon', 'bench'));
@@ -301,7 +305,7 @@ await check('operator and viewer: the 3D stage is operable by keyboard (arrows o
 });
 
 await check('operator: eyelids exist (hidden until a blink) and the head follows the camera', async () => {
-  const page = await open(browser, server.url + 'operator/#idle=off', {reducedMotion: 'no-preference'});
+  const page = await open(browser, server.url + 'operator/#base=base&idle=off', {reducedMotion: 'no-preference'});
   await page.waitForFunction(() => window.PARP_OPERATOR?.ready, null, {timeout: 60000});
   const lids = await page.evaluate(() =>
     window.PARP_OPERATOR.meshes.filter(m => window.PARP_OPERATOR.meshPart.get(m) === 'lids').map(m => m.visible),

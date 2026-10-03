@@ -27,7 +27,7 @@ const zone = (id, label, camera = 'torso', palette = 'fabric') => ({
 export function generatedRecon(weaponSlot) {
   return {
     id: 'generated-recon',
-    label: 'Generated Recon',
+    label: 'Recon',
     status: 'available',
     model: '../assets/models/operators/generated-recon.glb',
     packs: [],
@@ -54,7 +54,7 @@ export function generatedRecon(weaponSlot) {
       ]),
       slot('guards', 'Knee protection', 'legs', 'both', [option('none', 'None'), option('both', 'Knee pads', 'kneeL', 'kneeR')]),
       slot('clip', 'Belt clip', 'torso', 'on', [option('on', 'Carabiner', 'carabiner'), option('off', 'None')]),
-      {...weaponSlot, default: 'none'},
+      weaponSlot,
     ],
     zones: [
       zone('top', 'Jacket'),
@@ -76,6 +76,6 @@ export function generatedRecon(weaponSlot) {
       },
       {id: 'sand', label: 'Sand patrol', state: {'z.top': 'tan', 'z.pants': 'khaki', 'z.hood': 'tan', 'z.rig': 'brown', weapon: 'ak15k'}},
     ],
-    defaults: {pose: 'relaxed', idle: 'calm'},
+    defaults: {pose: 'ready', idle: 'calm'},
   };
 }

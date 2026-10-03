@@ -9,7 +9,7 @@ try {
   const page = await open(browser, server.url + 'operator/#base=generated-recon&look=off');
   await page.waitForFunction(() => window.PARP_OPERATOR?.ready, null, {timeout: 60000});
   assert.equal(await page.evaluate(() => window.PARP_OPERATOR.base.id), 'generated-recon');
-  await page.locator('#roster button').getByText('Generated Recon', {exact: true}).click();
+  await page.locator('#roster button').getByText('Recon', {exact: true}).click();
   const failures = await page.evaluate(() => {
     const o = window.PARP_OPERATOR,
       errors = [];
@@ -34,6 +34,7 @@ try {
   });
   assert.deepEqual(failures, []);
   const hash = await page.evaluate(() => location.hash);
+  await page.waitForFunction(() => window.PARP_OPERATOR.weapon?.rifle, null, {timeout: 60000}); // let the rifle finish loading first
   await page.reload();
   await page.waitForFunction(() => window.PARP_OPERATOR?.ready);
   assert.equal(await page.evaluate(() => location.hash), hash);
@@ -81,12 +82,15 @@ try {
     await page.evaluate(id => window.PARP_OPERATOR.set('weapon', id), id);
     await page.waitForFunction(id => window.PARP_OPERATOR.weapon?.rifle.id === id, id);
   }
-  await page.evaluate(() => window.PARP_OPERATOR.set('weapon', 'none'));
-  assert.equal(await page.evaluate(() => window.PARP_OPERATOR.weapon), null);
+  assert.ok(
+    await page.evaluate(() => !window.PARP_OPERATOR.base.slots.find(s => s.id === 'weapon').options.some(o => o.id === 'none')),
+    'the operator always holds a weapon',
+  );
   await page.evaluate(() => window.PARP_OPERATOR.switchBase('base'));
   await page.evaluate(() => window.PARP_OPERATOR.switchBase('generated-recon'));
   assert.equal(await page.evaluate(() => window.PARP_OPERATOR.rig.bones.size), 26);
   await page.emulateMedia({reducedMotion: 'no-preference'});
+  await page.waitForFunction(() => window.PARP_OPERATOR.weapon?.rifle, null, {timeout: 60000}); // let the rifle finish loading first
   await page.reload();
   await page.waitForFunction(() => window.PARP_OPERATOR?.ready);
   await page.evaluate(() => {

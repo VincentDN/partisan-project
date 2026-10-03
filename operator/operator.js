@@ -13,6 +13,7 @@ import {mountTopBar} from '../shared/topbar.js';
 import {camoFor, FABRIC} from '../shared/camo.js';
 import {Rig, blinkAt} from './rig.js';
 import {posesForProfile} from './pose-profile.js';
+import * as mech from '../workbench/mech.js';
 import {Grip, GRIPS} from './grip.js';
 import {PALETTES, CAMO_IDS, VIEWS, HERO_AZIMUTH, TRIANGLE_BUDGET, ROSTER, BASES, DEFAULT_BASE, defaultsFor} from './config.js';
 import {loadRifle} from '../workbench/rifle-instance.js';
@@ -277,11 +278,13 @@ const anchorPos = new T.Vector3(),
   goalQ = new T.Quaternion(),
   poleV = new T.Vector3(),
   POLES = {r: [-0.5, -1, -0.45], l: [0.6, -1, -0.3]}; // elbows hang down, out and a little back
+// Slung across the back: muzzle up over the right shoulder, top rail facing out, no hands on it.
+const SLUNG = {anchor: 'spine_03', hold: [0.1, -0.12, -0.2], muzzle: [-0.55, 0.83, 0], up: [0, 0, -1], hands: {}};
 let carry = null; // {p, q, w}: the rifle's blended placement (turn space) and the IK weight
 function placeWeapon(dt = 0) {
   const pose = rig.data.poses[state.pose];
-  const w = pose.weapon;
-  pivot.visible = !!weapon && !!w;
+  const w = pose.weapon || SLUNG; // a pose with no hands on the rifle carries it slung across the back
+  pivot.visible = !!weapon;
   if (!pivot.visible) {
     carry = null;
     return;
@@ -298,7 +301,7 @@ function placeWeapon(dt = 0) {
   const k = dt > 0 && !reduceMotion ? 1 - Math.exp(-dt * 9) : 1;
   carry.p.lerp(goalP, k);
   carry.q.slerp(goalQ, k);
-  carry.w = reduceMotion ? 1 : Math.min(1, carry.w + dt * 5);
+  carry.w = w === SLUNG ? 0 : reduceMotion ? 1 : Math.min(1, carry.w + dt * 5); // the hands blend in again when it comes off the back
   pivot.position.copy(carry.p);
   pivot.quaternion.copy(carry.q);
   pivot.updateMatrixWorld(true);
@@ -320,7 +323,31 @@ function chip(label, pressed, onclick, attrs = {}) {
   Object.entries(attrs).forEach(([k, v]) => b.setAttribute(k, v));
   return b;
 }
+// The weapon an operator holds unless something says otherwise: the user's Workbench build if they made one,
+// else the slot default (AK-74M). Applied to fresh states, not to DEFAULTS, so a shared link still names its gun.
+function benchDefault() {
+  let stored = '';
+  try {
+    stored = localStorage.getItem('parp-loadout') || '';
+  } catch {}
+  const build = stored ? encode(parseLegacy(stored)) : '';
+  return build && decode(build) && slotOf('weapon')?.options.some(o => o.id === 'bench') ? {weapon: 'bench', build} : {};
+}
+const fresh = () => ({...DEFAULTS, ...benchDefault()});
+// Handling sounds from the Workbench (recorded foley, synthesised until it loads) for every change on the operator.
+const HEAVY = new Set(['armor', 'rig', 'pack', 'belt', 'holsters']);
+function actionSound(key) {
+  if (key === 'weapon') {
+    mech.setDown();
+    setTimeout(() => mech.charge(), 220);
+  } else if (key === 'pose') mech.handle(0.9);
+  else if (key === 'idle' || key === 'look') mech.handle(0.4);
+  else if (key.startsWith('z.') || key.startsWith('patch')) mech.tap();
+  else if (HEAVY.has(key)) mech.clunk(0.55);
+  else mech.latch();
+}
 function set(key, value, cameraView) {
+  if (state[key] !== value) actionSound(key);
   state = {...state, [key]: value};
   if (key === 'weapon' && value === 'bench') {
     // capture the Workbench's latest build so the link is self-contained
@@ -400,7 +427,9 @@ function render() {
   $('#presets').replaceChildren(
     ...base.presets.map(p =>
       chip(p.label, false, () => {
-        state = {...DEFAULTS, pose: state.pose, idle: state.idle, ...p.state};
+        mech.clunk(0.6);
+        setTimeout(() => mech.latch(), 120);
+        state = {...fresh(), pose: state.pose, idle: state.idle, ...p.state};
         applyAll();
         render();
         writeHash();
@@ -426,8 +455,9 @@ function render() {
   $('#base-title').innerHTML = `${base.label},<br>low-poly.`;
 }
 async function switchBase(id) {
+  mech.setDown();
   await loadBase(id);
-  state = {...DEFAULTS, idle: state.idle};
+  state = {...fresh(), idle: state.idle};
   applyAll();
   render();
   writeHash();
@@ -442,9 +472,16 @@ function view(name) {
   const aspect = $('#stage').clientWidth / $('#stage').clientHeight;
   const d = v.distance * Math.max(1, 0.9 / aspect);
   const target = new T.Vector3(...v.target);
-  stage.moveCamera(target, new T.Vector3(Math.sin(azimuth) * d + target.x, v.height + 0.1, Math.cos(azimuth) * d + target.z));
+  // Fast and tight: a third of a second, a small overshoot.
+  stage.moveCamera(target, new T.Vector3(Math.sin(azimuth) * d + target.x, v.height + 0.1, Math.cos(azimuth) * d + target.z), 0.32, 1.1);
 }
-for (const [name, v] of Object.entries(VIEWS)) $('#views').append(chip(v.label, false, () => view(name)));
+for (const [name, v] of Object.entries(VIEWS))
+  $('#views').append(
+    chip(v.label, false, () => {
+      mech.handle(0.3);
+      view(name);
+    }),
+  );
 $('#spin').onclick = e => {
   turntable = !turntable;
   e.currentTarget.setAttribute('aria-pressed', String(turntable));
@@ -457,7 +494,8 @@ $('#wire').onclick = e => {
 
 // ---------- Actions ----------
 $('#reset').onclick = () => {
-  state = {...DEFAULTS};
+  mech.clunk(0.4);
+  state = {...fresh()};
   applyAll();
   render();
   writeHash();
@@ -465,7 +503,10 @@ $('#reset').onclick = () => {
 };
 $('#random').onclick = () => {
   const pick = a => a[Math.floor(Math.random() * a.length)];
-  state = {...DEFAULTS, idle: state.idle};
+  mech.handle(1);
+  mech.clunk(0.5);
+  setTimeout(() => mech.charge(), 250);
+  state = {...fresh(), idle: state.idle};
   for (const s of base.slots) state[s.id] = pick(s.options).id;
   for (const z of base.zones) state[`z.${z.id}`] = pick(zoneOptions(z)).id;
   state.pose = pick(Object.keys(poseData.poses));
@@ -541,7 +582,7 @@ async function restore(hash) {
   const params = new URLSearchParams(hash.replace(/^#/, ''));
   const id = BASES[params.get('base')] ? params.get('base') : DEFAULT_BASE;
   if (id !== base.id || !operator) await loadBase(id);
-  const next = {...DEFAULTS};
+  const next = {...fresh()};
   for (const [k, v] of params) if (k in next && k !== 'base' && valid(k, v)) next[k] = v;
   state = next;
   applyAll();

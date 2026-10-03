@@ -372,3 +372,20 @@ The 2.5-D top-down sprite look for the shooter (RimWorld style) and the retro ov
 - Cost to change: Low: swap a synth voice for a sample in `shot()` when recordings arrive.
 - Revisit if: Recorded weapon sounds land in `inbound/`.
 - Owner feedback: —
+
+### TAC-J-38 · The Recon (generated) is the default operator, always armed; the kitbashed Recon is deprecated
+- Status: built  ·  Packet: WP-CG1 follow-up
+- Decision: The Operator Modder opens on the generated Recon, now called just "Recon", in low ready. The kitbashed Recon (Base Operator plus the hood pack) leaves the roster as deprecated; `#base=recon` links still load it. The operator always holds a weapon: the weapon slot has no "None", the default is the AK-74M, or the user's Workbench build when one is saved in the browser (`parp-loadout`); that default fills fresh states (first load, reset, presets, base switch), not the slot default, so shared links keep naming their gun. Poses with no hands on the rifle (Relaxed, Radio check, Overwatch, Salute) carry it slung across the back. Camera moves in the Operator Modder are faster and tighter (0.32 s, about 2 % overshoot). Every change on the operator plays a Workbench handling sound (recorded foley): gear latches and clunks, colours tap, poses handle, weapons set down and rack, presets and random clunk and rack.
+- Why: Owner request.
+- Alternatives rejected: Deleting the kitbashed Recon (breaks old links); hiding the gun in rifle-less poses (the owner wants it always in the scene).
+- Cost / risk: The slung position is one placement for every operator; a bulky pack can show the rifle clipping it.
+- Cost to change: Low.
+- Revisit if: More generated operators land, or the sling needs per-operator offsets.
+- Owner feedback: —
+
+### TAC-J-39 · The opening scene's button loads every demo through the Nokia
+- Status: built  ·  Packet: WP-V5
+- Decision: A half-size Nokia lies lit on the workbench in the opening scene, beside the rifle. "Customize this weapon" became "Load all demos": a key press, then the camera pushes down onto the phone's screen, fades, and the index (`menu/`, the same phone close up) opens. The Weapon Modder stays one entry in that index.
+- Why: Owner request; the index holds every demo, so it is the right first step.
+- Cost to change: Low.
+- Owner feedback: —
