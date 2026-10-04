@@ -165,11 +165,35 @@ export function buildWarehouse(stage) {
     metal = flat(0x3d4236, null, {metalness: 0.3, roughness: 0.6}),
     olive = flat(0x4a5233),
     rust = flat(0x6b3a22);
-  box(1, 1, 1, crate, -2.6, 0, -2.9, 0.2);
-  box(1, 1, 1, crateDark, -3.5, 0, -3.3, -0.1);
-  box(0.9, 0.9, 0.9, crate, -3.0, 1, -3.1, 0.5);
-  box(0.8, 0.6, 1.2, crateDark, 2.4, 0, -3.4, 0.35);
-  box(0.8, 0.6, 1.2, crate, 2.5, 0.6, -3.35, 0.3);
+  // stacks out at the sides, so the crew and the bench in the middle stay in view
+  box(1, 1, 1, crate, -4.6, 0, -4.2, 0.2);
+  box(1, 1, 1, crateDark, -5.5, 0, -3.6, -0.1);
+  box(0.9, 0.9, 0.9, crate, -5.0, 1, -4.0, 0.5);
+  box(0.8, 0.6, 1.2, crateDark, 3.6, 0, -3.9, 0.35);
+  box(0.8, 0.6, 1.2, crate, 3.7, 0.6, -3.85, 0.3);
+  // the crate a rebel sits on (right) and the open weapons crate two rebels go through (back left)
+  const seat = box(0.62, 0.46, 0.55, crateDark, 0.55, 0, -2.45, 0.35);
+  seat.name = 'seat crate';
+  const open = new T.Group();
+  open.position.set(-2.8, 0, -3.15);
+  open.rotation.y = 0.08;
+  const side = (w, h, d, x, y, z) => {
+    const m = new T.Mesh(new T.BoxGeometry(w, h, d), crate);
+    m.position.set(x, y, z);
+    m.castShadow = m.receiveShadow = true;
+    open.add(m);
+  };
+  side(1.2, 0.05, 0.62, 0, 0.03, 0); // floor
+  side(1.2, 0.55, 0.05, 0, 0.3, 0.29); // front and back
+  side(1.2, 0.55, 0.05, 0, 0.3, -0.29);
+  side(0.05, 0.55, 0.62, 0.58, 0.3, 0); // ends
+  side(0.05, 0.55, 0.62, -0.58, 0.3, 0);
+  const lid = new T.Mesh(new T.BoxGeometry(1.2, 0.04, 0.64), crate); // the lid leaning against the back
+  lid.position.set(0, 0.62, -0.44);
+  lid.rotation.x = -1.1;
+  lid.castShadow = true;
+  open.add(lid);
+  group.add(open);
   for (const [x, z, m] of [
     [3.4, -1.6, olive],
     [3.9, -2.2, rust],
@@ -188,15 +212,23 @@ export function buildWarehouse(stage) {
     for (let i = 0; i < 6; i++)
       box(0.32, 0.22, 0.2, i % 2 ? olive : metal, x - 0.9 + (i % 3) * 0.7 + rnd() * 0.1, 0.1 + Math.floor(i / 3) * 0.9, -4.85, rnd() * 0.3);
   }
-  // a workbench at the side with a lamp
-  box(2, 0.08, 0.8, crateDark, -4.6, 0.86, 0.6, Math.PI / 2);
+  // the workbench against the back wall, in view between the crew: a heavy top, a shelf, a vice, tools, a lamp
+  const BENCH = {x: -0.7, z: -4.55, top: 0.9};
+  box(2.2, 0.1, 0.75, crateDark, BENCH.x, BENCH.top - 0.1, BENCH.z);
+  box(2.1, 0.05, 0.65, crate, BENCH.x, 0.25, BENCH.z);
   for (const [dx, dz] of [
-    [-0.32, -0.9],
-    [0.32, -0.9],
-    [-0.32, 0.9],
-    [0.32, 0.9],
+    [-1, -0.3],
+    [1, -0.3],
+    [-1, 0.3],
+    [1, 0.3],
   ])
-    box(0.08, 0.86, 0.08, crateDark, -4.6 + dx, 0, 0.6 + dz);
+    box(0.09, BENCH.top - 0.1, 0.09, crateDark, BENCH.x + dx, 0, BENCH.z + dz);
+  box(0.16, 0.12, 0.12, metal, BENCH.x - 0.85, BENCH.top, BENCH.z + 0.2); // vice
+  box(0.3, 0.05, 0.08, rust, BENCH.x + 0.75, BENCH.top, BENCH.z + 0.18); // tools
+  box(0.22, 0.04, 0.05, metal, BENCH.x + 0.55, BENCH.top, BENCH.z + 0.26);
+  box(0.36, 0.2, 0.22, olive, BENCH.x - 0.35, 0.3, BENCH.z); // ammo cans on the shelf
+  box(0.36, 0.2, 0.22, metal, BENCH.x + 0.15, 0.3, BENCH.z + 0.02);
+  box(1.8, 0.9, 0.03, flat(0x3a2e20), BENCH.x, 1.25, -5.42); // a pegboard of tools above it
   // a rebel banner on the back wall
   const banner = new T.Mesh(new T.PlaneGeometry(1.6, 2.2), flat(0x5a1d16, null, {side: T.DoubleSide}));
   banner.position.set(0.4, 3.1, -5.45);
@@ -210,7 +242,7 @@ export function buildWarehouse(stage) {
   const lights = new T.Group();
   const bulbMat = new T.MeshBasicMaterial({color: 0xffc27a});
   for (const [x, z] of [
-    [-3.4, -3.6],
+    [-5.2, -2.6],
     [4.2, -3.2],
   ]) {
     const bulb = new T.Mesh(new T.SphereGeometry(0.07, 8, 6), bulbMat);
@@ -238,6 +270,28 @@ export function buildWarehouse(stage) {
   rim.position.set(-1.6, 3.1, -2.8);
   rim.target.position.set(0, 1.2, 0);
   const fill = new T.HemisphereLight(0x5a6a80, 0x1a130c, 0.35); // low fill, cool above, warm floor bounce
+  // the bench lamp: a shaded bulb hanging low over the workbench, a warm island at the back of the room
+  const shade = new T.Mesh(new T.ConeGeometry(0.22, 0.2, 10, 1, true), flat(0x2c3326, null, {side: T.DoubleSide}));
+  shade.position.set(BENCH.x, 2.05, BENCH.z + 0.1);
+  const benchBulb = new T.Mesh(new T.SphereGeometry(0.05, 8, 6), bulbMat);
+  benchBulb.position.set(BENCH.x, 1.98, BENCH.z + 0.1);
+  const benchLamp = new T.SpotLight(0xffb36b, 22, 4, 0.9, 0.6, 2);
+  benchLamp.position.set(BENCH.x, 1.97, BENCH.z + 0.1);
+  benchLamp.target.position.set(BENCH.x, BENCH.top, BENCH.z + 0.1);
+  benchLamp.castShadow = true;
+  benchLamp.shadow.mapSize.setScalar(512);
+  lights.add(shade, benchBulb, benchLamp, benchLamp.target);
+  // a work light over the open weapons crate, so the two rebels going through it read against the dark
+  const crateShade = shade.clone(),
+    crateBulb = benchBulb.clone(),
+    crateLamp = new T.SpotLight(0xffc48a, 30, 5, 0.8, 0.7, 2);
+  crateShade.position.set(open.position.x, 2.35, open.position.z + 0.3);
+  crateBulb.position.set(open.position.x, 2.28, open.position.z + 0.3);
+  crateLamp.position.set(open.position.x, 2.27, open.position.z + 0.3);
+  crateLamp.target.position.set(open.position.x, 0.4, open.position.z + 0.5);
+  crateLamp.castShadow = true;
+  crateLamp.shadow.mapSize.setScalar(512);
+  lights.add(crateShade, crateBulb, crateLamp, crateLamp.target);
   lights.add(keyLight, keyLight.target, pool, pool.target, rim, rim.target, fill);
   group.add(lights);
 
@@ -277,7 +331,10 @@ export function buildWarehouse(stage) {
   scene.add(group);
   return {
     group,
-    lights: {key: keyLight, pool, rim, fill},
+    lights: {key: keyLight, pool, rim, fill, bench: benchLamp},
+    bench: BENCH, // where the workbench top is, for props
+    seat: seat.position,
+    crate: open,
     on,
     get enabled() {
       return group.visible;

@@ -4,6 +4,10 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 ## [Unreleased]
 
+### Added (Operator Customiser)
+- **A crew in the warehouse**: three insurgents idle in the background: one sits on a crate watching your operator, two go through an open weapons crate with their backs to the camera. The workbench, with a rifle on it, is in view under its lamp. TAC-J-47.
+- **Depth of field**: the operator stays sharp while the room behind softens. TAC-J-47.
+
 ### Added (Partisan Tactical)
 - **Real sound**: shots, impacts, flybys, explosions, engines, fires, footsteps, breathing and ambience are now real CC0 recordings (Freesound), fetched and prepared by `tools/audio/fetch-shooter-sounds.mjs`. TAC-J-46.
 - **Fog of war**: the map darkens outside what your rebels can see, and enemies there are hidden. TAC-J-46.

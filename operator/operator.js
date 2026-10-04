@@ -6,10 +6,13 @@
 import * as T from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
+import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
 import {shareCardDataUrl} from './share-card.js';
 import {createStage, reduceMotion} from '../shared/stage.js';
 import {buildWarehouse} from './warehouse.js';
 import {mountStash} from './stash.js';
+import {mountCrew} from './crew.js';
+import {createDof} from './dof.js';
 import {mountTopBar} from '../shared/topbar.js';
 import {camoFor, FABRIC} from '../shared/camo.js';
 import {Rig, blinkAt} from './rig.js';
@@ -39,7 +42,75 @@ renderer.toneMappingExposure = 0.85;
 // the HDR lighting buttons swap it for Studio, Outdoor or Sunset, and the Warehouse button brings it back.
 const warehouse = buildWarehouse(stage);
 mountStash($('#stash'));
-const roomButton = () => $('#room')?.setAttribute('aria-pressed', String(warehouse.enabled));
+
+/**
+ * A background figure: another copy of a base, dressed by its own state (equipment and colours), with its own rig and
+ * any extra poses. The hero's pipeline, without touching the hero (operator/crew.js places and animates them).
+ */
+const templates = new Map(); // base id -> Promise of its model with the packs bound, never shown: cloned per figure
+function template(b) {
+  if (!templates.has(b.id))
+    templates.set(
+      b.id,
+      (async () => {
+        const gltf = await loader.loadAsync(b.model);
+        const r = new Rig(gltf.scene, posesForProfile(poseData, b.poseProfile));
+        for (const url of b.packs || []) bindPack((await loader.loadAsync(url)).scene, gltf.scene, r);
+        return gltf.scene;
+      })(),
+    );
+  return templates.get(b.id);
+}
+async function figure(baseId, st = {}, extraPoses = {}) {
+  const b = BASES[baseId];
+  const gltf = {scene: SkeletonUtils.clone(await template(b))}; // its own bones, so it poses on its own
+  const data = posesForProfile(poseData, b.poseProfile);
+  const r = new Rig(gltf.scene, {...data, poses: {...data.poses, ...extraPoses}});
+  r.grip = new Grip(r.bones, r.rest, b.grip);
+  const full = {...defaultsFor(b), ...st},
+    show = visibleParts(b, full),
+    mats = new Map();
+  gltf.scene.traverse(o => {
+    if (!o.isMesh) return;
+    o.castShadow = o.receiveShadow = true;
+    o.frustumCulled = false;
+    o.material = o.material.clone();
+    o.material.userData.orig = {color: o.material.color.clone(), map: o.material.map};
+    if (!mats.has(o.material.name)) mats.set(o.material.name, o.material);
+    const part =
+      Object.entries(b.parts).find(
+        ([, p]) => p.nodes.includes(nodeOf(o)) && (!p.materials || p.materials.includes(o.material.name)),
+      )?.[0] ?? null;
+    o.visible = part === null || show.has(part);
+  });
+  // a clone per mesh: paint every material of a zone, not only the first one found
+  for (const zone of b.zones) {
+    const id = full[`z.${zone.id}`];
+    gltf.scene.traverse(
+      o => o.isMesh && zone.materials.includes(o.material.name) && paintZone(zone, id, new Map([[o.material.name, o.material]])),
+    );
+  }
+  return {root: gltf.scene, rig: r};
+}
+/** A rifle prop (no hands solved on it): +x muzzle, +y up, the pistol grip at the origin. */
+async function rifleProp(id = 'ak74m') {
+  const rifle = await loadRifle(id);
+  applyLoadout(rifle, emptyLoadout(id), {value: 0});
+  const grip = rifle.sockets.find(s => s.userData.id === 'grip');
+  const gp = grip ? rifle.model.worldToLocal(grip.getWorldPosition(new T.Vector3())) : new T.Vector3();
+  const holder = new T.Group();
+  holder.add(rifle.model);
+  rifle.model.position.sub(gp);
+  holder.traverse(o => o.isMesh && (o.castShadow = true));
+  return holder;
+}
+// Depth of field in the warehouse: focused where the camera looks (the hero), the room behind softens. Not in the
+// Art Style Lab, which draws its own screen-space passes.
+const dof = lab ? null : createDof(stage, {focus: cam => cam.position.distanceTo(stage.controls.target)});
+const roomButton = () => {
+  $('#room')?.setAttribute('aria-pressed', String(warehouse.enabled));
+  dof?.set(warehouse.enabled);
+};
 warehouse.on(true);
 roomButton();
 for (const b of document.querySelectorAll('[data-env], #backdrop'))
@@ -184,10 +255,10 @@ function zoneOptions(zone) {
   const camo = zone.textured ? CAMO_IDS.map(id => ({id, label: id[0].toUpperCase() + id.slice(1) + ' camo', camo: id})) : [];
   return [{id: 'original', label: zone.textured ? 'Original camo' : 'Original', original: true}, ...camo, ...palette];
 }
-function paintZone(zone, id) {
+function paintZone(zone, id, materials = zoneMaterials) {
   const option = zoneOptions(zone).find(o => o.id === id) || zoneOptions(zone)[0];
   for (const name of zone.materials) {
-    const m = zoneMaterials.get(name);
+    const m = materials.get(name);
     if (!m) continue;
     const orig = m.userData.orig;
     if (option.original) {
@@ -205,13 +276,13 @@ function paintZone(zone, id) {
 }
 
 // ---------- Apply state ----------
-function visibleParts() {
+function visibleParts(b = base, st = state) {
   const set = new Set();
   const chosen = id => {
-    const slot = slotOf(id);
-    return slot && (slot.options.find(o => o.id === state[id]) || slot.options[0]);
+    const slot = b.slots.find(s => s.id === id);
+    return slot && (slot.options.find(o => o.id === st[id]) || slot.options[0]);
   };
-  for (const slot of base.slots) for (const p of chosen(slot.id).show) set.add(p);
+  for (const slot of b.slots) for (const p of chosen(slot.id).show) set.add(p);
   // Hair needs a bare head; a beard and moustache need an uncovered lower face.
   if (!chosen('head')?.hair) set.delete('hair');
   if (chosen('face')?.covers) {
@@ -659,8 +730,14 @@ stage.onFrame((dt, t) => {
 });
 
 // Test hook: lets browser tests await a fully loaded operator and inspect state.
+// the background crew loads after the hero, so it never delays the operator
+const crew = lab ? null : mountCrew({scene, warehouse, figure, rifleProp, stage, reduceMotion});
 window.PARP_OPERATOR = {
   warehouse,
+  dof,
+  get crew() {
+    return crew;
+  },
   get state() {
     return state;
   },

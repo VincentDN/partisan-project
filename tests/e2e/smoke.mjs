@@ -157,11 +157,26 @@ await check('operator: loads, equipment toggles, zones are independent, hash rou
   // the Bannerlord layout: the stash on the left, the operator in the warehouse, the kit on the right
   await page.waitForFunction(() => document.querySelectorAll('#stash tbody tr').length >= 10, null, {timeout: 20000});
   assert.equal(await page.evaluate(() => window.PARP_OPERATOR.warehouse.enabled), true, 'the warehouse is the default room');
+  // the crew in the background (three insurgents, one with a rifle in hand) and the depth of field on the room
+  await page.waitForFunction(() => window.PARP_OPERATOR.crew?.figures.length === 3, null, {timeout: 60000});
+  assert.equal(await page.evaluate(() => window.PARP_OPERATOR.dof.on), true, 'the background is out of focus');
+  const crewInfo = await page.evaluate(() => {
+    const o = window.PARP_OPERATOR,
+      V = o.stage.T.Vector3;
+    const inspector = o.crew.figures.find(f => f.def.id === 'inspector');
+    return {
+      poses: o.crew.figures.map(f => f.rig.poseId).sort(),
+      handOnRifle: inspector.rig.bones.get('hand_r').getWorldPosition(new V()).distanceTo(inspector.holder.getWorldPosition(new V())),
+    };
+  });
+  assert.deepEqual(crewInfo.poses, ['inspect', 'rummage', 'sit']);
+  assert.ok(crewInfo.handOnRifle < 0.2, `the inspector holds his rifle (${crewInfo.handOnRifle.toFixed(2)} m)`);
   const firstName = await page.locator('#stash tbody tr .nm').first().innerText();
   await page.locator('#stash th[data-sort="value"] button').click();
   assert.equal(await page.locator('#stash th[data-sort="value"]').getAttribute('aria-sort'), 'ascending');
   await page.locator('[data-env="studio"]').click();
   assert.equal(await page.evaluate(() => window.PARP_OPERATOR.warehouse.enabled), false, 'an HDR lighting swaps the room out');
+  assert.equal(await page.evaluate(() => window.PARP_OPERATOR.dof.on), false, 'and the depth of field with it');
   await page.locator('#room').click();
   assert.equal(await page.evaluate(() => window.PARP_OPERATOR.warehouse.enabled), true);
   assert.ok(firstName.length > 2);
@@ -328,12 +343,12 @@ await check('operator: carries the Workbench build (P1 code) onto the character'
   });
   assert.deepEqual([r.rifle, r.muzzle, r.optic, r.stock], ['ak15k', 'brake', 'scope', 'fde']);
   assert.match(r.hash, /weapon=bench&build=P1\./, 'the link is self-contained: it carries the code');
+  await page.close(); // one 3D page at a time: the warehouse crew and depth of field are heavy for a software renderer
   // the link works in a fresh browser profile with no stored build
   const other = await open(browser, server.url + 'operator/' + r.hash);
-  await other.waitForFunction(() => window.PARP_OPERATOR?.weapon, null, {timeout: 60000});
+  await other.waitForFunction(() => window.PARP_OPERATOR?.weapon, null, {timeout: 90000});
   assert.equal(await other.evaluate(() => window.PARP_OPERATOR.weapon.rifle.build.muzzle), 'brake');
   await other.close();
-  await page.close();
 });
 
 await check('operator and viewer: the 3D stage is operable by keyboard (arrows orbit, +/- zoom)', async () => {
@@ -547,7 +562,8 @@ await check('convoy ambush: the convoy drives, the ambush springs, soldiers dism
   assert.equal(r.dismounted, r.soldiers, 'every soldier is out (the MRAP gunner is in his turret, not mounted)');
   assert.ok(r.soldiers < 11, 'the difficulty thins the convoy (Normal: about 70%)');
   assert.ok(r.callouts >= 3, `the army calls out (${r.callouts})`);
-  await page.waitForTimeout(500);
+  // the panel redraws every 120 ms of real frames: wait for it rather than for a fixed time
+  await page.waitForFunction(() => document.querySelectorAll('#comms li').length >= 3, null, {timeout: 10000}).catch(() => {});
   assert.ok((await page.locator('#comms li').count()) >= 3, 'callouts reach the comms log');
   noProblems(page);
   await page.close();

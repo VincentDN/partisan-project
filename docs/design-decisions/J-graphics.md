@@ -462,3 +462,13 @@ The 2.5-D top-down sprite look for the shooter (RimWorld style) and the retro ov
 - Cost to change: Low (`updateFog` in `convoy/sprite-render.js`; categories and picks in the fetch tool; `operator/warehouse.js`, `operator/operator.css`).
 - Revisit if: Sounds need per-weapon recordings (a PKM of its own), or the stash becomes the real inventory.
 - Owner feedback: —
+
+### TAC-J-47 · The warehouse has a crew, a workbench in view, and a shallow depth of field
+- Status: built  ·  Packet: WP-V
+- Decision: Three more insurgents share the Operator Customiser's warehouse (`operator/crew.js`), each a clone of the Insurgent with its own skeleton, kit and colours, posed by the rig and breathing on its own idle: one sits on a crate to the right and keeps turning his head to watch your operator (glancing at the floor now and then); two stand at an open weapons crate at the back left with their backs to the camera, one turning a rifle over in his hands (placed like the hero's carry, both hands solved onto it), the other bent over the crate reaching in. The workbench stands against the back wall in view between them, under a hanging lamp, with a rifle lying on it; a work light hangs over the crate. A depth-of-field pass (`operator/dof.js`) keeps the operator sharp and softens the room: it focuses where the camera looks, keeps half a metre either side sharp and blurs up to nine pixels (at 900 px tall) over the next two metres. The crew loads after the hero from one parsed copy of the model; Studio, Outdoor and Sunset turn the room, crew and blur off.
+- Why: Owner request: three insurgents idling in the background (one on a box watching the hero, two going through a crate with their backs to the camera), the workbench visible, and camera blur on the background.
+- Alternatives rejected: Sprites or cut-outs for the crew (they would not catch the room's light); a blurred backdrop image (the camera orbits).
+- Cost / risk: Three more skinned characters and a full-screen pass; heavy on software renderers (the browser tests open one 3D page at a time).
+- Cost to change: Low (`CREW` and `CREW_POSES` in `operator/crew.js`; the blur's uniforms in `operator/dof.js`).
+- Revisit if: The crew should wear the player's band (classes from the Rebel Band), or the camera views need their own focus.
+- Owner feedback: —
