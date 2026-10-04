@@ -58,10 +58,32 @@ export const back = () =>
   });
 /** Nothing to do: a low blip. */
 export const deny = () => play((ctx, out, t) => note(ctx, out, 220, t, 0.12, 0.06));
-/** Something unlocked: a quick rising arpeggio. */
+/**
+ * A secret getting closer (the vincentdenil.com nerd-mode easter egg): taps 1-6 each ping a whole tone higher than the
+ * last, gaining notes and volume, so the ear counts instead of the screen.
+ */
+export const climb = step =>
+  play((ctx, out, t) => {
+    const base = 660 * 2 ** (((step - 1) * 2) / 12),
+      peak = (0.04 + step * 0.012) / LEVEL; // note() scales by LEVEL; keep the site's own levels
+    note(ctx, out, base, t, 0.08, peak);
+    note(ctx, out, base * 1.5, t + 0.06, 0.08, peak * 0.8);
+    if (step >= 3) note(ctx, out, base * 2, t + 0.12, 0.09, peak * 0.7);
+    if (step >= 4) note(ctx, out, base / 2, t, 0.2, peak * 0.35, 'sawtooth');
+    if (step >= 5) note(ctx, out, base * 3, t + 0.18, 0.1, peak * 0.6);
+    if (step >= 6) note(ctx, out, base * 4, t + 0.24, 0.12, peak * 0.8, 'triangle');
+  });
+/** Unlocked: a fast rising arpeggio into a held major chord (the site's "level unlocked"). */
 export const unlock = () =>
   play((ctx, out, t) => {
-    [784, 988, 1175, 1568].forEach((f, i) => note(ctx, out, f, t + i * 0.07, i === 3 ? 0.22 : 0.08));
+    const v = x => x / LEVEL;
+    [523.25, 659.25, 783.99, 1046.5, 1318.51, 1567.98].forEach((f, i) => note(ctx, out, f, t + i * 0.07, 0.1, v(0.1)));
+    const c = t + 0.45;
+    note(ctx, out, 1046.5, c, 0.6, v(0.09));
+    note(ctx, out, 1318.51, c, 0.6, v(0.07));
+    note(ctx, out, 1567.98, c, 0.6, v(0.07));
+    note(ctx, out, 2093, c, 0.6, v(0.08), 'triangle');
+    note(ctx, out, 261.63, c, 0.6, v(0.05), 'sawtooth');
   });
 /** Victory: an 8-bit fanfare, a run up to a held major chord. */
 export const victory = () =>

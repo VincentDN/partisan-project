@@ -63,5 +63,8 @@ body.flat .lcd-frame{left:50%;top:calc(50% + var(--topbar,40px)/2);margin:-150px
 /* Dev tools: a folder row, and its tools indented under it */
 .menu a.folder{border-top:2px dashed var(--lcd-0)}
 .menu a.child{padding-left:20px}
+.menu a.nudge{animation:nudge .18s steps(4,end)}
+@keyframes nudge{30%{transform:translateX(-3px)}70%{transform:translateX(3px)}}
+@media (prefers-reduced-motion:reduce){.menu a.nudge{animation:none}}
 @keyframes blink{50%{opacity:0}}
 @media (prefers-reduced-motion:reduce){.fold{transition:none}.fold .launch{animation:none}}

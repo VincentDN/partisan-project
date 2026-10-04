@@ -43,11 +43,8 @@ let ROWS = [];
 function rowsFor() {
   return ITEMS.flatMap(it => (it.folder && devUnlocked && devOpen ? [it, ...it.children.map(c => ({...c, child: true}))] : [it]));
 }
-function folderLabel(it) {
-  if (devUnlocked) return `${it.label} ${devOpen ? '▾' : '▸'}`;
-  const left = DEV_TAPS - devTaps;
-  return devTaps ? `${it.label} · ${left} more tap${left > 1 ? 's' : ''}` : `${it.label} - tap to unlock`;
-}
+// No countdown on screen: each tap pings a whole tone higher (shared/ui-sounds.js climb), as on vincentdenil.com.
+const folderLabel = it => (devUnlocked ? `${it.label} ${devOpen ? '▾' : '▸'}` : `${it.label} - tap to unlock`);
 
 const clock = () => new Date().toLocaleTimeString('en-GB', {hour: '2-digit', minute: '2-digit'});
 function chrome(titleLeft, titleRight) {
@@ -102,10 +99,11 @@ function folder() {
   if (!devUnlocked) {
     devTaps++;
     if (devTaps < DEV_TAPS) {
-      ui.tap();
-      const label = content.querySelector(`.menu a[data-i="${index}"] span:last-child`);
-      if (label) label.textContent = folderLabel(ROWS[index]);
-      $('#help').textContent = `${DEV_TAPS - devTaps} more tap${DEV_TAPS - devTaps > 1 ? 's' : ''} to unlock the dev tools.`;
+      ui.climb(devTaps);
+      const row = content.querySelector(`.menu a[data-i="${index}"]`);
+      row?.classList.remove('nudge');
+      void row?.offsetWidth; // restart the nudge
+      row?.classList.add('nudge');
       return;
     }
     devUnlocked = true;

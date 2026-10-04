@@ -81,7 +81,8 @@ await check('index: the Nokia screen lies on the table and opens straight on the
   assert.equal(await page.evaluate(() => window.PARP_INDEX.open), -1, 'Escape folds it shut');
   // dev tools: seven taps unlock the folder, which then shows its tools
   for (let i = 0; i < 6; i++) await page.locator('.menu a[data-i="4"]').click();
-  assert.match(await page.locator('.menu a[data-i="4"]').innerText(), /1 more tap/i);
+  assert.match(await page.locator('.menu a[data-i="4"]').innerText(), /tap to unlock/i, 'no countdown on screen: the pings climb');
+  assert.doesNotMatch(await page.locator('#help').innerText(), /\d+ more tap/i);
   assert.equal(await page.evaluate(() => window.PARP_INDEX.devUnlocked), false);
   await page.locator('.menu a[data-i="4"]').click();
   assert.equal(await page.evaluate(() => window.PARP_INDEX.devUnlocked), true);

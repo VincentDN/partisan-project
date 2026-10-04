@@ -34,7 +34,7 @@ export const ITEMS = [
     label: 'Dev tools',
     folder: true,
     icon: px('1110010010111111000111111'),
-    help: 'Tools and documents for building the game. Locked: tap seven times to unlock.',
+    help: 'Tools and documents for building the game. Locked: keep tapping.',
     children: [
       {
         label: 'Equipment Wiki',
