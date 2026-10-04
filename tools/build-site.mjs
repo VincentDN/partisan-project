@@ -36,7 +36,7 @@ const ALLOW = [
   'inbound',
   'outbound',
 ];
-// Layered PSDs stay in the repository; outbound/flatten-psd.py writes a PNG beside each one and the build ships those.
+// Layered PSDs live in outbound/placeholder-psd/; outbound/flatten-psd.py writes a PNG beside any new one and the build ships those.
 // The Codex workbench study links to repository Markdown, which is not published.
 const SKIP_DIRS = [/^outbound\/tlou2-workbench-study\//];
 const SKIP_FILES = [/\.psd$/i, /\.manifest\.json$/, /\.md$/, /\.test\.m?js$/, /\.DS_Store$/];

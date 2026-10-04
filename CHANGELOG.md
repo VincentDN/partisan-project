@@ -5,7 +5,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 ## [Unreleased]
 
 ### Changed (index, intro, operator, Rebel Band)
-- **Intro boot**: the workbench scene loads behind a Nokia-style boot. The backlight flickers on, a lambda draws in, PARTISAN types out, a boot log ticks through and a pixel snake runs round the border as the bench loads. Then READY blinks and the dither reveal plays. About five seconds; any key or click skips it once the bench has loaded.
+- **Intro boot**: the workbench scene loads behind a Nokia-style boot. The backlight fades up, a lambda draws in, PARTISAN types out, a boot log ticks through and a pixel snake runs round the border as the bench loads. Then READY blinks and the dither reveal plays. About five seconds; any key or click skips it once the bench has loaded.
 - **Nokia index**: four demos (Weapon Modder, Operator Modder, Top-down Shooter Tests, Rebel Band). The tools and documents (Equipment Wiki, Asset Viewer, Game Design Doc, Moodboard, Advanced animations, Art Style Lab, Master Roadmap) sit in a Dev tools folder that unlocks after seven taps. A demo's explainer has a big LAUNCH button, and tapping anything else folds it shut. The phone's blips are louder.
 - **Operator poses**: three, Hero (rifle up, the default), Relaxed (rifle hanging muzzle-down in the right hand) and Low ready. Relaxed clears the gear with all eleven rifles.
 - **Rebel Band**: every rebel idles (breathing, a weight shift, the gun swaying). The upgrade buttons sit right under the character. An upgrade plays an 8-bit fanfare while the character glows, dithers into the new class with a flash and light rays, and a PROMOTED banner shows.

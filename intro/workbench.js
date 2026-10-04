@@ -292,7 +292,7 @@ function frame(){
 
 // ---------- Dithered load-in: the bench boots like a phone ----------
 // While the bench loads, the whole screen is a Nokia LCD at chunky resolution, two tones through an 8 x 8 ordered
-// dither: the backlight flickers on, a lambda draws itself in and PARTISAN types out under it, a boot log ticks
+// dither: the backlight fades up, a lambda draws itself in and PARTISAN types out under it, a boot log ticks
 // through, and a pixel snake runs round the border, growing as the bench loads. Then READY blinks and the screen drops
 // out pixel by pixel from the middle outwards. About five seconds of frames (a loading stall pauses it); any key or click skips to the reveal once the bench
 // has loaded. Reduced motion: a still screen and a quick reveal.
@@ -359,8 +359,8 @@ function drawDither(){
  const k=revealAt===null?0:Math.min(1,(now-revealAt)/(reduceMotion?.25:BOOT.reveal));
  bootFrame(t,w,h);
  const txt=bootTG.getImageData(0,0,w,h).data, src=bootG.getImageData(0,0,w,h).data,g=dither.getContext('2d'),img=g.createImageData(w,h),out=img.data;
- // the backlight: off, a few flickers, then steady
- const [f0,f1]=BOOT.flicker,light=t<f0?0:t<f1?(Math.sin(t*90)>.2?1:.25)*((t-f0)/(f1-f0)*.6+.4):1;
+ // the backlight: off, then it fades up smoothly
+ const [f0,f1]=BOOT.flicker,light=t<f0?0:t<f1?(t-f0)/(f1-f0):1;// the backlight fades up smoothly (no flicker)
  for(let y=0;y<h;y++)for(let x=0;x<w;x++){
   const i=y*w+x,o=i*4,th=(B8[(y&7)*8+(x&7)]+.5)/64;
   if(th*.55+Math.hypot(x/w-.5,(y/h-.5)*h/w)*1.4*.45<k*1.05){out[o+3]=0;continue;}// revealed
