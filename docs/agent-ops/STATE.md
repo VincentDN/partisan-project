@@ -5,20 +5,20 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json); full plan: [ta
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-04 07:43 UTC · codex · WP-CG1 · done**
+**2026-10-04 · codex · WP-CG2 · done**
 
-- Branch `codex/generated-operator-equipment` at `32dbca6`; implementation and verification committed.
-- Last commits: 32dbca6 acceptance results · 5571082 integrate current main · dd17986 Recon texture and pose fixes.
-- What happened: Recon now uses a 2K texture atlas and the complete textured head; repaired eye/mask seams, retained texture detail during tinting, calibrated palm frames and refitted eight carry poses. 14523 tris, 1.1 MB. All eleven rifles pass sampled torso clearance and palm reach in eight poses. 48 focused tests, all 21 browser smoke checks, built Recon acceptance with axe, build/link, lint and typecheck pass. Full suite: 208/210; unrelated downloader generation and missing Windows python3 remain. Integrated origin/main at 2c2a7df into this feature branch.
-- Next step: Review codex/generated-operator-equipment and docs/engineering/generated-recon.md. Main is unchanged by this fix under the latest repository-protection instruction. Local preview: http://localhost:8132/operator/?standalone#base=generated-recon&pose=ready
+- Branch `codex/generated-operator-equipment`; follows verified CG1 texture/pose fixes at `972d0b6`.
+- What happened: Added `operator/compare.html`, linked from the Operator Modder. Left: complete original inbound GLB, byte-for-byte with its 4K texture and 193534 triangles. Right: existing modular model in rest pose, 14523 triangles. Display-only orientation/ground alignment; synchronized cameras and lighting, full/torso/face views, wireframe and mobile layout. Source import script records a hash; source is registered as an inspection reference, explicitly exempt from the gameplay budget for this as-is comparison request.
+- Verification: built-site comparison test and axe pass, including byte identity, decoded 4K texture, 1.85 m alignment, keyboard camera sync, reload and mobile overflow. Build/link, lint/typecheck pass. Full unit suite stays at 208/210 with the two pre-existing downloader failures.
+- Next step: Review `operator/compare.html` and `docs/engineering/generated-recon.md`. Main remains unchanged under the latest repository-protection instruction. Local preview: http://localhost:8132/operator/compare.html
 <!-- handoff:end -->
 
 ## Resume here
 
 1. Fetch latest main and inspect changes before reconciling this branch. Preserve both agents’ work.
-2. Recon work is complete; review the textured face, ready/hero/port poses and equipment options in the local preview.
+2. Recon and comparison work is complete; review the unchanged source beside the current version. Use the comparison's Operator Modder link for animated poses and equipment options.
 3. Rebuild instructions and limits are in `docs/engineering/generated-recon.md`. Use Blender 4.4, then the existing optimize-pack pipeline.
-4. For further changes run `npm run test:operator`, the browser smoke suite, build/check, lint and typecheck. On Windows, set `CHROMIUM` to the installed Chrome executable.
+4. For further changes run `npm run test:comparison`, `npm run test:operator`, the browser smoke suite, build/check, lint and typecheck. On Windows, set `CHROMIUM` to the installed Chrome executable.
 5. Keep this change on its feature branch under the owner's latest repository-protection instruction. No PR was requested.
 
 ## Known limits

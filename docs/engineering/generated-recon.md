@@ -5,6 +5,8 @@ The Base, Insurgent and Enforcer entries remain available; old kitbashed Recon l
 
 ## Source choice
 
+For direct inspection, open `operator/compare.html` from the Operator Modder comparison link. The original panel uses the complete inbound GLB byte-for-byte, retaining its 193,534 triangles, 4K texture and generated rifle. `node tools/assets/import-recon-original.mjs` publishes that copy and records its hash. Only a parent display transform aligns its facing direction and ground height. The current panel loads the existing modular GLB in its unanimated rest pose with all equipment. Both cameras and lighting controls are synchronized. The source asset is an inspection reference with a 200,000-triangle budget, as explicitly requested, rather than a gameplay operator.
+
 Both inbound models contribute to the runtime asset. `PARP_Recon_hooded_model_splitparts_v01_05.glb` provides removable equipment and body pieces.
 The complete `PARP_Recon_hooded_model_v01_05.glb` supplies its textured head and the 4K source colour atlas. Neither source contains skin weights or animation clips.
 

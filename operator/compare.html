@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex"><meta name="seo_hidden" content="true">
+<title>Partisan Project | Recon comparison</title><link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="compare.css">
+<script type="importmap">{"imports":{"three":"../vendor/three/build/three.module.min.js","three/addons/":"../vendor/three/examples/jsm/"}}</script>
+</head><body>
+<main>
+<div class="intro"><div><h1>Recon: original and current</h1><p>Orbit or zoom either model to move both cameras. Lighting and scale match.</p></div><a href="./#base=generated-recon">Open Operator Modder →</a></div>
+<div class="toolbar">
+<div role="group" aria-label="Camera view"><button data-view="full" aria-pressed="true">Full body</button><button data-view="torso" aria-pressed="false">Torso</button><button data-view="face" aria-pressed="false">Face</button></div>
+<button id="wire" aria-pressed="false">Wireframe</button>
+<label>Lighting <select id="environment"><option value="outdoor">Outdoor</option><option value="studio">Studio</option><option value="sunset">Sunset</option></select></label>
+<label>Light rotation <input id="light-rotation" type="range" min="0" max="360" value="255"><output id="light-angle">255°</output></label>
+</div>
+<p id="status" role="status" aria-live="polite">Loading both Recon models…</p>
+<div class="comparison">
+<section aria-labelledby="original-title"><h2 id="original-title">Original Recon</h2><p>Complete inbound model, unchanged textures, geometry and generated rifle.</p><div id="original-stage" class="stage" role="group" tabindex="0" aria-label="Original Recon. Drag or use arrow keys to orbit; plus and minus zoom."></div><p class="stats" id="original-stats"></p></section>
+<section aria-labelledby="current-title"><h2 id="current-title">Current modular Recon</h2><p>Current conversion in its rest pose, with all equipment and original colours.</p><div id="current-stage" class="stage" role="group" tabindex="0" aria-label="Current Recon. Drag or use arrow keys to orbit; plus and minus zoom."></div><p class="stats" id="current-stats"></p></section>
+</div>
+<p class="footnote">Original: PARP_Recon_hooded_model_v01_05. Only its display orientation and height above the ground are aligned. Use the Operator Modder for the current version’s equipment, poses and animations.</p>
+</main><noscript>This comparison requires JavaScript and WebGL.</noscript><script type="module" src="compare.js"></script>
+</body></html>

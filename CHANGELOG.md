@@ -4,6 +4,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 ## [Unreleased]
 
+### Added (Recon original comparison, WP-CG2)
+- Compare the complete, unchanged inbound Recon with the current modular model side by side. Orbit and zoom stay synchronized; full-body, torso and face views share lighting and scale. Available from the Operator Modder's "Compare Recon with the original model" link.
+
 ### Fixed (Recon textures and weapon poses, WP-CG1)
 - Transfer the textured inbound model onto the modular Recon with a shared 2K atlas. Replace broken split eyes with the complete head, preserving its face UVs and repairing seam caps. Hood recolouring leaves the face intact; clothing colours retain fabric detail.
 - Align glove bones and measured palm centres with the rifle grip solver. Refit eight carry poses to clear chest equipment and keep both hands within reach across eleven rifles. The complete operator remains within budget at 14,523 triangles and about 1.1 MB.

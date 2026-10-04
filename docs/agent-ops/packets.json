@@ -2487,6 +2487,28 @@
     "operator/poses.json"
    ],
    "acceptance": "Generated Recon loads below 15000 triangles with a decoded albedo atlas and protected face; recolouring retains detail, equipment stays independent, all poses/idles deform finite geometry, reduced motion and URL reload work. Eleven rifles in eight carry poses pass sampled torso/equipment clearance and palm reach. node --test tests/generated-recon.test.mjs tests/operator-config.test.mjs; node tests/e2e/generated-recon.mjs"
+  },
+  {
+   "id": "WP-CG2",
+   "title": "Compare untouched Recon source with the modular conversion",
+   "track": "Characters",
+   "milestone": "M2",
+   "size": "S",
+   "bu": 8,
+   "status": "done",
+   "deps": [
+    "WP-CG1"
+   ],
+   "agent": "any",
+   "needs": [
+    "browser"
+   ],
+   "inputs": [
+    "operator/compare.html",
+    "operator/compare.js",
+    "inbound/Models/PARP_Recon_hooded_model_v01_05.glb"
+   ],
+   "acceptance": "Original GLB remains byte-identical; original 4K texture loads; models align at 1.85 m, camera and lighting controls match, face/full views and mobile layout work. npm run test:comparison; npm run build && npm run check"
   }
  ]
 }

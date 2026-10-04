@@ -1,0 +1,9 @@
+{
+ "source": "inbound/Models/PARP_Recon_hooded_model_v01_05.glb",
+ "sha256": "26004a12542e2aad9362d5a8d07c7da4f199511d63420c2a8663e88aeac4bf9e",
+ "bytes": 7786416,
+ "triangles": 193534,
+ "meshes": 1,
+ "images": 1,
+ "unchanged": true
+}
