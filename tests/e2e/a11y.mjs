@@ -34,7 +34,8 @@ const pages = [
       p.waitForFunction(() => document.querySelector('#start') && !document.querySelector('#start').disabled, null, {timeout: 90000}),
   ],
   ['viewer', 'viewer/', async p => p.waitForFunction(() => window.PARP_VIEWER?.ready, null, {timeout: 60000})],
-  ['design document', 'docs/game-design-master-doc.html', async p => p.waitForSelector('#milestones .ms')],
+  // without the site build there is no docs/packets.json, and the progress section says it is offline (.note)
+  ['design document', 'docs/game-design-master-doc.html', async p => p.waitForSelector('#milestones .ms, #milestones .note')],
   ['master roadmap', 'docs/master-roadmap.html', async p => p.waitForSelector('main h1')],
 ];
 let failures = 0;

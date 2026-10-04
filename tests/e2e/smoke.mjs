@@ -478,6 +478,21 @@ await check('workbench: loads, swapping a part writes the hash, both rifles load
   await page.waitForFunction(() => window.PARP_WORKBENCH.rifle?.id === 'stg44', null, {timeout: 60000});
   await page.locator('#build .chips button', {hasText: 'Vertical'}).first().click();
   assert.match(await page.evaluate(() => location.hash), /foregrip=vertical/);
+  // the Modern RPK preset: the CNC kit (folding stock, M-LOK handguard, machined grip, translucent magazine)
+  await page.locator('#presets button', {hasText: 'Modern RPK'}).click();
+  await page.waitForFunction(
+    () => window.PARP_WORKBENCH.rifle?.id === 'rpk' && window.PARP_WORKBENCH.rifle.build.handguard === 'mlok',
+    null,
+    {
+      timeout: 60000,
+    },
+  );
+  assert.deepEqual(await page.evaluate(() => ['stock', 'handguard', 'grip', 'magazine'].map(s => window.PARP_WORKBENCH.rifle.build[s])), [
+    'cnc',
+    'mlok',
+    'cnc',
+    'clear',
+  ]);
   noProblems(page);
   await page.close();
 });

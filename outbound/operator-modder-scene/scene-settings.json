@@ -1,0 +1,203 @@
+{
+  "exported": "2026-10-04T19:04:45.804Z",
+  "units": "metres, +Y up; the operator stands at the origin facing +Z",
+  "camera": {
+    "position": [
+      1.4235782507653008,
+      1.0000000000000004,
+      3.197409101749103
+    ],
+    "target": [
+      0,
+      0.92,
+      0
+    ],
+    "fovDegrees": 35,
+    "near": 0.01,
+    "far": 60,
+    "aspect": 1.0515463917525774
+  },
+  "renderer": {
+    "toneMapping": "ACESFilmic",
+    "exposure": 1.05,
+    "outputColorSpace": "srgb"
+  },
+  "background": "#07080a",
+  "fog": {
+    "type": "exponential squared",
+    "color": "#07080a",
+    "density": 0.085
+  },
+  "environment": {
+    "note": "an HDR environment for reflections only",
+    "intensity": 0.16
+  },
+  "depthOfField": {
+    "focusDistance": 3.5009141663285606,
+    "sharpMetresEitherSide": 0.55,
+    "falloffMetres": 2.2,
+    "maxBlurPixelsAt900": 9
+  },
+  "fillLights": [
+    {
+      "type": "HemisphereLight",
+      "name": "",
+      "sky": "#5a6a80",
+      "ground": "#1a130c",
+      "intensity": 0.35
+    }
+  ],
+  "lights": [
+    {
+      "type": "DirectionalLight",
+      "name": "",
+      "color": "#ffffff",
+      "intensity": 0,
+      "castShadow": false,
+      "visible": true,
+      "position": [
+        -2.9305328699425894,
+        1.3395874258566078,
+        2.3701229138323012
+      ]
+    },
+    {
+      "type": "PointLight",
+      "name": "",
+      "color": "#ff9a4a",
+      "intensity": 4,
+      "distance": 7,
+      "decay": 2,
+      "castShadow": false,
+      "visible": true,
+      "position": [
+        -5.2,
+        3.05,
+        -2.6
+      ]
+    },
+    {
+      "type": "PointLight",
+      "name": "",
+      "color": "#ff9a4a",
+      "intensity": 4,
+      "distance": 7,
+      "decay": 2,
+      "castShadow": false,
+      "visible": true,
+      "position": [
+        4.2,
+        3.05,
+        -3.2
+      ]
+    },
+    {
+      "type": "SpotLight",
+      "name": "",
+      "color": "#ffb36b",
+      "intensity": 22,
+      "distance": 4,
+      "angle": 0.9,
+      "penumbra": 0.6,
+      "decay": 2,
+      "castShadow": true,
+      "visible": true,
+      "position": [
+        -0.7,
+        1.97,
+        -4.45
+      ]
+    },
+    {
+      "type": "SpotLight",
+      "name": "",
+      "color": "#ffc48a",
+      "intensity": 30,
+      "distance": 5,
+      "angle": 0.8,
+      "penumbra": 0.7,
+      "decay": 2,
+      "castShadow": true,
+      "visible": true,
+      "position": [
+        -2.8,
+        2.27,
+        -2.85
+      ]
+    },
+    {
+      "type": "SpotLight",
+      "name": "",
+      "color": "#ffd6a6",
+      "intensity": 95,
+      "distance": 14,
+      "angle": 0.36,
+      "penumbra": 0.55,
+      "decay": 2,
+      "castShadow": true,
+      "visible": true,
+      "position": [
+        1.9,
+        4.6,
+        2.6
+      ]
+    },
+    {
+      "type": "SpotLight",
+      "name": "",
+      "color": "#ffe2b8",
+      "intensity": 45,
+      "distance": 9,
+      "angle": 0.3,
+      "penumbra": 0.8,
+      "decay": 2,
+      "castShadow": false,
+      "visible": true,
+      "position": [
+        0,
+        5.5,
+        0.3
+      ]
+    },
+    {
+      "type": "SpotLight",
+      "name": "",
+      "color": "#c4d8ff",
+      "intensity": 300,
+      "distance": 12,
+      "angle": 0.5,
+      "penumbra": 0.4,
+      "decay": 2,
+      "castShadow": false,
+      "visible": true,
+      "position": [
+        -1.6,
+        3.1,
+        -2.8
+      ]
+    }
+  ],
+  "operator": {
+    "base": "generated-recon",
+    "rig": "full",
+    "comms": "on",
+    "scarf": "on",
+    "pack": "full",
+    "holsters": "both",
+    "guards": "both",
+    "clip": "on",
+    "weapon": "ak74m",
+    "z.top": "original",
+    "z.pants": "original",
+    "z.hood": "original",
+    "z.scarf": "original",
+    "z.rig": "original",
+    "z.gear": "original",
+    "z.gloves": "original",
+    "z.boots": "original",
+    "pose": "hero",
+    "idle": "calm",
+    "look": "on",
+    "build": ""
+  }
+}

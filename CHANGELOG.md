@@ -8,7 +8,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 - **Room sound**: the warehouse is alive with real recordings: rain on the roof, men talking in the next bay, radio calls, rifles being charged and loaded, bolts, brass, tools, laughter, coughs, footsteps. A Room sound button turns it off. TAC-J-49.
 
 ### Added (Weapon Modder)
-- **Warehouse**: the rifle lies on a table in the Operator Customiser's warehouse, under the same lights, with the room blurred behind. A Warehouse lighting button brings it back after Studio, Outdoor or Sunset. TAC-J-48.
+- **Warehouse backdrop**: the rifle keeps its studio lighting in front of a 360° picture of the Operator Customiser's warehouse (crew and workbench included) that stays put as you orbit. Backdrop shows the sky instead; Warehouse brings the room back. TAC-J-50.
+- **CNC kit**: a folding skeletal stock, an M-LOK handguard (RPK, StG 44), a machined grip and a translucent polymer magazine. A **Modern RPK** preset puts them together. TAC-J-50.
+- **Operator Modder scene as a GLB** in `outbound/operator-modder-scene/` (character, rifle, pose, crew, room, lights, camera, plus the render settings). TAC-J-50.
 - **Every rifle takes every attachment**: optics, muzzle devices, back-up sights, foregrips (GP-25 included), side-rail lights and lasers, triggers, charging handles and slings on all eleven rifles. TAC-J-48.
 - **MCX retro textures**: the Spear in chunky dithered bitmap textures. TAC-J-48.
 
