@@ -12,6 +12,7 @@ casual-friendly resistance shooter. Live site (after the one-time Pages setup in
 | Asset Viewer | Inspect registered GLBs against triangle and licence budgets | [`viewer/`](viewer/) |
 | Design document | In-universe one-pager: pillars, dispatches, operators, moodboard, specs | [`docs/game-design-master-doc.html`](docs/game-design-master-doc.html) |
 | Master roadmap | Milestones and ~60 work packets sized for $20 AI plans | [`docs/master-roadmap.md`](docs/master-roadmap.md) |
+| Character customisation roadmap | Clean Recon body, interchangeable carriers, pouches, belts and bags; fitting and saved assemblies | [`docs/character-customisation-roadmap.md`](docs/character-customisation-roadmap.md) |
 | Opening scene | The workbench at night: your rifle on the table, the old radio; leads to the customiser and the advanced animations test | [`intro/`](intro/) |
 | Vincent to-do | What only you can do (Pages, licences, decisions) | [`docs/vincent-todo.md`](docs/vincent-todo.md) |
 

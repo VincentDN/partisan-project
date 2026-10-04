@@ -4,6 +4,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 ## [Unreleased]
 
+### Planned (Deep character customisation, WP-CM0)
+- Added a staged Recon-inspired modular character roadmap and dependency-linked work packets: complete underlying clothing/body, distinct carrier families, individual attachments and bags, fit validation, accessible editing and versioned outfits. This records planned work; new equipment is not implemented yet.
+
 ### Added (Recon original comparison, WP-CG2)
 - Compare the complete, unchanged inbound Recon with the current modular model side by side. Orbit and zoom stay synchronized; full-body, torso and face views share lighting and scale. Available from the Operator Modder's "Compare Recon with the original model" link.
 
