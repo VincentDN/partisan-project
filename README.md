@@ -12,6 +12,7 @@ casual-friendly resistance shooter. Live site (after the one-time Pages setup in
 | Asset Viewer | Inspect registered GLBs against triangle and licence budgets | [`viewer/`](viewer/) |
 | Design document | In-universe one-pager: pillars, dispatches, operators, moodboard, specs | [`docs/game-design-master-doc.html`](docs/game-design-master-doc.html) |
 | Master roadmap | Milestones and ~60 work packets sized for $20 AI plans | [`docs/master-roadmap.md`](docs/master-roadmap.md) |
+| Character customisation roadmap | Clean Recon body, interchangeable carriers, pouches, belts and bags; fitting and saved assemblies | [`docs/character-customisation-roadmap.md`](docs/character-customisation-roadmap.md) |
 | Opening scene | The workbench at night: your rifle on the table, the old radio; leads to the customiser and the advanced animations test | [`intro/`](intro/) |
 | Vincent to-do | What only you can do (Pages, licences, decisions) | [`docs/vincent-todo.md`](docs/vincent-todo.md) |
 
@@ -24,6 +25,7 @@ npm test               # unit, plan and site-build tests
 npm run build && npm run check     # build _site/ and verify every link
 npm run test:e2e       # headless-browser smoke test (CHROMIUM=/path/to/chrome if needed)
 npm run test:operator  # generated operator geometry, equipment, animation and browser checks
+npm run test:comparison # unchanged original Recon and synchronized comparison view
 ```
 
 ## Layout

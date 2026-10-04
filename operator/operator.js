@@ -99,7 +99,7 @@ async function loadBase(id) {
     const gltf = await loader.loadAsync(next.model);
     // The rig captures the rest pose, so it must be created once, before any pose is applied, and cached with the scene.
     const newRig = new Rig(gltf.scene, posesForProfile(poseData, next.poseProfile));
-    newRig.grip = new Grip(newRig.bones, newRig.rest);
+    newRig.grip = new Grip(newRig.bones, newRig.rest, next.grip);
     for (const url of next.packs || []) bindPack((await loader.loadAsync(url)).scene, gltf.scene, newRig);
     gltf.scene.traverse(o => {
       if (o.isMesh) {
@@ -180,7 +180,7 @@ function paintZone(zone, id) {
       m.map = camoFor(option.camo);
     } else {
       m.color.set(option.color);
-      m.map = null;
+      m.map = zone.preserveTexture ? orig.map : null;
     }
     m.needsUpdate = true;
   }

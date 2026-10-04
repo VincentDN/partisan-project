@@ -51,8 +51,11 @@ function setWorld(bone, world) {
 
 export class Grip {
   /** @param {Map<string, T.Bone>} bones  @param {Map<string, {world: T.Quaternion}>} rest */
-  constructor(bones, rest) {
+  constructor(bones, rest, profile = {}) {
     this.bones = bones;
+    this.palms = Object.fromEntries(
+      ['r', 'l'].map(side => [side, profile.palms?.[side] ? new T.Vector3(...profile.palms[side]) : PALM.clone()]),
+    );
     this.arms = {};
     for (const side of ['r', 'l']) {
       const U = bones.get(`upperarm_${side}`),
@@ -109,7 +112,7 @@ export class Grip {
     const handQ = this.handRotation(side, g, rifleQ, new T.Quaternion());
     // Wrist target: the grip point minus the palm offset carried by the hand's rotation.
     const gripW = new T.Vector3().fromArray(g.at).applyMatrix4(rifleWorld);
-    const wrist = gripW.sub(PALM.clone().applyQuaternion(handQ));
+    const wrist = gripW.sub(this.palms[side].clone().applyQuaternion(handQ));
     const S = U.getWorldPosition(new T.Vector3());
     const a = L.getWorldPosition(new T.Vector3()).distanceTo(S),
       b = H.getWorldPosition(new T.Vector3()).distanceTo(L.getWorldPosition(new T.Vector3()));

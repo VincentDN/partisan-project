@@ -39,6 +39,16 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 - **Partisan Tactical**: no aim wait for the player any more. The magazine, reserve and reload now show on the map, with a reload ring at the cursor. TAC-J-41.
 - **Opening scene**: the Nokia is at real size, and its LCD loops a dithered lambda and a console log. The scene now loads in with a Nokia-green ordered dither. TAC-J-42.
 - **Recon** now wears its generated colours: the textured model's look is baked onto the runtime model (`tools/assets/bake-generated-recon.mjs`). TAC-J-43.
+### Planned (Deep character customisation, WP-CM0)
+- Added a staged Recon-inspired modular character roadmap and dependency-linked work packets: complete underlying clothing/body, distinct carrier families, individual attachments and bags, fit validation, accessible editing and versioned outfits. This records planned work; new equipment is not implemented yet.
+
+### Added (Recon original comparison, WP-CG2)
+- Compare the complete, unchanged inbound Recon with the current modular model side by side. Orbit and zoom stay synchronized; full-body, torso and face views share lighting and scale. Available from the Operator Modder's "Compare Recon with the original model" link.
+
+### Fixed (Recon textures and weapon poses, WP-CG1)
+- Transfer the textured inbound model onto the modular Recon with a shared 2K atlas. Replace broken split eyes with the complete head, preserving its face UVs and repairing seam caps. Hood recolouring leaves the face intact; clothing colours retain fabric detail.
+- Align glove bones and measured palm centres with the rifle grip solver. Refit eight carry poses to clear chest equipment and keep both hands within reach across eleven rifles. The complete operator remains within budget at 14,523 triangles and about 1.1 MB.
+- Honor the existing site-build directory exclusion on Windows, preventing unpublished study links from entering the built site.
 
 ### Changed (Partisan Tactical: RimWorld-style shooting)
 - **Rounds in flight**: bullets, rockets (with a smoke trail) and arcing grenades are drawn with the set's projectile sprites and land when they arrive; damage comes on arrival. TAC-J-40.

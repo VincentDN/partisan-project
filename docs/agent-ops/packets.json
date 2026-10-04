@@ -2468,7 +2468,7 @@
   },
   {
    "id": "WP-CG1",
-   "title": "Generated Recon: import split model, fit animation rig and expose modular equipment",
+   "title": "Generated Recon: textured modular model, fitted animation rig and weapon clearance",
    "track": "Characters",
    "milestone": "M2",
    "size": "M",
@@ -2482,10 +2482,528 @@
    ],
    "inputs": [
     "inbound/Models/PARP_Recon_hooded_model_splitparts_v01_05.glb",
+    "inbound/Models/PARP_Recon_hooded_model_v01_05.glb",
     "operator/config.js",
     "operator/poses.json"
    ],
-   "acceptance": "Generated Recon loads from its own GLB below 15000 triangles; both hands remain visible, equipment and colours are independent, all poses/idles deform finite geometry, reduced motion and URL reload work. node --test tests/generated-recon.test.mjs tests/operator-config.test.mjs; node tests/e2e/generated-recon.mjs"
+   "acceptance": "Generated Recon loads below 15000 triangles with a decoded albedo atlas and protected face; recolouring retains detail, equipment stays independent, all poses/idles deform finite geometry, reduced motion and URL reload work. Eleven rifles in eight carry poses pass sampled torso/equipment clearance and palm reach. node --test tests/generated-recon.test.mjs tests/operator-config.test.mjs; node tests/e2e/generated-recon.mjs"
+  },
+  {
+   "id": "WP-CG2",
+   "title": "Compare untouched Recon source with the modular conversion",
+   "track": "Characters",
+   "milestone": "M2",
+   "size": "S",
+   "bu": 8,
+   "status": "done",
+   "deps": [
+    "WP-CG1"
+   ],
+   "agent": "any",
+   "needs": [
+    "browser"
+   ],
+   "inputs": [
+    "operator/compare.html",
+    "operator/compare.js",
+    "inbound/Models/PARP_Recon_hooded_model_v01_05.glb"
+   ],
+   "acceptance": "Original GLB remains byte-identical; original 4K texture loads; models align at 1.85 m, camera and lighting controls match, face/full views and mobile layout work. npm run test:comparison; npm run build && npm run check"
+  },
+  {
+   "id": "WP-CM0",
+   "title": "Deep character customisation roadmap and work queue",
+   "track": "Characters",
+   "milestone": "M2",
+   "size": "S",
+   "bu": 8,
+   "status": "done",
+   "deps": [
+    "WP-CG2"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/character-customisation-roadmap.md",
+    "docs/engineering/generated-recon.md"
+   ],
+   "acceptance": "Scope, families, dependencies, budgets, review gates and planning-only status are documented; packet graph and generated roadmap validate."
+  },
+  {
+   "id": "WP-CM1",
+   "title": "Audit Recon sources, module boundaries and skeleton contract",
+   "track": "Characters",
+   "milestone": "M2",
+   "size": "S",
+   "bu": 8,
+   "status": "ready",
+   "deps": [
+    "WP-CM0"
+   ],
+   "agent": "any",
+   "needs": [
+    "bpy",
+    "browser"
+   ],
+   "inputs": [
+    "docs/character-customisation-roadmap.md",
+    "docs/engineering/generated-recon.md",
+    "operator/generated-recon.js",
+    "tools/assets/import-generated-recon.py"
+   ],
+   "acceptance": "Numbered exploded source sheet, rebuild/reuse list, source/texture reconciliation plan, measured geometry allocation and versioned skeleton/mount conventions exist."
+  },
+  {
+   "id": "WP-CM2",
+   "title": "Rebuild the clean Recon torso and clothing underneath equipment",
+   "track": "Characters",
+   "milestone": "M2",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-CM1"
+   ],
+   "agent": "any",
+   "needs": [
+    "bpy",
+    "browser"
+   ],
+   "inputs": [
+    "docs/character-customisation-roadmap.md",
+    "docs/engineering/generated-recon.md"
+   ],
+   "acceptance": "Carrier/harness removal exposes complete front, back, shoulder and waist surfaces; clean cloth textures have no baked gear remnants; 360-degree strip contact sheet passes."
+  },
+  {
+   "id": "WP-CM3",
+   "title": "Separate Recon headwear and rebuild articulated hands",
+   "track": "Characters",
+   "milestone": "M2",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-CM2"
+   ],
+   "agent": "any",
+   "needs": [
+    "bpy",
+    "browser"
+   ],
+   "inputs": [
+    "docs/character-customisation-roadmap.md",
+    "docs/engineering/generated-recon.md"
+   ],
+   "acceptance": "Head, hood, mask and neck join without gaps; both gloves support relaxed, open and rifle grip shapes; legacy bone names remain compatible and skeleton additions are versioned."
+  },
+  {
+   "id": "WP-CM4",
+   "title": "Define item instances, assembly hierarchy and compatibility resolver",
+   "track": "Characters",
+   "milestone": "M2",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-CM1"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/character-customisation-roadmap.md",
+    "docs/engineering/generated-recon.md"
+   ],
+   "acceptance": "Pure-data tests cover parent dependencies, repeated item instances, mount footprints, conflicts, coverage masks and full-outfit triangle accounting."
+  },
+  {
+   "id": "WP-CM5",
+   "title": "Model the lightweight modular plate carrier",
+   "track": "Characters",
+   "milestone": "M2",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-CM2",
+    "WP-CM4"
+   ],
+   "agent": "any",
+   "needs": [
+    "bpy",
+    "browser"
+   ],
+   "inputs": [
+    "docs/character-customisation-roadmap.md",
+    "docs/engineering/generated-recon.md"
+   ],
+   "acceptance": "Front/rear bags, straps, cummerbund and placard are independently authored; empty/loaded fits pass torso poses and complete removal restores the clean jacket."
+  },
+  {
+   "id": "WP-CM6",
+   "title": "Model magazine, utility and radio attachment modules",
+   "track": "Characters",
+   "milestone": "M2",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-CM5"
+   ],
+   "agent": "any",
+   "needs": [
+    "bpy",
+    "browser"
+   ],
+   "inputs": [
+    "docs/character-customisation-roadmap.md",
+    "docs/engineering/generated-recon.md"
+   ],
+   "acceptance": "Three independent pouch modules mount, duplicate and remove with occupied-cell validation; radio/cable follows its owning pouch; UV and posed contact sheets pass."
+  },
+  {
+   "id": "WP-CM7",
+   "title": "Model the equipment belt and small daypack",
+   "track": "Characters",
+   "milestone": "M2",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-CM3",
+    "WP-CM5"
+   ],
+   "agent": "any",
+   "needs": [
+    "bpy",
+    "browser"
+   ],
+   "inputs": [
+    "docs/character-customisation-roadmap.md",
+    "docs/engineering/generated-recon.md"
+   ],
+   "acceptance": "Belt and daypack have authored fits with and without the carrier; straps attach correctly and packs respect the slung rifle; exported assets have manifests and budgets."
+  },
+  {
+   "id": "WP-CM8",
+   "title": "Build the assembly editor, undo/redo and versioned outfit saves",
+   "track": "Characters",
+   "milestone": "M2",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-CM4",
+    "WP-CM6",
+    "WP-CM7"
+   ],
+   "agent": "any",
+   "needs": [
+    "browser"
+   ],
+   "inputs": [
+    "docs/character-customisation-roadmap.md",
+    "docs/engineering/generated-recon.md"
+   ],
+   "acceptance": "Stripped, light and patrol outfits can be assembled by mouse and keyboard, undone/redone and restored from links/JSON; legacy Recon and weapon P1 links remain compatible."
+  },
+  {
+   "id": "WP-CM9",
+   "title": "Validate the first modular character milestone",
+   "track": "Characters",
+   "milestone": "M2",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-CM3",
+    "WP-CM8"
+   ],
+   "agent": "any",
+   "needs": [
+    "browser"
+   ],
+   "inputs": [
+    "docs/character-customisation-roadmap.md",
+    "docs/engineering/generated-recon.md"
+   ],
+   "acceptance": "Strip/body, all shared poses/idles, representative transition frames, all rifles, maximum kit budget, three-look contact sheet, accessibility and device performance gates pass."
+  },
+  {
+   "id": "WP-CM10",
+   "title": "Model the assault carrier family",
+   "track": "Characters",
+   "milestone": "M2",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-CM9"
+   ],
+   "agent": "any",
+   "needs": [
+    "bpy",
+    "browser"
+   ],
+   "inputs": [
+    "docs/character-customisation-roadmap.md",
+    "docs/engineering/generated-recon.md"
+   ],
+   "acceptance": "A distinct padded carrier reuses attachment interfaces with its own fit data, valid empty silhouette and tested module combinations."
+  },
+  {
+   "id": "WP-CM11",
+   "title": "Model the heavy carrier family and optional coverage pieces",
+   "track": "Characters",
+   "milestone": "M2",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-CM10"
+   ],
+   "agent": "any",
+   "needs": [
+    "bpy",
+    "browser"
+   ],
+   "inputs": [
+    "docs/character-customisation-roadmap.md",
+    "docs/engineering/generated-recon.md"
+   ],
+   "acceptance": "Heavy front/rear and side modules plus bounded optional coverage have valid fit/coverage rules; maximum allowed assembly remains below 15000 operator triangles."
+  },
+  {
+   "id": "WP-CM12",
+   "title": "Model a standalone chest rig and Recon cross-body harness",
+   "track": "Characters",
+   "milestone": "M2",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-CM9"
+   ],
+   "agent": "any",
+   "needs": [
+    "bpy",
+    "browser"
+   ],
+   "inputs": [
+    "docs/character-customisation-roadmap.md",
+    "docs/engineering/generated-recon.md"
+   ],
+   "acceptance": "Both distinct rig alternatives strip cleanly, support their module sets and explicitly validate carrier/pack exclusions."
+  },
+  {
+   "id": "WP-CM13",
+   "title": "Expand pouch, belt and holster modules",
+   "track": "Characters",
+   "milestone": "M2",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-CM9"
+   ],
+   "agent": "any",
+   "needs": [
+    "bpy",
+    "browser"
+   ],
+   "inputs": [
+    "docs/character-customisation-roadmap.md",
+    "docs/engineering/generated-recon.md"
+   ],
+   "acceptance": "Double/pistol/support-weapon pouches, medical/dump pouches and holster/drop-leg adapter have registered assets, occupied footprints, fits and readable silhouettes; split packet if scope exceeds M."
+  },
+  {
+   "id": "WP-CM14",
+   "title": "Model hydration pack, patrol pack and cross-body satchel",
+   "track": "Characters",
+   "milestone": "M2",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-CM9",
+    "WP-CM12"
+   ],
+   "agent": "any",
+   "needs": [
+    "bpy",
+    "browser"
+   ],
+   "inputs": [
+    "docs/character-customisation-roadmap.md",
+    "docs/engineering/generated-recon.md"
+   ],
+   "acceptance": "Three bag families include strap-route variants, parent ownership, carrier compatibility and slung-weapon clearance; split packet if scope exceeds M."
+  },
+  {
+   "id": "WP-CM15",
+   "title": "Author alternate upper clothing and trouser fits",
+   "track": "Characters",
+   "milestone": "M2",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-CM10",
+    "WP-CM12"
+   ],
+   "agent": "any",
+   "needs": [
+    "bpy",
+    "browser"
+   ],
+   "inputs": [
+    "docs/character-customisation-roadmap.md",
+    "docs/engineering/generated-recon.md"
+   ],
+   "acceptance": "Alternate shirt/jacket and trousers expose complete surfaces and support registered carrier fits without body holes or baked gear ghosts."
+  },
+  {
+   "id": "WP-CM16",
+   "title": "Add fitted headgear and identity choices",
+   "track": "Characters",
+   "milestone": "M2",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-CM3",
+    "WP-CM9"
+   ],
+   "agent": "any",
+   "needs": [
+    "bpy",
+    "browser"
+   ],
+   "inputs": [
+    "docs/character-customisation-roadmap.md",
+    "docs/engineering/generated-recon.md"
+   ],
+   "acceptance": "Hood/mask/scarf/cap/helmet and supported face/skin choices use explicit coverage rules, protected materials and neck/head pose tests."
+  },
+  {
+   "id": "WP-CM17",
+   "title": "Add per-item camouflage, patch and wear presets",
+   "track": "Characters",
+   "milestone": "M2",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-CM9"
+   ],
+   "agent": "any",
+   "needs": [
+    "browser"
+   ],
+   "inputs": [
+    "docs/character-customisation-roadmap.md",
+    "docs/engineering/generated-recon.md"
+   ],
+   "acceptance": "Finishes preserve source detail and protected skin/hardware regions, restore original values and round-trip independently without changing gameplay properties."
+  },
+  {
+   "id": "WP-CM18",
+   "title": "Author a second bounded body fit profile",
+   "track": "Characters",
+   "milestone": "M2",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-CM11",
+    "WP-CM14",
+    "WP-CM15",
+    "WP-CM16"
+   ],
+   "agent": "any",
+   "needs": [
+    "bpy",
+    "browser"
+   ],
+   "inputs": [
+    "docs/character-customisation-roadmap.md",
+    "docs/engineering/generated-recon.md"
+   ],
+   "acceptance": "Second authored body/clothing profile has fitted versions of released kit; unsupported fits are unavailable with reasons; no unrestricted deformation sliders."
+  },
+  {
+   "id": "WP-CM19",
+   "title": "Connect modular appearances to owned rebel equipment",
+   "track": "Characters",
+   "milestone": "M3",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-CM9",
+    "WP-S8",
+    "WP-S14"
+   ],
+   "agent": "any",
+   "needs": [
+    "browser"
+   ],
+   "inputs": [
+    "docs/character-customisation-roadmap.md",
+    "docs/engineering/generated-recon.md"
+   ],
+   "acceptance": "Adapter uses existing item IDs/instances and inventory transactions; preview/share codes cannot grant ownership, protection or capacity; no parallel item database."
+  },
+  {
+   "id": "WP-CM20",
+   "title": "Map modular gear to tactical sprite appearance layers",
+   "track": "Characters",
+   "milestone": "M3",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-CM19",
+    "WP-V6"
+   ],
+   "agent": "any",
+   "needs": [
+    "browser"
+   ],
+   "inputs": [
+    "docs/character-customisation-roadmap.md",
+    "docs/engineering/generated-recon.md"
+   ],
+   "acceptance": "Carrier/pack/headgear silhouettes resolve through existing paper-doll layers; 3D assets do not replace the established tactical renderer."
+  },
+  {
+   "id": "WP-CM21",
+   "title": "Validate and release the expanded modular catalogue",
+   "track": "Characters",
+   "milestone": "M2",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-CM11",
+    "WP-CM12",
+    "WP-CM13",
+    "WP-CM14",
+    "WP-CM15",
+    "WP-CM16",
+    "WP-CM17",
+    "WP-CM18"
+   ],
+   "agent": "any",
+   "needs": [
+    "browser"
+   ],
+   "inputs": [
+    "docs/character-customisation-roadmap.md",
+    "docs/engineering/generated-recon.md"
+   ],
+   "acceptance": "All published families pass explicit coverage matrix, worst-case kit/weapon stacks, migrations, accessible editor and measured load/memory budgets; gameplay adapters do not block this gallery release."
   }
  ]
 }

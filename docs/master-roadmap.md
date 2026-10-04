@@ -104,11 +104,9 @@ weapon); colour zones (top, trousers, armour, helmet, gear, gloves, boots, skin)
 generated camos; ten poses (Relaxed, Hero rifle-up, Low ready, High ready, Shoulder arms, Crouch, Kneel, Salute, Radio check, Overwatch; legs fold via a `lower` offset); three idles (Calm,
 Alert scanning, Weary); URL looks; photo export; triangle/draw-call readout against budget.
 
-Next: patches and props (`C3`, `C7`), more poses (`C8`), idle polish (`C9`), faces/hair (`C10`), owner sign-off of the three roster operators.
+Next priority: [deep character customisation](character-customisation-roadmap.md), packets `WP-CM0`–`WP-CM21`. Rebuild a complete Recon underbody, then author interchangeable carrier families, individual pouches, belts and bags with fitting, compatibility and saved assemblies. The first gate is a stripped character plus one carrier, three pouch modules, a belt and a daypack. Reuse the older C-series patch, prop and headwear work where compatible; the new 3D release does not wait for inventory/sprite integration.
 
-*Pose model.* Poses and idles are JSON in character-space degrees applied over the rest pose, so they work on any base
-that shares the 83-bone skeleton. `tools/pose-fit.mjs` solves arm angles to hit a hand target (e.g. a rifle grip) and
-prints numbers to paste. **No hand IK at runtime, no firing, no bench animation** (ADR 0005).
+*Pose model.* Poses and idles are JSON in character-space degrees applied over the rest pose. Legacy operators use the shared skeleton; the generated Recon has a fitted 26-bone skeleton and a pose profile. Runtime two-bone arm IK in `operator/grip.js` places palms on the carried rifle. The modular roadmap preserves this data interface while adding articulated hands and fitted gear. Weapon firing and recoil remain outside the Operator Modder.
 
 ### 5.3 Integration and sharing
 
@@ -158,8 +156,8 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 |---|---|---|---|---|
 | **M0** Foundation | v0.3.0 | 10/10 | 130 BU | 100% |
 | **M1** Gun modder: real parts, three weapons | v0.4.0 | 9/11 | 143 BU | 89% |
-| **M2** Operator roster: Recon, Insurgent, Enforcer | v0.5.0 | 11/12 | 192 BU | 96% |
-| **M3** Integration and sharing | v0.6.0 | 4/6 | 96 BU | 58% |
+| **M2** Operator roster: Recon, Insurgent, Enforcer | v0.5.0 | 13/33 | 552 BU | 36% |
+| **M3** Integration and sharing | v0.6.0 | 4/8 | 124 BU | 45% |
 | **M4** Weapon roster 2: modern and WW2 | v0.7.0 | 7/7 | 111 BU | 100% |
 | **M5** Production acceptance | v1.0.0 | 3/5 | 59 BU | 61% |
 | **TD** Tech debt (fill windows) | — | 4/4 | 44 BU | 100% |
@@ -214,7 +212,28 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-C9` | Idle polish: blink and head-follow of the camera (reduced-motion safe) | M (20) | done | — | `WP-C1` |
 | `WP-C10` | More hairstyles and facial-hair options for bare-head looks | M (20) | done | bpy | `WP-C4` |
 | `WP-C11` | Secondary motion: scarf drape and strap follow-through on the idle | S (8) | done | bpy, browser | `WP-C9` |
-| `WP-CG1` | Generated Recon: import split model, fit animation rig and expose modular equipment | M (20) | done | bpy, browser | — |
+| `WP-CG1` | Generated Recon: textured modular model, fitted animation rig and weapon clearance | M (20) | done | bpy, browser | — |
+| `WP-CG2` | Compare untouched Recon source with the modular conversion | S (8) | done | browser | `WP-CG1` |
+| `WP-CM0` | Deep character customisation roadmap and work queue | S (8) | done | — | `WP-CG2` |
+| `WP-CM1` | Audit Recon sources, module boundaries and skeleton contract | S (8) | ready | bpy, browser | `WP-CM0` |
+| `WP-CM2` | Rebuild the clean Recon torso and clothing underneath equipment | M (20) | planned | bpy, browser | `WP-CM1` |
+| `WP-CM3` | Separate Recon headwear and rebuild articulated hands | M (20) | planned | bpy, browser | `WP-CM2` |
+| `WP-CM4` | Define item instances, assembly hierarchy and compatibility resolver | S (8) | planned | — | `WP-CM1` |
+| `WP-CM5` | Model the lightweight modular plate carrier | M (20) | planned | bpy, browser | `WP-CM2`, `WP-CM4` |
+| `WP-CM6` | Model magazine, utility and radio attachment modules | M (20) | planned | bpy, browser | `WP-CM5` |
+| `WP-CM7` | Model the equipment belt and small daypack | M (20) | planned | bpy, browser | `WP-CM3`, `WP-CM5` |
+| `WP-CM8` | Build the assembly editor, undo/redo and versioned outfit saves | M (20) | planned | browser | `WP-CM4`, `WP-CM6`, `WP-CM7` |
+| `WP-CM9` | Validate the first modular character milestone | M (20) | planned | browser | `WP-CM3`, `WP-CM8` |
+| `WP-CM10` | Model the assault carrier family | M (20) | planned | bpy, browser | `WP-CM9` |
+| `WP-CM11` | Model the heavy carrier family and optional coverage pieces | M (20) | planned | bpy, browser | `WP-CM10` |
+| `WP-CM12` | Model a standalone chest rig and Recon cross-body harness | M (20) | planned | bpy, browser | `WP-CM9` |
+| `WP-CM13` | Expand pouch, belt and holster modules | M (20) | planned | bpy, browser | `WP-CM9` |
+| `WP-CM14` | Model hydration pack, patrol pack and cross-body satchel | M (20) | planned | bpy, browser | `WP-CM9`, `WP-CM12` |
+| `WP-CM15` | Author alternate upper clothing and trouser fits | M (20) | planned | bpy, browser | `WP-CM10`, `WP-CM12` |
+| `WP-CM16` | Add fitted headgear and identity choices | M (20) | planned | bpy, browser | `WP-CM3`, `WP-CM9` |
+| `WP-CM17` | Add per-item camouflage, patch and wear presets | S (8) | planned | browser | `WP-CM9` |
+| `WP-CM18` | Author a second bounded body fit profile | M (20) | planned | bpy, browser | `WP-CM11`, `WP-CM14`, `WP-CM15`, `WP-CM16` |
+| `WP-CM21` | Validate and release the expanded modular catalogue | M (20) | planned | browser | `WP-CM11`, `WP-CM12`, `WP-CM13`, `WP-CM14`, `WP-CM15`, `WP-CM16`, `WP-CM17`, `WP-CM18` |
 
 ### M3 · Integration and sharing
 
@@ -226,6 +245,8 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-I4` | Combined share card (operator + weapon + stats) and photo-mode extras | S (8) | done | — | `WP-I3` |
 | `WP-X1` | Original opening scene and advanced-animations test restored verbatim from vincentdenil-site (intro/), wired to the current customiser and the shared music player | M (20) | done | browser | — |
 | `WP-X2` | Advanced animations: contact, sound and device review (the original prototype's open gates) | M (20) | planned | browser | `WP-X1` |
+| `WP-CM19` | Connect modular appearances to owned rebel equipment | M (20) | planned | browser | `WP-CM9`, `WP-S8`, `WP-S14` |
+| `WP-CM20` | Map modular gear to tactical sprite appearance layers | S (8) | planned | browser | `WP-CM19`, `WP-V6` |
 
 ### M4 · Weapon roster 2: modern and WW2
 

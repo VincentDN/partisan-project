@@ -1169,7 +1169,18 @@
    "budget": {
     "triangles": 15000
    },
-   "notes": "Fitted 26-bone deform rig, 27 modular meshes, 11253 triangles; runtime poses, idles and equipment slots."
+   "notes": "Fitted 26-bone deform rig, 26 modular mesh nodes, 14523 triangles, shared 2K albedo atlas and protected face material; runtime poses, idles and equipment slots."
+  },
+  {
+   "id": "recon-original",
+   "label": "Recon — original comparison",
+   "path": "assets/models/operators/recon-original.glb",
+   "kind": "reference",
+   "status": "real",
+   "budget": {
+    "triangles": 200000
+   },
+   "notes": "Untouched complete inbound model for the owner-requested as-is comparison view: 193534 triangles and original 4K texture. Inspection reference; excluded from the gameplay operator budget."
   }
  ],
  "pipeline": [

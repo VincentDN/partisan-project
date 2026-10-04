@@ -1,0 +1,25 @@
+/* Matched source/current stages with shared controls and a stacked mobile layout. */
+@import '../shared/tokens.css';
+* { box-sizing: border-box; }
+body { margin: 0; background: #11170f; color: #e6e9dc; font: 14px/1.5 system-ui, sans-serif; }
+main { padding: 18px 24px; max-width: 1800px; margin: auto; }
+.intro, .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+h1 { margin: 0; font-size: clamp(22px, 3vw, 32px); }
+h2 { margin: 12px 16px 2px; font-size: 19px; }
+p { margin: 4px 0 12px; color: #bfcab1; }
+a { color: #dbe8ba; }
+button, select { font: inherit; color: inherit; background: #222d1e; border: 1px solid #637452; border-radius: 4px; padding: 7px 12px; }
+button { cursor: pointer; }
+button[aria-pressed='true'] { background: #d3dfb0; color: #141d0f; }
+:focus-visible { outline: 3px solid #f8bd70; outline-offset: 3px; }
+.toolbar { justify-content: flex-start; margin: 12px 0; }
+.toolbar label { display: flex; align-items: center; gap: 8px; }
+.comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+section { min-width: 0; border: 1px solid #46533d; border-radius: 6px; overflow: hidden; background: #192216; }
+section p { margin: 0 16px 10px; min-height: 42px; }
+.stage { height: clamp(350px, 63vh, 780px); position: relative; touch-action: none; }
+.stage canvas { display: block; }
+section .stats { min-height: 0; margin: 10px 16px; font: 12px/1.5 ui-monospace, monospace; }
+#status:empty { display: none; }
+.footnote { margin-top: 14px; max-width: 1000px; font-size: 12px; }
+@media (max-width: 700px) { main { padding: 14px; } .comparison { grid-template-columns: 1fr; } .stage { height: 430px; } }

@@ -51,7 +51,7 @@ function copy(rel) {
     for (const e of fs.readdirSync(src)) copy(path.join(rel, e));
     return;
   }
-  if (SKIP_FILES.some(re => re.test(rel)) || SKIP_DIRS.some(re => re.test(rel))) return;
+  if (SKIP_FILES.some(re => re.test(rel)) || SKIP_DIRS.some(re => re.test(rel.split(path.sep).join('/')))) return;
   const dest = path.join(out, rel);
   fs.mkdirSync(path.dirname(dest), {recursive: true});
   fs.copyFileSync(src, dest);

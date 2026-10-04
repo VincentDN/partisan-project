@@ -11,10 +11,11 @@ import {BASES, TRIANGLE_BUDGET} from '../operator/config.js';
 const data = JSON.parse(fs.readFileSync('operator/poses.json'));
 const base = BASES['generated-recon'];
 const bytes = fs.readFileSync('assets/models/operators/generated-recon.glb');
-// The baked albedo texture needs a browser to decode; geometry, weights and poses do not, so textures are skipped here.
+// Node has no DOM image decoder. Keep the real geometry/material loader, supplying only a texture stub;
+// browser acceptance verifies the embedded atlas decodes and remains on recoloured materials.
 const {scene} = await new GLTFLoader()
+  .register(() => ({name: 'NodeTexture', loadTexture: () => Promise.resolve(new T.Texture())}))
   .setMeshoptDecoder(MeshoptDecoder)
-  .register(() => ({name: 'skip-textures', loadTexture: () => Promise.resolve(null)}))
   .parseAsync(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength), '');
 const meshes = [];
 scene.traverse(o => {
@@ -22,9 +23,20 @@ scene.traverse(o => {
 });
 const rig = new Rig(scene, posesForProfile(data, base.poseProfile));
 
+test('generated hand axes match the grip solver and the face has a protected textured material', () => {
+  for (const side of ['r', 'l']) {
+    const palmNormal = new T.Vector3(0, 0, 1).applyQuaternion(rig.rest.get('hand_' + side).world);
+    assert.ok(palmNormal.x * (side === 'r' ? 1 : -1) > 0.98, `${side}: rest palm must face inward`);
+  }
+  const face = meshes.find(m => m.material.name === 'M_GR_Face');
+  assert.ok(face?.material.map);
+  assert.ok(face.geometry.attributes.uv);
+  assert.ok(!base.zones.some(z => z.materials.includes('M_GR_Face')));
+});
+
 test('generated geometry is skinned, normalized, compact and within the complete equipment budget', () => {
-  assert.equal(meshes.length, 27);
-  assert.ok(bytes.length < 750 * 1024, 'geometry (about 300 KB) plus the baked 2048 px albedo atlas (about 335 KB)');
+  assert.equal(meshes.length, 27); // the hood's protected face material creates a second primitive
+  assert.ok(bytes.length < 1500 * 1024);
   let triangles = 0;
   for (const mesh of meshes) {
     assert.ok(mesh.isSkinnedMesh, mesh.name);
