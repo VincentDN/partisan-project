@@ -5,7 +5,21 @@
 import '../shared/frame.js';
 import {mountTopBar} from '../shared/topbar.js';
 import {buildPawn, loadGuns, loadSet, lookFor} from '../convoy/sprite-art.js';
-import {GEAR, CLASSES, TROOPS, LEADER, START_BAND, START_STASH, bandLimit, bandSize, ready, canUpgrade, upgrade} from './troops.js';
+import {
+  GEAR,
+  CLASSES,
+  TROOPS,
+  LEADER,
+  START_BAND,
+  START_STASH,
+  bandLimit,
+  bandSize,
+  ready,
+  canUpgrade,
+  upgrade,
+  abilitiesOf,
+} from './troops.js';
+import {createTreeView} from './tree.js';
 import * as mech from '../workbench/mech.js';
 
 mountTopBar({title: 'Rebel Band', scene: 'viewer'});
@@ -22,12 +36,12 @@ const el = (tag, attrs = {}, ...kids) => {
 };
 
 // ---------- state ----------
-const KEY = 'parp-band';
+const KEY = 'parp-band-v2'; // v2: the deep class tree (the v1 troop list is retired)
 const fresh = () => ({band: structuredClone(START_BAND), stash: {...START_STASH}, leader: structuredClone(LEADER), raids: 0});
 let S = fresh();
 try {
   const saved = JSON.parse(localStorage.getItem(KEY) || 'null');
-  if (saved?.band && saved?.stash) S = {...fresh(), ...saved};
+  if (saved?.band && saved?.stash && Object.keys(saved.band).every(id => TROOPS[id])) S = {...fresh(), ...saved};
 } catch {}
 const save = () => {
   try {
@@ -262,10 +276,28 @@ async function renderCentre() {
         el('span', {}, t.xp && t.to.length ? `${Math.floor(b.xp)} xp · ${t.xp} a step` : 'Top of its path'),
       ),
       el('p', {class: 'note'}, t.note),
-      ups.length ? el('div', {class: 'upgrades'}, ...ups) : el('p', {class: 'note'}, 'The last step on this path.'),
+      abilityList(selected),
+      ups.length ? el('h3', {class: 'paths'}, 'Next steps') : null,
+      ups.length ? el('div', {class: 'upgrades'}, ...ups) : el('p', {class: 'note'}, 'The top of this path.'),
     );
   }
   await drawPawn($('#pawn'), selected, {size: 300, cy: 190, ground: true});
+}
+/** A class's abilities: its own first, then those carried from the classes it came through. */
+function abilityList(id) {
+  const all = abilitiesOf(id);
+  return el(
+    'ul',
+    {class: 'abilities', 'aria-label': 'Abilities'},
+    ...[...all.filter(a => a.own), ...all.filter(a => !a.own).reverse()].map(a =>
+      el(
+        'li',
+        {class: a.own ? 'own' : 'kept'},
+        el('span', {class: 'ab-kind ' + a.kind}, a.kind === 'active' ? 'ACT' : 'PAS'),
+        el('span', {}, el('strong', {}, a.name), a.own ? null : el('small', {}, ` · from ${TROOPS[a.from].label}`), el('br'), a.text),
+      ),
+    ),
+  );
 }
 function render() {
   renderStash();
@@ -327,6 +359,29 @@ $('#skirmish').onclick = () => {
     .map(([id, n]) => `${n} ${GEAR[id].label}`)
     .join(', ')}`;
 };
+// The class tree: every path at once, full screen.
+const tree = createTreeView($('#tree-view'), {
+  state: () => S,
+  drawPawn,
+  onPick: id => {
+    selected = id;
+    showTree(false);
+    render();
+  },
+});
+function showTree(on) {
+  $('#tree-view').hidden = !on;
+  $('#tree-btn').setAttribute('aria-pressed', String(on));
+  $('#tree-btn').textContent = on ? 'Back to the band' : 'Class tree';
+  if (on) {
+    tree.render(selected === 'leader' ? null : selected);
+    mech.handle(0.6);
+  }
+}
+$('#tree-btn').onclick = () => showTree($('#tree-view').hidden);
+addEventListener('keydown', e => {
+  if (e.key === 'Escape' && !$('#tree-view').hidden) showTree(false);
+});
 $('#reset').onclick = () => {
   S = fresh();
   selected = 'leader';
@@ -344,5 +399,6 @@ window.PARP_BAND = {
   },
   choose,
   upgrade: doUpgrade,
+  showTree,
   ready: true,
 };

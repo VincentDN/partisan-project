@@ -426,3 +426,178 @@ button {
     transition: none !important;
   }
 }
+/* ---------- abilities ---------- */
+.abilities {
+  list-style: none;
+  margin: 8px 0;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+}
+.abilities li {
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  gap: 8px;
+  padding: 5px 8px;
+  background: #1a1c1f;
+  border: 1px solid var(--line);
+  font-size: 12px;
+}
+.abilities li.kept {
+  opacity: 0.62;
+}
+.abilities small {
+  color: var(--dim);
+}
+.ab-kind {
+  align-self: start;
+  text-align: center;
+  padding: 2px 0;
+  font: 700 10px ui-monospace, monospace;
+  color: var(--lcd-0);
+  background: var(--lcd-1);
+}
+.ab-kind.passive {
+  background: #c9c6b4;
+}
+.detail h3.paths {
+  margin: 10px 0 0;
+  font: 600 11px/1 ui-monospace, monospace;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+/* ---------- the class tree ---------- */
+.tree-view {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  display: grid;
+  grid-template-columns: 1fr minmax(300px, 360px);
+  gap: 10px;
+  min-height: 0;
+}
+.tree-view[hidden] {
+  display: none;
+}
+.band:has(.tree-view:not([hidden])) > .panel,
+.band:has(.tree-view:not([hidden])) > .centre {
+  display: none;
+}
+.tree-main {
+  overflow: auto;
+  background:
+    radial-gradient(ellipse at 30% 40%, #262a24, #15171a 70%),
+    var(--bg);
+  border: 1px solid var(--line);
+  min-height: 0;
+}
+.legend {
+  position: sticky;
+  left: 0;
+  top: 0;
+  z-index: 3;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin: 0;
+  padding: 8px 12px;
+  background: #15171aee;
+  border-bottom: 1px solid var(--line);
+  font-size: 12px;
+}
+.legend span::before {
+  content: '';
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 6px;
+  background: var(--build);
+}
+.legend .hint {
+  color: var(--dim);
+  margin-left: auto;
+}
+.legend .hint::before {
+  display: none;
+}
+.tree-canvas {
+  position: relative;
+}
+.tree-canvas svg {
+  position: absolute;
+  inset: 0;
+}
+.tier-head {
+  position: absolute;
+  top: 8px;
+  font: 700 11px ui-monospace, monospace;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--lcd-1);
+}
+.node {
+  position: absolute;
+  display: grid;
+  grid-template-columns: 46px 1fr;
+  align-items: center;
+  gap: 4px;
+  padding: 0 6px 0 2px;
+  background: #22252a;
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--build);
+  text-align: left;
+  cursor: pointer;
+}
+.node canvas {
+  width: 44px;
+  height: 44px;
+}
+.node .nm {
+  font-size: 12px;
+  line-height: 1.2;
+}
+.node small {
+  display: block;
+  color: var(--dim);
+  font: 11px ui-monospace, monospace;
+}
+.node.have {
+  background: #2a2e26;
+}
+.node.have small {
+  color: var(--lcd-1);
+}
+.node[aria-pressed='true'] {
+  border-color: var(--sel);
+  border-left-color: var(--build);
+  box-shadow: 0 0 0 1px var(--sel);
+}
+.node:focus-visible {
+  outline: 2px solid var(--sel);
+}
+.tree-side h3 {
+  margin: 0;
+  font-size: 18px;
+}
+.tree-side h4 {
+  margin: 12px 0 4px;
+  font: 600 11px/1 ui-monospace, monospace;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+.tree-side .path {
+  color: var(--dim);
+  font-size: 12px;
+}
+.tree-side .kept-list {
+  color: var(--dim);
+  font-size: 12px;
+}
+.tree-side .go {
+  margin-top: 12px;
+  padding: 6px 14px;
+  background: #3a4a2a;
+  border: 1px solid #5e7a3e;
+  cursor: pointer;
+}

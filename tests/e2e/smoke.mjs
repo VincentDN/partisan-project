@@ -515,15 +515,23 @@ await check('design doc: sections and live progress render', async () => {
 
 await check('rebel band: the band, the stash and an upgrade along a path', async () => {
   const page = await open(browser, server.url + 'band/');
-  await page.evaluate(() => localStorage.removeItem('parp-band'));
+  await page.evaluate(() => localStorage.removeItem('parp-band-v2'));
   await page.reload();
   await page.waitForFunction(() => window.PARP_BAND?.ready, null, {timeout: 60000});
   assert.ok((await page.locator('#groups .card').count()) >= 6, 'troop cards');
   assert.ok((await page.locator('#stash .item').count()) >= 15, 'stash items');
-  await page.locator('#groups .card', {hasText: 'Village Volunteer'}).click();
-  const before = await page.evaluate(() => window.PARP_BAND.state.band.partisan.count);
-  await page.locator('.up', {hasText: 'Partisan'}).getByRole('button', {name: 'Upgrade 1'}).click();
-  assert.equal(await page.evaluate(() => window.PARP_BAND.state.band.partisan.count), before + 1);
+  await page.locator('#groups .card', {hasText: 'Village Infantry'}).click();
+  assert.ok((await page.locator('#detail .abilities li').count()) >= 2, 'abilities listed');
+  const before = await page.evaluate(() => window.PARP_BAND.state.band.fighter.count);
+  await page.locator('.up', {hasText: 'Fighter'}).getByRole('button', {name: 'Upgrade 1'}).click();
+  assert.equal(await page.evaluate(() => window.PARP_BAND.state.band.fighter.count), before + 1);
+  // the class tree: every class as a node, a card with abilities, back to the band
+  await page.locator('#tree-btn').click();
+  assert.ok((await page.locator('#tree-view .node').count()) >= 40, 'every class in the tree');
+  await page.locator('#tree-view .node[data-id="fpvpilot"]').click();
+  assert.match(await page.locator('.tree-side h3').innerText(), /FPV Pilot/);
+  await page.keyboard.press('Escape');
+  assert.equal(await page.locator('#tree-view').isHidden(), true);
   await page.locator('#skirmish').click();
   assert.equal(await page.evaluate(() => window.PARP_BAND.state.raids), 1);
   noProblems(page);

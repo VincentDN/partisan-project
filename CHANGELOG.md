@@ -4,6 +4,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 ## [Unreleased]
 
+### Added (Rebel Band class tree)
+- **Class tree with abilities**: 44 classes over seven tiers. The path runs Village Infantry → Fighter → Insurgent, then splits into Heavy, Medium or Light builds and their specialists: machine gunners, grenadiers, anti-armour, riflemen, engineers, sappers, medics, drone operators, signallers and EW specialists, scouts, recon, marksmen, snipers, saboteurs. Each class has two abilities and keeps those of earlier tiers. A full-screen Class Tree view shows every path. TAC-H-13.
+
 ### Added (Equipment Wiki)
 - **Equipment Wiki** (`wiki/`, in the index): 4,227 lootable items in 82 categories, with search, rarity, sorting and item cards (stats, ammunition, mounts, description, loot rarity). Placeholder data is copied from tarkov.dev by `tools/wiki/import-tarkov.mjs`; the icons come from the project's placeholder art. TAC-C-09.
 

@@ -37,7 +37,7 @@ export const ITEMS = [
     label: 'Rebel Band',
     href: '../band/',
     icon: px('0111001110001001111101010'),
-    help: 'Test. Level your rebel band along set paths; every step needs stolen equipment from the stash. Raid patrols for experience and loot.',
+    help: 'Test. Level your band from Village Infantry to 44 classes in heavy, medium and light builds, each with abilities. Every step needs stolen gear. Class tree included.',
   },
   {
     label: 'Equipment Wiki',

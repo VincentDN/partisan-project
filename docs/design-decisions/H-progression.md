@@ -157,3 +157,18 @@ list above is a starting point and is expected to change after feedback.
 - Cost to change: Low (data in `band/troops.js`).
 - Revisit if: Missions should feed the band (convoy loot into the stash, casualties out of it).
 - Owner feedback: —
+
+### TAC-H-13 · A deep class tree with abilities: Village Infantry to seven tiers of heavy, medium and light builds
+- Status: built (demo)  ·  Packet: WP-P (early)
+- Decision: The Rebel Band's troop list is replaced by a class tree of 44 classes over seven tiers. Every fighter goes Village Infantry, then Fighter, then Insurgent, then picks a build at tier 4: Heavy Fighter (firepower and armour), Guerrilla (the line and its specialists) or Skirmisher (eyes, range and stealth). From there the paths go to tier 7:
+  - **Heavy:** Machine Gunner, Heavy Gunner, Gun Team Leader; Grenadier, Breacher, Demolitionist; Anti-Armour Gunner, Tank Hunter, ATGM Team Leader.
+  - **Medium:** Rifleman, Veteran Rifleman, then Squad Leader or Shock Trooper; Combat Engineer, then Sapper (Master Sapper) or Fortifier; Medic, Field Surgeon, Combat Doctor; Drone Operator, then FPV Pilot (Swarm Commander) or Overwatch Operator; Signaller, Radio Operator, EW Specialist.
+  - **Light:** Scout, Recon, then Pathfinder or Ghost; Marksman, Sharpshooter, then Ghost Sniper or Counter-Sniper; Saboteur, Infiltrator, Shadow.
+
+  Every class brings two abilities, active or passive, written with the numbers the simulation will use (for example "Recon drone: shows every enemy within 40 m of a point for 20 s"). A soldier keeps the abilities of every class it came through. Each step costs experience (40 at tier 1, rising to 360 at tier 6) and the class's equipment from the stash: new gear includes drones, mines, jammers, night vision, engineer tools, surgical kits, a laser rangefinder and an ATGM. A full-screen Class Tree view lays out every path by tier, coloured by build, with the classes you have drawn thicker; a card per class shows its abilities, path, equipment and what it leads to. Saves use a new key (`parp-band-v2`), because the old troop list is retired.
+- Why: Owner request: a character levelling tree with special abilities by class, going deep from village infantry through fighter and insurgent into heavy, medium and light builds.
+- Alternatives rejected: Skill points per soldier (a band of dozens is managed by class, as in Bannerlord); abilities only at the top tiers (every step should feel like a gain).
+- Cost / risk: The abilities are design data: the convoy simulation does not use them yet. Numbers are first guesses.
+- Cost to change: Low (data in `band/troops.js`).
+- Revisit if: Abilities move into the simulation (start with Recon drone, Patch up, Deploy bipod and Dig in, which map onto existing systems).
+- Owner feedback: —
