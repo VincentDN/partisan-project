@@ -5,13 +5,12 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json); full plan: [ta
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-04 · codex · WP-CM0 · done**
+**2026-10-04 17:46 UTC · codex · WP-CM1 · done**
 
-- Branch `codex/generated-operator-equipment`; follows the original/current comparison at `964b7d8`.
-- What happened: Wrote `docs/character-customisation-roadmap.md` for the owner's requested deep Recon-inspired customisation system. Defines a clean underbody, three carrier families, chest rigs, individual pouches/belts/bags, mounting and compatibility data, articulated hands, materials, accessible editing, versioned saves, budget allocation and release gates. Registered CM0–CM21: planning done, CM1 ready, twenty implementation packets planned. No geometry or runtime behaviour was changed by this planning task.
-- Verification: all eight existing agent/plan tests pass; dependency graph, generated roadmap table and document links validate. Known baseline unit failures remain in the unrelated downloader tests.
-- Next step: The next implementation task is CM1: audit the two inbound models and current conversions, make an exploded source sheet, identify fused jacket/carrier surfaces, reconcile upstream model changes and agree the skeleton/module contract. Do not mark asset modelling complete from this plan. The original/current comparison remains at http://localhost:8132/operator/compare.html.
-- Upstream note: latest fetched main is `907f86d` and includes a separate Recon colour bake plus other demo changes. Those later commits are not merged here; this comparison intentionally shows this branch's verified textured conversion. Reconcile the two model pipelines deliberately before any future integration.
+- Branch `codex/generated-operator-equipment` at `855c47b`; working tree clean.
+- Last commits: 855c47b feat(WP-CM1): add Recon source teardown and modular authoring contract · 7fc1334 docs(WP-CM0): plan deep Recon character customisation · 964b7d8 docs(WP-CG2): note concurrent upstream model changes
+- What happened: Completed the 27-part source teardown, committed front/back/exploded sheet, measured topology and runtime skeleton audit, and versioned modular authoring contract. Built-site teardown/comparison and accessibility pass; audit/plan tests, build/check, lint, configured typecheck and formatting pass. Full suite: 212/214 with two unchanged downloader failures. Feature milestone 855c47b pushed; original and current operator assets unchanged.
+- Next step: CM2: rebuild complete clean torso/clothing under the fused vest using docs/engineering/recon-modular-audit.md and tools/assets/recon-modular-contract.json. Create an opt-in recon-modular authoring output; validate stripped front/back/side coverage and clean cloth textures before carriers. CM4 is also ready. No merge to main.
 <!-- handoff:end -->
 
 ## Resume here
