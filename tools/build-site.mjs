@@ -19,6 +19,7 @@ const ALLOW = [
   'assets/js',
   'assets/img',
   'assets/audio',
+  'assets/backgrounds',
   'assets/lighting',
   'assets/models',
   'assets/sprites',
