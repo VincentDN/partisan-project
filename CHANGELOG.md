@@ -4,6 +4,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 ## [Unreleased]
 
+### Documentation
+- **Walking Through, episode one** (`docs/podcast/walking-through-01-game-engines.md`): a researched, narration-ready episode on which engine could carry the project into a standalone Bannerlord-like game (Unreal 5, Unity 6, Godot 4, Bevy, Flax, Stride, O3DE, modding routes, staying on the web), weighed against this project. Recommends Godot 4 for the RimWorld-style direction, with Unity 6 as runner-up and Unreal 5 for a first-person version.
+
 ### Added (Rebel Band demo)
 - **Rebel Band** (`band/`, in the index): a levelling and equipment demo in the RimWorld + Nokia style. Your leader stands in the middle, the band is on the right by class, and the stolen stash is on the left. Troops climb set paths, each step needs specific equipment, and raids give experience, loot and volunteers. TAC-H-12.
 
