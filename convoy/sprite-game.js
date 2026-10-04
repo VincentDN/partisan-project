@@ -137,6 +137,7 @@ function start() {
 // ---------- input (same keys as the 3-D page) ----------
 const keys = new Set();
 let fire = false,
+  grenade = false,
   reload = false,
   wantWeapon = null,
   pointer = null; // CSS pixels on the canvas
@@ -150,7 +151,9 @@ addEventListener('keydown', e => {
   }
   if (e.target.closest?.('aside, nav')) return;
   const k = e.key.toLowerCase();
-  if (['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'shift', ' ', 'e'].includes(k)) e.preventDefault();
+  if (['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'shift', 'control', ' ', 'e', 'g'].includes(k))
+    e.preventDefault();
+  if (k === 'g' && !e.repeat) grenade = true; // throw a hand grenade at the cursor
   keys.add(k);
   if (k === 'r') reload = true;
   const slot = ABILITY_KEYS.indexOf(k);
@@ -172,7 +175,6 @@ addEventListener('keydown', e => {
   if (selected.length && point) {
     if (k === 'f') sim.order(selected, {type: 'follow'});
     if (k === 'h') sim.order(selected, {type: 'hold'});
-    if (k === 'g') sim.order(selected, {type: 'move', x: point.x, z: point.z});
     if (k === 't') {
       const t = enemyNear(point);
       if (t) sim.order(selected, {type: 'attack', target: t.id});
@@ -246,6 +248,7 @@ function clearInput() {
   fire = false;
   aimZoom = false;
   reload = false;
+  grenade = false;
   wantWeapon = null;
 }
 function setPaused(on) {
@@ -258,8 +261,20 @@ function input() {
   const mx = (has('d') || has('arrowright') ? 1 : 0) - (has('a') || has('arrowleft') ? 1 : 0);
   const mz = (has('s') || has('arrowdown') ? 1 : 0) - (has('w') || has('arrowup') ? 1 : 0);
   const aim = aimPoint();
-  const i = {mx, mz, sneak: has('shift'), fire, reload, interact: has('e'), weapon: wantWeapon, ...(aim ? {ax: aim.x, az: aim.z} : {})};
+  const i = {
+    mx,
+    mz,
+    sprint: has('shift'),
+    sneak: has('control'),
+    fire,
+    grenade,
+    reload,
+    interact: has('e'),
+    weapon: wantWeapon,
+    ...(aim ? {ax: aim.x, az: aim.z} : {}),
+  };
   reload = false;
+  grenade = false;
   wantWeapon = null;
   return i;
 }

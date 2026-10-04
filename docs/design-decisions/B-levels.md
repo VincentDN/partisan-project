@@ -182,3 +182,13 @@ Built on [A-foundations.md](A-foundations.md) and designed around swapping ([G-s
 - Cost to change: Low (tables in `convoy/abilities.js` and `convoy/difficulty.js`).
 - Revisit if: Abilities need their own art and sounds, or the army gets abilities too.
 - Owner feedback: —
+
+### TAC-B-16 · Sprint, hand grenades, burning wrecks, and difficulty sets how many soldiers turn up
+- Status: built  ·  Packet: WP-S (late)
+- Decision: The active rebel sprints on Shift (6.6 m/s, about five seconds of stamina that comes back resting; wider aim while sprinting) and sneaks on Ctrl. G throws a hand grenade at the cursor: each rebel carries three, one a second, out to 28 m, arcing over cover and bursting on landing (4.5 m, 115 at the centre); the squad's "go" order moved to right-click only. A destroyed vehicle now explodes: a 7 m blast that hurts anyone near, sets off a vehicle parked close (an RPG into the lead jeep can chain down the column), and burns for 45 s. Difficulty also sets how many soldiers a level fields: Easy 55%, Normal 70%, Hard 85%, Brutal 100% of foot soldiers, convoy riders, wave squads and the reaction force, thinned evenly; leaders, radio operators and turret gunners always come, so the objectives and the radio rules still work.
+- Why: Owner request: sprint with Shift, grenades on G, too many enemy soldiers, and cars that explode when hit with the RPG.
+- Alternatives rejected: Fewer soldiers by editing the levels (difficulty would stop meaning anything); grenades as a class ability only (every rebel should have them).
+- Cost / risk: The levels were balanced at full strength; Normal is now lighter than designed.
+- Cost to change: Low (`thinLevel` in `convoy/sim.js`, `force` in `convoy/difficulty.js`).
+- Revisit if: A level needs a fixed garrison whatever the difficulty.
+- Owner feedback: —

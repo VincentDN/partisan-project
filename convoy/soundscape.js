@@ -13,6 +13,18 @@
 import {WEAPONS} from './weapons.js';
 
 const FOLEY = new URL('../assets/audio/foley/', import.meta.url);
+// Real recordings (tools/audio/fetch-shooter-sounds.mjs: CC0 field, range and military recordings from Freesound).
+// Where a category has loaded, it replaces the synthesis below; until then, or without it, the synthesis plays.
+const REAL = new URL('../assets/audio/shooter/', import.meta.url);
+/** Which recording each weapon fires with: category, pitch, how much of the clip a single round lets ring, level. */
+export const SHOT_SAMPLES = {
+  ak: {cat: 'shot-rifle', rate: 1, len: 1.2, gain: 0.9},
+  pkm: {cat: 'shot-rifle', rate: 0.86, len: 0.9, gain: 1},
+  svd: {cat: 'shot-sniper', rate: 1, len: 2, gain: 1},
+  hmg: {cat: 'shot-sniper', rate: 0.7, len: 1.1, gain: 1.1},
+  rpg: {cat: 'rpg-launch', rate: 1, len: 2.6, gain: 1},
+  gp: {cat: 'gl-thump', rate: 1, len: 1.2, gain: 0.9},
+};
 const KEY = 'parp-sfx';
 const SPEED_OF_SOUND = 343;
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
@@ -124,6 +136,9 @@ export function createSoundscape() {
     level = null,
     env = null,
     foley = {},
+    real = {}, // category -> [AudioBuffer]
+    chokes = new Map(), // unit id -> the last shot voice, so a burst does not pile up ringing tails
+    loops = {}, // name -> looping voice (beds, the player's footsteps and breath)
     birdsQuietUntil = 0,
     nextAmbient = {};
   const engines = new Map(), // vehicle -> {osc, gain, ...}
@@ -279,6 +294,49 @@ export function createSoundscape() {
     return true;
   }
   const busy = () => stats.voices > 90;
+  /** Play a real recording of category `cat` at (x, z): returns the voice, or null if the category has not loaded. */
+  function play(cat, x, z, listener, {gain = 1, echo = 0, wet = 1, rate = 1, len = 0, delay = 0} = {}) {
+    const list = real[cat];
+    if (!list?.length) return null;
+    const {node, at} = spot(x, z, listener, {gain, echo, wet});
+    const src = ctx.createBufferSource();
+    src.buffer = list[Math.floor(Math.random() * list.length)];
+    src.playbackRate.value = rate * (0.96 + Math.random() * 0.08);
+    const g = ctx.createGain();
+    const start = at + delay,
+      end = start + (len ? Math.min(len, src.buffer.duration / src.playbackRate.value) : src.buffer.duration / src.playbackRate.value);
+    g.gain.setValueAtTime(1, start);
+    if (len) g.gain.setTargetAtTime(0, end - 0.12, 0.05);
+    src.connect(g).connect(node);
+    src.start(start);
+    track(src, end + 0.3);
+    return {src, g};
+  }
+  /** A looping recording, its level and pitch eased toward a target each frame; started on first use. */
+  function loopVoice(name, cat, dest) {
+    if (loops[name]) return loops[name];
+    const list = real[cat];
+    if (!list?.length) return null;
+    const src = ctx.createBufferSource();
+    src.buffer = list[Math.floor(Math.random() * list.length)];
+    src.loop = true;
+    const g = ctx.createGain();
+    g.gain.value = 0;
+    const pan = ctx.createStereoPanner();
+    src
+      .connect(g)
+      .connect(pan)
+      .connect(dest || A.sfx);
+    src.start(0, Math.random() * src.buffer.duration);
+    return (loops[name] = {src, g, pan, nodes: [src]});
+  }
+  function setLoop(voice, gain, {rate = null, pan = null, tc = 0.25} = {}) {
+    if (!voice) return;
+    const now = ctx.currentTime;
+    voice.g.gain.setTargetAtTime(gain, now, tc);
+    if (rate !== null) voice.src.playbackRate.setTargetAtTime(rate, now, 0.2);
+    if (pan !== null) voice.pan.pan.setTargetAtTime(pan, now, 0.1);
+  }
 
   // ---------- weapons ----------
   function shot(e, listener, sim) {
@@ -286,6 +344,18 @@ export function createSoundscape() {
     const own = e.unit === sim.player?.id;
     const near = spatial(listener.x, listener.z, e.x, e.z);
     if (busy() && !own && near.d > 12) return stats.skipped++;
+    const S = SHOT_SAMPLES[e.weapon];
+    if (S && real[S.cat]?.length) {
+      // the real thing: a recorded shot, its tail choked by the next round of the same burst
+      const prev = chokes.get(e.unit);
+      if (prev) prev.g.gain.setTargetAtTime(0.25, ctx.currentTime, 0.03);
+      const v = play(S.cat, e.x, e.z, listener, {gain: S.gain * P.gain * (own ? 1.1 : 1), echo: 1, rate: S.rate, len: S.len});
+      if (v) chokes.set(e.unit, v);
+      if (own && !['rpg', 'gp'].includes(e.weapon) && Math.random() < 0.3)
+        play('shells', e.x, e.z, listener, {gain: 0.22, wet: 0.2, delay: 0.3 + Math.random() * 0.2});
+      flyby(e, listener, own);
+      return count('shot');
+    }
     const {node, at} = spot(e.x, e.z, listener, {gain: P.gain * (own ? 1 : 0.95), echo: 1});
     const v = 0.94 + Math.random() * 0.12,
       closeness = clamp(1 - near.d / 45, 0, 1);
@@ -323,25 +393,38 @@ export function createSoundscape() {
       noise(hiss.node, at + 0.05, {dur: fly + 0.1, gain: 0.6, type: 'bandpass', freq: 1800, freqEnd: 3200, q: 1.5, attack: fly * 0.8});
     }
     if (e.weapon === 'gp') tone(node, at, {dur: 0.06, gain: 0.4, freq: 600, freqEnd: 300}); // the hollow "bloop"
-    // a round passing close to you: the supersonic snap and the whizz
+    flyby(e, listener, own);
+    count('shot');
+  }
+  /** A round passing close to you: the supersonic snap and the whizz. */
+  function flyby(e, listener, own) {
     if (!own && !['rpg', 'gp'].includes(e.weapon)) {
       const pass = segmentDistance(listener.x, listener.z, e.x, e.z, e.x1, e.z1);
       if (pass.d < 5 && pass.t > 0.08 && pass.t < 0.999) {
         const k = 1 - pass.d / 5;
         const px = e.x + (e.x1 - e.x) * pass.t,
           pz = e.z + (e.z1 - e.z) * pass.t;
-        const by = spot(px, pz, listener, {gain: 0.9 * k, wet: 0.3});
-        noise(by.node, ctx.currentTime, {dur: 0.006, gain: 1, type: 'highpass', freq: 3500, attack: 0.0005});
-        noise(by.node, ctx.currentTime, {dur: 0.14, gain: 0.4, type: 'bandpass', freq: 3600, freqEnd: 1200, q: 4, attack: 0.03});
+        if (!play('flyby', px, pz, listener, {gain: 0.8 * k, wet: 0.3})) {
+          const by = spot(px, pz, listener, {gain: 0.9 * k, wet: 0.3});
+          noise(by.node, ctx.currentTime, {dur: 0.006, gain: 1, type: 'highpass', freq: 3500, attack: 0.0005});
+          noise(by.node, ctx.currentTime, {dur: 0.14, gain: 0.4, type: 'bandpass', freq: 3600, freqEnd: 1200, q: 4, attack: 0.03});
+        }
         count('flyby');
       }
     }
-    count('shot');
   }
 
   function impact(e, listener) {
     const s = spatial(listener.x, listener.z, e.x, e.z);
     if (s.d > 35 || (busy() && s.d > 10)) return;
+    if (e.surface !== 'flesh') {
+      const cat = e.surface === 'metal' ? 'impact-metal' : 'impact-dirt';
+      if (play(cat, e.x, e.z, listener, {gain: e.surface === 'metal' ? 0.45 : 0.5, wet: 0.5, rate: e.surface === 'wall' ? 1.2 : 1})) {
+        if ((e.surface === 'metal' || e.surface === 'wall') && Math.random() < 0.15)
+          play('ricochet', e.x, e.z, listener, {gain: 0.35, wet: 0.6});
+        return count('impact');
+      }
+    }
     const {node, at} = spot(e.x, e.z, listener, {gain: 0.55, wet: 0.6});
     const v = 0.9 + Math.random() * 0.2;
     if (e.surface === 'metal') {
@@ -362,8 +445,17 @@ export function createSoundscape() {
     count('impact');
   }
 
-  function explosion(x, z, listener, size = 1, metal = false) {
+  function explosion(x, z, listener, size = 1, metal = false, kind = 'big') {
     const s = spatial(listener.x, listener.z, x, z);
+    const cat = kind === 'grenade' ? 'explosion-grenade' : kind === 'wreck' ? 'car-explode' : 'explosion-big';
+    if (real[cat]?.length) {
+      // the recording, with a sub-bass push underneath for the weight it loses on small speakers
+      play(cat, x, z, listener, {gain: 1.2 * size, echo: 1.2, wet: 1.1});
+      const {node, at} = spot(x, z, listener, {gain: 0.9 * size, wet: 0.2});
+      tone(node, at, {dur: 0.7 * size, gain: 1, freq: 55, freqEnd: 26, attack: 0.003});
+      if (s.d < 10 * size) deafen(1 - s.d / (10 * size));
+      return count('explode');
+    }
     const {node, at} = spot(x, z, listener, {gain: 1.5 * size, echo: 1.4, wet: 1.4});
     noise(node, at, {dur: 0.05, gain: 1, type: 'highpass', freq: 1800, attack: 0.001});
     tone(node, at, {dur: 0.9 * size, gain: 1.4, freq: 62, freqEnd: 24, attack: 0.002});
@@ -450,6 +542,23 @@ export function createSoundscape() {
   function engine(v, listener, dt) {
     let voice = engines.get(v);
     const s = spatial(listener.x, listener.z, v.x, v.z);
+    if (!voice && !v.destroyed && s.d < 140 && real['engine-truck']?.length) {
+      // a recorded diesel, pitched up with the revs
+      const list = real['engine-truck'],
+        src = ctx.createBufferSource(),
+        g = ctx.createGain(),
+        pan = ctx.createStereoPanner(),
+        f = ctx.createBiquadFilter();
+      src.buffer = list[engines.size % list.length];
+      src.loop = true;
+      f.type = 'lowpass';
+      f.frequency.value = 2500;
+      g.gain.value = 0;
+      src.connect(f).connect(g).connect(pan).connect(A.sfx);
+      src.start(0, Math.random() * src.buffer.duration);
+      voice = {nodes: [src], g, f, pan, src, real: true, heavy: v.kind === 'mrap' ? 0.85 : 1, x: v.x, z: v.z, rpm: 0};
+      engines.set(v, voice);
+    }
     if (!voice && !v.destroyed && s.d < 140) {
       const heavy = v.kind === 'mrap' ? 0.8 : 1;
       const o1 = ctx.createOscillator(),
@@ -498,6 +607,13 @@ export function createSoundscape() {
     voice.z = v.z;
     voice.rpm += (clamp(moved / 8, 0, 1) - voice.rpm) * Math.min(1, dt * 2);
     const r = voice.rpm;
+    if (voice.real) {
+      voice.src.playbackRate.setTargetAtTime(voice.heavy * (0.85 + r * 0.45), now, 0.25);
+      voice.f.frequency.setTargetAtTime(s.cutoff, now, 0.2);
+      voice.g.gain.setTargetAtTime((0.22 + r * 0.25) * s.gain, now, 0.15);
+      voice.pan.pan.setTargetAtTime(s.pan, now, 0.1);
+      return;
+    }
     voice.o1.frequency.setTargetAtTime(voice.heavy * (34 + r * 26), now, 0.2);
     voice.o2.frequency.setTargetAtTime(voice.heavy * (68.6 + r * 52), now, 0.2);
     voice.lfo.frequency.setTargetAtTime(voice.heavy * (8 + r * 9), now, 0.2);
@@ -508,6 +624,24 @@ export function createSoundscape() {
   function fire(v, listener, dt) {
     const s = spatial(listener.x, listener.z, v.x, v.z);
     let voice = fires.get(v);
+    if (!voice && real['fire-burning']?.length) {
+      const src = ctx.createBufferSource(),
+        g = ctx.createGain(),
+        pan = ctx.createStereoPanner();
+      src.buffer = real['fire-burning'][fires.size % real['fire-burning'].length];
+      src.loop = true;
+      g.gain.value = 0;
+      src.connect(g).connect(pan).connect(A.sfx);
+      src.start(0, Math.random() * src.buffer.duration);
+      voice = {nodes: [src], g, pan, real: true};
+      fires.set(v, voice);
+    }
+    if (voice?.real) {
+      const burning = (v.burningUntil ?? Infinity) - (A.sim?.time ?? 0);
+      voice.g.gain.setTargetAtTime(0.5 * s.gain * Math.max(0.15, Math.min(1, burning / 20)), ctx.currentTime, 0.3);
+      voice.pan.pan.setTargetAtTime(s.pan, ctx.currentTime, 0.1);
+      return;
+    }
     if (!voice) {
       const src = ctx.createBufferSource();
       src.buffer = A.brown;
@@ -550,7 +684,21 @@ export function createSoundscape() {
       .filter(([, d]) => d < 16)
       .sort((a, b) => a[1] - b[1])
       .slice(0, 8);
+    const p = sim.player;
+    const stepLoop = p && loopVoice('steps', 'footstep-gravel');
+    if (stepLoop) {
+      // your own footsteps: a recorded walk on gravel, faster and louder at a sprint, near silent sneaking
+      const going = p.alive && p.moving,
+        sneaking = p.speed < 2.5;
+      setLoop(stepLoop, going ? (p.sprinting ? 0.42 : sneaking ? 0.05 : 0.2) : 0, {
+        rate: p.sprinting ? 1.35 : sneaking ? 0.75 : 1,
+        tc: 0.08,
+      });
+    }
+    const breath = p && loopVoice('breath', 'breath-sprint');
+    if (breath) setLoop(breath, p.alive && (p.sprinting || (p.stamina ?? 1) < 0.6) ? 0.3 * (1.1 - (p.stamina ?? 1)) : 0, {tc: 0.6});
     for (const [u] of near) {
+      if (u === p && stepLoop) continue;
       const st = steps.get(u.id) || {x: u.x, z: u.z, acc: 0};
       const moved = Math.hypot(u.x - st.x, u.z - st.z);
       st.x = u.x;
@@ -613,7 +761,16 @@ export function createSoundscape() {
       A.beds.push(src);
       return {f, g};
     };
-    A.wind = env.beds.includes('wind') ? loop(A.brown, 'lowpass', 500, 0.16) : null;
+    for (const k of ['bed', 'battle']) if (loops[k]) (stopVoice(loops[k]), delete loops[k]);
+    A.realBed = false;
+    const bedCat = env.beds.includes('night') ? 'amb-forest-night' : 'amb-countryside';
+    if (real[bedCat]?.length) {
+      // the place, recorded: a countryside or night-forest bed, and a far-off war under it
+      A.realBed = true;
+      setLoop(loopVoice('bed', bedCat, A.amb), env.beds.includes('cave') ? 0.18 : 0.55, {tc: 1.5});
+      if (!env.beds.includes('cave')) setLoop(loopVoice('battle', 'amb-distant-battle', A.amb), 0.12, {tc: 3});
+    }
+    A.wind = env.beds.includes('wind') && !A.realBed ? loop(A.brown, 'lowpass', 500, 0.16) : null;
     A.drone = env.beds.includes('cave') ? loop(A.brown, 'lowpass', 140, 0.22, 1.5) : null;
   }
   function ambience(listener, dt) {
@@ -635,6 +792,7 @@ export function createSoundscape() {
       const [x, z] = around();
       return spot(x, z, listener, {gain: 1, wet: 1.2});
     };
+    if (A.realBed && !env.beds.includes('cave')) return; // the recorded bed carries the birds, crickets and wind
     if (env.beds.includes('birds') && t > birdsQuietUntil && due('bird', 0.6, 2.6)) {
       const {node, at: when} = at();
       const kind = Math.random();
@@ -685,6 +843,29 @@ export function createSoundscape() {
   }
 
   // ---------- public ----------
+  async function loadReal() {
+    try {
+      const manifest = await (await fetch(new URL('manifest.json', REAL))).json();
+      await Promise.all(
+        Object.entries(manifest.categories).map(async ([cat, {files}]) => {
+          const bufs = await Promise.all(
+            files.map(async f => {
+              try {
+                return await ctx.decodeAudioData(await (await fetch(new URL(f.file, REAL))).arrayBuffer());
+              } catch {
+                return null;
+              }
+            }),
+          );
+          real[cat] = bufs.filter(Boolean);
+        }),
+      );
+      if (env) startBeds(); // swap the synthesised beds for the recordings
+      stats.real = Object.keys(real).filter(k => real[k].length).length;
+    } catch {
+      // no recordings: everything stays synthesised
+    }
+  }
   async function loadFoley() {
     try {
       const manifest = await (await fetch(new URL('manifest.json', FOLEY))).json();
@@ -718,6 +899,7 @@ export function createSoundscape() {
       if (!ctx) {
         build();
         loadFoley();
+        loadReal();
       }
       if (ctx.state === 'suspended') ctx.resume();
     },
@@ -752,8 +934,9 @@ export function createSoundscape() {
         stats.events++;
         if (e.type === 'shot') shot(e, listener, sim);
         else if (e.type === 'impact') impact(e, listener);
-        else if (e.type === 'explode') explosion(e.x, e.z, listener, e.lob ? 0.75 : 1);
-        else if (e.type === 'wreck') explosion(e.x, e.z, listener, 1.5, true);
+        else if (e.type === 'explode') explosion(e.x, e.z, listener, e.lob ? 0.75 : 1, false, e.lob ? 'grenade' : 'big');
+        else if (e.type === 'wreck') explosion(e.x, e.z, listener, 1.5, true, 'wreck');
+        else if (e.type === 'throw') play('throw', e.x, e.z, listener, {gain: 0.5, wet: 0.3});
         else if (e.type === 'collapse') explosion(e.x, e.z, listener, 0.8, true);
         else if (e.type === 'death') death(e, listener);
         else if (e.type === 'hurt' && e.unit === sim.player?.id) deafen(0.25);

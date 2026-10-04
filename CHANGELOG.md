@@ -4,6 +4,16 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 ## [Unreleased]
 
+### Added (Partisan Tactical)
+- **Real sound**: shots, impacts, flybys, explosions, engines, fires, footsteps, breathing and ambience are now real CC0 recordings (Freesound), fetched and prepared by `tools/audio/fetch-shooter-sounds.mjs`. TAC-J-46.
+- **Fog of war**: the map darkens outside what your rebels can see, and enemies there are hidden. TAC-J-46.
+- **Sprint** on Shift (stamina), sneak on Ctrl; **hand grenades** on G (three each). TAC-B-16.
+- **Exploding vehicles**: a destroyed vehicle blows up, hurts whoever is near, can set off the next one and burns. TAC-B-16.
+
+### Changed
+- **Difficulty** now also sets how many soldiers turn up (Easy 55% to Brutal 100%); Normal fields about 70% of a level. TAC-B-16.
+- **Operator Customiser**: Bannerlord-style layout (stash left, kit right) in a textured retro Nokia skin; the operator stands in a lit spot in a dark rebel warehouse with three-point lighting. TAC-J-46.
+
 ### Changed (index, intro, operator, Rebel Band)
 - **Intro boot**: the workbench scene loads behind a Nokia-style boot. The backlight fades up, a lambda draws in, PARTISAN types out, a boot log ticks through and a pixel snake runs round the border as the bench loads. Then READY blinks and the dither reveal plays. About five seconds; any key or click skips it once the bench has loaded.
 - **Nokia index**: four demos (Weapon Modder, Operator Modder, Top-down Shooter Tests, Rebel Band). The tools and documents (Equipment Wiki, Asset Viewer, Game Design Doc, Moodboard, Advanced animations, Art Style Lab, Master Roadmap) sit in a Dev tools folder that unlocks after seven taps. A demo's explainer has a big LAUNCH button, and tapping anything else folds it shut. The phone's blips are louder.

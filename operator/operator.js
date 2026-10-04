@@ -8,6 +8,8 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
 import {shareCardDataUrl} from './share-card.js';
 import {createStage, reduceMotion} from '../shared/stage.js';
+import {buildWarehouse} from './warehouse.js';
+import {mountStash} from './stash.js';
 import {mountTopBar} from '../shared/topbar.js';
 import {camoFor, FABRIC} from '../shared/camo.js';
 import {Rig, blinkAt} from './rig.js';
@@ -33,6 +35,22 @@ const stage = await createStage($('#stage'), {
 });
 const {scene, camera, renderer} = stage;
 renderer.toneMappingExposure = 0.85;
+// The room: a dark rebel warehouse with the operator in a pool of light (operator/warehouse.js). It is the default;
+// the HDR lighting buttons swap it for Studio, Outdoor or Sunset, and the Warehouse button brings it back.
+const warehouse = buildWarehouse(stage);
+mountStash($('#stash'));
+const roomButton = () => $('#room')?.setAttribute('aria-pressed', String(warehouse.enabled));
+warehouse.on(true);
+roomButton();
+for (const b of document.querySelectorAll('[data-env], #backdrop'))
+  b.addEventListener('click', () => {
+    warehouse.on(false);
+    roomButton();
+  });
+$('#room')?.addEventListener('click', () => {
+  warehouse.on(!warehouse.enabled);
+  roomButton();
+});
 const poseData = await (await fetch(new URL('./poses.json', import.meta.url))).json();
 const loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
 
@@ -642,6 +660,7 @@ stage.onFrame((dt, t) => {
 
 // Test hook: lets browser tests await a fully loaded operator and inspect state.
 window.PARP_OPERATOR = {
+  warehouse,
   get state() {
     return state;
   },

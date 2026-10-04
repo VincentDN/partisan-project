@@ -154,6 +154,17 @@ await check('opening scene: the table, the rifle, one button; the shell keeps on
 await check('operator: loads, equipment toggles, zones are independent, hash round-trips, poses and weapon', async () => {
   const page = await open(browser, server.url + 'operator/#base=base');
   await page.waitForFunction(() => window.PARP_OPERATOR?.ready, null, {timeout: 60000});
+  // the Bannerlord layout: the stash on the left, the operator in the warehouse, the kit on the right
+  await page.waitForFunction(() => document.querySelectorAll('#stash tbody tr').length >= 10, null, {timeout: 20000});
+  assert.equal(await page.evaluate(() => window.PARP_OPERATOR.warehouse.enabled), true, 'the warehouse is the default room');
+  const firstName = await page.locator('#stash tbody tr .nm').first().innerText();
+  await page.locator('#stash th[data-sort="value"] button').click();
+  assert.equal(await page.locator('#stash th[data-sort="value"]').getAttribute('aria-sort'), 'ascending');
+  await page.locator('[data-env="studio"]').click();
+  assert.equal(await page.evaluate(() => window.PARP_OPERATOR.warehouse.enabled), false, 'an HDR lighting swaps the room out');
+  await page.locator('#room').click();
+  assert.equal(await page.evaluate(() => window.PARP_OPERATOR.warehouse.enabled), true);
+  assert.ok(firstName.length > 2);
   const vis = mat => page.evaluate(n => window.PARP_OPERATOR.meshes.filter(m => m.material.name === n).some(m => m.visible), mat);
   assert.equal(await vis('M_Helmet'), true);
   await page.evaluate(() => window.PARP_OPERATOR.set('head', 'bare'));
@@ -528,14 +539,44 @@ await check('convoy ambush: the convoy drives, the ambush springs, soldiers dism
     return {
       alarm: sim.alarm,
       dismounted: sim.units.filter(u => u.side === 'army' && u.state !== 'mounted').length,
+      soldiers: sim.units.filter(u => u.side === 'army').length,
       callouts: sim.callouts.length,
     };
   });
   assert.equal(r.alarm, true, 'the ambush is sprung');
-  assert.equal(r.dismounted, 11, 'every soldier is out (the MRAP gunner stays in his turret)');
+  assert.equal(r.dismounted, r.soldiers, 'every soldier is out (the MRAP gunner is in his turret, not mounted)');
+  assert.ok(r.soldiers < 11, 'the difficulty thins the convoy (Normal: about 70%)');
   assert.ok(r.callouts >= 3, `the army calls out (${r.callouts})`);
   await page.waitForTimeout(500);
   assert.ok((await page.locator('#comms li').count()) >= 3, 'callouts reach the comms log');
+  noProblems(page);
+  await page.close();
+});
+
+await check('partisan tactical: G throws a grenade, Shift sprints, the fog hides what the rebels cannot see', async () => {
+  const page = await open(browser, server.url + 'convoy/?seed=7');
+  await page.waitForFunction(() => window.PARP_SPRITES?.ready, null, {timeout: 90000});
+  await page.locator('#start').click();
+  await page.mouse.move(700, 300);
+  const before = await page.evaluate(() => window.PARP_SPRITES.sim.player.grenades);
+  await page.keyboard.press('g');
+  await page.waitForFunction(b => window.PARP_SPRITES.sim.player.grenades === b - 1, before, {timeout: 5000});
+  await page.keyboard.down('d');
+  await page.keyboard.down('Shift');
+  await page.waitForFunction(() => window.PARP_SPRITES.sim.player.sprinting, null, {timeout: 5000});
+  await page.keyboard.up('Shift');
+  await page.keyboard.up('d');
+  // the convoy is far off at the start: the fog hides its soldiers from the renderer, the simulation still has them
+  const hidden = await page.evaluate(() => {
+    const {sim} = window.PARP_SPRITES;
+    return sim.units.filter(
+      u =>
+        u.side === 'army' &&
+        u.alive &&
+        !sim.units.some(p => p.side === 'partisan' && Math.hypot(p.x - u.x, p.z - u.z) < 46 && sim.los(p.x, p.z, u.x, u.z)),
+    ).length;
+  });
+  assert.ok(hidden > 0, 'soldiers out of sight exist');
   noProblems(page);
   await page.close();
 });

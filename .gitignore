@@ -10,3 +10,4 @@ assets-incoming/
 *.fbx
 __pycache__/
 *.pyc
+.cache/

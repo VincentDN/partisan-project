@@ -1,0 +1,606 @@
+{
+ "source": "Freesound, CC0 only",
+ "categories": {
+  "explosion-big": {
+   "loop": false,
+   "files": [
+    {
+     "file": "explosion-big/explosion-big-1.mp3",
+     "id": 182429,
+     "title": "Explosion by qubodup",
+     "author": "qubodup",
+     "seconds": 3.03,
+     "source": "https://freesound.org/s/182429/"
+    },
+    {
+     "file": "explosion-big/explosion-big-2.mp3",
+     "id": 442958,
+     "title": "Explosion by qubodup",
+     "author": "qubodup",
+     "seconds": 0.86,
+     "source": "https://freesound.org/s/442958/"
+    },
+    {
+     "file": "explosion-big/explosion-big-3.mp3",
+     "id": 182431,
+     "title": "Explosive 1 v2 [DOD 130303].flac by qubodup",
+     "author": "qubodup",
+     "seconds": 3.03,
+     "source": "https://freesound.org/s/182431/"
+    },
+    {
+     "file": "explosion-big/explosion-big-4.mp3",
+     "id": 855247,
+     "title": "Explosion and Shockwave 2 by qubodup",
+     "author": "qubodup",
+     "seconds": 4.6,
+     "source": "https://freesound.org/s/855247/"
+    }
+   ]
+  },
+  "explosion-grenade": {
+   "loop": false,
+   "files": [
+    {
+     "file": "explosion-grenade/explosion-grenade-1.mp3",
+     "id": 609587,
+     "title": "Grenade Explosion SFX (medium-sized, meaty, realistic) by unfa",
+     "author": "unfa",
+     "seconds": 3.53,
+     "source": "https://freesound.org/s/609587/"
+    },
+    {
+     "file": "explosion-grenade/explosion-grenade-2.mp3",
+     "id": 563010,
+     "title": "Explosion.mp3 by florianreichelt",
+     "author": "florianreichelt",
+     "seconds": 3.53,
+     "source": "https://freesound.org/s/563010/"
+    },
+    {
+     "file": "explosion-grenade/explosion-grenade-3.mp3",
+     "id": 189778,
+     "title": "Explosive.flac by qubodup",
+     "author": "qubodup",
+     "seconds": 3.53,
+     "source": "https://freesound.org/s/189778/"
+    },
+    {
+     "file": "explosion-grenade/explosion-grenade-4.mp3",
+     "id": 182797,
+     "title": "Windy Explosion.flac by qubodup",
+     "author": "qubodup",
+     "seconds": 3.53,
+     "source": "https://freesound.org/s/182797/"
+    }
+   ]
+  },
+  "car-explode": {
+   "loop": false,
+   "files": [
+    {
+     "file": "car-explode/car-explode-1.mp3",
+     "id": 523365,
+     "title": "Bomb Explosion by LilMati",
+     "author": "LilMati",
+     "seconds": 6.03,
+     "source": "https://freesound.org/s/523365/"
+    },
+    {
+     "file": "car-explode/car-explode-2.mp3",
+     "id": 132929,
+     "title": "Explosion and Rubble/Debris by deleted_user_1887925",
+     "author": "deleted_user_1887925",
+     "seconds": 6.03,
+     "source": "https://freesound.org/s/132929/"
+    },
+    {
+     "file": "car-explode/car-explode-3.mp3",
+     "id": 244394,
+     "title": "Bang/Explosion Metallic by Werra",
+     "author": "Werra",
+     "seconds": 6.03,
+     "source": "https://freesound.org/s/244394/"
+    }
+   ]
+  },
+  "impact-dirt": {
+   "loop": false,
+   "files": [
+    {
+     "file": "impact-dirt/impact-dirt-1.mp3",
+     "id": 789388,
+     "title": "Bullet impact ground (subsonic) SFX by modusmogulus",
+     "author": "modusmogulus",
+     "seconds": 0.73,
+     "source": "https://freesound.org/s/789388/"
+    },
+    {
+     "file": "impact-dirt/impact-dirt-2.mp3",
+     "id": 319229,
+     "title": "Single Rock hit dirt 2.wav by worthahep88",
+     "author": "worthahep88",
+     "seconds": 0.73,
+     "source": "https://freesound.org/s/319229/"
+    }
+   ]
+  },
+  "impact-metal": {
+   "loop": false,
+   "files": [
+    {
+     "file": "impact-metal/impact-metal-1.mp3",
+     "id": 812592,
+     "title": "Clang by qubodup",
+     "author": "qubodup",
+     "seconds": 0.57,
+     "source": "https://freesound.org/s/812592/"
+    },
+    {
+     "file": "impact-metal/impact-metal-2.mp3",
+     "id": 136826,
+     "title": "INDUSTHIT023 by mitchelk",
+     "author": "mitchelk",
+     "seconds": 0.84,
+     "source": "https://freesound.org/s/136826/"
+    }
+   ]
+  },
+  "ricochet": {
+   "loop": false,
+   "files": [
+    {
+     "file": "ricochet/ricochet-1.mp3",
+     "id": 30932,
+     "title": "bullet ricochet.wav by aust_paul",
+     "author": "aust_paul",
+     "seconds": 1.23,
+     "source": "https://freesound.org/s/30932/"
+    },
+    {
+     "file": "ricochet/ricochet-2.mp3",
+     "id": 392975,
+     "title": "Ricochet 2.wav by morganpurkis",
+     "author": "morganpurkis",
+     "seconds": 0.78,
+     "source": "https://freesound.org/s/392975/"
+    },
+    {
+     "file": "ricochet/ricochet-3.mp3",
+     "id": 345413,
+     "title": "Bullet_Ricochet_01 by Artmasterrich",
+     "author": "Artmasterrich",
+     "seconds": 0.68,
+     "source": "https://freesound.org/s/345413/"
+    }
+   ]
+  },
+  "flyby": {
+   "loop": false,
+   "files": [
+    {
+     "file": "flyby/flyby-1.mp3",
+     "id": 855248,
+     "title": "Real Bullet Flyby Sound by qubodup",
+     "author": "qubodup",
+     "seconds": 0.13,
+     "source": "https://freesound.org/s/855248/"
+    },
+    {
+     "file": "flyby/flyby-2.mp3",
+     "id": 386854,
+     "title": "Bullet Crack.wav by morganpurkis",
+     "author": "morganpurkis",
+     "seconds": 0.42,
+     "source": "https://freesound.org/s/386854/"
+    },
+    {
+     "file": "flyby/flyby-3.mp3",
+     "id": 505238,
+     "title": "Whizzby by Daleonfire",
+     "author": "Daleonfire",
+     "seconds": 0.94,
+     "source": "https://freesound.org/s/505238/"
+    }
+   ]
+  },
+  "shells": {
+   "loop": false,
+   "files": [
+    {
+     "file": "shells/shells-1.mp3",
+     "id": 370805,
+     "title": "Bullet Shell Thrown On Table.wav by LilMati",
+     "author": "LilMati",
+     "seconds": 0.44,
+     "source": "https://freesound.org/s/370805/"
+    },
+    {
+     "file": "shells/shells-2.mp3",
+     "id": 371199,
+     "title": "Bullet Shells Thrown In Basket.wav by LilMati",
+     "author": "LilMati",
+     "seconds": 0.34,
+     "source": "https://freesound.org/s/371199/"
+    }
+   ]
+  },
+  "reload": {
+   "loop": false,
+   "files": [
+    {
+     "file": "reload/reload-1.mp3",
+     "id": 674742,
+     "title": "AK-47 Assault Rifle being unloaded and reloaded by serøutōnin--deprivəd",
+     "author": "serøutōnin--deprivəd",
+     "seconds": 1.62,
+     "source": "https://freesound.org/s/674742/"
+    },
+    {
+     "file": "reload/reload-2.mp3",
+     "id": 815879,
+     "title": "Assault Rifle Reload by qubodup",
+     "author": "qubodup",
+     "seconds": 1.91,
+     "source": "https://freesound.org/s/815879/"
+    },
+    {
+     "file": "reload/reload-3.mp3",
+     "id": 432141,
+     "title": "Rifle-or-shotgun-reload.wav by MaximBomba",
+     "author": "MaximBomba",
+     "seconds": 3.03,
+     "source": "https://freesound.org/s/432141/"
+    }
+   ]
+  },
+  "throw": {
+   "loop": false,
+   "files": [
+    {
+     "file": "throw/throw-1.mp3",
+     "id": 346373,
+     "title": "Throwing / Whip Effect by denao270",
+     "author": "denao270",
+     "seconds": 0.26,
+     "source": "https://freesound.org/s/346373/"
+    },
+    {
+     "file": "throw/throw-2.mp3",
+     "id": 515625,
+     "title": "Throw/Swipe by mrickey13",
+     "author": "mrickey13",
+     "seconds": 0.63,
+     "source": "https://freesound.org/s/515625/"
+    }
+   ]
+  },
+  "footstep-gravel": {
+   "loop": true,
+   "files": [
+    {
+     "file": "footstep-gravel/footstep-gravel-1.mp3",
+     "id": 530589,
+     "title": "Footsteps_Boots_Gritty_Ground_(Gravel).wav by Nox_Sound",
+     "author": "Nox_Sound",
+     "seconds": 6.03,
+     "source": "https://freesound.org/s/530589/"
+    },
+    {
+     "file": "footstep-gravel/footstep-gravel-2.mp3",
+     "id": 395562,
+     "title": "Jogging in a forest.MP3 by SoundsForHim",
+     "author": "SoundsForHim",
+     "seconds": 6.03,
+     "source": "https://freesound.org/s/395562/"
+    },
+    {
+     "file": "footstep-gravel/footstep-gravel-3.mp3",
+     "id": 361072,
+     "title": "FastRunning.mp3 by Topschool",
+     "author": "Topschool",
+     "seconds": 6.03,
+     "source": "https://freesound.org/s/361072/"
+    }
+   ]
+  },
+  "breath-sprint": {
+   "loop": true,
+   "files": [
+    {
+     "file": "breath-sprint/breath-sprint-1.mp3",
+     "id": 163383,
+     "title": "Heavy Breathing by Under7dude",
+     "author": "Under7dude",
+     "seconds": 4.26,
+     "source": "https://freesound.org/s/163383/"
+    },
+    {
+     "file": "breath-sprint/breath-sprint-2.mp3",
+     "id": 321669,
+     "title": "Heavy Breathing Man/Boy.WAV by darranambler",
+     "author": "darranambler",
+     "seconds": 6.03,
+     "source": "https://freesound.org/s/321669/"
+    }
+   ]
+  },
+  "engine-truck": {
+   "loop": true,
+   "files": [
+    {
+     "file": "engine-truck/engine-truck-1.mp3",
+     "id": 187564,
+     "title": "Truck Engine Idle Loops.flac by qubodup",
+     "author": "qubodup",
+     "seconds": 12.04,
+     "source": "https://freesound.org/s/187564/"
+    },
+    {
+     "file": "engine-truck/engine-truck-2.mp3",
+     "id": 182793,
+     "title": "Military Vehicle Humming.flac by qubodup",
+     "author": "qubodup",
+     "seconds": 12.04,
+     "source": "https://freesound.org/s/182793/"
+    },
+    {
+     "file": "engine-truck/engine-truck-3.mp3",
+     "id": 128160,
+     "title": "Diesel Truck Idling Front.wav by ibirdfilm",
+     "author": "ibirdfilm",
+     "seconds": 12.04,
+     "source": "https://freesound.org/s/128160/"
+    }
+   ]
+  },
+  "fire-burning": {
+   "loop": true,
+   "files": [
+    {
+     "file": "fire-burning/fire-burning-1.mp3",
+     "id": 563765,
+     "title": "Fire Auto - car on fire by florianreichelt",
+     "author": "florianreichelt",
+     "seconds": 10.03,
+     "source": "https://freesound.org/s/563765/"
+    },
+    {
+     "file": "fire-burning/fire-burning-2.mp3",
+     "id": 563766,
+     "title": "fire crackles by florianreichelt",
+     "author": "florianreichelt",
+     "seconds": 10.03,
+     "source": "https://freesound.org/s/563766/"
+    }
+   ]
+  },
+  "amb-countryside": {
+   "loop": true,
+   "files": [
+    {
+     "file": "amb-countryside/amb-countryside-1.mp3",
+     "id": 458113,
+     "title": "Countryside by brunoboselli",
+     "author": "brunoboselli",
+     "seconds": 40.05,
+     "source": "https://freesound.org/s/458113/"
+    },
+    {
+     "file": "amb-countryside/amb-countryside-2.mp3",
+     "id": 351609,
+     "title": "PrairieSummer_ambience.wav by dsebeste",
+     "author": "dsebeste",
+     "seconds": 40.05,
+     "source": "https://freesound.org/s/351609/"
+    },
+    {
+     "file": "amb-countryside/amb-countryside-3.mp3",
+     "id": 559518,
+     "title": "Birds Singing Near Stream",
+     "author": "HighPeakEmma",
+     "seconds": 39.73,
+     "source": "https://freesound.org/s/559518/"
+    }
+   ]
+  },
+  "amb-forest-night": {
+   "loop": true,
+   "files": [
+    {
+     "file": "amb-forest-night/amb-forest-night-1.mp3",
+     "id": 333221,
+     "title": "Night Crickets Back Porch.aiff",
+     "author": "hdfreema",
+     "seconds": 40.05,
+     "source": "https://freesound.org/s/333221/"
+    },
+    {
+     "file": "amb-forest-night/amb-forest-night-2.mp3",
+     "id": 175020,
+     "title": "AMBIENCE NIGHT FIELD CRICKET 01.wav",
+     "author": "sengjinn",
+     "seconds": 40.05,
+     "source": "https://freesound.org/s/175020/"
+    },
+    {
+     "file": "amb-forest-night/amb-forest-night-3.mp3",
+     "id": 363472,
+     "title": "OwlAndTheHarvestMoon.wav",
+     "author": "Sclolex",
+     "seconds": 40.05,
+     "source": "https://freesound.org/s/363472/"
+    }
+   ]
+  },
+  "amb-distant-battle": {
+   "loop": true,
+   "files": [
+    {
+     "file": "amb-distant-battle/amb-distant-battle-1.mp3",
+     "id": 326442,
+     "title": "Battle, war zone gun fight by alanmcki",
+     "author": "alanmcki",
+     "seconds": 40.05,
+     "source": "https://freesound.org/s/326442/"
+    },
+    {
+     "file": "amb-distant-battle/amb-distant-battle-2.mp3",
+     "id": 150305,
+     "title": "War sounds by Dragout",
+     "author": "Dragout",
+     "seconds": 15.28,
+     "source": "https://freesound.org/s/150305/"
+    },
+    {
+     "file": "amb-distant-battle/amb-distant-battle-3.mp3",
+     "id": 350368,
+     "title": "Shoots from distance.wav by ZvinbergsA",
+     "author": "ZvinbergsA",
+     "seconds": 15.39,
+     "source": "https://freesound.org/s/350368/"
+    },
+    {
+     "file": "amb-distant-battle/amb-distant-battle-4.mp3",
+     "id": 840492,
+     "title": "War Zone (Lo-Fi) by qubodup",
+     "author": "qubodup",
+     "seconds": 15.18,
+     "source": "https://freesound.org/s/840492/"
+    }
+   ]
+  },
+  "shot-rifle": {
+   "loop": false,
+   "files": [
+    {
+     "file": "shot-rifle/shot-rifle-1.mp3",
+     "id": 855842,
+     "title": "An AK-47 being shot // has distinctive metallic kalashnikov-esque report // punchy sounding",
+     "author": "serøutōnin--deprivəd",
+     "seconds": 1.44,
+     "source": "https://freesound.org/s/855842/"
+    },
+    {
+     "file": "shot-rifle/shot-rifle-2.mp3",
+     "id": 855843,
+     "title": "An AK-47 being shot // has distinctive metallic kalashnikov-esque report // punchy sounding w/ distant trailing reverb",
+     "author": "serøutōnin--deprivəd",
+     "seconds": 1.44,
+     "source": "https://freesound.org/s/855843/"
+    },
+    {
+     "file": "shot-rifle/shot-rifle-3.mp3",
+     "id": 855841,
+     "title": "An AK-47 being shot // has distinctive metallic kalashnikov-esque report",
+     "author": "serøutōnin--deprivəd",
+     "seconds": 1.2,
+     "source": "https://freesound.org/s/855841/"
+    },
+    {
+     "file": "shot-rifle/shot-rifle-4.mp3",
+     "id": 855655,
+     "title": "An automatic rifle being shot once // metallic and punchy sounding",
+     "author": "serøutōnin--deprivəd",
+     "seconds": 1.44,
+     "source": "https://freesound.org/s/855655/"
+    }
+   ]
+  },
+  "shot-sniper": {
+   "loop": false,
+   "files": [
+    {
+     "file": "shot-sniper/shot-sniper-1.mp3",
+     "id": 433858,
+     "title": "Rifle Gun Shot 01.wav",
+     "author": "LilMati",
+     "seconds": 1.25,
+     "source": "https://freesound.org/s/433858/"
+    },
+    {
+     "file": "shot-sniper/shot-sniper-2.mp3",
+     "id": 484036,
+     "title": "Rifle Gun Shot 02.wav",
+     "author": "LilMati",
+     "seconds": 1.54,
+     "source": "https://freesound.org/s/484036/"
+    },
+    {
+     "file": "shot-sniper/shot-sniper-3.mp3",
+     "id": 411567,
+     "title": "Centerfire Rifle Gun Shot 01.wav",
+     "author": "LilMati",
+     "seconds": 2.04,
+     "source": "https://freesound.org/s/411567/"
+    },
+    {
+     "file": "shot-sniper/shot-sniper-4.mp3",
+     "id": 563015,
+     "title": "a loud gunshot in the woods",
+     "author": "florianreichelt",
+     "seconds": 2.04,
+     "source": "https://freesound.org/s/563015/"
+    }
+   ]
+  },
+  "rpg-launch": {
+   "loop": false,
+   "files": [
+    {
+     "file": "rpg-launch/rpg-launch-1.mp3",
+     "id": 840511,
+     "title": "Rocket Launch",
+     "author": "qubodup",
+     "seconds": 2.64,
+     "source": "https://freesound.org/s/840511/"
+    },
+    {
+     "file": "rpg-launch/rpg-launch-2.mp3",
+     "id": 854511,
+     "title": "Mine Clearing Line Charge Launch",
+     "author": "qubodup",
+     "seconds": 2.64,
+     "source": "https://freesound.org/s/854511/"
+    },
+    {
+     "file": "rpg-launch/rpg-launch-3.mp3",
+     "id": 854476,
+     "title": "M142 HIMARS Rocket Launch 8",
+     "author": "qubodup",
+     "seconds": 2.64,
+     "source": "https://freesound.org/s/854476/"
+    }
+   ]
+  },
+  "gl-thump": {
+   "loop": false,
+   "files": [
+    {
+     "file": "gl-thump/gl-thump-1.mp3",
+     "id": 162402,
+     "title": "M203 Grenade Launcher 1.flac",
+     "author": "qubodup",
+     "seconds": 0.57,
+     "source": "https://freesound.org/s/162402/"
+    },
+    {
+     "file": "gl-thump/gl-thump-2.mp3",
+     "id": 187542,
+     "title": "M-327 Mortar Shots.flac",
+     "author": "qubodup",
+     "seconds": 1.23,
+     "source": "https://freesound.org/s/187542/"
+    },
+    {
+     "file": "gl-thump/gl-thump-3.mp3",
+     "id": 184382,
+     "title": "Mortar Shots.flac",
+     "author": "qubodup",
+     "seconds": 1.23,
+     "source": "https://freesound.org/s/184382/"
+    }
+   ]
+  }
+ }
+}
