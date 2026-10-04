@@ -4,6 +4,14 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 ## [Unreleased]
 
+### Added (Weapon Modder)
+- **Warehouse**: the rifle lies on a table in the Operator Customiser's warehouse, under the same lights, with the room blurred behind. A Warehouse lighting button brings it back after Studio, Outdoor or Sunset. TAC-J-48.
+- **Every rifle takes every attachment**: optics, muzzle devices, back-up sights, foregrips (GP-25 included), side-rail lights and lasers, triggers, charging handles and slings on all eleven rifles. TAC-J-48.
+- **MCX retro textures**: the Spear in chunky dithered bitmap textures. TAC-J-48.
+
+### Fixed (Weapon Modder)
+- **M16A1** no longer looks stretched (it was too tall and too thin). **Bren** has blued steel and a walnut stock and grip; **StG 44** a walnut butt and Bakelite grip instead of all black. TAC-J-48.
+
 ### Added (Operator Customiser)
 - **A crew in the warehouse**: three insurgents idle in the background: one sits on a crate watching your operator, two go through an open weapons crate with their backs to the camera. The workbench, with a rifle on it, is in view under its lamp. TAC-J-47.
 - **Depth of field**: the operator stays sharp while the room behind softens. TAC-J-47.

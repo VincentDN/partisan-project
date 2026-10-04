@@ -17,6 +17,7 @@
 // Meters per source unit, shared by both files: the AK-74M model is scaled to its published
 // 943 mm overall length, which puts the AK-15K at the same scale.
 // Which rail each railed slot rides on. Slots on one rail share space: workbench/rails.js keeps them from overlapping.
+import {complete} from './universal.js';
 import {EXTRA} from './rifles-extra.js';
 export const RAIL_OF = {optic: 'top', buis: 'top', foregrip: 'bottom', side: 'side'};
 
@@ -316,4 +317,5 @@ export const MODELS = {
 };
 
 Object.assign(MODELS, EXTRA);
+for (const config of Object.values(MODELS)) complete(config);
 export const DEFAULT_MODEL = 'ak74m';

@@ -443,6 +443,25 @@ await check('workbench: loads, swapping a part writes the hash, both rifles load
   await page.waitForFunction(() => document.querySelector('#title').textContent.includes('AK-15K'), null, {timeout: 60000});
   assert.equal(await page.locator('.fire').count(), 0, 'no test-fire control remains');
   assert.equal(await page.locator('#copy-code').count(), 1);
+  // the warehouse room is on, with depth of field; Studio swaps it out and Warehouse brings it back
+  assert.deepEqual(await page.evaluate(() => [window.PARP_WORKBENCH.warehouse.enabled, window.PARP_WORKBENCH.dof.on]), [true, true]);
+  await page.locator('[data-env="studio"]').click();
+  assert.equal(await page.evaluate(() => window.PARP_WORKBENCH.warehouse.enabled), false);
+  await page.locator('#room').click();
+  assert.equal(await page.evaluate(() => window.PARP_WORKBENCH.warehouse.enabled), true);
+  // the retro MCX: every surface carries a nearest-filtered bitmap; an old rifle takes a modern grip and light
+  await page.locator('[data-rifle="spear-retro"]').click();
+  await page.waitForFunction(() => window.PARP_WORKBENCH.rifle?.id === 'spear-retro', null, {timeout: 60000});
+  const retro = await page.evaluate(() => {
+    const maps = [];
+    window.PARP_WORKBENCH.rifle.model.traverseVisible(o => o.isMesh && maps.push(o.material.map?.magFilter));
+    return {meshes: maps.length, nearest: maps.filter(f => f === 1003).length};
+  });
+  assert.ok(retro.meshes > 5 && retro.nearest === retro.meshes, JSON.stringify(retro));
+  await page.locator('[data-rifle="stg44"]').click();
+  await page.waitForFunction(() => window.PARP_WORKBENCH.rifle?.id === 'stg44', null, {timeout: 60000});
+  await page.locator('#build .chips button', {hasText: 'Vertical'}).first().click();
+  assert.match(await page.evaluate(() => location.hash), /foregrip=vertical/);
   noProblems(page);
   await page.close();
 });

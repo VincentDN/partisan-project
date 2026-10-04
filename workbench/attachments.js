@@ -42,6 +42,7 @@ export const glb =
           }
         });
         group.add(model);
+        group.dispatchEvent({type: 'loaded'}); // rifle-instance.js repaints late parts (the retro MCX)
       },
       undefined,
       err => console.error(`attachment ${file} failed to load`, err),
@@ -96,6 +97,7 @@ export const real =
           }
         });
         group.add(wrap);
+        group.dispatchEvent({type: 'loaded'});
       },
       undefined,
       err => console.error(`attachment ${file} failed to load`, err),

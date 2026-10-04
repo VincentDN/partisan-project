@@ -6,6 +6,8 @@ import {SLOTS} from '../workbench/attachments.js';
 import {clash, resolve, fits, candidates, span} from '../workbench/rails.js';
 
 const SCALE = 0.943 / 9.088; // models.js: source units -> metres
+// Mounts are in metres already; sockets are in source units.
+const baseX = (config, slot) => config.mounts?.find(m => m[0] === slot)?.[2][0] ?? config.sockets.find(s => s[0] === slot)[2][0] * SCALE;
 function itemsFor(config, build, offsets = {}) {
   return Object.entries(RAIL_OF)
     .filter(([slot]) => config.slots[slot]?.rail)
@@ -23,7 +25,7 @@ function itemsFor(config, build, offsets = {}) {
       return {
         slot,
         rail,
-        baseX: config.sockets.find(s => s[0] === slot)[2][0] * SCALE,
+        baseX: baseX(config, slot),
         offset: offsets[slot] || 0,
         fp: option.fp || [0, 0],
         travel: conf.rail,
@@ -42,10 +44,7 @@ for (const [rifleId, config] of Object.entries(MODELS)) {
 
   test(`[${rifleId}] every railed slot has a socket, a footprint on every option, and sane travel`, () => {
     for (const slot of slots) {
-      assert.ok(
-        config.sockets.some(s => s[0] === slot),
-        `${slot}: socket`,
-      );
+      assert.ok(config.sockets.some(s => s[0] === slot) || config.mounts?.some(m => m[0] === slot), `${slot}: socket`);
       const t = config.slots[slot].rail;
       assert.ok(t.min <= 0 && t.max >= 0 && t.step > 0 && t.max - t.min <= 0.4, `${slot}: travel`);
       for (const id of optionsOf(config, slot)) {

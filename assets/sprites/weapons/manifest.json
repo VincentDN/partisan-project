@@ -50,8 +50,13 @@
     "length": 1.143
   },
   "rpk": {
-    "label": "RPK (7.62×39)",
+    "label": "RPK (7.62\u00d739)",
     "file": "rpk.png",
     "length": 1.059
+  },
+  "spear-retro": {
+    "label": "MCX retro textures",
+    "file": "spear.png",
+    "length": 1.209
   }
 }

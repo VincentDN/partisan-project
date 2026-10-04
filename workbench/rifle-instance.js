@@ -3,8 +3,10 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
 import {SLOTS, FINISHES, FINISH_TARGETS, FALLBACK_MATERIALS} from './attachments.js';
 import {MODELS} from './models.js';
-// Lay the longest axis along x with the muzzle (the slimmer end) at +x, scale to meters, center.
-export function normalize(root, scale) {
+import {paintSurface, paintRetro} from './surface.js';
+// Lay the longest axis along x with the muzzle (the slimmer end) at +x, scale to meters, center. `stretch` [x, y, z]
+// corrects a source whose proportions are off (the M16's is too tall and too thin), in the laid-out axes.
+export function normalize(root, scale, stretch = null) {
   root.updateMatrixWorld(true);
   let size = new T.Box3().setFromObject(root).getSize(new T.Vector3());
   if (size.z > size.x && size.z >= size.y) root.rotation.y = Math.PI / 2;
@@ -32,11 +34,18 @@ export function normalize(root, scale) {
   });
   if (ends[0][1] - ends[0][0] < ends[1][1] - ends[1][0]) root.rotateY(Math.PI);
   root.scale.multiplyScalar(scale);
-  root.updateMatrixWorld(true);
-  const center = new T.Box3().setFromObject(root).getCenter(new T.Vector3());
+  let body = root;
+  if (stretch) {
+    body = new T.Group();
+    body.name = 'proportions';
+    body.scale.set(...stretch);
+    body.add(root);
+  }
+  body.updateMatrixWorld(true);
+  const center = new T.Box3().setFromObject(body).getCenter(new T.Vector3());
   const holder = new T.Group();
-  holder.add(root);
-  root.position.sub(center);
+  holder.add(body);
+  body.position.sub(center);
   return holder;
 }
 
@@ -56,7 +65,18 @@ export async function loadRifle(id, {decorate = () => {}} = {}) {
     root.add(o);
     return o;
   });
-  const model = normalize(root, config.scale);
+  const model = normalize(root, config.scale, config.stretch);
+  // Mount points given in metres on the laid-out rifle (workbench/universal.js), for rifles whose source has no part there.
+  for (const [sid, label, p, d] of config.mounts || []) {
+    const o = new T.Object3D();
+    o.name = 'socket:' + sid;
+    o.position.set(...p);
+    o.userData = {id: sid, label, direction: new T.Vector3(...d)};
+    model.add(o);
+    sockets.push(o);
+  }
+  model.updateMatrixWorld(true);
+  if (config.surface) paintSurface(model, config);
   // Clone materials so highlighting, finishes and wireframe only touch this rifle's meshes.
   model.traverse(o => {
     if (o.isMesh) o.material = o.material.clone();
@@ -114,6 +134,10 @@ export async function loadRifle(id, {decorate = () => {}} = {}) {
         });
         object.visible = false;
         container.add(object);
+        if (config.surface?.retro) {
+          paintRetro(object, model);
+          object.addEventListener('loaded', () => paintRetro(object, model)); // parts that arrive from a file
+        }
       }
       return {...o, object};
     });
