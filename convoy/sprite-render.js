@@ -3,6 +3,7 @@
 // then every object sorted by its south edge (cover, vehicles, pawns, trees), then effects and labels on top.
 // x runs east and z south in metres; the camera looks straight down, objects show their front faces (2.5-D).
 import {loadArt, loadGuns, buildPawn, lookFor, savedLook, DEFAULT_GUN, tinted, atlasCell} from './sprite-art.js';
+import {WEAPONS} from './weapons.js';
 
 const PPM = 32; // pixels per metre at zoom 1 (art bible: 1 m = 32 px)
 
@@ -13,12 +14,45 @@ function lcg(seed) {
 }
 const canvas = (w, h) => Object.assign(document.createElement('canvas'), {width: w, height: h});
 const hex = n => '#' + n.toString(16).padStart(6, '0');
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+/** Error function (Abramowitz-Stegun 7.1.26), for the hit chance. */
+function erf(x) {
+  const t = 1 / (1 + 0.3275911 * Math.abs(x));
+  const y = 1 - ((((1.061405429 * t - 1.453152027) * t + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x);
+  return x < 0 ? -y : y;
+}
+/**
+ * The chance a round from u hits o: the simulation's aim error is about normal with a standard deviation
+ * of 0.575 x the shooter's spread (sim.shoot); a hit is an error smaller than the target's half-width seen from the muzzle.
+ */
+export function hitChance(u, o, W) {
+  const d = Math.max(0.5, Math.hypot(o.x - u.x, o.z - u.z));
+  if (d > W.range) return 0;
+  const sigma = (W.spread * 0.9 + (u.supp || 0) * 0.1 * (u.armour ?? 1) + (u.moving ? 0.045 : 0)) * 0.575;
+  return erf(Math.atan((o.r || 0.4) / d) / (sigma * Math.SQRT2));
+}
 
 export async function createSpriteRenderer(view) {
   const [art, guns] = await Promise.all([loadArt(), loadGuns()]);
+  // The set's flash and glow motes keep their shape in a very faint alpha (a shader brightens them in the original):
+  // scale the alpha once so they read on a canvas. ShotHit_Dirt and ShotHit_Spark have no alpha at all and are not used.
+  const brighten = (img, peak) => {
+    if (!img) return img;
+    const c = canvas(img.width, img.height),
+      g = c.getContext('2d');
+    g.drawImage(img, 0, 0);
+    const d = g.getImageData(0, 0, c.width, c.height),
+      px = d.data;
+    let max = 1;
+    for (let i = 3; i < px.length; i += 4) max = Math.max(max, px[i]);
+    for (let i = 3; i < px.length; i += 4) px[i] = Math.min(255, (px[i] * peak) / max);
+    g.putImageData(d, 0, 0);
+    return c;
+  };
+  const fx = {shotFlash: brighten(art.shotFlash, 255), fireGlow: brighten(art.fireGlow, 210), dustPuff: brighten(art.dustPuff, 170)};
   const ctx = view.getContext('2d');
   const pawns = new Map(); // unit id -> {south, east, north} or a pending promise
-  const camera = {x: 0, z: 0, zoom: 0.85};
+  const camera = {x: 0, z: 0, zoom: 0.85, aimK: 0};
   let ground = null; // {canvas, scale, minX, minZ}
   let level = null;
   const scorch = []; // explosions already burnt into the ground
@@ -143,8 +177,9 @@ export async function createSpriteRenderer(view) {
   let W = 0,
     Hh = 0,
     ppm = PPM;
-  const sx = x => (x - camera.x) * ppm + W / 2,
-    sy = z => (z - camera.z) * ppm + Hh / 2;
+  const shake = {trauma: 0, x: 0, y: 0};
+  const sx = x => (x - camera.x) * ppm + W / 2 + shake.x,
+    sy = z => (z - camera.z) * ppm + Hh / 2 + shake.y;
   function shadow(x, z, rx, rz, alpha = 0.28) {
     ctx.fillStyle = `rgba(0,0,0,${alpha})`;
     ctx.beginPath();
@@ -371,26 +406,339 @@ export async function createSpriteRenderer(view) {
   }
 
   // ---------- effects ----------
-  const TRACER = {partisan: '255,236,170', army: '255,196,140', rpg: '255,170,90', hmg: '255,210,150'};
-  function effects(sim) {
-    for (const t of sim.tracers) {
-      const age = sim.time - t.t;
-      if (age > 0.08) continue;
-      const c = TRACER[t.weapon] || TRACER[t.side];
-      const grad = ctx.createLinearGradient(sx(t.x0), sy(t.z0), sx(t.x1), sy(t.z1));
-      grad.addColorStop(0, `rgba(${c},0)`);
-      grad.addColorStop(1, `rgba(${c},${0.95 - age * 8})`);
-      ctx.strokeStyle = grad;
-      ctx.lineWidth = t.weapon === 'rpg' ? 4 : 2;
-      ctx.beginPath();
-      ctx.moveTo(sx(t.x0), sy(t.z0) - 0.4 * ppm);
-      ctx.lineTo(sx(t.x1), sy(t.z1) - 0.4 * ppm);
-      ctx.stroke();
-      ctx.globalCompositeOperation = 'lighter';
-      if (age < 0.05) sprite(art.shotFlash, t.x0, t.z0, 1.4, 1.4, {oy: -0.4, alpha: 0.9});
-      sprite(art.hitDirt, t.x1, t.z1, 0.9, 0.9, {alpha: 0.7 - age * 6});
-      ctx.globalCompositeOperation = 'source-over';
+  // RimWorld-style combat: rounds are sprites in flight (sim.projectiles), every shot flashes at the muzzle and lights
+  // the ground, and what a round hits throws up its own motes: dirt and dust, sparks off metal, chips off walls, blood
+  // that stays on the ground. The camera kicks with your own shots, near misses and blasts (not under reduced motion).
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const seen = new WeakSet();
+  const flashes = []; // {x, z, a, t, life, size}
+  const motes = []; // {img, x, z, y, vx, vz, vy, gravity, t, life, size, grow, alpha, rot, vr, add}
+  const screen = {a: 0, color: '255,226,180'};
+  const pauseMax = new Map(); // unit id -> the pause it started (for the aim pie)
+  const BIG = new Set(['pkm', 'hmg', 'svd']);
+  const KICK = {ak: 0.17, pkm: 0.19, svd: 0.45, hmg: 0.22, rpg: 0.6, gp: 0.32};
+  const FLASH = {ak: 1.5, pkm: 1.7, svd: 2.1, hmg: 2.3, rpg: 2.8, gp: 1.2};
+  const FIRING = new Set(['engage', 'flank', 'search', 'cover', 'retreat', 'turret', 'bound', 'overwatch']);
+  const kick = k => {
+    if (!reduceMotion) shake.trauma = Math.min(1, shake.trauma + k);
+  };
+  const mote = o =>
+    motes.push({y: 0, vx: 0, vz: 0, vy: 0, gravity: 0, grow: 0, alpha: 1, rot: Math.random() * 6.28, vr: 0, add: false, ...o});
+  const rnd = (a, b) => a + Math.random() * (b - a);
+  /** Filth on the ground canvas: blood stays where it fell, as in RimWorld. */
+  function decal(img, x, z, size, color, alpha = 0.85) {
+    if (!img || !ground) return;
+    const g = ground.canvas.getContext('2d'),
+      s = ground.scale;
+    g.save();
+    g.globalAlpha = alpha;
+    g.translate((x - ground.origin.x) * s, (z - ground.origin.z) * s);
+    g.rotate(Math.random() * 6.28);
+    const w = size * s;
+    g.drawImage(tinted(img, color), -w / 2, -w / 2, w, w);
+    g.restore();
+  }
+  function debris(x, z, n, speed, img = art.debris, size = 0.22, color = null) {
+    for (let i = 0; i < n; i++) {
+      const a = Math.random() * 6.28,
+        v = rnd(0.4, 1) * speed;
+      mote({
+        img: color ? tinted(img, color) : img,
+        x,
+        z,
+        y: 0.2,
+        vx: Math.cos(a) * v,
+        vz: Math.sin(a) * v * 0.7,
+        vy: rnd(2, 5),
+        gravity: 14,
+        t: lastSimT,
+        life: rnd(0.5, 0.9),
+        size,
+        vr: rnd(-12, 12),
+      });
     }
+  }
+  function impactFx(im) {
+    const t = lastSimT,
+      back = Math.atan2(-im.dz, -im.dx);
+    if (im.surface === 'flesh') {
+      mote({img: art.bloodSplash, x: im.x, z: im.z, y: 0.5, t, life: 0.35, size: 0.95, grow: 0.7});
+      mote({img: art.bodyImpact, x: im.x, z: im.z, y: 0.5, t, life: 0.14, size: 0.8, add: true});
+      const a = Math.atan2(im.dz, im.dx);
+      decal(
+        [art.spatterA, art.spatterB, art.spatterC][Math.floor(Math.random() * 3)],
+        im.x + Math.cos(a) * rnd(0.3, 0.9),
+        im.z + Math.sin(a) * rnd(0.3, 0.9),
+        rnd(0.7, 1.3),
+        '#7d1712',
+        0.75,
+      );
+    } else if (im.surface === 'metal') {
+      mote({img: art.sparkFlash, x: im.x, z: im.z, y: 0.5, t, life: 0.1, size: 1, add: true, rot: back});
+      for (let i = 0; i < 4; i++) {
+        const a = back + rnd(-1, 1),
+          v = rnd(4, 8);
+        mote({
+          img: art.sparkThrown,
+          x: im.x,
+          z: im.z,
+          y: 0.5,
+          vx: Math.cos(a) * v,
+          vz: Math.sin(a) * v,
+          vy: rnd(1, 3),
+          gravity: 10,
+          t,
+          life: rnd(0.2, 0.4),
+          size: 0.35,
+          add: true,
+          rot: a + Math.PI / 2,
+        });
+      }
+    } else if (im.surface === 'wall') {
+      mote({img: art.sparkFlash, x: im.x, z: im.z, y: 0.5, t, life: 0.07, size: 0.6, add: true, rot: back});
+      mote({img: tinted(fx.dustPuff, '#b9ad94'), x: im.x, z: im.z, y: 0.5, vz: -0.4, t, life: 0.8, size: 0.6, grow: 1.2, alpha: 0.6});
+      debris(im.x, im.z, 3, 2.5, art.debris, 0.18, '#a29a86');
+    } else {
+      mote({
+        img: tinted(fx.dustPuff, '#b4a383'),
+        x: im.x,
+        z: im.z,
+        vx: rnd(-0.3, 0.3),
+        vz: -0.35,
+        t,
+        life: rnd(0.7, 1.1),
+        size: 0.65,
+        grow: 1.2,
+        alpha: 0.55,
+      });
+      debris(im.x, im.z, 2, 2, art.debris, 0.16, '#7b6a50');
+    }
+  }
+  function blastFx(e, listener) {
+    const t = lastSimT,
+      d = Math.hypot(e.x - listener.x, e.z - listener.z);
+    debris(e.x, e.z, 14, 7, art.debris, 0.3, '#6b5d48');
+    for (let i = 0; i < 8; i++) {
+      const a = (i / 8) * 6.28;
+      mote({
+        img: tinted(fx.dustPuff, '#a69777'),
+        x: e.x + Math.cos(a) * e.r * 0.4,
+        z: e.z + Math.sin(a) * e.r * 0.4,
+        vx: Math.cos(a) * 3,
+        vz: Math.sin(a) * 2.2,
+        t,
+        life: rnd(0.9, 1.6),
+        size: e.r * 0.5,
+        grow: 1.5,
+        alpha: 0.6,
+      });
+    }
+    mote({img: fx.fireGlow, x: e.x, z: e.z, y: 0.5, t, life: 0.35, size: e.r * 3, add: true, alpha: 0.9});
+    kick(clamp(1 - d / 32, 0, 1) * 0.95 * clamp(e.r / 3.6, 0.6, 1.2));
+    const a = clamp(1 - d / 26, 0, 1) * 0.42;
+    if (a > screen.a) Object.assign(screen, {a, color: '255,226,180'});
+  }
+  /** New shots, landings and blasts since the last frame become flashes, motes and camera kicks. */
+  function spawn(sim) {
+    const p = sim.player;
+    for (const t of sim.tracers) {
+      if (seen.has(t)) continue;
+      seen.add(t);
+      if (sim.time - t.t > 0.3) continue;
+      const a = Math.atan2(t.z1 - t.z0, t.x1 - t.x0);
+      flashes.push({x: t.x0, z: t.z0, a, t: t.t, life: t.weapon === 'rpg' ? 0.12 : 0.065, size: FLASH[t.weapon] || 1.5});
+      if (t.weapon === 'rpg')
+        for (let i = 0; i < 6; i++)
+          mote({
+            img: art.smoke,
+            x: t.x0 - Math.cos(a),
+            z: t.z0 - Math.sin(a),
+            vx: -Math.cos(a) * rnd(2, 4) + rnd(-1, 1),
+            vz: -Math.sin(a) * rnd(2, 4) + rnd(-1, 1),
+            t: t.t,
+            life: rnd(1, 1.8),
+            size: 1.1,
+            grow: 1.4,
+            alpha: 0.5,
+          });
+      if (t.unit === p.id) kick(KICK[t.weapon] || 0.15);
+      else if (p.alive && t.side !== p.side) {
+        // a round going past close by
+        const vx = t.x1 - t.x0,
+          vz = t.z1 - t.z0,
+          len2 = vx * vx + vz * vz || 1,
+          k = clamp(((p.x - t.x0) * vx + (p.z - t.z0) * vz) / len2, 0, 1);
+        if (Math.hypot(t.x0 + vx * k - p.x, t.z0 + vz * k - p.z) < 2.2 && k > 0.1) kick(0.09);
+      }
+    }
+    for (const im of sim.impacts) {
+      if (seen.has(im)) continue;
+      seen.add(im);
+      if (sim.time - im.t < 0.3) impactFx(im);
+    }
+    for (const e of sim.explosions) {
+      if (seen.has(e)) continue;
+      seen.add(e);
+      if (sim.time - e.t < 0.3) blastFx(e, p);
+    }
+    // the player hit: a kick and a red edge
+    if (p.alive && lastHp !== null && p.hp < lastHp) {
+      kick(0.35);
+      Object.assign(screen, {a: 0.3, color: '170,20,10'});
+    }
+    lastHp = p.hp;
+  }
+  let lastHp = null;
+  function drawProjectiles(sim) {
+    for (const q of sim.projectiles) {
+      const k = clamp((sim.time - q.t0) / (q.t1 - q.t0), 0, 1);
+      const ex = q.hit ? q.hit.x : q.x1,
+        ez = q.hit ? q.hit.z : q.z1;
+      const x = q.x0 + (ex - q.x0) * k,
+        z = q.z0 + (ez - q.z0) * k,
+        a = Math.atan2(ez - q.z0, ex - q.x0);
+      if (q.lob) {
+        // a grenade arcs: its shadow runs along the ground under it
+        const H = Math.min(5, Math.hypot(ex - q.x0, ez - q.z0) * 0.3),
+          h = 4 * H * k * (1 - k) + 0.4 * (1 - k);
+        shadow(x, z, 0.16, 0.09, 0.35);
+        sprite(art.grenade, x, z, 0.7, 0.7, {oy: -h, rot: sim.time * 14});
+      } else if (q.weapon === 'rpg') {
+        if (sim.time - (q.puff ?? -1) > 0.025) {
+          q.puff = sim.time;
+          mote({
+            img: art.smoke,
+            x,
+            z,
+            y: 0.45,
+            vx: rnd(-0.3, 0.3),
+            vz: rnd(-0.3, 0.3),
+            t: sim.time,
+            life: rnd(0.8, 1.3),
+            size: 0.6,
+            grow: 1.6,
+            alpha: 0.45,
+          });
+        }
+        ctx.globalCompositeOperation = 'lighter';
+        sprite(fx.fireGlow, x - Math.cos(a) * 0.6, z - Math.sin(a) * 0.6, 1.2, 1.2, {oy: -0.45, alpha: 0.8});
+        ctx.globalCompositeOperation = 'source-over';
+        sprite(art.rocket, x, z, 1.4, 1.4, {oy: -0.45, rot: a + Math.PI / 2});
+      } else {
+        if (level.night) {
+          ctx.globalCompositeOperation = 'lighter';
+          sprite(fx.fireGlow, x, z, 0.7, 0.7, {oy: -0.42, alpha: 0.5});
+          ctx.globalCompositeOperation = 'source-over';
+        }
+        sprite(BIG.has(q.weapon) ? art.bulletBig : art.bulletSmall, x, z, 1.1, 1.1, {oy: -0.42, rot: a + Math.PI / 2});
+      }
+    }
+  }
+  function drawFlashes(sim) {
+    ctx.globalCompositeOperation = 'lighter';
+    for (let i = flashes.length - 1; i >= 0; i--) {
+      const f = flashes[i],
+        k = (sim.time - f.t) / f.life;
+      if (k >= 1 || k < 0) {
+        if (k >= 1 || sim.time < f.t - 1) flashes.splice(i, 1);
+        continue;
+      }
+      const mx = f.x + Math.cos(f.a) * 0.6,
+        mz = f.z + Math.sin(f.a) * 0.6;
+      // the flash lights the ground round the muzzle
+      const R = f.size * (level.night ? 2.6 : 1.6) * ppm,
+        X = sx(mx),
+        Y = sy(mz);
+      const g = ctx.createRadialGradient(X, Y, 0, X, Y, R);
+      g.addColorStop(0, `rgba(255,205,130,${(level.night ? 0.5 : 0.32) * (1 - k)})`);
+      g.addColorStop(1, 'rgba(255,205,130,0)');
+      ctx.fillStyle = g;
+      ctx.fillRect(X - R, Y - R, R * 2, R * 2);
+      sprite(fx.shotFlash, mx, mz, f.size * (1 - k * 0.3), f.size * (1 - k * 0.3), {oy: -0.42, rot: f.a, alpha: 1 - k});
+    }
+    ctx.globalCompositeOperation = 'source-over';
+  }
+  function drawMotes(sim, dt) {
+    for (let i = motes.length - 1; i >= 0; i--) {
+      const m = motes[i],
+        k = (sim.time - m.t) / m.life;
+      if (k >= 1 || sim.time < m.t - 1) {
+        motes.splice(i, 1);
+        continue;
+      }
+      m.x += m.vx * dt;
+      m.z += m.vz * dt;
+      m.y += m.vy * dt;
+      m.vy -= m.gravity * dt;
+      m.rot += m.vr * dt;
+      if (m.y < 0) {
+        m.y = 0;
+        m.vy = 0;
+        m.vx *= 0.5;
+        m.vz *= 0.5;
+        m.vr *= 0.5;
+      }
+      if (m.add) ctx.globalCompositeOperation = 'lighter';
+      const size = m.size * (1 + m.grow * k);
+      sprite(m.img, m.x, m.z, size, size, {oy: -m.y, rot: m.rot, alpha: m.alpha * (1 - k)});
+      if (m.add) ctx.globalCompositeOperation = 'source-over';
+    }
+    if (motes.length > 400) motes.splice(0, motes.length - 400);
+  }
+  /** RimWorld's aim pie: a wedge over the shooter that fills while it aims before a string of shots. */
+  function aimPie(u, frac) {
+    const X = sx(u.x),
+      Y = sy(u.z) - 1.55 * ppm,
+      R = Math.max(5, 0.28 * ppm);
+    ctx.fillStyle = 'rgba(0,0,0,.4)';
+    ctx.beginPath();
+    ctx.arc(X, Y, R + 1.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,.85)';
+    ctx.beginPath();
+    ctx.moveTo(X, Y);
+    ctx.arc(X, Y, R, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * clamp(frac, 0, 1));
+    ctx.closePath();
+    ctx.fill();
+  }
+  function pies(sim) {
+    const p = sim.player,
+      warm = WEAPONS[p.weapon]?.warmup || 0;
+    if (p.alive && p.aim > 0 && p.aim < warm) aimPie(p, p.aim / warm);
+    for (const u of sim.units) {
+      if (u === p || !u.alive || !(u.pause > 0) || !FIRING.has(u.state) || !u.alert || !u.visible?.some(e => e.alive)) {
+        pauseMax.delete(u.id);
+        continue;
+      }
+      const max = Math.max(pauseMax.get(u.id) || 0, u.pause);
+      pauseMax.set(u.id, max);
+      if (u.state === 'mounted' || u.escaped) continue;
+      aimPie(u, 1 - u.pause / max);
+    }
+  }
+  /** Hovering an enemy: the chance your next round hits it, RimWorld's targeting readout. */
+  function hitReadout(sim, aim) {
+    const p = sim.player;
+    if (!p.alive || !aim) return;
+    const o = sim.units
+      .filter(u => u.side !== p.side && u.alive && !u.escaped && u.state !== 'mounted' && Math.hypot(u.x - aim.x, u.z - aim.z) < 1.2)
+      .sort((a, b) => Math.hypot(a.x - aim.x, a.z - aim.z) - Math.hypot(b.x - aim.x, b.z - aim.z))[0];
+    if (!o) return;
+    const W = WEAPONS[p.weapon];
+    const d = Math.hypot(o.x - p.x, o.z - p.z);
+    const text = d > W.range ? 'Out of range' : !sim.los(p.x, p.z, o.x, o.z) ? 'No clear shot' : `${Math.round(hitChance(p, o, W) * 100)}%`;
+    ctx.font = '600 12px ui-sans-serif, system-ui, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+    const X = sx(aim.x) + 16,
+      Y = sy(aim.z) + 16,
+      w = ctx.measureText(text).width + 10;
+    ctx.fillStyle = 'rgba(0,0,0,.6)';
+    ctx.fillRect(X, Y - 9, w, 18);
+    ctx.fillStyle = '#f2f2e6';
+    ctx.fillText(text, X + 5, Y + 1);
+  }
+  function effects(sim) {
     for (const e of sim.explosions) {
       const age = sim.time - e.t;
       if (!e._burnt) {
@@ -459,7 +807,9 @@ export async function createSpriteRenderer(view) {
     view.height = Math.max(1, Math.round(r.height * dpr));
   }
 
-  function draw(sim, {aim, selected = [], orders = true} = {}) {
+  let lastSimT = 0,
+    lastReal = 0;
+  function draw(sim, {aim, selected = [], orders = true, pointer = null, aimZoom = false} = {}) {
     if (sim.level !== level) {
       level = sim.level;
       ground = bakeGround(level);
@@ -473,17 +823,33 @@ export async function createSpriteRenderer(view) {
       smoke.length = 0;
     }
     const now = performance.now() / 1000;
+    const rdt = clamp(now - (lastReal || now), 0, 0.1),
+      simDt = clamp(sim.time - lastSimT, 0, 0.1);
+    lastReal = now;
+    lastSimT = sim.time;
     W = view.width / dpr;
     Hh = view.height / dpr;
-    ppm = PPM * camera.zoom;
-    // the camera eases toward the active rebel
-    // the camera eases toward the active rebel, leaning a third of the way toward where you aim
+    // Right mouse held: a subtle zoom in and a longer lean toward the cursor (aiming down the sights).
+    camera.aimK += ((aimZoom ? 1 : 0) - camera.aimK) * (1 - Math.exp(-rdt * 9));
+    ppm = PPM * camera.zoom * (1 + 0.14 * camera.aimK);
+    // The camera follows the active rebel and moves with the mouse: it leans toward the cursor's side of the screen.
     const p = sim.player;
-    const lean = aim
-      ? {x: Math.max(-16, Math.min(16, (aim.x - p.x) * 0.45)), z: Math.max(-14, Math.min(14, (aim.z - p.z) * 0.45))}
-      : {x: 0, z: 0};
-    camera.x += (p.x + lean.x - camera.x) * 0.08;
-    camera.z += (p.z + lean.z - camera.z) * 0.08;
+    let lx = 0,
+      lz = 0;
+    if (pointer) {
+      const reach = 0.24 + 0.2 * camera.aimK;
+      lx = clamp((pointer.x - W / 2) / (W / 2), -1, 1) * (W / 2 / ppm) * reach;
+      lz = clamp((pointer.y - Hh / 2) / (Hh / 2), -1, 1) * (Hh / 2 / ppm) * reach;
+    }
+    const follow = 1 - Math.exp(-rdt * 6);
+    camera.x += (p.x + lx - camera.x) * follow;
+    camera.z += (p.z + lz - camera.z) * follow;
+    // camera shake: trauma squared, decaying
+    shake.trauma = Math.max(0, shake.trauma - rdt * 1.9);
+    const amp = shake.trauma * shake.trauma * 11;
+    shake.x = amp * (Math.random() * 2 - 1);
+    shake.y = amp * (Math.random() * 2 - 1);
+    if (ground) spawn(sim);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.imageSmoothingEnabled = true;
     ctx.fillStyle = '#1b2016';
@@ -520,7 +886,11 @@ export async function createSpriteRenderer(view) {
     things.sort((a, b) => a.z - b.z);
     for (const t of things) t.draw();
     effects(sim);
+    drawMotes(sim, simDt);
+    drawProjectiles(sim);
+    drawFlashes(sim);
     drawSmoke(now);
+    pies(sim);
     if (level.night) {
       // darkness with a pool of light round each lamp and the player
       ctx.fillStyle = 'rgba(8,12,24,.45)';
@@ -536,6 +906,20 @@ export async function createSpriteRenderer(view) {
       ctx.globalCompositeOperation = 'source-over';
     }
     bubbles(sim);
+    if (screen.a > 0.01) {
+      ctx.fillStyle = `rgba(${screen.color},${screen.a})`;
+      if (screen.color.startsWith('170')) {
+        // hurt: a red edge, clear in the middle
+        const g = ctx.createRadialGradient(W / 2, Hh / 2, Math.min(W, Hh) * 0.42, W / 2, Hh / 2, Math.max(W, Hh) * 0.72);
+        g.addColorStop(0, 'rgba(170,20,10,0)');
+        g.addColorStop(1, `rgba(170,20,10,${screen.a * 1.3})`);
+        ctx.fillStyle = g;
+      } else ctx.globalCompositeOperation = 'lighter';
+      ctx.fillRect(0, 0, W, Hh);
+      ctx.globalCompositeOperation = 'source-over';
+      screen.a *= Math.exp(-rdt * 7);
+    }
+    hitReadout(sim, aim);
     if (aim && p.alive) {
       ctx.strokeStyle = 'rgba(255,255,255,.85)';
       ctx.lineWidth = 1.5;
@@ -560,7 +944,12 @@ export async function createSpriteRenderer(view) {
     snap(sim) {
       camera.x = sim.player.x;
       camera.z = sim.player.z + 6;
+      flashes.length = motes.length = 0;
+      shake.trauma = screen.a = 0;
+      lastHp = null;
+      lastSimT = sim.time;
     },
+    shake,
     files: art,
     guns,
     /** A rebel's look changed: rebuild its sprite on the next frame. */

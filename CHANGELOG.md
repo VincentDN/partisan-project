@@ -9,6 +9,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 - Align glove bones and measured palm centres with the rifle grip solver. Refit eight carry poses to clear chest equipment and keep both hands within reach across eleven rifles. The complete operator remains within budget at 14,523 triangles and about 1.1 MB.
 - Honor the existing site-build directory exclusion on Windows, preventing unpublished study links from entering the built site.
 
+### Changed (Partisan Tactical: RimWorld-style shooting)
+- **Rounds in flight**: bullets, rockets (with a smoke trail) and arcing grenades are drawn with the set's projectile sprites and land when they arrive; damage comes on arrival. TAC-J-40.
+- **Aim warmup and the aim pie**: you aim for a moment before a string of shots; army shooters show the pie while they aim. Hovering an enemy shows your hit chance.
+- **Flashes and impacts**: muzzle flashes that light the ground, dust and debris on the ground, sparks off metal, chips off walls, blood that stays.
+- **Camera**: shake on your shots, near misses, hits and blasts; a screen flash for close blasts and a red edge when hit; the camera follows the mouse; hold the right button to zoom in a little and aim further.
+
 ### Changed (Operator Modder and opening scene)
 - **Recon is the default operator**: the generated Recon, renamed from "Generated Recon", opens the Operator Modder; the kitbashed Recon is deprecated (off the roster, old links still work). TAC-J-38.
 - **Always armed**: the AK-74M by default, or your Workbench build if you made one; rifle-less poses carry it slung across the back. No more "None" weapon.

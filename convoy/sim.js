@@ -78,6 +78,10 @@ export class Sim {
     this.alarmAt = Infinity;
     this.outcome = null; // 'won' | 'lost'
     this.tracers = []; // {x0,z0,x1,z1,side,weapon,t}
+    // Rounds in flight (RimWorld-style): where a round goes is decided when it is fired, what it does lands when it
+    // arrives. {x0, z0, x1, z1, t0, t1, weapon, side, by, hit, hitBox, lob}
+    this.projectiles = [];
+    this.impacts = []; // where rounds landed, for the renderers: {x, z, surface, weapon, t}
     this.explosions = []; // {x,z,r,t}
     this.callouts = []; // {id, name, side, text, t}
     // Sound events for the soundscape (convoy/soundscape.js drains them each frame): {type, x, z, t, ...}.
@@ -419,9 +423,9 @@ export class Sim {
       const d = Math.min(W.range, Math.hypot(tx - u.x, tz - u.z)) * (1 + g * W.spread * 2);
       const x1 = u.x + dx * d,
         z1 = u.z + dz * d;
-      this.tracers.push({x0: ox, z0: oz, x1, z1, side: u.side, weapon: wid, t: this.time});
+      this.tracers.push({x0: ox, z0: oz, x1, z1, side: u.side, weapon: wid, t: this.time, unit: u.id});
       this.sound({type: 'shot', x: ox, z: oz, x1, z1, weapon: wid, side: u.side, unit: u.id});
-      this.explode(x1, z1, W, u, null);
+      this.launch(u, wid, ox, oz, x1, z1, {lob: true});
       return true;
     }
     // Every box the round could hit; a turret gunner sits above his own hull, so that box does not shield him.
@@ -446,16 +450,9 @@ export class Sim {
     const hitBox = hit ? null : boxHits.find(h => Math.abs(h.s - best) < 1e-6)?.b || null;
     const x1 = ox + dx * best,
       z1 = oz + dz * best;
-    this.tracers.push({x0: ox, z0: oz, x1, z1, side: u.side, weapon: wid, t: this.time});
+    this.tracers.push({x0: ox, z0: oz, x1, z1, side: u.side, weapon: wid, t: this.time, unit: u.id});
     if (this.tracers.length > 80) this.tracers.shift();
     this.sound({type: 'shot', x: ox, z: oz, x1, z1, weapon: wid, side: u.side, unit: u.id});
-    if (!W.splash)
-      this.sound({
-        type: 'impact',
-        x: x1,
-        z: z1,
-        surface: hit ? 'flesh' : hitBox?.vehicle || hitBox?.target ? 'metal' : hitBox ? 'wall' : 'ground',
-      });
     // Near misses suppress (less behind a gun shield).
     for (const o of this.units) {
       if (!o.alive || o.side === u.side || o === hit) continue;
@@ -464,10 +461,46 @@ export class Sim {
         along = px * dx + pz * dz;
       if (along > 0 && along < best + 1.5 && Math.abs(px * dz - pz * dx) < 2.6) o.supp = Math.min(1, o.supp + W.supp * (o.armour ?? 1));
     }
-    if (W.splash) this.explode(x1, z1, W, u, hitBox);
-    else if (hit) this.damage(hit, u, W.damage);
-    else if (hitBox?.target && u.side === 'partisan') this.damageTarget(hitBox.target, W.damage * 0.5, u);
+    this.launch(u, wid, ox, oz, x1, z1, {hit, hitBox});
     return true;
+  }
+
+  /** A round leaves the muzzle: it lands after its flight time (weapon speed), or at once without one. */
+  launch(u, wid, x0, z0, x1, z1, {hit = null, hitBox = null, lob = false} = {}) {
+    const W = WEAPONS[wid],
+      d = Math.hypot(x1 - x0, z1 - z0),
+      flight = W.speed ? Math.max(lob ? 0.45 : 0, d / W.speed) : 0;
+    const p = {x0, z0, x1, z1, t0: this.time, t1: this.time + flight, weapon: wid, side: u.side, by: u, hit, hitBox, lob};
+    if (flight <= 0) this.land(p);
+    else this.projectiles.push(p);
+  }
+
+  /** A round arrives: a burst for explosives, damage to whoever it was going to hit, otherwise a strike on cover or ground. */
+  land(p) {
+    const W = WEAPONS[p.weapon],
+      by = p.by;
+    if (p.hit) {
+      // a round decided as a hit lands on the target wherever it has moved to
+      p.x1 = p.hit.x;
+      p.z1 = p.hit.z;
+    }
+    if (W.splash) return this.explode(p.x1, p.z1, W, by, p.hitBox);
+    let surface = p.hitBox?.vehicle || p.hitBox?.target ? 'metal' : p.hitBox ? 'wall' : 'ground';
+    if (p.hit && p.hit.alive && !p.hit.escaped) {
+      surface = 'flesh';
+      this.damage(p.hit, by, W.damage);
+    } else if (p.hitBox?.target && by.side === 'partisan') this.damageTarget(p.hitBox.target, W.damage * 0.5, by);
+    this.sound({type: 'impact', x: p.x1, z: p.z1, surface});
+    this.impacts.push({x: p.x1, z: p.z1, surface, weapon: p.weapon, t: this.time, dx: p.x1 - p.x0, dz: p.z1 - p.z0});
+    if (this.impacts.length > 80) this.impacts.shift();
+  }
+
+  /** Land every round due by `until` (all of them with Infinity). */
+  resolveProjectiles(until = this.time) {
+    if (!this.projectiles.some(p => p.t1 <= until)) return;
+    const due = this.projectiles.filter(p => p.t1 <= until);
+    this.projectiles = this.projectiles.filter(p => p.t1 > until);
+    for (const p of due) this.land(p);
   }
 
   /** An explosive bursts at (x, z): splash damage with falloff, heavy suppression, and damage to a vehicle it struck. */
@@ -625,6 +658,7 @@ export class Sim {
     if (this.outcome) return;
     ensureControl(this);
     this.time += dt;
+    this.resolveProjectiles();
     for (const o of input.orders || []) this.order(o.ids, o);
     this.driveConvoy(dt);
     this.runWaves();
@@ -657,11 +691,18 @@ export class Sim {
         p.reload = 0;
         p.reloading = null;
         p.cd = 0.35; // bring it up
+        p.aim = 0;
         this.sound({type: 'switch', x: p.x, z: p.z, weapon: p.weapon, unit: p.id});
       }
       if (input.reload) this.startReload(p);
       if (p.mags[p.weapon] === 0 && p.reload === 0) this.startReload(p);
-      if (input.fire && input.ax !== undefined) this.shoot(p, input.ax, input.az);
+      // Aim, then fire: a string of shots starts after the weapon's warmup (the aim pie); a short let-go keeps it up.
+      const warm = WEAPONS[p.weapon].warmup || 0;
+      if (input.fire && input.ax !== undefined) {
+        p.aimIdle = 0;
+        p.aim = Math.min(warm, (p.aim || 0) + dt);
+        if (p.aim >= warm) this.shoot(p, input.ax, input.az);
+      } else if ((p.aimIdle = (p.aimIdle || 0) + dt) > 0.35) p.aim = 0;
       this.interact(p, !!input.interact, dt);
     }
     // AI: perception and decisions at 5 Hz per unit (staggered), actions every step

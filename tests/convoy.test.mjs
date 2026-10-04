@@ -53,7 +53,7 @@ test('a shot is heard: the army forms a blurred belief about the shooter, and th
   const sim = new Sim({seed: 2, awareness: 0.5});
   run(sim, 5); // the convoy is still rolling in, nobody has seen the ridge
   const p = sim.player;
-  sim.step(1 / 60, {ax: sim.vehicles[1].x, az: 0, fire: true});
+  for (let i = 0; i < 40 && !sim.alarm; i++) sim.step(1 / 60, {ax: sim.vehicles[1].x, az: 0, fire: true}); // aim, then the first shot
   assert.ok(sim.alarm);
   const soldier = sim.units.find(u => u.side === 'army' && u.alive && dist(u, p) < 85);
   const b = bestBelief(soldier);
@@ -66,7 +66,7 @@ test('higher awareness: tighter hearing and faster callouts', () => {
   const errAt = awareness => {
     const sim = new Sim({seed: 3, awareness});
     run(sim, 5);
-    sim.step(1 / 60, {ax: sim.vehicles[1].x, az: 0, fire: true});
+    for (let i = 0; i < 40 && !sim.alarm; i++) sim.step(1 / 60, {ax: sim.vehicles[1].x, az: 0, fire: true}); // aim, then the first shot
     const army = sim.units.filter(u => u.side === 'army');
     return army.reduce((s, u) => s + bestBelief(u).err, 0) / army.length;
   };

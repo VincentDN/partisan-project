@@ -146,6 +146,7 @@ test('[compound] rifle fire wears the mast down; enemy fire does not', () => {
     p.cd = 0;
     p.mags.ak = 30;
     s.shoot(p, mast.x, mast.z);
+    s.resolveProjectiles(Infinity); // the round lands
   }
   assert.ok(mast.destroyed, 'about ten rifle hits');
 });
