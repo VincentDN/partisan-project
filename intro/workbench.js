@@ -290,32 +290,88 @@ function frame(){
  requestAnimationFrame(frame);
 }
 
-// ---------- Dithered load-in ----------
-// While the bench loads, a Nokia-green band sweeps through an 8 x 8 ordered dither on black; when it is ready the black
-// drops out pixel by pixel, from the middle outwards, instead of a plain fade. Quarter resolution, drawn pixelated.
+// ---------- Dithered load-in: the bench boots like a phone ----------
+// While the bench loads, the whole screen is a Nokia LCD at chunky resolution, two tones through an 8 x 8 ordered
+// dither: the backlight flickers on, a lambda draws itself in and PARTISAN types out under it, a boot log ticks
+// through, and a pixel snake runs round the border, growing as the bench loads. Then READY blinks and the screen drops
+// out pixel by pixel from the middle outwards. About five seconds of frames (a loading stall pauses it); any key or click skips to the reveal once the bench
+// has loaded. Reduced motion: a still screen and a quick reveal.
 const B8=(()=>{let m=[[0]];for(let n=1;n<8;n*=2)m=[...m.map(r=>[...r.map(v=>4*v),...r.map(v=>4*v+2)]),...m.map(r=>[...r.map(v=>4*v+3),...r.map(v=>4*v+1)])];return m.flat();})();
-const dither=document.createElement('canvas');
+const INK=[22,32,15],PAPER=[159,177,132],DARK=[7,9,10];
+const BOOT={flicker:[.3,.75],lambda:[.8,1.9],name:1.55,log:2.1,logStep:.32,minDone:3.7,ready:.55,reveal:1.5};
+const BOOT_LOG=['PARTISAN OS 3310.λ','SIM CARD ......... OK','RADIO NET ........ OK','STASH ............ OK','WORKBENCH ....... '];
+const dither=document.createElement('canvas'),bootLcd=document.createElement('canvas'),bootG=bootLcd.getContext('2d',{willReadFrequently:true});
+// text goes on its own layer, cut at a fixed threshold so the letters stay crisp instead of dithering to mush
+const bootText=document.createElement('canvas'),bootTG=bootText.getContext('2d',{willReadFrequently:true});
 Object.assign(dither.style,{position:'fixed',inset:'0',width:'100%',height:'100%',zIndex:9,imageRendering:'pixelated',pointerEvents:'none'});
+dither.setAttribute('aria-hidden','true');
 document.body.append(dither);fade.classList.add('clear');
-let revealAt=null;
+// the boot's own clock: it advances at most 1/20 s a frame, so a loading stall pauses the boot instead of skipping it
+let bootT=0,bootLast=null;
+let loadedAt=null,revealAt=null,skip=false;
+const bootSkip=()=>{skip=true;};
+addEventListener('keydown',bootSkip,{once:true});addEventListener('pointerdown',bootSkip,{once:true});
+/** Estimated progress while loading (creeps toward 90%), then 100%. */
+const progress=t=>loadedAt!==null?1:.9*(1-Math.exp(-t/2.2));
+/** The boot screen in grey (white = lit LCD pixel), on the low-res canvas. */
+function bootFrame(t,w,h){
+ const g=bootG,u=Math.min(w,h);
+ g.fillStyle='#000';g.fillRect(0,0,w,h);
+ // the lambda draws in: one long stroke and the short leg
+ bootTG.clearRect(0,0,w,h);
+ const L=Math.max(0,Math.min(1,(t-BOOT.lambda[0])/(BOOT.lambda[1]-BOOT.lambda[0]))),S=u*.28,cx=w/2,cy=h*.3;
+ if(L>0){
+  g.strokeStyle='#fff';g.lineWidth=Math.max(2,u*.05);g.lineCap='square';
+  const a=[cx-S*.42,cy-S*.5],b=[cx+S*.42,cy+S*.5],m=[cx,cy-S*.02],c=[cx-S*.42,cy+S*.5];
+  const k1=Math.min(1,L/.65),k2=Math.max(0,(L-.65)/.35);
+  g.beginPath();g.moveTo(...a);g.lineTo(a[0]+(b[0]-a[0])*k1,a[1]+(b[1]-a[1])*k1);
+  if(k2>0){g.moveTo(...m);g.lineTo(m[0]+(c[0]-m[0])*k2,m[1]+(c[1]-m[1])*k2);}
+  g.stroke();
+  // a soft glow behind it, which the dither turns into a halftone
+  const glow=g.createRadialGradient(cx,cy,0,cx,cy,S*1.1);glow.addColorStop(0,`rgba(255,255,255,${.35*L})`);glow.addColorStop(1,'rgba(255,255,255,0)');
+  g.globalCompositeOperation='destination-over';g.fillStyle=glow;g.fillRect(0,0,w,h);g.globalCompositeOperation='source-over';
+ }
+ const T=bootTG,fs=Math.max(8,Math.round(u/13));
+ T.font=`700 ${fs}px ui-monospace, Menlo, Consolas, monospace`;T.textBaseline='top';T.fillStyle='#fff';
+ if(t>BOOT.name){const word='PARTISAN',n=Math.min(word.length,Math.floor((t-BOOT.name)*14));T.textAlign='center';T.fillText(word.slice(0,n)+(n<word.length&&t*6%2<1?'_':''),cx,cy+S*.6);}
+ // the boot log, bottom left
+ T.textAlign='left';const ls=Math.max(7,Math.round(u/19));T.font=`700 ${ls}px ui-monospace, Menlo, Consolas, monospace`;
+ const lines=Math.min(BOOT_LOG.length,Math.floor((t-BOOT.log)/BOOT.logStep)+1),x0=Math.round(u*.08),y0=h-Math.round(u*.08)-BOOT_LOG.length*(ls+2);
+ for(let i=0;i<lines&&t>BOOT.log;i++){
+  let line='> '+BOOT_LOG[i];
+  if(i===BOOT_LOG.length-1)line+=String(Math.floor(progress(t)*100)).padStart(3,' ')+'%';
+  T.fillText(line,x0,y0+i*(ls+2));
+ }
+ if(revealAt!==null||(loadedAt!==null&&t>=BOOT.minDone)){if(Math.floor(t*5)%2===0){T.textAlign='right';T.fillText('READY',w-x0,y0+(BOOT_LOG.length-1)*(ls+2));}}
+ // the snake runs round the border, its length the progress
+ const per=2*(w+h)-8,len=Math.max(4,Math.round(per*.08+per*.45*progress(t))),head=Math.floor(t*per*.22)%per;
+ const at=i=>{i=((i%per)+per)%per;const W=w-2,H=h-2;if(i<W)return[1+i,1];i-=W;if(i<H)return[w-2,1+i];i-=H;if(i<W)return[w-2-i,h-2];i-=W;return[1,h-2-i];};
+ if(t>BOOT.flicker[1]){g.fillStyle='#fff';for(let i=0;i<len;i++){const[x,y]=at(head-i);g.fillRect(x,y,1,1);}const[fx,fy]=at(head+Math.floor(per*.3));if(Math.floor(t*4)%2===0)g.fillRect(fx,fy,1,1);}
+}
 function drawDither(){
- const now=performance.now()/1000,w=Math.ceil(innerWidth/4),h=Math.ceil(innerHeight/4);
- if(dither.width!==w||dither.height!==h){dither.width=w;dither.height=h;}
- const g=dither.getContext('2d'),img=g.createImageData(w,h),px=img.data;
- const k=revealAt===null?0:Math.min(1,(now-revealAt)/(reduceMotion?.25:1.1));
+ const now=performance.now()/1000;
+ bootT+=bootLast===null?0:Math.min(now-bootLast,.05);bootLast=now;
+ const t=reduceMotion?BOOT.minDone+1:bootT;
+ const px=Math.max(2,Math.round(Math.min(innerWidth,innerHeight)/170)),w=Math.ceil(innerWidth/px),h=Math.ceil(innerHeight/px);
+ if(dither.width!==w||dither.height!==h){dither.width=bootLcd.width=bootText.width=w;dither.height=bootLcd.height=bootText.height=h;}
+ window.PARP_BOOT={t,loaded:loadedAt!==null,revealed:revealAt!==null};
+ if(revealAt===null&&loadedAt!==null&&(skip||t>=BOOT.minDone+BOOT.ready))revealAt=now;
+ const k=revealAt===null?0:Math.min(1,(now-revealAt)/(reduceMotion?.25:BOOT.reveal));
+ bootFrame(t,w,h);
+ const txt=bootTG.getImageData(0,0,w,h).data, src=bootG.getImageData(0,0,w,h).data,g=dither.getContext('2d'),img=g.createImageData(w,h),out=img.data;
+ // the backlight: off, a few flickers, then steady
+ const [f0,f1]=BOOT.flicker,light=t<f0?0:t<f1?(Math.sin(t*90)>.2?1:.25)*((t-f0)/(f1-f0)*.6+.4):1;
  for(let y=0;y<h;y++)for(let x=0;x<w;x++){
-  const t=(B8[(y&7)*8+(x&7)]+.5)/64,o=(y*w+x)*4;
-  const r=Math.hypot(x/w-.5,(y/h-.5)*h/w)*1.4;// 0 in the middle
-  if(t*.55+r*.45<k*1.05)continue;// revealed
-  const band=revealAt===null?Math.max(0,1-Math.abs(((x/w+now*.35)%1.4)-.7)*4)*.5:0;// the loading sweep
-  if(t<band){px[o]=0x9f;px[o+1]=0xb1;px[o+2]=0x84;}else{px[o]=7;px[o+1]=9;px[o+2]=10;}
-  px[o+3]=255;
+  const i=y*w+x,o=i*4,th=(B8[(y&7)*8+(x&7)]+.5)/64;
+  if(th*.55+Math.hypot(x/w-.5,(y/h-.5)*h/w)*1.4*.45<k*1.05){out[o+3]=0;continue;}// revealed
+  const lit=txt[o+3]>110||src[o]/255>th,c=light===0?DARK:lit?INK:PAPER;// lit pixels are the LCD's dark ink on the green paper
+  out[o]=DARK[0]+(c[0]-DARK[0])*light;out[o+1]=DARK[1]+(c[1]-DARK[1])*light;out[o+2]=DARK[2]+(c[2]-DARK[2])*light;out[o+3]=255;
  }
  g.putImageData(img,0,0);
- if(k<1)requestAnimationFrame(drawDither);else dither.remove();
+ if(k<1)requestAnimationFrame(drawDither);else{dither.remove();removeEventListener('keydown',bootSkip);removeEventListener('pointerdown',bootSkip);}
 }
 requestAnimationFrame(drawDither);
-const reveal=()=>{revealAt=performance.now()/1000;};
+const reveal=()=>{loadedAt??=performance.now()/1000;};
 
 loadRifle().then(()=>{
  status.hidden=true;start.disabled=false;start.focus({preventScroll:true});

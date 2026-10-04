@@ -5,7 +5,9 @@ import {ITEMS} from '../assets/js/items.js';
 import {sceneFor} from '../assets/js/previews.js';
 
 test('every on-site demo maps to its own preview scene', () => {
-  const scenes = ITEMS.filter(it => it.href && !/^https?:/.test(it.href)).map(sceneFor);
+  const scenes = ITEMS.flatMap(it => it.children || [it])
+    .filter(it => it.href && !/^https?:/.test(it.href))
+    .map(sceneFor);
   assert.ok(!scenes.includes('call'), `no fallback scene for a demo: ${scenes}`);
   assert.equal(sceneFor({href: '../convoy/'}), 'tactical');
   assert.equal(sceneFor({href: '../intro/advanced.html'}), 'advanced');

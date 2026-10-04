@@ -2,9 +2,11 @@
 // The menu items are real links (so it works without JS and for screen readers); this script adds
 // selection state, number-key jumps, soft keys, the sound toggle and the About screen.
 // The first tap (or Enter, or a number key) on a demo folds open its explainer: a short dithered loop of the demo and
-// its sounds down a phone line (previews.js). A second tap on the same item, or on the explainer, launches it.
+// its sounds down a phone line (previews.js), and a big LAUNCH button. Tapping anything else folds it shut again
+// (Enter, the soft key or the same number key also launch). The Dev tools folder is locked until tapped seven times
+// (remembered in this browser); then a tap folds its tools open or shut.
 import {soundLayer} from '../../shared/sound-layer.js';
-import {ITEMS} from './items.js';
+import {ITEMS, DEV_TAPS} from './items.js';
 import * as ui from '../../shared/ui-sounds.js';
 import {sceneFor, startPreview} from './previews.js';
 
@@ -16,6 +18,36 @@ let index = 0,
   open = -1, // the item whose explainer is folded open
   stopPreview = null;
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const DEV_KEY = 'parp-devtools';
+const store = {
+  get: () => {
+    try {
+      return localStorage.getItem(DEV_KEY) === 'unlocked';
+    } catch {
+      return false;
+    }
+  },
+  set: () => {
+    try {
+      localStorage.setItem(DEV_KEY, 'unlocked');
+    } catch {
+      /* private mode: unlocked for this visit */
+    }
+  },
+};
+let devUnlocked = store.get(),
+  devOpen = false,
+  devTaps = 0;
+/** The rows on screen: the items, with the folder's tools under it while it is unlocked and open. */
+let ROWS = [];
+function rowsFor() {
+  return ITEMS.flatMap(it => (it.folder && devUnlocked && devOpen ? [it, ...it.children.map(c => ({...c, child: true}))] : [it]));
+}
+function folderLabel(it) {
+  if (devUnlocked) return `${it.label} ${devOpen ? '▾' : '▸'}`;
+  const left = DEV_TAPS - devTaps;
+  return devTaps ? `${it.label} · ${left} more tap${left > 1 ? 's' : ''}` : `${it.label} - tap to unlock`;
+}
 
 const clock = () => new Date().toLocaleTimeString('en-GB', {hour: '2-digit', minute: '2-digit'});
 function chrome(titleLeft, titleRight) {
@@ -31,53 +63,80 @@ function soundLabel() {
 
 function renderMenu() {
   mode = 'menu';
-  const rows = ITEMS.map(
-    (it, i) =>
-      `<li><a href="${it.href || '#'}" ${it.href && /^https?:/.test(it.href) ? 'rel="noopener"' : ''} data-i="${i}" ${i === index ? 'aria-current="true"' : ''}${it.href ? ` aria-expanded="false" aria-controls="fold-${i}"` : ''}><span class="n">${i + 1}</span><span class="ic" aria-hidden="true">${it.icon || ''}</span><span>${it.action === 'sound' ? soundLabel() : it.label}</span></a>${it.href ? `<div class="fold" id="fold-${i}" data-i="${i}" hidden></div>` : ''}</li>`,
-  ).join('');
+  ROWS = rowsFor();
+  const rows = ROWS.map((it, i) => {
+    const link = !!it.href,
+      label = it.action === 'sound' ? soundLabel() : it.folder ? folderLabel(it) : it.label;
+    const attrs = [
+      `href="${it.href || '#'}"`,
+      it.href && /^https?:/.test(it.href) ? 'rel="noopener"' : '',
+      `data-i="${i}"`,
+      i === index ? 'aria-current="true"' : '',
+      link ? `aria-expanded="false" aria-controls="fold-${i}"` : '',
+      it.folder && devUnlocked ? `aria-expanded="${devOpen}"` : '',
+      it.folder ? 'class="folder"' : it.child ? 'class="child"' : '',
+    ].filter(Boolean);
+    return `<li><a ${attrs.join(' ')}><span class="n">${i + 1}</span><span class="ic" aria-hidden="true">${it.icon || ''}</span><span>${label}</span></a>${link ? `<div class="fold" id="fold-${i}" data-i="${i}" hidden></div>` : ''}</li>`;
+  }).join('');
   content.innerHTML =
-    chrome('MAIN MENU', `${index + 1}/${ITEMS.length}`) +
+    chrome('MAIN MENU', `${index + 1}/${ROWS.length}`) +
     `<ul class="menu" id="menu" aria-label="Partisan Project index">${rows}</ul><div class="help" id="help" aria-live="polite"></div>` +
     softkeys('SELECT', 'EXIT');
   for (const a of content.querySelectorAll('.menu a')) {
     a.addEventListener('click', e => {
+      e.preventDefault(); // links open from the LAUNCH button
       const i = +a.dataset.i;
-      if (ITEMS[i].action) {
-        e.preventDefault();
-        index = i;
-        activate();
-      } else if (open !== i) {
-        // first tap: fold open the explainer; the second tap follows the link
-        e.preventDefault();
-        select(i, false);
-        fold(i);
-      } else {
-        ui.select();
-        closeFold(false);
-      }
+      if (open === i) return closeFold(); // tapping the open item again folds it down
+      index = i;
+      select(i, false);
+      activate();
     });
     a.addEventListener('mouseenter', () => select(+a.dataset.i, false));
     a.addEventListener('focus', () => select(+a.dataset.i, false));
   }
   open = -1;
-  select(index, true);
+  select(Math.min(index, ROWS.length - 1), true);
+}
+/** The Dev tools folder: count taps until it unlocks, then fold its tools open or shut. */
+function folder() {
+  if (!devUnlocked) {
+    devTaps++;
+    if (devTaps < DEV_TAPS) {
+      ui.tap();
+      const label = content.querySelector(`.menu a[data-i="${index}"] span:last-child`);
+      if (label) label.textContent = folderLabel(ROWS[index]);
+      $('#help').textContent = `${DEV_TAPS - devTaps} more tap${DEV_TAPS - devTaps > 1 ? 's' : ''} to unlock the dev tools.`;
+      return;
+    }
+    devUnlocked = true;
+    store.set();
+    ui.unlock();
+  } else ui.select();
+  devOpen = !devOpen;
+  renderMenu();
+  if (devOpen) content.querySelector(`.menu a[data-i="${index + ROWS[index].children.length}"]`)?.scrollIntoView({block: 'nearest'});
 }
 /** Fold open item i's explainer (closing any other): the dithered preview, what the demo is, how to open it. */
 function fold(i) {
   closeFold(false);
-  const it = ITEMS[i],
+  const it = ROWS[i],
     a = content.querySelector(`.menu a[data-i="${i}"]`),
     box = content.querySelector(`#fold-${i}`);
   if (!box) return;
   open = i;
   ui.select();
-  box.innerHTML = `<canvas aria-hidden="true"></canvas><p>${it.help}</p><p class="go">▶ TAP AGAIN TO OPEN</p>`;
+  box.innerHTML = `<canvas aria-hidden="true"></canvas><p>${it.help}</p><button type="button" class="launch">${/^https?:/.test(it.href) || it.href.includes('docs/') ? '▶ OPEN' : '▶ LAUNCH DEMO'}</button>`;
   box.hidden = false;
   a.setAttribute('aria-expanded', 'true');
-  box.addEventListener('click', () => a.click(), {once: true}); // a tap on the explainer is the second tap
+  // the big button launches; a tap anywhere else in the explainer folds it shut
+  box.addEventListener('click', e => {
+    e.stopPropagation();
+    if (e.target.closest('.launch')) launch(i);
+    else closeFold();
+  });
   stopPreview = startPreview(box.querySelector('canvas'), sceneFor(it), {withSound: sound.prefs.on, reduceMotion});
   requestAnimationFrame(() => box.classList.add('open'));
-  setSoftkey('OPEN');
+  setSoftkey('LAUNCH');
   $('#help').hidden = true; // the explainer carries the same text
   box.scrollIntoView({block: 'nearest'});
 }
@@ -105,7 +164,7 @@ function setSoftkey(label) {
 }
 function select(i, scroll = true) {
   const before = index;
-  index = (i + ITEMS.length) % ITEMS.length;
+  index = (i + ROWS.length) % ROWS.length;
   if (mode === 'menu' && index !== before) {
     ui.tap();
     if (open >= 0 && open !== index) closeFold(false);
@@ -114,9 +173,9 @@ function select(i, scroll = true) {
   for (const a of content.querySelectorAll('.menu a')) if (+a.dataset.i !== index) a.removeAttribute('aria-current');
   const cur = content.querySelector(`.menu a[data-i="${index}"]`);
   cur.setAttribute('aria-current', 'true');
-  $('#help').textContent = ITEMS[index].help;
+  $('#help').textContent = ROWS[index].folder && devUnlocked ? 'Tools and documents for building the game.' : ROWS[index].help;
   const t = content.querySelector('.title span:last-child');
-  if (t) t.textContent = `${index + 1}/${ITEMS.length}`;
+  if (t) t.textContent = `${index + 1}/${ROWS.length}`;
   if (scroll) cur.scrollIntoView({block: 'nearest'});
 }
 function renderAbout() {
@@ -129,11 +188,22 @@ function renderAbout() {
   <p>Credits and licences: see the documentation in the <a href="https://github.com/VincentDN/partisan-project">GitHub repository</a>, or contact <a href="mailto:vincent@kaisercatcinema.com">vincent@kaisercatcinema.com</a>.</p></div>` +
     softkeys('', 'BACK');
 }
-function activate() {
-  const it = ITEMS[index];
-  if (mode === 'menu' && it.href && open !== index) return fold(index); // the first select folds open the explainer
+/** Open row i's demo or document. */
+function launch(i) {
+  const it = ROWS[i];
   ui.select();
-  if (mode === 'about') return renderMenu();
+  closeFold(false);
+  if (it.href) (/^https?:/.test(it.href) ? window.top : window).location.href = it.href; // outbound links leave the frame
+}
+function activate() {
+  if (mode === 'about') {
+    ui.select();
+    return renderMenu();
+  }
+  const it = ROWS[index];
+  if (it.folder) return folder();
+  if (it.href) return open === index ? launch(index) : fold(index); // the first select folds open the explainer
+  ui.select();
   if (it.action === 'sound') {
     sound.prefs.on = !sound.prefs.on;
     sound.save();
@@ -144,8 +214,6 @@ function activate() {
     return;
   }
   if (it.action === 'about') return renderAbout();
-  closeFold(false);
-  if (it.href) (/^https?:/.test(it.href) ? window.top : window).location.href = it.href; // outbound links leave the frame
 }
 function back() {
   if (open >= 0) return closeFold();
@@ -161,7 +229,7 @@ function press(k) {
   else if (k === 'down') mode === 'menu' && select(index + 1);
   else if (k === 'select') activate();
   else if (k === 'back') back();
-  else if (/^[1-9]$/.test(k) && mode === 'menu' && ITEMS[+k - 1]) {
+  else if (/^[1-9]$/.test(k) && mode === 'menu' && ROWS[+k - 1]) {
     select(+k - 1);
     activate(); // a number folds its explainer open; the same number again launches
   }
@@ -192,7 +260,9 @@ addEventListener('keydown', e => {
 // Soft keys are re-created with each screen, so listen once on the screen.
 content.addEventListener('click', e => {
   const k = e.target.closest?.('[data-key]');
-  if (k) press(k.dataset.key);
+  if (k) return press(k.dataset.key);
+  // a tap anywhere off the menu items folds an open explainer shut
+  if (open >= 0 && !e.target.closest?.('.menu a')) closeFold();
 });
 
 // Music follows the shared preference (autoplay is blocked until a first gesture).
@@ -222,5 +292,11 @@ window.PARP_INDEX = {
   },
   get open() {
     return open;
+  },
+  get rows() {
+    return ROWS.map(r => r.label);
+  },
+  get devUnlocked() {
+    return devUnlocked;
   },
 };

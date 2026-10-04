@@ -44,13 +44,19 @@ await check('index: the Nokia screen lies on the table and opens straight on the
     'LCD is laid on the phone with a projective transform',
   );
   assert.equal(await page.evaluate(() => window.PARP_INDEX.mode), 'menu', 'no splash screen');
-  assert.equal(await page.locator('.menu a').count(), 15);
-  const first = await page.locator('.menu a').allInnerTexts();
-  assert.match(first[0], /Weapon Workbench/i, '1 is the opening scene');
-  assert.match(first[1], /Weapon Modder/i, '2 is the weapon customiser');
+  await page.evaluate(() => localStorage.removeItem('parp-devtools'));
+  await page.reload();
+  await page.waitForFunction(() => window.PARP_INDEX?.ready && window.PARP_MENU?.ready);
+  const rows = await page.locator('.menu a').allInnerTexts();
+  assert.equal(rows.length, 8, 'four demos, the locked dev tools, sound, about, projects');
+  assert.match(rows[0], /Weapon Modder/i);
+  assert.match(rows[1], /Operator Modder/i);
+  assert.match(rows[2], /Top-down Shooter Tests/i);
+  assert.match(rows[3], /Rebel Band/i);
+  assert.match(rows[4], /Dev tools - tap to unlock/i);
   await page.keyboard.press('ArrowDown');
   assert.equal(await page.evaluate(() => window.PARP_INDEX.index), 1);
-  // the first press folds open the explainer with a dithered preview; the same key again launches the demo
+  // the first press folds open the explainer with a dithered preview and a big LAUNCH button
   await page.keyboard.press('3');
   assert.equal(await page.evaluate(() => window.PARP_INDEX.open), 2, 'explainer open');
   await page.waitForTimeout(400);
@@ -62,13 +68,33 @@ await check('index: the Nokia screen lies on the table and opens straight on the
   });
   assert.ok(ink > 0.05 && ink < 0.95, `the preview draws (${ink.toFixed(2)} ink)`);
   assert.equal(await page.locator('.menu a[data-i="2"]').getAttribute('aria-expanded'), 'true');
-  // a tap on another item moves the explainer there; a second tap on it launches
-  await page.locator('.menu a[data-i="5"]').click();
-  assert.equal(await page.evaluate(() => window.PARP_INDEX.open), 5);
+  assert.match(await page.locator('#fold-2 .launch').innerText(), /LAUNCH DEMO/);
+  // tapping anything else folds it down: the explainer itself, the item, another item moves it
+  await page.locator('#fold-2 p').click();
+  assert.equal(await page.evaluate(() => window.PARP_INDEX.open), -1, 'a tap on the explainer folds it');
+  await page.locator('.menu a[data-i="3"]').click();
+  assert.equal(await page.evaluate(() => window.PARP_INDEX.open), 3);
+  await page.locator('.menu a[data-i="3"]').click();
+  assert.equal(await page.evaluate(() => window.PARP_INDEX.open), -1, 'a second tap on the item folds it');
+  await page.keyboard.press('3');
   await page.keyboard.press('Escape');
   assert.equal(await page.evaluate(() => window.PARP_INDEX.open), -1, 'Escape folds it shut');
-  await page.keyboard.press('3');
-  await Promise.all([page.waitForURL(/operator\/?$/), page.keyboard.press('3')]);
+  // dev tools: seven taps unlock the folder, which then shows its tools
+  for (let i = 0; i < 6; i++) await page.locator('.menu a[data-i="4"]').click();
+  assert.match(await page.locator('.menu a[data-i="4"]').innerText(), /1 more tap/i);
+  assert.equal(await page.evaluate(() => window.PARP_INDEX.devUnlocked), false);
+  await page.locator('.menu a[data-i="4"]').click();
+  assert.equal(await page.evaluate(() => window.PARP_INDEX.devUnlocked), true);
+  const dev = await page.evaluate(() => window.PARP_INDEX.rows);
+  for (const name of ['Equipment Wiki', 'Asset Viewer', 'Game Design Doc', 'Moodboard', 'Advanced animations'])
+    assert.ok(dev.includes(name), name);
+  assert.equal(await page.evaluate(() => localStorage.getItem('parp-devtools')), 'unlocked');
+  await page.locator('.menu a[data-i="4"]').click();
+  assert.equal(await page.locator('.menu a').count(), 8, 'a tap folds the tools away again');
+  // LAUNCH opens the demo
+  await page.locator('.menu a[data-i="1"]').click();
+  await Promise.all([page.waitForURL(/operator\/?$/), page.locator('#fold-1 .launch').click()]);
+  await page.evaluate(() => localStorage.removeItem('parp-devtools'));
   noProblems(page);
   await page.close();
 });

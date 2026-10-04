@@ -1,5 +1,5 @@
 // Small Nokia-style interface sounds for the index: a tap when the selection moves, a two-note chirp on select, a falling
-// note on back. Synthesised with Web Audio (no samples), quiet, and silent when the music preference is off.
+// note on back, and a little fanfare for unlocking. Synthesised with Web Audio (no samples), and silent when the music preference is off.
 import {audio} from './sfx.js';
 import {soundLayer} from './sound-layer.js';
 
@@ -12,7 +12,7 @@ const enabled = () => {
 };
 
 /** One square-wave note: `freq` Hz for `dur` seconds from `t`, with a fast attack and an exponential decay. */
-const LEVEL = 1.5; // blip level relative to the first mix (+50%)
+const LEVEL = 4.5; // blip level relative to the first mix (about +13 dB): the phone's beeps sit clearly over the music
 function note(ctx, out, freq, t, dur, gain = 0.07, type = 'square') {
   gain *= LEVEL;
   const osc = ctx.createOscillator(),
@@ -58,3 +58,8 @@ export const back = () =>
   });
 /** Nothing to do: a low blip. */
 export const deny = () => play((ctx, out, t) => note(ctx, out, 220, t, 0.12, 0.06));
+/** Something unlocked: a quick rising arpeggio. */
+export const unlock = () =>
+  play((ctx, out, t) => {
+    [784, 988, 1175, 1568].forEach((f, i) => note(ctx, out, f, t + i * 0.07, i === 3 ? 0.22 : 0.08));
+  });

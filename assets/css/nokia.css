@@ -54,9 +54,14 @@ body.flat .lcd-frame{left:50%;top:calc(50% + var(--topbar,40px)/2);margin:-150px
 /* The explainer folded open under a menu item: a dithered loop of the demo, what it is, and how to open it. */
 .menu li{list-style:none}
 .fold{overflow:hidden;max-height:0;padding:0 7px;border-bottom:2px solid var(--lcd-0);font-size:11px;font-weight:400;text-transform:none;letter-spacing:0;cursor:pointer;transition:max-height .22s steps(6,end),padding .22s steps(6,end)}
-.fold.open{max-height:190px;padding:6px 7px}
+.fold.open{max-height:240px;padding:6px 7px}
 .fold canvas{display:block;width:100%;max-width:224px;aspect-ratio:112/44;margin:0 auto 4px;image-rendering:pixelated;box-shadow:0 0 0 2px var(--lcd-0)}
 .fold p{margin:2px 0}
-.fold .go{font-weight:700;text-transform:uppercase;letter-spacing:.04em;animation:blink 1s steps(1,end) infinite}
+.fold .launch{display:block;width:100%;margin:6px 0 2px;padding:9px 6px;font:inherit;font-size:16px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--lcd-1);background:var(--lcd-0);border:0;box-shadow:inset 0 0 0 2px var(--lcd-1),0 0 0 2px var(--lcd-0);cursor:pointer;animation:launch 1.2s steps(1,end) infinite}
+.fold .launch:hover,.fold .launch:focus-visible{outline:none;box-shadow:inset 0 0 0 4px var(--lcd-1),0 0 0 2px var(--lcd-0)}
+@keyframes launch{50%{box-shadow:inset 0 0 0 2px var(--lcd-0),0 0 0 2px var(--lcd-0)}}
+/* Dev tools: a folder row, and its tools indented under it */
+.menu a.folder{border-top:2px dashed var(--lcd-0)}
+.menu a.child{padding-left:20px}
 @keyframes blink{50%{opacity:0}}
-@media (prefers-reduced-motion:reduce){.fold{transition:none}.fold .go{animation:none}}
+@media (prefers-reduced-motion:reduce){.fold{transition:none}.fold .launch{animation:none}}
