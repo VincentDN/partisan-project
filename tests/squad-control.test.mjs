@@ -18,8 +18,7 @@ test('swap preserves each rebel object, health, ammo, cooldowns and in-progress 
   assert.equal(sim.active, mila);
   assert.equal(old.id, 'player');
   assert.deepEqual({hp: mila.hp, mags: mila.mags, reserve: mila.reserve, reload: mila.reload, cd: mila.cd}, before);
-  assert.equal(old.order.type, 'hold');
-  assert.equal(old.order.x, old.x);
+  assert.equal(old.order.type, 'follow', 'the rebel you leave falls in behind');
   assert.equal(sim.swapTo('dragan'), false, 'cannot bypass voluntary cooldown');
   sim.time += 3;
   sim.order(['player'], {type: 'follow'});

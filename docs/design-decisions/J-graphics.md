@@ -512,3 +512,13 @@ The 2.5-D top-down sprite look for the shooter (RimWorld style) and the retro ov
 - Cost to change: Low (the `lens()` shader function and `flareSources` strengths in `operator/operator.js`; `uLens` scales it all).
 - Revisit if: The Weapon Modder or the shooter should get the same lens.
 - Owner feedback: —
+
+### TAC-J-52 · Antialiasing everywhere, and models parsed once
+- Status: built  ·  Packet: WP-V
+- Decision: **Antialiasing.** The Operator Modder draws its scene into a render target for the depth of field, which bypassed the canvas's antialiasing entirely; the target now has 4× MSAA. **Loading.** `shared/model-cache.js` fetches and parses every model file once per page and hands out clones that share geometry and textures; clones dispose only what they own. A rifle used to fetch and parse about fifteen attachment files every time it loaded, even with none fitted; attachments are now built the first time they are chosen (`buildOption` in `workbench/rifle-instance.js`), with camo, wear, finishes and the retro bitmap applied as they arrive. Both modders parse the rifles (and the Workbench its attachment files) in the background, one per idle moment, respecting Data Saver. The Operator Modder disposes the weapon it puts down. Measured headless: a rifle reload went from 55-100 ms and ~20 requests to 2-7 ms and none; switching the carried weapon is 17-170 ms.
+- Why: Owner feedback: jagged at 1080p; long delays when clicking a weapon in the Operator Modder; better loading across the project.
+- Alternatives rejected: FXAA (blurrier than MSAA on thin rifle parts); preloading every attachment up front (the cost we removed).
+- Cost / risk: The parsed files stay in memory for the page's life (a few MB).
+- Cost to change: Low.
+- Revisit if: Memory on phones becomes a problem (evict the least used).
+- Owner feedback: —

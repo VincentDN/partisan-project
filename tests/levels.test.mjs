@@ -160,6 +160,7 @@ test('[compound] the cache must be carried out: a dead carrier drops it, and ext
   assert.ok(s.taken.has('cache'));
   assert.equal(cache.takenBy, 'player');
   for (const u of s.units.filter(u => u.side === 'partisan' && u.id !== 'player')) Object.assign(u, {x: exit.x, z: exit.z});
+  s.order(['mila', 'dragan'], {type: 'hold'}); // they wait at the exit (the squad follows by default)
   s.step(1 / 60, {});
   assert.equal(s.objectives.find(o => o.id === 'exit').state, 'active', 'the carrier is not at the exit yet');
   s.damage(

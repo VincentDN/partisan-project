@@ -105,6 +105,9 @@ export function thinLevel(L, force) {
   };
 }
 
+/** Metres anyone can see, rebels and soldiers alike (role sights and optics are capped to it). */
+export const VISION = 30;
+
 export class Sim {
   /**
    * @param {{level?: object|string, seed?: number, awareness?: number, squad?: object, difficulty?: string}} opts
@@ -118,6 +121,11 @@ export class Sim {
     if (difficulty) this.level = thinLevel(this.level, difficultyOf(difficulty).force);
     this.rand = rng(seed);
     this.awareness = awareness;
+    // Everyone sees as far as the rebels' fog of war shows (convoy/sprite-render.js), and while a screen is watching,
+    // `view` is the part of the map on it: a soldier off the screen can neither spot nor shoot a rebel. You see them,
+    // they see you.
+    this.vision = VISION;
+    this.view = null; // {x0, x1, z0, z1} in metres, set by the renderer each frame
     this.difficultyId = difficulty || 'normal';
     this.difficulty = difficultyOf(this.difficultyId);
     // What abilities leave in the world (convoy/abilities.js): sandbag walls, smoke, mines, marks on revealed soldiers.
@@ -473,6 +481,7 @@ export class Sim {
    */
   shoot(u, tx, tz, extra = 0, wid = u.weapon) {
     const W = WEAPONS[wid];
+    if (u.side === 'army' && !this.onScreen(u)) return false; // off the player's screen: holds fire
     if (u.reload > 0 || u.cd > 0 || !u.alive || !(wid in u.mags)) return false;
     if (u.mags[wid] <= 0) {
       this.startReload(u, wid);
@@ -860,6 +869,11 @@ export class Sim {
    * Give teammates an order (see partisanThink in convoy/ai.js): {type: 'hold'|'follow'|'move'|'attack'|'cover', x?, z?, target?, angle?}.
    * @param {string[]} ids partisan ids (the player is ignored)
    */
+  /** Is this point on the player's screen (always true with no screen, as in tests)? 1 m inside the edge. */
+  onScreen(u) {
+    const v = this.view;
+    return !v || (u.x > v.x0 + 1 && u.x < v.x1 - 1 && u.z > v.z0 + 1 && u.z < v.z1 - 1);
+  }
   order(ids, order) {
     const ACK = {hold: 'Holding.', follow: 'On you.', move: 'Moving.', attack: 'Engaging.', cover: 'Watching that sector.'};
     for (const u of this.units) {

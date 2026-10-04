@@ -54,7 +54,7 @@ export async function createSpriteRenderer(view) {
   const fx = {shotFlash: brighten(art.shotFlash, 255), fireGlow: brighten(art.fireGlow, 210), dustPuff: brighten(art.dustPuff, 170)};
   const ctx = view.getContext('2d');
   const pawns = new Map(); // unit id -> {south, east, north} or a pending promise
-  const camera = {x: 0, z: 0, zoom: 0.85, aimK: 0};
+  const camera = {x: 0, z: 0, zoom: 1.1, aimK: 0}; // close enough that the fight you can see is the fight there is
   let ground = null; // {canvas, scale, minX, minZ}
   let level = null;
   const scorch = []; // explosions already burnt into the ground
@@ -338,6 +338,17 @@ export async function createSpriteRenderer(view) {
   function drawPawn(u, sim, opts) {
     if (u.escaped || u.state === 'mounted' || u.state === 'turret' || (u.role === 'turret' && !u.alive)) return;
     if (u.side === 'army' && !inSight.has(u)) return; // fog of war: only what a rebel can see (or a reveal has marked)
+    if (u.side === 'army' && fogOn && (sightFade.get(u) ?? 1) < 0.999) {
+      // fading into or out of sight
+      ctx.save();
+      ctx.globalAlpha *= sightFade.get(u);
+      drawPawnBody(u, sim, opts);
+      ctx.restore();
+      return;
+    }
+    drawPawnBody(u, sim, opts);
+  }
+  function drawPawnBody(u, sim, opts) {
     const p = pawnFor(u);
     const size = 2.4;
     shadow(u.x, u.z + 0.1, 0.45, 0.22, 0.3);
@@ -912,13 +923,19 @@ export async function createSpriteRenderer(view) {
   }
 
   // ---------- fog of war: what the rebels can see ----------
-  // Sight is cast from every rebel: rays out to SIGHT metres, stopped by cover, vehicles and smoke. Outside it the map
-  // darkens and army soldiers are not drawn (unless a reveal has marked them); gunfire, vehicles and wrecks still show.
-  const SIGHT = 46,
-    RAYS = 220;
-  let inSight = new Set(); // army units a rebel can see this frame
-  const fogCanvas = document.createElement('canvas'),
-    fg = fogCanvas.getContext('2d');
+  // Sight is cast from every rebel: rays out to the sim's vision range (the soldiers see as far, convoy/sim.js), stopped
+  // by cover, vehicles and smoke. Outside it the map darkens and army soldiers are not drawn (unless a reveal has marked
+  // them); gunfire, vehicles and wrecks still show. Against flicker: each frame's mask is blended into the last one
+  // (shifted with the camera), and a soldier fades in and out of sight rather than popping.
+  const RAYS = 360;
+  let SIGHT = 30;
+  let inSight = new Set(); // army units drawn this frame
+  const sightFade = new Map(); // army unit -> 0..1, how far it has faded into sight
+  const fogNow = document.createElement('canvas'),
+    fn = fogNow.getContext('2d');
+  let fogCanvas = document.createElement('canvas'),
+    fogBack = document.createElement('canvas');
+  let fogCam = null; // the camera the shown mask was drawn with
   /** The visibility polygon from (ox, oz): [[x, z], ...] round the circle. */
   function sightFrom(sim, ox, oz, boxes) {
     const pts = [];
@@ -944,25 +961,31 @@ export async function createSpriteRenderer(view) {
     }
     return pts;
   }
-  function updateFog(sim) {
+  function updateFog(sim, dt) {
+    SIGHT = sim.vision ?? SIGHT;
     const eyes = sim.units.filter(u => u.side === 'partisan' && u.alive && !u.escaped);
     const boxes = sim.boxes();
     inSight = new Set();
+    const fade = 1 - Math.exp(-dt * 10);
     for (const u of sim.units) {
       if (u.side !== 'army' || u.escaped) continue;
       if (sim.time < (u.revealedUntil ?? -1) || eyes.some(e => Math.hypot(e.x - u.x, e.z - u.z) < SIGHT && sim.los(e.x, e.z, u.x, u.z)))
-        inSight.add(u);
+        u.seenAt = sim.time;
+      const want = sim.time - (u.seenAt ?? -9) < 0.35 ? 1 : 0; // a moment's grace before a soldier fades out of sight
+      const k = (sightFade.get(u) ?? 0) + (want - (sightFade.get(u) ?? 0)) * fade;
+      sightFade.set(u, k);
+      if (k > 0.03) inSight.add(u);
     }
-    // the dark, with each rebel's sight cut out of it (soft at the edge of its range)
+    // this frame's dark, with each rebel's sight cut out of it (soft at the edge of its range)
     const w = Math.ceil(W / 2),
       h = Math.ceil(Hh / 2);
-    if (fogCanvas.width !== w || fogCanvas.height !== h) [fogCanvas.width, fogCanvas.height] = [w, h];
-    fg.setTransform(1, 0, 0, 1, 0, 0);
-    fg.globalCompositeOperation = 'source-over';
-    fg.clearRect(0, 0, w, h);
-    fg.fillStyle = level.night ? 'rgba(4,6,10,.72)' : 'rgba(10,12,9,.58)';
-    fg.fillRect(0, 0, w, h);
-    fg.globalCompositeOperation = 'destination-out';
+    for (const c of [fogNow, fogCanvas, fogBack]) if (c.width !== w || c.height !== h) [c.width, c.height] = [w, h];
+    fn.setTransform(1, 0, 0, 1, 0, 0);
+    fn.globalCompositeOperation = 'source-over';
+    fn.clearRect(0, 0, w, h);
+    fn.fillStyle = level.night ? 'rgba(4,6,10,.72)' : 'rgba(10,12,9,.58)';
+    fn.fillRect(0, 0, w, h);
+    fn.globalCompositeOperation = 'destination-out';
     for (const e of eyes) {
       const poly = sightFrom(
         sim,
@@ -973,16 +996,44 @@ export async function createSpriteRenderer(view) {
       const cx = sx(e.x) / 2,
         cy = sy(e.z) / 2,
         R = (SIGHT * ppm) / 2;
-      const g = fg.createRadialGradient(cx, cy, R * 0.55, cx, cy, R);
+      const g = fn.createRadialGradient(cx, cy, R * 0.55, cx, cy, R);
       g.addColorStop(0, 'rgba(0,0,0,1)');
       g.addColorStop(1, 'rgba(0,0,0,0)');
-      fg.fillStyle = g;
-      fg.beginPath();
-      poly.forEach(([x, z], i) => (i ? fg.lineTo(sx(x) / 2, sy(z) / 2) : fg.moveTo(sx(x) / 2, sy(z) / 2)));
-      fg.closePath();
-      fg.fill();
+      fn.fillStyle = g;
+      fn.beginPath();
+      poly.forEach(([x, z], i) => (i ? fn.lineTo(sx(x) / 2, sy(z) / 2) : fn.moveTo(sx(x) / 2, sy(z) / 2)));
+      fn.closePath();
+      fn.fill();
     }
-    fg.globalCompositeOperation = 'source-over';
+    // blend into the mask shown last frame, moved to where the camera is now: shown = last·(1−k) + now·k
+    // ('lighter' adds premultiplied colour and alpha, so with one fog colour this is an exact mix)
+    const cam = {x: camera.x - shake.x / ppm, z: camera.z - shake.y / ppm, ppm};
+    const bg = fogBack.getContext('2d');
+    bg.setTransform(1, 0, 0, 1, 0, 0);
+    bg.globalCompositeOperation = 'source-over';
+    bg.clearRect(0, 0, w, h);
+    const k = fogCam ? 1 - Math.exp(-dt * 14) : 1;
+    if (fogCam && k < 1) {
+      const sc = cam.ppm / fogCam.ppm;
+      bg.globalAlpha = 1 - k;
+      bg.setTransform(
+        sc,
+        0,
+        0,
+        sc,
+        w / 2 - (w / 2) * sc + ((fogCam.x - cam.x) * cam.ppm) / 2,
+        h / 2 - (h / 2) * sc + ((fogCam.z - cam.z) * cam.ppm) / 2,
+      );
+      bg.drawImage(fogCanvas, 0, 0);
+      bg.setTransform(1, 0, 0, 1, 0, 0);
+    }
+    bg.globalCompositeOperation = 'lighter';
+    bg.globalAlpha = k;
+    bg.drawImage(fogNow, 0, 0);
+    bg.globalAlpha = 1;
+    bg.globalCompositeOperation = 'source-over';
+    [fogCanvas, fogBack] = [fogBack, fogCanvas];
+    fogCam = cam;
   }
   const inBoxPad = (x, z, b) => Math.abs(x - b.x) <= b.w / 2 && Math.abs(z - b.z) <= b.d / 2;
 
@@ -1188,7 +1239,9 @@ export async function createSpriteRenderer(view) {
         }
       }
     groundFx(sim);
-    if (fogOn) updateFog(sim);
+    // what the player's screen shows, for the sim's "you see them, they see you" (convoy/sim.js onScreen)
+    sim.view = {x0: camera.x - W / 2 / ppm, x1: camera.x + W / 2 / ppm, z0: camera.z - Hh / 2 / ppm, z1: camera.z + Hh / 2 / ppm};
+    if (fogOn) updateFog(sim, rdt);
     else inSight = new Set(sim.units);
     // everything that stands, sorted by its south edge
     const things = [];

@@ -192,3 +192,13 @@ Built on [A-foundations.md](A-foundations.md) and designed around swapping ([G-s
 - Cost to change: Low (`thinLevel` in `convoy/sim.js`, `force` in `convoy/difficulty.js`).
 - Revisit if: A level needs a fixed garrison whatever the difficulty.
 - Owner feedback: —
+
+### TAC-B-17 · You see them, they see you; the squad moves up with you
+- Status: built  ·  Packet: WP-V
+- Decision: **Vision.** One range for everybody, `VISION` = 30 m in `convoy/sim.js`: the rebels' fog of war shows that far, and no soldier sees farther (role sights and optics are capped to it). While a screen is watching, the renderer tells the sim what is on it (`sim.view`), and a soldier outside it can neither spot a rebel nor fire (`sim.onScreen`): no more being shot by men you cannot see. The default zoom is closer (1.1, was 0.85). **Fog.** No more flicker: 360 rays (was 220), each frame's mask blended into the last (shifted with the camera, about 70 ms), and soldiers fade in and out of sight with a third of a second's grace instead of popping. **Squad.** Teammates follow by default (and the rebel you switch away from falls in behind): they keep their starting ambush positions until you move 4 m off, then stay in slots behind the way you are going (not where you aim), at your pace, running to catch up when more than 8 m behind. Explicit orders (F, H, move, attack, cover) work as before.
+- Why: Owner feedback: the fog flickers; soldiers see and shoot from beyond the screen's edge; zoom in a bit; same vision for both sides; the squad should move up with you.
+- Alternatives rejected: Zooming out to fit the old 42-65 m sights (the owner wants it closer); fog by grid cells (blocky).
+- Cost / risk: A marksman no longer outranges the fight; levels tuned around long sight lines play closer. On a very wide screen the view rule allows more than 30 m sideways only up to the vision range.
+- Cost to change: Low (`VISION`, `onScreen`, `partisanThink` follow in `convoy/ai.js`; the fog in `convoy/sprite-render.js`).
+- Revisit if: The marksman should regain reach (a scope that extends `vision` while aiming).
+- Owner feedback: —
