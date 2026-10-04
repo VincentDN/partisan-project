@@ -21,6 +21,8 @@ import {
 } from './troops.js';
 import {createTreeView} from './tree.js';
 import * as mech from '../workbench/mech.js';
+import * as ui from '../shared/ui-sounds.js';
+import {idle, idlePose, promote} from './fx.js';
 
 mountTopBar({title: 'Rebel Band', scene: 'viewer'});
 const $ = s => document.querySelector(s);
@@ -65,37 +67,53 @@ function pawnOf(id) {
   return pawns.get(id);
 }
 const gunOf = id => guns[id === 'leader' ? S.leader.gun : TROOPS[id].gun] || Object.values(guns)[0];
-/** A pawn from the front, the gun held across it, drawn into a canvas: RimWorld's look. size: the pawn in pixels. */
-async function drawPawn(canvas, id, {size = canvas.width, cy = canvas.height / 2, ground = false} = {}) {
-  const p = await pawnOf(id),
-    g = canvas.getContext('2d'),
-    gun = gunOf(id);
-  g.clearRect(0, 0, canvas.width, canvas.height);
-  const cx = canvas.width / 2;
+const phaseOf = id => ([...id].reduce((h, c) => h + c.charCodeAt(0), 0) % 97) / 23; // each class breathes on its own beat
+/** Paint pawn p (and its gun) into g at time t: RimWorld's look, front on, breathing and shifting its weight. */
+function paint(g, p, gun, id, {size, cx, cy, ground = false, t = 0}) {
+  const m = idlePose(t, phaseOf(id));
   if (ground) {
     // a patch of RimWorld ground under the pawn, with its soft shadow
     const r = g.createRadialGradient(cx, cy + size * 0.3, 0, cx, cy + size * 0.3, size * 0.55);
     r.addColorStop(0, '#4a4234');
     r.addColorStop(1, 'rgba(40,36,30,0)');
     g.fillStyle = r;
-    g.fillRect(0, 0, canvas.width, canvas.height);
+    g.fillRect(cx - size, cy - size, size * 2, size * 2);
   }
   g.fillStyle = 'rgba(0,0,0,.32)';
   g.beginPath();
-  g.ellipse(cx, cy + size * 0.27, size * 0.2, size * 0.07, 0, 0, Math.PI * 2);
+  g.ellipse(cx + m.shift * size * 0.5, cy + size * 0.27, size * 0.2 * (1 - m.lift * 2), size * 0.07, 0, 0, Math.PI * 2);
   g.fill();
   g.imageSmoothingEnabled = true;
-  g.drawImage(p.south, cx - size / 2, cy - size / 2, size, size);
+  // breathing: the body lifts and stretches a touch from the feet up; the weight shifts from foot to foot
+  const h = size * m.squash,
+    x = cx - size / 2 + m.shift * size,
+    y = cy + size / 2 - h - m.lift * size;
+  g.drawImage(p.south, x, y, size, h);
   if (gun) {
     // held across the body, muzzle up to the left, as RimWorld draws a pawn facing south with its weapon
     const len = size * 0.62 * Math.min(1.2, gun.length),
-      h = (len * gun.img.height) / gun.img.width;
+      gh = (len * gun.img.height) / gun.img.width;
     g.save();
-    g.translate(cx + size * 0.02, cy + size * 0.1);
-    g.rotate(-0.6);
-    g.drawImage(gun.img, -len / 2, -h / 2, len, h);
+    g.translate(cx + size * 0.02 + m.shift * size, cy + size * 0.1 - m.lift * size * 1.4);
+    g.rotate(-0.6 + m.gun);
+    g.drawImage(gun.img, -len / 2, -gh / 2, len, gh);
     g.restore();
   }
+}
+/** A painter for class `id` on a canvas of this size: (g, t) => void. */
+async function painter(id, canvas, {size = canvas.width, cy = canvas.height / 2, ground = false} = {}) {
+  const p = await pawnOf(id),
+    gun = gunOf(id),
+    W = canvas.width,
+    H = canvas.height;
+  return (g, t) => {
+    g.clearRect(0, 0, W, H);
+    paint(g, p, gun, id, {size, cx: W / 2, cy, ground, t});
+  };
+}
+/** A pawn from the front, the gun held across it, drawn into a canvas and kept idling. size: the pawn in pixels. */
+async function drawPawn(canvas, id, opts = {}) {
+  idle(canvas, await painter(id, canvas, opts));
 }
 function drawIcon(canvas, id) {
   const g = canvas.getContext('2d'),
@@ -204,6 +222,8 @@ function renderBand() {
     }),
   );
 }
+const PAWN = {size: 300, cy: 190, ground: true};
+let promoting = false;
 async function renderCentre() {
   const detail = $('#detail');
   if (selected === 'leader') {
@@ -277,11 +297,16 @@ async function renderCentre() {
       ),
       el('p', {class: 'note'}, t.note),
       abilityList(selected),
-      ups.length ? el('h3', {class: 'paths'}, 'Next steps') : null,
-      ups.length ? el('div', {class: 'upgrades'}, ...ups) : el('p', {class: 'note'}, 'The top of this path.'),
+    );
+    // the upgrade buttons sit right under the character
+    $('#ups').replaceChildren(
+      ...(ups.length
+        ? [el('h3', {class: 'paths'}, 'Upgrade to'), el('div', {class: 'upgrades'}, ...ups)]
+        : [el('p', {class: 'note'}, 'The top of this path.')]),
     );
   }
-  await drawPawn($('#pawn'), selected, {size: 300, cy: 190, ground: true});
+  if (selected === 'leader') $('#ups').replaceChildren();
+  if (!promoting) await drawPawn($('#pawn'), selected, PAWN);
 }
 /** A class's abilities: its own first, then those carried from the classes it came through. */
 function abilityList(id) {
@@ -312,17 +337,28 @@ function choose(id) {
 }
 
 // ---------- actions ----------
-function doUpgrade(from, to, n) {
+async function doUpgrade(from, to, n) {
+  if (promoting) return;
   const r = upgrade(S.band, S.stash, from, to, n);
   if (!r.n) return;
   S.band = r.band;
   S.stash = r.stash;
-  mech.clunk(0.5);
-  setTimeout(() => mech.charge(), 180);
-  if (!S.band[from]) selected = to;
   save();
+  // the big pawn turns from the old class into the new one, to a fanfare; then the screen shows the new class
+  promoting = true;
+  mech.clunk(0.5);
+  ui.victory();
+  const canvas = $('#pawn'),
+    [drawOld, drawNew] = await Promise.all([painter(from, canvas, PAWN), painter(to, canvas, PAWN)]);
+  selected = to;
   render();
   $('#status').textContent = `${r.n} × ${TROOPS[from].label} → ${TROOPS[to].label}`;
+  await promote(canvas, drawOld, drawNew, {
+    title: 'PROMOTED',
+    sub: `${r.n > 1 ? r.n + ' × ' : ''}${TROOPS[from].label} → ${TROOPS[to].label}`,
+  });
+  promoting = false;
+  idle(canvas, drawNew);
 }
 // A raid on an army patrol: everyone gains experience, the leader too, and the band carries off what the patrol had.
 $('#skirmish').onclick = () => {
@@ -399,6 +435,9 @@ window.PARP_BAND = {
   },
   choose,
   upgrade: doUpgrade,
+  get promoting() {
+    return promoting;
+  },
   showTree,
   ready: true,
 };

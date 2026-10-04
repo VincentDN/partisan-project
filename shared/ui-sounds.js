@@ -63,3 +63,15 @@ export const unlock = () =>
   play((ctx, out, t) => {
     [784, 988, 1175, 1568].forEach((f, i) => note(ctx, out, f, t + i * 0.07, i === 3 ? 0.22 : 0.08));
   });
+/** Victory: an 8-bit fanfare, a run up to a held major chord. */
+export const victory = () =>
+  play((ctx, out, t) => {
+    const run = [523, 659, 784, 1047];
+    run.forEach((f, i) => note(ctx, out, f, t + i * 0.09, 0.09, 0.06));
+    const at = t + run.length * 0.09 + 0.02;
+    note(ctx, out, 784, at, 0.12, 0.05);
+    note(ctx, out, 1047, at + 0.13, 0.7, 0.06);
+    note(ctx, out, 1319, at + 0.13, 0.7, 0.04);
+    note(ctx, out, 1568, at + 0.13, 0.7, 0.03);
+    note(ctx, out, 262, at + 0.13, 0.7, 0.05, 'triangle');
+  });

@@ -604,8 +604,8 @@ await check('design doc: sections and live progress render', async () => {
   await page.close();
 });
 
-await check('rebel band: the band, the stash and an upgrade along a path', async () => {
-  const page = await open(browser, server.url + 'band/');
+await check('rebel band: the band idles, the stash, and an upgrade under the character that plays a promotion', async () => {
+  const page = await open(browser, server.url + 'band/', {reducedMotion: 'no-preference'});
   await page.evaluate(() => localStorage.removeItem('parp-band-v2'));
   await page.reload();
   await page.waitForFunction(() => window.PARP_BAND?.ready, null, {timeout: 60000});
@@ -613,9 +613,19 @@ await check('rebel band: the band, the stash and an upgrade along a path', async
   assert.ok((await page.locator('#stash .item').count()) >= 15, 'stash items');
   await page.locator('#groups .card', {hasText: 'Village Infantry'}).click();
   assert.ok((await page.locator('#detail .abilities li').count()) >= 2, 'abilities listed');
+  // the pawn idles: its pixels change from one moment to the next
+  const pixels = () => page.locator('#pawn').evaluate(c => c.toDataURL());
+  const still = await pixels();
+  await page.waitForTimeout(500);
+  assert.notEqual(await pixels(), still, 'the pawn breathes');
+  // the upgrade buttons sit right under the character, before the abilities
+  assert.equal(await page.evaluate(() => document.querySelector('#pawn').nextElementSibling.id), 'ups');
   const before = await page.evaluate(() => window.PARP_BAND.state.band.fighter.count);
-  await page.locator('.up', {hasText: 'Fighter'}).getByRole('button', {name: 'Upgrade 1'}).click();
+  await page.locator('#ups .up', {hasText: 'Fighter'}).getByRole('button', {name: 'Upgrade 1'}).click();
   assert.equal(await page.evaluate(() => window.PARP_BAND.state.band.fighter.count), before + 1);
+  assert.equal(await page.evaluate(() => window.PARP_BAND.promoting), true, 'the promotion plays');
+  await page.waitForFunction(() => !window.PARP_BAND.promoting, null, {timeout: 10000});
+  assert.equal(await page.locator('#who').innerText(), 'Fighter', 'the screen shows the new class');
   // the class tree: every class as a node, a card with abilities, back to the band
   await page.locator('#tree-btn').click();
   assert.ok((await page.locator('#tree-view .node').count()) >= 40, 'every class in the tree');
