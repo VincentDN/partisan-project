@@ -108,3 +108,13 @@ You steal from vehicles and soldiers, then use what you stole to equip your rebe
 - Cost to change: Low.
 - Revisit if: One attachment dominates.
 - Owner feedback: —
+
+### TAC-C-09 · An Equipment Wiki of every lootable item, on placeholder data from tarkov.dev
+- Status: built (placeholder data)  ·  Packet: WP-C (early)
+- Decision: `wiki/` lists every lootable item the game will need: 4,227 items in 82 categories. It covers weapons, ammunition and ammo packs, weapon parts and mods, gear (armour, plates, helmets, rigs, backpacks, eyewear, headsets, night vision), medication, provisions, barter items, intel, money and containers. A category tree, search, rarity filter and sorting lead to an item card with a grid size, weight, value, loot rarity, stats, compatible ammunition (linked), mounts and description. The data is copied from tarkov.dev's public data cache by `tools/wiki/import-tarkov.mjs`, which can be re-run to refresh it, into `wiki/data/items.json`. Tarkov's keys, maps, quest and battle-pass items and weapon presets are left out. The icons are placeholders from the project's own art set, not tarkov.dev's images. Loot rarity (common to very rare) is derived from price within each top category, ready for loot tables. Filtering and icons live in `wiki/catalogue.js` and are tested.
+- Why: Owner request: a detailed equipment wiki with all lootable equipment, using placeholders and tarkov.dev's data for now.
+- Alternatives rejected: Hand-writing a catalogue now (slow, and the shape of the data is what matters first); hotlinking tarkov.dev's images (another site's assets in our pages).
+- Cost / risk: The data is Tarkov's: names, prices and balance are placeholders until the game has its own catalogue. 2.1 MB of JSON (served compressed).
+- Cost to change: Low: replace `wiki/data/items.json` with the game's catalogue in the same shape.
+- Revisit if: The game's own item list exists, or the convoy's loot should draw from this catalogue.
+- Owner feedback: —

@@ -40,6 +40,12 @@ export const ITEMS = [
     help: 'Test. Level your rebel band along set paths; every step needs stolen equipment from the stash. Raid patrols for experience and loot.',
   },
   {
+    label: 'Equipment Wiki',
+    href: '../wiki/',
+    icon: px('1111110101111111010111111'),
+    help: 'Reference. Every lootable item the game will need: weapons, ammo, parts, armour, rigs, meds, barter goods. Placeholder data from tarkov.dev.',
+  },
+  {
     label: 'Advanced animations',
     href: '../intro/advanced.html',
     icon: px('1111101010111110101011111'),

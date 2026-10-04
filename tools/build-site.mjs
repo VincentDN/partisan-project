@@ -30,6 +30,7 @@ const ALLOW = [
   'viewer',
   'convoy',
   'band',
+  'wiki',
   'docs/game-design-master-doc.html',
   'docs/moodboard',
   'inbound',

@@ -21,6 +21,7 @@ export function sceneFor(item) {
   if (h.includes('operator/')) return 'operator';
   if (h.includes('convoy/')) return 'tactical';
   if (h.includes('band/')) return 'band';
+  if (h.includes('wiki/')) return 'wiki';
   if (h.includes('viewer/')) return 'viewer';
   if (h.includes('moodboard')) return 'moodboard';
   if (h.includes('docs/')) return 'doc';
@@ -239,6 +240,23 @@ const SCENES = {
       g.fillRect((x % 170) - 30, 8, 28, 28);
     }
   },
+  wiki(g, t) {
+    // a catalogue: rows scrolling, one highlighted, its card with a rifle on it
+    g.fillStyle = '#eee';
+    g.fillRect(0, 0, W, H);
+    for (let i = 0; i < 8; i++) {
+      const y = ((i * 7 - t * 8) % 56) + 56;
+      const yy = (y % 56) - 6,
+        hi = i === Math.floor(t * 1.5) % 8;
+      g.fillStyle = hi ? '#000' : '#888';
+      g.fillRect(4, yy, 44, 5);
+    }
+    g.fillStyle = '#ccc';
+    g.fillRect(56, 4, 52, 36);
+    rifle(g, 68, 16, 0.6, '#111');
+    g.fillStyle = '#333';
+    for (let i = 0; i < 3; i++) g.fillRect(60, 28 + i * 4, 24 + ((i * 13 + Math.floor(t * 1.5) * 7) % 20), 2);
+  },
   call(g, t) {
     // ringing handset
     g.fillStyle = '#eee';
@@ -417,6 +435,10 @@ const SOUNDS = {
     },
   },
   moodboard: {every: 1.6, play: (L, t) => burst(L, t, {dur: 0.25, freq: 1400, q: 0.6, gain: 0.35})},
+  wiki: {
+    every: 1.1,
+    play: (L, t) => (burst(L, t, {dur: 0.03, freq: 2600, q: 2, gain: 0.4}), burst(L, t + 0.5, {dur: 0.2, freq: 1500, q: 0.5, gain: 0.25})),
+  },
   call: {every: 2, play: (L, t) => tone(L, t, {freq: 425, dur: 0.9, type: 'sine', gain: 0.35})}, // a ringing tone
 };
 

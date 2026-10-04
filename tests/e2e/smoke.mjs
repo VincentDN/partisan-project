@@ -44,7 +44,7 @@ await check('index: the Nokia screen lies on the table and opens straight on the
     'LCD is laid on the phone with a projective transform',
   );
   assert.equal(await page.evaluate(() => window.PARP_INDEX.mode), 'menu', 'no splash screen');
-  assert.equal(await page.locator('.menu a').count(), 14);
+  assert.equal(await page.locator('.menu a').count(), 15);
   const first = await page.locator('.menu a').allInnerTexts();
   assert.match(first[0], /Weapon Workbench/i, '1 is the opening scene');
   assert.match(first[1], /Weapon Modder/i, '2 is the weapon customiser');
@@ -341,7 +341,7 @@ await check('operator: eyelids exist (hidden until a blink) and the head follows
   await page.close();
 });
 
-await check('workbench: the guided tour steps through, is remembered, and the stats panel renders', async () => {
+await check('workbench: no onboarding tour (deprecated), and the stats panel renders', async () => {
   const page = await open(browser, server.url + 'workbench/');
   await page.waitForSelector('#build .slot', {timeout: 60000});
   await page.waitForSelector('#stats .bar', {timeout: 10000});
@@ -350,13 +350,7 @@ await check('workbench: the guided tour steps through, is remembered, and the st
     '#ef8f39',
     'shared/tokens.css loaded through panel-ui.css',
   );
-  assert.equal(await page.locator('#first-run').isVisible(), true, 'tour shows on first visit');
-  assert.match(await page.locator('#first-run').innerText(), /1 \/ 3/);
-  await page.locator('#first-run button', {hasText: 'Next'}).click();
-  assert.equal(await page.locator('.tour-lit').count(), 1);
-  await page.locator('#first-run button', {hasText: 'Skip tour'}).click();
-  assert.equal(await page.locator('#first-run').isVisible(), false);
-  assert.equal(await page.evaluate(() => localStorage.getItem('parp-tour-workbench')), '1');
+  assert.equal(await page.locator('#first-run, .tour-lit').count(), 0, 'the onboarding tour is gone');
   noProblems(page);
   await page.close();
 });
@@ -532,6 +526,19 @@ await check('rebel band: the band, the stash and an upgrade along a path', async
   assert.equal(await page.evaluate(() => window.PARP_BAND.state.band.partisan.count), before + 1);
   await page.locator('#skirmish').click();
   assert.equal(await page.evaluate(() => window.PARP_BAND.state.raids), 1);
+  noProblems(page);
+  await page.close();
+});
+
+await check('equipment wiki: categories, search and an item card', async () => {
+  const page = await open(browser, server.url + 'wiki/');
+  await page.waitForFunction(() => window.PARP_WIKI?.ready, null, {timeout: 60000});
+  assert.ok((await page.locator('#tree details').count()) >= 8, 'top categories');
+  await page.locator('#q').fill('PKM');
+  await page.locator('#items button', {hasText: 'Kalashnikov PKM'}).first().click();
+  assert.match(await page.locator('#detail h1').innerText(), /PKM/);
+  assert.ok((await page.locator('#detail .chips button').count()) > 0, 'compatible ammunition');
+  assert.match(page.url(), /item=kalashnikov-pkm/);
   noProblems(page);
   await page.close();
 });

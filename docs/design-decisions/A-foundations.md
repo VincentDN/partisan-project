@@ -293,3 +293,13 @@ levels need. Principles: [00-principles.md](00-principles.md). Combat model: [01
 - Cost to change: —
 - Revisit if: —
 - Owner feedback: —
+
+### TAC-A-26 · The first onboarding tour is deprecated
+- Status: built  ·  Packet: —
+- Decision: The guided first-run tours ("New here?" callouts stepping through presets, parts and stats) are removed from the Weapon Modder and the Operator Modder, with their CSS. The module moves to `docs/archive/onboarding-tour-v1.js` for reference; nothing imports it.
+- Why: Owner request: deprecate the onboarding system; a new one will be written later.
+- Alternatives rejected: Hiding the tours behind a setting (keeps code nobody wants).
+- Cost / risk: First-time visitors get no guidance until the new system lands.
+- Cost to change: Low.
+- Revisit if: The new onboarding system is designed.
+- Owner feedback: "remove those 'tour' tooltips you built. Depreciate that onboarding system"

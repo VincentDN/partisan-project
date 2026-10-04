@@ -1,3 +1,5 @@
+// DEPRECATED (2026-10-04): the first onboarding tour, removed from every page at the owner's request. Kept for
+// reference only; a new onboarding system will be written later. Nothing imports this file.
 // Guided first run: a short, dismissible tour that steps through a demo's key controls.
 // Reuses the page's #first-run callout. Remembered per browser under `key`; Esc or Skip ends it.
 import {reduceMotion} from './stage.js';

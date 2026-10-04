@@ -7,7 +7,6 @@ import * as T from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
 import {shareCardDataUrl} from './share-card.js';
-import {startTour} from '../shared/tour.js';
 import {createStage, reduceMotion} from '../shared/stage.js';
 import {mountTopBar} from '../shared/topbar.js';
 import {camoFor, FABRIC} from '../shared/camo.js';
@@ -600,14 +599,6 @@ addEventListener('hashchange', () => {
   if (location.hash.replace(/^#/, '') !== hashOf()) restore(location.hash);
 });
 view('full');
-startTour(
-  [
-    {target: '#presets', text: 'Pick a look preset to start from.'},
-    {target: '#slots', text: 'Change equipment, then recolour each part under Colour.'},
-    {target: '#poses', text: 'Choose a hero pose, then an idle style to bring it to life.'},
-  ],
-  {key: 'parp-tour-operator'},
-);
 
 let lidCache = {meshes: null, count: -1, list: []};
 const headPos = new T.Vector3(),

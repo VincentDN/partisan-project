@@ -4,6 +4,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 ## [Unreleased]
 
+### Added (Equipment Wiki)
+- **Equipment Wiki** (`wiki/`, in the index): 4,227 lootable items in 82 categories, with search, rarity, sorting and item cards (stats, ammunition, mounts, description, loot rarity). Placeholder data is copied from tarkov.dev by `tools/wiki/import-tarkov.mjs`; the icons come from the project's placeholder art. TAC-C-09.
+
+### Removed
+- The onboarding tours ("New here?" steps) in the Weapon and Operator Modders. Deprecated; the module is archived in `docs/archive/`. TAC-A-26.
+
 ### Changed (Nokia index)
 - **Explain, then launch**: the first tap on a demo folds open a small explainer with a dithered preview of its gameplay and its sounds as if heard down a 1990s phone call. A second tap opens the demo. TAC-J-44.
 

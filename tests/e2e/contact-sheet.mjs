@@ -25,7 +25,7 @@ for (const pose of poses.split(','))
         const o = window.PARP_OPERATOR;
         o.set('pose', pose);
         o.set('idle', 'off');
-        document.querySelectorAll('aside,header,#first-run').forEach(e => (e.style.display = 'none'));
+        document.querySelectorAll('aside,header').forEach(e => (e.style.display = 'none'));
         document.querySelector('main').style.display = 'block';
         document.querySelector('#stage').style.height = '760px';
         const {camera, controls} = o.stage,

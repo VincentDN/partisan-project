@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex"><meta name="googlebot" content="noindex, nofollow"><meta name="seo_hidden" content="true"><title>Partisan Project | Equipment Wiki</title><link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="wiki.css">
+</head>
+<body>
+<main class="wiki">
+  <nav class="panel cats" aria-labelledby="cats-title" tabindex="0">
+    <h2 class="plate" id="cats-title">Equipment</h2>
+    <div id="tree"></div>
+  </nav>
+
+  <section class="panel list" aria-labelledby="list-title">
+    <div class="plate list-head"><h2 id="list-title">All equipment</h2><span id="count" class="size"></span></div>
+    <div class="filters">
+      <label class="search"><span class="sr-only">Search</span><input id="q" type="search" placeholder="Search name or short name" autocomplete="off"></label>
+      <label><span>Rarity</span><select id="rarity"><option value="">Any</option><option>common</option><option>uncommon</option><option>rare</option><option>very rare</option></select></label>
+      <label><span>Sort</span><select id="sort"><option value="name">Name</option><option value="price">Value</option><option value="kg">Weight</option><option value="size">Size</option></select></label>
+    </div>
+    <ul id="items" class="items" aria-label="Items"></ul>
+    <button id="more" class="more" type="button" hidden>Show more</button>
+  </section>
+
+  <article class="panel detail" id="detail" aria-live="polite" tabindex="0"></article>
+
+  <footer class="bar">
+    <span class="sig" aria-hidden="true"></span>
+    <span id="status" class="status" role="status"></span>
+  </footer>
+</main>
+<div id="loading" class="loading">Loading the catalogue…</div>
+<script type="module" src="./wiki.js"></script>
+</body></html>
