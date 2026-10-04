@@ -4,6 +4,15 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 ## [Unreleased]
 
+### Added (Partisan Tactical: abilities, levelling, difficulty)
+- **Class abilities in every level**: each rebel's class from the Rebel Band tree sets its weapons, passives and up to three abilities on Z X V (rockets, FPV drones, guided missiles, breaching charges, smoke, sandbags, mines, recon reveals, jamming, healing, stealth and more), with cooldowns on an ability bar. TAC-B-15.
+- **Levelling**: the squad earns experience in missions (kills, objectives, survival, victory) and is promoted along the class tree from the debrief or the SQUAD panel; saved in the browser. TAC-H-14.
+- **Difficulty**: Easy, Normal, Hard and Brutal scale damage taken, enemy aim and reactions, and experience. TAC-B-15.
+- **Slow-motion switch**: choosing a rebel slows time and dithers the map to the Nokia's two tones. TAC-J-45.
+
+### Removed
+- The old 3-D view of the top-down shooter, archived in `docs/archive/convoy-3d/`; the RimWorld-style view is the base graphics system. TAC-J-45.
+
 ### Added (Rebel Band class tree)
 - **Class tree with abilities**: 44 classes over seven tiers. The path runs Village Infantry → Fighter → Insurgent, then splits into Heavy, Medium or Light builds and their specialists: machine gunners, grenadiers, anti-armour, riflemen, engineers, sappers, medics, drone operators, signallers and EW specialists, scouts, recon, marksmen, snipers, saboteurs. Each class has two abilities and keeps those of earlier tiers. A full-screen Class Tree view shows every path. TAC-H-13.
 

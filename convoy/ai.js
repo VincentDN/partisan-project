@@ -86,10 +86,12 @@ export function perceive(sim, u) {
     da = Math.atan2(Math.sin(da), Math.cos(da));
     if (Math.abs(da) > halfFov) continue;
     if (!sim.los(u.x, u.z, e.x, e.z)) continue;
+    // A rebel in stealth (an ability) is only seen up close; a quiet class (noise) is slower to notice.
+    if (u.side === 'army' && sim.time < (e.stealthUntil ?? -1) && d > 4) continue;
     if (u.side === 'army' && !u.alert) {
       // Before the alarm a soldier only grows suspicious: movement and closeness make you easier to spot.
       const pace = !e.moving ? 0.6 : e.speed < 2 ? 1 : 2.2;
-      u.suspicion += 0.2 * (0.4 + sim.awareness * 1.2) * (1 - d / range) * pace;
+      u.suspicion += 0.2 * (0.4 + sim.awareness * 1.2) * (1 - d / range) * pace * (e.mods?.noise ?? 1);
       if (u.suspicion < 1) continue;
       sim.alert(u);
     }
@@ -110,7 +112,7 @@ export function hear(sim, shooter) {
   for (const u of sim.units) {
     if (!u.alive || u.escaped || u.side !== 'army') continue;
     const d = dist(u, shooter);
-    if (d > 85) continue;
+    if (d > 85 * (shooter.mods?.noise ?? 1)) continue; // a quiet shooter (suppressor, class) is heard nearer
     const err = 1 + d * 0.14 * (1.5 - sim.awareness);
     const a = sim.rand() * Math.PI * 2,
       r = sim.rand() * err * 0.6;

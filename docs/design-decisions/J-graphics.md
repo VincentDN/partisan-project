@@ -442,3 +442,13 @@ The 2.5-D top-down sprite look for the shooter (RimWorld style) and the retro ov
 - Cost to change: Low (`assets/js/previews.js`).
 - Revisit if: The previews should show real captured gameplay.
 - Owner feedback: —
+
+### TAC-J-45 · The 3-D shooter is retired; switching rebel slows time and dithers the world
+- Status: built  ·  Packet: WP-V
+- Decision: The RimWorld-style 2.5-D view is the only view of Partisan Tactical. The three.js page (`convoy/3d.html`, `convoy/game.js`) moves to `docs/archive/convoy-3d/`, its link leaves the page, and its browser tests now run on the sprite page. While you choose a rebel (Q), time runs at 15% and the map eases into the Nokia's two tones: a third-resolution Bayer 4x4 dither of the frame (ink #16200f, paper #b5c79a) laid over the scene with a dark green vignette, and back out when you pick. Under reduced motion time stops instead, with no dither.
+- Why: Owner request: deprecate all 3-D top-down shooter code (RimWorld is the base graphics system), and make the switch a slow-motion moment with a dither effect.
+- Alternatives rejected: A full-resolution dither (too fine to read as the LCD); greyscale only (loses the Nokia identity).
+- Cost / risk: A frame read-back each frame while the picker is open (small, at a third of the resolution).
+- Cost to change: Low (`ditherOverlay` in `convoy/sprite-render.js`).
+- Revisit if: The picker should freeze time completely.
+- Owner feedback: —

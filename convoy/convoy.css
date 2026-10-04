@@ -30,3 +30,19 @@ button.primary{background:var(--accent);color:#14100a;border-color:var(--accent)
 #squad-picker [data-rebel]{position:absolute;transform:translate(-50%,-100%);pointer-events:auto;max-width:195px;background:#12170ff2;color:var(--text);border:2px solid var(--line);white-space:normal}
 #squad-picker [data-rebel]:hover,#squad-picker [data-rebel]:focus-visible{border-color:var(--accent);outline:2px solid var(--accent);outline-offset:3px}
 #squad-picker [data-swap-cancel]{position:absolute;bottom:45px;left:50%;transform:translateX(-50%);pointer-events:auto;background:#12170ff2}
+/* squad: classes, experience, promotions (convoy/progression.js) */
+.squad-cards{display:grid;gap:8px;margin:6px 0}
+.squad-card{padding:7px 9px;border:1px solid var(--line);border-radius:6px;background:#ffffff08;font-size:12px;line-height:1.35}
+.squad-card .cls{color:var(--dim)}
+.squad-card .gain{display:block;color:#a6d86a}
+.squad-card small{display:block;color:var(--dim)}
+.squad-card .acts{color:#d6cfa8}
+.xpbar{height:5px;margin:5px 0 3px;background:#ffffff18;border-radius:3px;overflow:hidden}
+.xpbar i{display:block;height:100%;background:#a6d86a}
+.promote{display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin-top:5px}
+.promote button{font:inherit;font-size:11px;padding:3px 7px;color:#16200f;background:#b5c79a;border:0;border-radius:4px;cursor:pointer}
+.promote button:hover,.promote button:focus-visible{background:#d6f0b0}
+.card .debrief-xp{margin-top:10px;max-height:46vh;overflow:auto}
+.card:has(.debrief-xp){max-width:440px}
+.row-select{display:grid;grid-template-columns:96px 1fr;gap:6px;align-items:center;margin:8px 0 2px;font-size:12px;color:var(--dim)}
+.row-select select{font:inherit;color:var(--text);background:#2a3720;border:1px solid var(--line);border-radius:4px;padding:3px}

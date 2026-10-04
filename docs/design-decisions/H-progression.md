@@ -172,3 +172,13 @@ list above is a starting point and is expected to change after feedback.
 - Cost to change: Low (data in `band/troops.js`).
 - Revisit if: Abilities move into the simulation (start with Recon drone, Patch up, Deploy bipod and Dig in, which map onto existing systems).
 - Owner feedback: —
+
+### TAC-H-14 · The squad levels up in missions along the class tree
+- Status: built  ·  Packet: WP-P (early)
+- Decision: The three rebels in Partisan Tactical carry classes from the Rebel Band tree (TAC-H-13): by default the Lead rebel is an Insurgent, Mila a Marksman and Dragan a Machine Gunner. Each mission pays experience at the debrief: 12 per kill, 25 per objective done (shared), 20 for surviving and 40 for a victory, multiplied by the difficulty (Easy ×0.75, Normal ×1, Hard ×1.25, Brutal ×1.6). When a rebel has the class's experience (the tree's `xp`), the debrief and the SQUAD panel offer a promotion to each class it leads to; promoting spends that experience. The class sets the rebel's weapons (machine gunners a PKM, marksmen an SVD, anti-armour an RPG, others a rifle; the Lead rebel always keeps an RPG for the convoy's armour), its passives become stat modifiers, and its active abilities fill the ability bar (TAC-B-15). The squad is saved in the browser (`parp-squad-v1`) and can be reset. Promotions in the field cost no equipment (the band's stash stays a Rebel Band rule).
+- Why: Owner request: the top-down shooter levels with abilities and a levelling system included.
+- Alternatives rejected: A separate perk tree for the shooter (two progression systems for the same soldiers); equipment costs in the shooter (no loot economy there yet).
+- Cost / risk: Experience numbers are first guesses; a good mission promotes an Insurgent at once.
+- Cost to change: Low (`convoy/progression.js`).
+- Revisit if: The shooter and the Rebel Band share one save, and promotions should cost the band's gear.
+- Owner feedback: —

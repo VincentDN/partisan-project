@@ -1,16 +1,22 @@
-// Partisan Tactical in the 2.5-D sprite style (graphics roadmap test): the same simulation, input and rules as the 3-D
-// page (convoy/game.js), drawn by convoy/sprite-render.js with the RimWorld-style placeholder art.
+// Partisan Tactical: the top-down shooter, drawn in the 2.5-D RimWorld style by convoy/sprite-render.js (the old 3-D
+// view is archived in docs/archive/convoy-3d/). The squad's classes come from the Rebel Band tree (band/troops.js): they
+// set each rebel's weapons, passives and abilities (Z X V), and the rebels level up between missions
+// (convoy/progression.js). Switching rebel (Q) slows time and dithers the world; difficulty is a select in the panel.
 import '../shared/frame.js';
 import {mountTopBar} from '../shared/topbar.js';
 import {Sim} from './sim.js';
 import {WEAPONS} from './weapons.js';
+import {activesFor, useAbility, cooldownLeft} from './abilities.js';
+import {DIFFICULTY, DEFAULT_DIFFICULTY} from './difficulty.js';
+import {SQUAD_KEY, loadSquad, newSquad, missionXp, award, canPromote, promote, progress} from './progression.js';
+import {TROOPS} from '../band/troops.js';
 import {LEVELS, MISSIONS, DEFAULT_LEVEL} from './levels/index.js';
 import {createSquadPicker} from './squad-picker.js';
 import {createSoundscape} from './soundscape.js';
 import {createSpriteRenderer} from './sprite-render.js';
 import {COSMETICS, buildPawn, lookFor, saveLook, resetLook, savedLook} from './sprite-art.js';
 
-mountTopBar({title: 'Partisan Tactical (2.5-D test)', scene: 'viewer'});
+mountTopBar({title: 'Partisan Tactical', scene: 'viewer'});
 const $ = s => document.querySelector(s);
 const stageEl = $('#stage'),
   view = $('#view');
@@ -22,13 +28,42 @@ $('#status').textContent = 'Loading the sprites…';
 const R = await createSpriteRenderer(view);
 $('#status').hidden = true;
 
+// The squad (classes and experience) and the difficulty are kept in this browser.
+const store = {
+  get: k => {
+    try {
+      return localStorage.getItem(k);
+    } catch {
+      return null;
+    }
+  },
+  set: (k, v) => {
+    try {
+      localStorage.setItem(k, v);
+    } catch {
+      /* private mode: the squad lives for this visit */
+    }
+  },
+};
+const DIFF_KEY = 'parp-difficulty';
+let squad = loadSquad(store.get(SQUAD_KEY)),
+  diffId = DIFFICULTY[store.get(DIFF_KEY)] ? store.get(DIFF_KEY) : DEFAULT_DIFFICULTY;
+const saveSquad = () => store.set(SQUAD_KEY, JSON.stringify(squad));
+
 let sim,
   started = false,
   paused = false,
   selected = [];
 function newGame() {
   const awareness = Number($('#aware').value) / 100;
-  sim = new Sim({level: LEVELS[levelId], seed: Number(params.get('seed')) || Math.floor(Math.random() * 1e6), awareness});
+  sim = new Sim({
+    level: LEVELS[levelId],
+    seed: Number(params.get('seed')) || Math.floor(Math.random() * 1e6),
+    awareness,
+    squad: squad.classes,
+    difficulty: diffId,
+  });
+  awarded = false;
   R.snap(sim);
   started = false;
   selected = [];
@@ -42,8 +77,8 @@ function newGame() {
   $('#start').textContent = 'Start';
   renderMissions();
   $('#card').hidden = false;
-  $('#to-3d').href = `3d.html?mission=${levelId}`;
   renderLook();
+  renderSquad();
 }
 function renderMissions() {
   $('#missions').replaceChildren(
@@ -113,6 +148,8 @@ addEventListener('keydown', e => {
   if (['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'shift', ' ', 'e'].includes(k)) e.preventDefault();
   keys.add(k);
   if (k === 'r') reload = true;
+  const slot = ABILITY_KEYS.indexOf(k);
+  if (slot >= 0 && started && !sim.outcome && !paused && !sim.control.pending && !e.repeat) ability(slot);
   if (['1', '2', '3'].includes(k)) wantWeapon = sim.player.weapons[Number(k) - 1];
   if (k === '+' || k === '=') zoom(1.15);
   if (k === '-') zoom(1 / 1.15);
@@ -144,6 +181,22 @@ addEventListener('keydown', e => {
   }
 });
 addEventListener('keyup', e => keys.delete(e.key.toLowerCase()));
+
+// ---------- abilities: Z X V use the active rebel's class abilities at the cursor ----------
+const ABILITY_KEYS = ['z', 'x', 'v'];
+function ability(slot) {
+  const a = activesFor(sim.player.cls)[slot];
+  if (!a?.run) return false;
+  return useAbility(sim, sim.player, a.name, aimPoint());
+}
+function abilityBar() {
+  const p = sim.player;
+  if (!p.cls || !p.alive) return null;
+  return activesFor(p.cls).map((a, i) => {
+    const left = cooldownLeft(sim, p, a.name);
+    return {key: ABILITY_KEYS[i], name: a.name, left, cd: a.cd * (p.mods?.cooldown ?? 1), ready: left <= 0, usable: !!a.run};
+  });
+}
 addEventListener('blur', () => clearInput());
 addEventListener('visibilitychange', () => clearInput());
 const teammates = () => sim.units.filter(u => u.side === 'partisan' && u !== sim.player && u.alive);
@@ -266,8 +319,141 @@ function showDebrief(d) {
   $('#card-title').textContent = `${sim.level.title}: ${d.outcome === 'won' ? 'accomplished' : 'failed'}`;
   const text = $('#card-text');
   text.textContent = `${Math.floor(d.time / 60)}:${String(Math.floor(d.time % 60)).padStart(2, '0')} · ${d.armyDown} soldiers down, ${d.escaped} fled, ${d.vehiclesDestroyed} vehicles destroyed. ${d.byPartisan.map(u => `${u.name}: ${u.state}, ${u.kills} down`).join(' · ')}`;
+  // experience: paid once per mission, scaled by difficulty; promotions are offered right here
+  if (!awarded) {
+    awarded = true;
+    lastEarned = missionXp(d, diffId);
+    squad = award(squad, lastEarned);
+    saveSquad();
+  }
+  const xp = document.createElement('div');
+  xp.className = 'debrief-xp';
+  xp.append(squadCards(lastEarned));
+  text.append(xp);
   $('#start').textContent = 'Play again';
+  renderSquad();
 }
+
+// ---------- squad: classes, experience and promotions (saved in this browser) ----------
+let awarded = false,
+  lastEarned = null;
+const NAMES = {player: 'Lead rebel', mila: 'Mila', dragan: 'Dragan'};
+function el(tag, attrs = {}, ...kids) {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs))
+    if (v === null || v === undefined) continue;
+    else if (k === 'class') e.className = v;
+    else if (k.startsWith('on')) e[k] = v;
+    else e.setAttribute(k, v);
+  e.append(...kids.filter(k => k !== null && k !== undefined && k !== false));
+  return e;
+}
+/** One card per rebel: class, XP bar, abilities on the bar, and promotion buttons when there is enough XP. */
+function squadCards(earned = null) {
+  const wrap = el('div', {class: 'squad-cards'});
+  for (const id of Object.keys(squad.classes)) {
+    const cls = squad.classes[id],
+      t = TROOPS[cls],
+      pr = progress(squad, id);
+    const actives = activesFor(cls)
+      .map((a, i) => `${ABILITY_KEYS[i].toUpperCase()} ${a.name}`)
+      .join(' · ');
+    const gain = earned?.[id];
+    const promos = canPromote(squad, id)
+      ? el(
+          'div',
+          {class: 'promote', role: 'group', 'aria-label': `Promote ${NAMES[id]}`},
+          el('span', {}, 'Promote to:'),
+          ...t.to.map(to =>
+            el(
+              'button',
+              {
+                type: 'button',
+                'data-promote': `${id}:${to}`,
+                onclick: () => {
+                  const next = promote(squad, id, to);
+                  if (!next) return;
+                  squad = next;
+                  saveSquad();
+                  sim.say(
+                    sim.units.find(u => u.id === id) || sim.player,
+                    `${NAMES[id]} is now a ${TROOPS[to].label.toLowerCase()}.`,
+                    'promo-' + to,
+                    0,
+                  );
+                  renderSquad();
+                  if (sim.outcome && !$('#card').hidden) showDebrief(sim.debrief());
+                },
+              },
+              TROOPS[to].label,
+            ),
+          ),
+        )
+      : null;
+    wrap.append(
+      el(
+        'div',
+        {class: 'squad-card', 'data-squad': id},
+        el('b', {}, NAMES[id]),
+        el('span', {class: 'cls'}, ` ${t.label} · tier ${t.tier}`),
+        gain
+          ? el(
+              'span',
+              {class: 'gain'},
+              ` +${gain.total} XP (${gain.parts.map(([l, n]) => `${l} ${n}`).join(', ')}${gain.mult !== 1 ? `, ×${gain.mult}` : ''})`,
+            )
+          : null,
+        el(
+          'div',
+          {
+            class: 'xpbar',
+            role: 'meter',
+            'aria-label': `${NAMES[id]} experience`,
+            'aria-valuemin': 0,
+            'aria-valuemax': pr.need || 1,
+            'aria-valuenow': Math.min(pr.xp, pr.need || 1),
+          },
+          el('i', {style: `width:${Math.round(pr.frac * 100)}%`}),
+        ),
+        el('small', {}, pr.need ? `${pr.xp} / ${pr.need} XP to promote` : `${pr.xp} XP · top of the path`),
+        actives ? el('small', {class: 'acts'}, actives) : null,
+        promos,
+      ),
+    );
+  }
+  return wrap;
+}
+function renderSquad() {
+  const box = $('#squad');
+  if (!box) return;
+  const reset = el(
+    'button',
+    {
+      type: 'button',
+      onclick: () => {
+        squad = newSquad();
+        saveSquad();
+        newGame();
+      },
+    },
+    'Reset squad',
+  );
+  box.replaceChildren(
+    squadCards(),
+    el('p', {class: 'note'}, `Missions: ${squad.missions}. Classes and promotions take effect at the next start.`),
+    reset,
+  );
+}
+const diffSel = $('#difficulty');
+for (const [id, d] of Object.entries(DIFFICULTY)) diffSel.append(new Option(d.label, id, false, id === diffId));
+const diffNote = () => ($('#difficulty-note').textContent = DIFFICULTY[diffId].text);
+diffNote();
+diffSel.onchange = () => {
+  diffId = diffSel.value;
+  store.set(DIFF_KEY, diffId);
+  diffNote();
+  newGame();
+};
 
 const picker = createSquadPicker({
   root: $('#squad-picker'),
@@ -417,6 +603,7 @@ const resize = () => R.resize();
 new ResizeObserver(resize).observe(view);
 resize();
 let acc = 0,
+  slowmo = 0,
   last = performance.now(),
   panelAt = 0;
 const STEP = 1 / 60;
@@ -437,7 +624,17 @@ function frame() {
     $('#card').hidden = false;
   }
   sound.update(sim, {paused, scale: picker.scale, dt: elapsed});
-  R.draw(sim, {aim: started ? aimPoint() : null, selected, pointer: started ? pointer : null, aimZoom: aimZoom && started});
+  // slow motion while choosing a rebel, eased in and out; the world dithers with it (none with reduced motion)
+  const slowTarget = reduceMotion ? 0 : 1 - picker.scale;
+  slowmo += (slowTarget - slowmo) * (1 - Math.exp(-elapsed * (slowTarget > slowmo ? 10 : 6)));
+  R.draw(sim, {
+    aim: started ? aimPoint() : null,
+    selected,
+    pointer: started ? pointer : null,
+    aimZoom: aimZoom && started,
+    abilities: started && !sim.control.pending ? abilityBar() : null,
+    slowmo: slowmo < 0.01 ? 0 : slowmo,
+  });
   if (now - panelAt > 120) {
     panelAt = now;
     updatePanel();
@@ -456,5 +653,13 @@ window.PARP_SPRITES = {
   start,
   newGame,
   sound,
+  ability,
+  get squad() {
+    return squad;
+  },
+  get slowmo() {
+    return slowmo;
+  },
+  openSwap: () => picker.open(),
   ready: true,
 };

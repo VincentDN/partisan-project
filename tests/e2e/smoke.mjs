@@ -418,20 +418,59 @@ await check('art style lab: every style renders over the operator and switching 
 await check('squad control: keyboard, death transfer, all-down and reduced motion', () => checkSquadControl(browser, server.url));
 await check('squad control: timed slow-motion selection', () => checkSquadControl(browser, server.url, 'no-preference'));
 
+await check('partisan tactical: class abilities, difficulty, and XP and promotions at the debrief', async () => {
+  const page = await open(browser, server.url + 'convoy/?seed=7');
+  await page.evaluate(() => localStorage.removeItem('parp-squad-v1'));
+  await page.reload();
+  await page.waitForFunction(() => window.PARP_SPRITES?.ready, null, {timeout: 60000});
+  await page.locator('#difficulty').selectOption('hard');
+  assert.equal(await page.evaluate(() => window.PARP_SPRITES.sim.difficultyId), 'hard');
+  await page.locator('#start').click();
+  const used = await page.evaluate(() => {
+    const {sim, ability} = window.PARP_SPRITES;
+    return {cls: sim.player.cls, ok: ability(0), cd: Object.keys(sim.player.cooldowns).length};
+  });
+  assert.equal(used.cls, 'insurgent');
+  assert.ok(used.ok && used.cd === 1, 'Z uses the first ability and starts its cooldown');
+  assert.ok((await page.locator('#squad .squad-card').count()) === 3, 'the squad panel lists the three rebels');
+  await page.evaluate(() => {
+    const {sim} = window.PARP_SPRITES;
+    sim.kills.player = 30;
+    for (const u of sim.units.filter(u => u.side === 'partisan'))
+      sim.damage(
+        u,
+        sim.units.find(a => a.side === 'army'),
+        999,
+      );
+    sim.checkOutcome();
+  });
+  await page.locator('#card:not([hidden]) .debrief-xp').waitFor();
+  assert.match(await page.locator('.debrief-xp').innerText(), /XP/);
+  const promote = page.locator('.debrief-xp [data-promote^="player:"]').first();
+  await promote.click();
+  const squad = await page.evaluate(() => JSON.parse(localStorage.getItem('parp-squad-v1')));
+  assert.notEqual(squad.classes.player, 'insurgent', 'promoted along the tree and saved');
+  await page.locator('#start').click();
+  assert.equal(await page.evaluate(() => window.PARP_SPRITES.sim.player.cls), squad.classes.player);
+  await page.evaluate(() => localStorage.removeItem('parp-squad-v1'));
+  noProblems(page);
+  await page.close();
+});
+
 await check('convoy ambush: the convoy drives, the ambush springs, soldiers dismount and call out', async () => {
-  const page = await open(browser, server.url + 'convoy/3d.html?seed=7&ai');
-  await page.waitForFunction(() => window.PARP_CONVOY?.ready, null, {timeout: 60000});
+  const page = await open(browser, server.url + 'convoy/?seed=7');
+  await page.waitForFunction(() => window.PARP_SPRITES?.ready, null, {timeout: 60000});
   await page.locator('#start').click();
   // fast-forward the simulation until the lead vehicle stops at the roadblock, then open fire on it
   await page.evaluate(() => {
-    const {sim} = window.PARP_CONVOY;
+    const {sim} = window.PARP_SPRITES;
     while (!sim.vehicles[0].stopped && sim.time < 60) sim.step(1 / 60, {});
     const v = sim.vehicles[1];
     for (let i = 0; i < 60; i++) sim.step(1 / 60, {ax: v.x, az: v.z, fire: true});
     for (let i = 0; i < 60 * 4; i++) sim.step(1 / 60, {});
   });
   const r = await page.evaluate(() => {
-    const {sim} = window.PARP_CONVOY;
+    const {sim} = window.PARP_SPRITES;
     return {
       alarm: sim.alarm,
       dismounted: sim.units.filter(u => u.side === 'army' && u.state !== 'mounted').length,
@@ -443,7 +482,6 @@ await check('convoy ambush: the convoy drives, the ambush springs, soldiers dism
   assert.ok(r.callouts >= 3, `the army calls out (${r.callouts})`);
   await page.waitForTimeout(500);
   assert.ok((await page.locator('#comms li').count()) >= 3, 'callouts reach the comms log');
-  assert.ok((await page.locator('#labels .state').count()) >= 1, 'AI view labels soldier states');
   noProblems(page);
   await page.close();
 });

@@ -28,11 +28,6 @@ const pages = [
   ['rebel band', 'band/', async p => p.waitForFunction(() => window.PARP_BAND?.ready, null, {timeout: 60000})],
   ['partisan tactical', 'convoy/', async p => p.waitForFunction(() => window.PARP_SPRITES?.ready, null, {timeout: 60000})],
   [
-    'partisan tactical, old 3-D view',
-    'convoy/3d.html',
-    async p => p.waitForFunction(() => window.PARP_CONVOY?.ready, null, {timeout: 60000}),
-  ],
-  [
     'advanced animations',
     'intro/advanced.html',
     async p =>

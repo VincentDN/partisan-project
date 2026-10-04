@@ -112,3 +112,14 @@ export const ROLES = {
 
 // Partisans: you switch weapons with 1/2/3; Mila is the marksman, Dragan carries the machine gun.
 export const PARTISAN_LOADOUTS = {player: ['ak', 'svd', 'rpg'], mila: ['svd'], dragan: ['pkm']};
+
+// What abilities launch (convoy/abilities.js): never carried, so they have no magazine, sound or sprite of their own
+// (the renderer and soundscape fall back to the RPG's for rounds in flight). Same fields as WEAPONS.
+export const ORDNANCE = {
+  tandem: {label: 'Tandem round', speed: 30, damage: 0, splash: {r: 3.6, damage: 130}, vehicle: 380, spread: 0, range: 80, supp: 0.9},
+  atgm: {label: 'Guided missile', speed: 34, damage: 0, splash: {r: 4, damage: 150}, vehicle: 600, spread: 0, range: 130, supp: 1},
+  fpv: {label: 'FPV drone', speed: 18, damage: 0, splash: {r: 3.2, damage: 110}, vehicle: 260, spread: 0, range: 150, supp: 1},
+  mine: {label: 'Mine', speed: 0, damage: 0, splash: {r: 3.5, damage: 140}, vehicle: 320, spread: 0, range: 0, supp: 1},
+};
+/** A weapon or a piece of ordnance by id. */
+export const munition = id => WEAPONS[id] || ORDNANCE[id];

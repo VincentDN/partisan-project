@@ -172,3 +172,13 @@ Built on [A-foundations.md](A-foundations.md) and designed around swapping ([G-s
 - Cost to change: Low.
 - Revisit if: Elevation is added to the simulation.
 - Owner feedback: —
+
+### TAC-B-15 · Class abilities in missions, and four difficulties
+- Status: built  ·  Packet: WP-S (late)
+- Decision: The active abilities of the class tree play in every level (`convoy/abilities.js`). Up to three, newest first, sit on an ability bar at the bottom of the map on Z, X and V, each with a cooldown sweep, aimed at the cursor and clamped to a range. They are built from a few effects the simulation understands: rockets, tandem rounds, guided missiles and FPV drones in flight; blasts and breaching charges; suppression; reveals (marked soldiers get red brackets and the squad is told where they are); healing and revives; sandbag walls that block like cover; smoke that blocks sight; mines that burst under soldiers and vehicles; jamming (the army's radio is cut, so word only travels by voice); spoofing (the army hears contact where you point); stealth (seen only within 4 m); dashes; rally; a bipod (less spread and more suppression while still) and a held breath (one steady shot). Passives multiply speed, reload, spread, damage, vehicle damage, suppression dealt, damage taken, recovery, search speed, noise and cooldowns. A difficulty select (Easy, Normal, Hard, Brutal) scales the damage the rebels take, the army's aim and its reaction time, and the experience paid; it is saved in the browser.
+- Why: Owner request: the shooter levels with abilities, a levelling system and difficulty options.
+- Alternatives rejected: Per-ability code paths (44 classes; a few shared effects keep it testable); difficulty by army numbers (the levels are hand-built; multipliers keep them as designed).
+- Cost / risk: Some actives with no fitting effect show on the bar as unusable; numbers are first guesses.
+- Cost to change: Low (tables in `convoy/abilities.js` and `convoy/difficulty.js`).
+- Revisit if: Abilities need their own art and sounds, or the army gets abilities too.
+- Owner feedback: —

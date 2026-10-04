@@ -586,7 +586,7 @@ export function createSoundscape() {
       const d = Math.hypot(u.x - listener.x, u.z - listener.z);
       if (d > 20) continue;
       const W = WEAPONS[u.reloading],
-        p = 1 - u.reload / W.reload,
+        p = 1 - u.reload / (u.reloadTime || W.reload),
         seen = reloadSeen.get(u.id) ?? -1;
       for (const [when, kind, gain] of RELOADS[u.reloading] || RELOADS.ak)
         if (when > seen && when <= p) reloadStep(u, kind, gain * (u === sim.player ? 0.9 : 0.6), listener);
@@ -759,6 +759,7 @@ export function createSoundscape() {
         else if (e.type === 'hurt' && e.unit === sim.player?.id) deafen(0.25);
         else if (e.type === 'reload' && e.unit !== sim.player?.id) reloadStep(e, 'rustle', 0.3, listener);
         else if (e.type === 'switch') reloadStep(e, 'handle', 0.6, listener);
+        else if (e.type === 'ability') reloadStep(e, 'handle', 0.8, listener);
         else if (e.type === 'say' && e.radio) radio(e, listener);
         else if (e.type === 'alarm') {
           birdsQuietUntil = ctx.currentTime + 60;

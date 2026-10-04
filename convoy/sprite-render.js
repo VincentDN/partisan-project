@@ -4,6 +4,7 @@
 // x runs east and z south in metres; the camera looks straight down, objects show their front faces (2.5-D).
 import {loadArt, loadGuns, buildPawn, lookFor, savedLook, DEFAULT_GUN, tinted, atlasCell} from './sprite-art.js';
 import {WEAPONS} from './weapons.js';
+import {ditherToMask} from '../assets/js/dither.js';
 
 const PPM = 32; // pixels per metre at zoom 1 (art bible: 1 m = 32 px)
 
@@ -603,7 +604,38 @@ export async function createSpriteRenderer(view) {
           h = 4 * H * k * (1 - k) + 0.4 * (1 - k);
         shadow(x, z, 0.16, 0.09, 0.35);
         sprite(art.grenade, x, z, 0.7, 0.7, {oy: -h, rot: sim.time * 14});
-      } else if (q.weapon === 'rpg') {
+      } else if (q.weapon === 'fpv') {
+        // an FPV drone: a small dark cross with spinning props, a shadow under it
+        shadow(x, z, 0.25, 0.12, 0.3);
+        const X = sx(x),
+          Y = sy(z) - 1.4 * ppm,
+          s = 0.35 * ppm;
+        ctx.save();
+        ctx.translate(X, Y);
+        ctx.rotate(a);
+        ctx.strokeStyle = '#1d1f19';
+        ctx.lineWidth = Math.max(2, s * 0.25);
+        ctx.beginPath();
+        ctx.moveTo(-s, -s);
+        ctx.lineTo(s, s);
+        ctx.moveTo(-s, s);
+        ctx.lineTo(s, -s);
+        ctx.stroke();
+        ctx.fillStyle = 'rgba(200,200,190,.35)';
+        for (const [dx, dy] of [
+          [-s, -s],
+          [s, s],
+          [-s, s],
+          [s, -s],
+        ]) {
+          ctx.beginPath();
+          ctx.ellipse(dx, dy, s * 0.55, s * 0.2, sim.time * 40, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.fillStyle = Math.sin(sim.time * 20) > 0 ? '#ff4a3a' : '#5a1a14';
+        ctx.fillRect(-2, -2, 4, 4);
+        ctx.restore();
+      } else if (q.weapon === 'rpg' || q.weapon === 'tandem' || q.weapon === 'atgm') {
         if (sim.time - (q.puff ?? -1) > 0.025) {
           q.puff = sim.time;
           mote({
@@ -743,7 +775,7 @@ export async function createSpriteRenderer(view) {
     ctx.fillStyle = '#9b988a';
     ctx.fillText(`/ ${W.mag}   ${reserve === Infinity ? '+∞' : '+' + reserve}`, X + 16 + cw, Y + 40);
     if (reloading) {
-      const k = 1 - p.reload / W.reload;
+      const k = 1 - p.reload / (p.reloadTime || W.reload);
       ctx.fillStyle = 'rgba(255,255,255,.15)';
       ctx.fillRect(X + 10, Y + 43, 148, 3);
       ctx.fillStyle = '#ffd36b';
@@ -855,6 +887,126 @@ export async function createSpriteRenderer(view) {
     }
   }
 
+  // ---------- abilities (convoy/abilities.js) ----------
+  /** On the ground: mines (a blinking light), the rings of a reveal or suppression. */
+  function groundFx(sim) {
+    for (const m of sim.mines) {
+      shadow(m.x, m.z, 0.3, 0.16, 0.4);
+      ctx.fillStyle = '#3a3a2c';
+      ctx.beginPath();
+      ctx.ellipse(sx(m.x), sy(m.z), 0.28 * ppm, 0.16 * ppm, 0, 0, Math.PI * 2);
+      ctx.fill();
+      if (Math.sin(sim.time * 5 + m.x) > 0.6) {
+        ctx.fillStyle = '#ff5040';
+        ctx.fillRect(sx(m.x) - 1.5, sy(m.z) - 1.5, 3, 3);
+      }
+    }
+    for (const r of sim.reveals) {
+      if (sim.time > r.until) continue;
+      const k = clamp((sim.time - r.t) / 0.9, 0, 1),
+        fade = clamp((r.until - sim.time) / 0.5, 0, 1);
+      ctx.strokeStyle = r.kind === 'suppress' ? `rgba(255,150,90,${0.7 * fade})` : `rgba(140,230,120,${0.7 * fade})`;
+      ctx.lineWidth = 2;
+      ctx.setLineDash(r.kind === 'suppress' ? [] : [8, 6]);
+      ctx.beginPath();
+      ctx.arc(sx(r.x), sy(r.z), r.r * ppm * (0.2 + 0.8 * k), 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+  }
+  /** Above everything: smoke screens, and brackets on soldiers a reveal has marked. */
+  function abilityFx(sim) {
+    for (const c of sim.smokes) {
+      const life = clamp((c.until - sim.time) / 3, 0, 1) * clamp((sim.time - c.t) / 0.8, 0, 1);
+      if (life <= 0) continue;
+      for (let i = 0; i < 7; i++) {
+        const a = i * 2.4 + sim.time * 0.15,
+          d = (i % 3) * c.r * 0.3;
+        const x = c.x + Math.cos(a) * d,
+          z = c.z + Math.sin(a) * d;
+        const g = ctx.createRadialGradient(sx(x), sy(z) - ppm, 0, sx(x), sy(z) - ppm, c.r * ppm * 0.75);
+        g.addColorStop(0, `rgba(200,200,190,${0.55 * life})`);
+        g.addColorStop(1, 'rgba(200,200,190,0)');
+        ctx.fillStyle = g;
+        ctx.fillRect(sx(x) - c.r * ppm, sy(z) - ppm - c.r * ppm, c.r * 2 * ppm, c.r * 2 * ppm);
+      }
+    }
+    for (const u of sim.units)
+      if (u.side === 'army' && u.alive && !u.escaped && sim.time < (u.revealedUntil ?? -1)) brackets(u.x, u.z, 0.9, 'rgba(255,90,70,.9)');
+    for (const u of sim.units)
+      if (u.side === 'partisan' && u.alive && sim.time < (u.stealthUntil ?? -1)) ring(u.x, u.z, 0.75, 'rgba(160,200,255,.6)');
+  }
+  /** The ability bar: one slot per active ability, a cooldown sweep, the key to press. */
+  function abilityBar(list) {
+    const S = 46,
+      gap = 8,
+      total = list.length * S + (list.length - 1) * gap;
+    let X = W / 2 - total / 2;
+    const Y = Hh - 100;
+    for (const a of list) {
+      ctx.fillStyle = 'rgba(12,14,10,.78)';
+      ctx.beginPath();
+      ctx.roundRect(X, Y, S, S, 6);
+      ctx.fill();
+      ctx.strokeStyle = a.ready && a.usable ? '#a6d86a' : 'rgba(255,255,255,.18)';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      if (!a.ready && a.cd) {
+        // a dark sweep for the time left
+        ctx.fillStyle = 'rgba(0,0,0,.55)';
+        ctx.beginPath();
+        ctx.moveTo(X + S / 2, Y + S / 2);
+        ctx.arc(X + S / 2, Y + S / 2, S * 0.62, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * (a.left / a.cd));
+        ctx.closePath();
+        ctx.save();
+        ctx.clip();
+        ctx.fillRect(X, Y, S, S);
+        ctx.restore();
+      }
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = a.usable ? '#f2f2e6' : '#77746a';
+      ctx.font = '700 15px ui-monospace, monospace';
+      ctx.fillText(a.ready || !a.usable ? a.key.toUpperCase() : String(Math.ceil(a.left)), X + S / 2, Y + S / 2 - 3);
+      ctx.font = '600 8px ui-monospace, monospace';
+      ctx.fillStyle = '#c9c6b4';
+      const words = a.name.toUpperCase();
+      ctx.fillText(words.length > 11 ? words.slice(0, 10) + '…' : words, X + S / 2, Y + S - 8);
+      X += S + gap;
+    }
+    ctx.textBaseline = 'alphabetic';
+  }
+
+  // ---------- slow motion: the world dithers to the Nokia's two tones while you pick a rebel ----------
+  const dither = document.createElement('canvas'),
+    dctx = dither.getContext('2d', {willReadFrequently: true});
+  const INK = [22, 32, 15],
+    PAPER = [181, 199, 154];
+  function ditherOverlay(k) {
+    const w = Math.max(1, Math.round(W / 3)),
+      h = Math.max(1, Math.round(Hh / 3));
+    if (dither.width !== w || dither.height !== h) [dither.width, dither.height] = [w, h];
+    dctx.imageSmoothingEnabled = true;
+    dctx.drawImage(view, 0, 0, w, h);
+    const img = dctx.getImageData(0, 0, w, h),
+      mask = ditherToMask(img.data, w, h, {contrast: 1.6, bias: 0.08});
+    for (let i = 0; i < mask.length; i++) img.data.set(mask[i] ? INK : PAPER, i * 4);
+    dctx.putImageData(img, 0, 0);
+    ctx.save();
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.imageSmoothingEnabled = false;
+    // the dither creeps in from the edges: full at the rim, thinner over the middle
+    ctx.globalAlpha = k * 0.55;
+    ctx.drawImage(dither, 0, 0, W, Hh);
+    const g = ctx.createRadialGradient(W / 2, Hh / 2, Math.min(W, Hh) * 0.25, W / 2, Hh / 2, Math.max(W, Hh) * 0.7);
+    g.addColorStop(0, 'rgba(22,32,15,0)');
+    g.addColorStop(1, 'rgba(22,32,15,.75)');
+    ctx.globalAlpha = k;
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, W, Hh);
+    ctx.restore();
+  }
+
   // ---------- frame ----------
   function resize() {
     dpr = Math.min(devicePixelRatio || 1, 2);
@@ -865,7 +1017,12 @@ export async function createSpriteRenderer(view) {
 
   let lastSimT = 0,
     lastReal = 0;
-  function draw(sim, {aim, selected = [], orders = true, pointer = null, aimZoom = false} = {}) {
+  /**
+   * @param {object} sim
+   * @param {{aim?, selected?, orders?, pointer?, aimZoom?, abilities?: Array, slowmo?: number}} opts
+   *   abilities: the ability bar [{key, name, left, cd, ready, usable}]; slowmo 0..1: the rebel switch's slow motion
+   */
+  function draw(sim, {aim, selected = [], orders = true, pointer = null, aimZoom = false, abilities = null, slowmo = 0} = {}) {
     if (sim.level !== level) {
       level = sim.level;
       ground = bakeGround(level);
@@ -929,6 +1086,7 @@ export async function createSpriteRenderer(view) {
           ring(o.x, o.z, 0.5, 'rgba(255,211,107,.8)');
         }
       }
+    groundFx(sim);
     // everything that stands, sorted by its south edge
     const things = [];
     for (const b of sim.boxes()) if (b.kind !== 'vehicle') things.push({z: b.z + b.d / 2, draw: () => drawCover(b, sim)});
@@ -947,6 +1105,7 @@ export async function createSpriteRenderer(view) {
     drawFlashes(sim);
     drawSmoke(now);
     pies(sim);
+    abilityFx(sim);
     if (level.night) {
       // darkness with a pool of light round each lamp and the player
       ctx.fillStyle = 'rgba(8,12,24,.45)';
@@ -975,8 +1134,10 @@ export async function createSpriteRenderer(view) {
       ctx.globalCompositeOperation = 'source-over';
       screen.a *= Math.exp(-rdt * 7);
     }
+    if (slowmo > 0.01) ditherOverlay(slowmo);
     hitReadout(sim, aim);
     if (aim) ammoHud(sim, aim);
+    if (abilities?.length) abilityBar(abilities);
     if (aim && p.alive) {
       ctx.strokeStyle = 'rgba(255,255,255,.85)';
       ctx.lineWidth = 1.5;

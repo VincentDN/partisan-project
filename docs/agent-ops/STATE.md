@@ -33,7 +33,7 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json); full plan: [ta
    The previously working browser was Chromium 134 / Playwright build 1161; the default v1243 download returned a corrupt archive.
    Do not change locked project dependencies merely to select a test browser.
 3. Inspect the picker visually in normal/reduced motion, keyboard and touch; check clumped/distant rebels and all-down during selection.
-   Relevant files: `convoy/squad-picker.js`, `convoy/squad-control.js`, `convoy/game.js`, `tests/e2e/squad-control.mjs`.
+   Relevant files: `convoy/squad-picker.js`, `convoy/squad-control.js`, `convoy/sprite-game.js`, `tests/e2e/squad-control.mjs`.
 4. Run `npm run test:a11y`, relevant smoke tests, `npm test`, `npm run build`, `npm run check`, lint/typecheck.
    Mark S21 done only once its acceptance is met, update `G-squad-play.md` and regenerate the packet table.
 5. Continue S28 (small module boundaries), S16 (headless metrics), S8 (item instances) and S29 (persistence transactions).
