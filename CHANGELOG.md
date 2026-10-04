@@ -4,6 +4,10 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 ## [Unreleased]
 
+### Added (Recon source teardown, WP-CM1)
+- Inspect all 27 original split pieces in assembled, exploded and body-candidate views; select, isolate, frame and inspect measured repair decisions. The stripped view exposes the fused vest, open torso, missing neck and right hand that need rebuilding.
+- Record the canonical textured source, corrected skeleton and modular mount contract, with measured geometry allocations and a repeatable source audit. New carriers and the clean body remain subsequent modelling work.
+
 ### Planned (Deep character customisation, WP-CM0)
 - Added a staged Recon-inspired modular character roadmap and dependency-linked work packets: complete underlying clothing/body, distinct carrier families, individual attachments and bags, fit validation, accessible editing and versioned outfits. This records planned work; new equipment is not implemented yet.
 

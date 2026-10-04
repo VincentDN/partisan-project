@@ -2536,7 +2536,7 @@
    "milestone": "M2",
    "size": "S",
    "bu": 8,
-   "status": "ready",
+   "status": "done",
    "deps": [
     "WP-CM0"
    ],
@@ -2560,7 +2560,7 @@
    "milestone": "M2",
    "size": "M",
    "bu": 20,
-   "status": "planned",
+   "status": "ready",
    "deps": [
     "WP-CM1"
    ],
@@ -2571,7 +2571,9 @@
    ],
    "inputs": [
     "docs/character-customisation-roadmap.md",
-    "docs/engineering/generated-recon.md"
+    "docs/engineering/generated-recon.md",
+    "docs/engineering/recon-modular-audit.md",
+    "tools/assets/recon-modular-contract.json"
    ],
    "acceptance": "Carrier/harness removal exposes complete front, back, shoulder and waist surfaces; clean cloth textures have no baked gear remnants; 360-degree strip contact sheet passes."
   },
@@ -2604,7 +2606,7 @@
    "milestone": "M2",
    "size": "S",
    "bu": 8,
-   "status": "planned",
+   "status": "ready",
    "deps": [
     "WP-CM1"
    ],
@@ -2612,7 +2614,9 @@
    "needs": [],
    "inputs": [
     "docs/character-customisation-roadmap.md",
-    "docs/engineering/generated-recon.md"
+    "docs/engineering/generated-recon.md",
+    "docs/engineering/recon-modular-audit.md",
+    "tools/assets/recon-modular-contract.json"
    ],
    "acceptance": "Pure-data tests cover parent dependencies, repeated item instances, mount footprints, conflicts, coverage masks and full-outfit triangle accounting."
   },

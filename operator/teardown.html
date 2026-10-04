@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex"><meta name="seo_hidden" content="true">
+<title>Partisan Project | Recon teardown</title><link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="teardown.css">
+<script type="importmap">{"imports":{"three":"../vendor/three/build/three.module.min.js","three/addons/":"../vendor/three/examples/jsm/"}}</script>
+</head><body><main>
+<div class="intro"><div><h1>Recon teardown</h1><p>Explore the 27 source pieces and the work needed to make them independently wearable.</p></div>
+<nav aria-label="Operator views"><a href="compare.html">Original comparison</a> · <a href="./#base=generated-recon">Operator Modder</a></nav></div>
+<div class="toolbar">
+<div role="group" aria-label="Assembly"><button data-mode="assembled" aria-pressed="false">Assembled</button> <button data-mode="exploded" aria-pressed="true">Exploded</button> <button data-mode="body" aria-pressed="false">Body candidates</button></div>
+<label>Separation <input id="separation" type="range" min="0" max="100" value="100"><output id="separation-value">100%</output></label>
+<div role="group" aria-label="Camera"><button data-camera="front" aria-pressed="true">Front</button> <button data-camera="back" aria-pressed="false">Back</button> <button data-camera="side" aria-pressed="false">Side</button></div>
+<button id="wire" aria-pressed="false">Wireframe</button>
+</div>
+<p id="status" role="status">Loading source pieces…</p>
+<div class="teardown">
+<section aria-label="Source inspection"><div class="legend"><span class="clothing">Clothing</span><span class="fused">Fused surfaces</span><span class="equipment">Equipment</span><span class="discard">Replace / discard</span></div>
+<div id="teardown-stage" class="stage" role="group" tabindex="0" aria-label="Recon source pieces. Drag or use arrow keys to orbit; plus and minus zoom."></div>
+<p id="scene-note" class="stats"></p></section>
+<aside aria-label="Part inspector"><div id="selection" aria-live="polite"><h2 id="part-title">Select a source piece</h2><p id="part-note">Numbers in the view match the list below.</p><p id="part-stats"></p><p id="part-module"></p></div>
+<div class="part-actions"><button id="isolate" aria-pressed="false">Isolate selected</button><button id="focus">Focus selected</button><button id="show-all">Show all</button></div>
+<div id="parts" role="group" aria-label="Source pieces"></div></aside>
+</div>
+<p class="footnote">Inspection colours identify surfaces; use the original comparison for textures. “Body candidates” still includes the fused vest and damaged head pieces: it is not a finished stripped character. Source geometry stays unchanged. Number 01 maps to source part 0.</p>
+</main><noscript>This inspection requires JavaScript and WebGL.</noscript><script type="module" src="teardown.js"></script></body></html>

@@ -1181,6 +1181,17 @@
     "triangles": 200000
    },
    "notes": "Untouched complete inbound model for the owner-requested as-is comparison view: 193534 triangles and original 4K texture. Inspection reference; excluded from the gameplay operator budget."
+  },
+  {
+   "id": "recon-split-reference",
+   "label": "Recon — source teardown",
+   "path": "assets/models/operators/recon-split-reference.glb",
+   "kind": "reference",
+   "status": "real",
+   "budget": {
+    "triangles": 200000
+   },
+   "notes": "Byte-identical split source for numbered inspection: 27 pieces, 195765 triangles. Diagnostic reference only; excluded from the gameplay operator budget."
   }
  ],
  "pipeline": [

@@ -1,0 +1,3440 @@
+{
+ "version": 1,
+ "source": {
+  "path": "inbound/Models/PARP_Recon_hooded_model_splitparts_v01_05.glb",
+  "sha256": "73265e7e66f6d2c84b874d7c1769cb2078ba62dd3630e4e0ede67bf912b535da",
+  "bytes": 5020948,
+  "triangles": 195765
+ },
+ "complete": {
+  "sha256": "26004a12542e2aad9362d5a8d07c7da4f199511d63420c2a8663e88aeac4bf9e",
+  "bytes": 7786416,
+  "triangles": 193534,
+  "meshes": [
+   {
+    "name": "tripo_node_29646b9e-ff0a-45af-b609-bf2722479085",
+    "triangles": 193534
+   }
+  ],
+  "textures": [
+   {
+    "size": [
+     4096,
+     4096
+    ],
+    "mime": "image/jpeg"
+   }
+  ],
+  "materials": [
+   {
+    "name": "tripo_material_29646b9e-ff0a-45af-b609-bf2722479085",
+    "textured": true
+   }
+  ],
+  "bones": []
+ },
+ "current": {
+  "sha256": "489f884166b40b3d4e45613fe4c24dba558dff19d63e5b8a18c4641e2f401ae7",
+  "bytes": 1133608,
+  "triangles": 14523,
+  "meshes": [
+   {
+    "name": "SK_GR_BackPouch",
+    "triangles": 210
+   },
+   {
+    "name": "SK_GR_BeltPouch",
+    "triangles": 262
+   },
+   {
+    "name": "SK_GR_Boot_L",
+    "triangles": 270
+   },
+   {
+    "name": "SK_GR_Boot_R",
+    "triangles": 252
+   },
+   {
+    "name": "SK_GR_Carabiner",
+    "triangles": 76
+   },
+   {
+    "name": "SK_GR_Cuff_R",
+    "triangles": 124
+   },
+   {
+    "name": "SK_GR_Glove_L",
+    "triangles": 258
+   },
+   {
+    "name": "SK_GR_Glove_R",
+    "triangles": 258
+   },
+   {
+    "name": "SK_GR_Harness",
+    "triangles": 597
+   },
+   {
+    "name": "SK_GR_HipPouch",
+    "triangles": 188
+   },
+   {
+    "name": "SK_GR_Holster",
+    "triangles": 339
+   },
+   {
+    "name": "SK_GR_Hood",
+    "triangles": 4000
+   },
+   {
+    "name": "SK_GR_Jacket",
+    "triangles": 1923
+   },
+   {
+    "name": "SK_GR_Knee_L",
+    "triangles": 74
+   },
+   {
+    "name": "SK_GR_Knee_R",
+    "triangles": 70
+   },
+   {
+    "name": "SK_GR_MagPouches",
+    "triangles": 210
+   },
+   {
+    "name": "SK_GR_Neck",
+    "triangles": 48
+   },
+   {
+    "name": "SK_GR_Radio",
+    "triangles": 70
+   },
+   {
+    "name": "SK_GR_RadioBadge",
+    "triangles": 70
+   },
+   {
+    "name": "SK_GR_Scarf",
+    "triangles": 434
+   },
+   {
+    "name": "SK_GR_ShoulderTab",
+    "triangles": 70
+   },
+   {
+    "name": "SK_GR_Sleeve_L",
+    "triangles": 798
+   },
+   {
+    "name": "SK_GR_Sleeve_R",
+    "triangles": 718
+   },
+   {
+    "name": "SK_GR_Trousers_L",
+    "triangles": 1361
+   },
+   {
+    "name": "SK_GR_Trousers_R",
+    "triangles": 1619
+   },
+   {
+    "name": "SK_GR_UtilityPouch",
+    "triangles": 224
+   }
+  ],
+  "textures": [
+   {
+    "size": [
+     2048,
+     2048
+    ],
+    "mime": "image/jpeg"
+   }
+  ],
+  "materials": [
+   {
+    "name": "M_GR_rig",
+    "textured": true
+   },
+   {
+    "name": "M_GR_boots",
+    "textured": true
+   },
+   {
+    "name": "M_GR_gear",
+    "textured": true
+   },
+   {
+    "name": "M_GR_gloves",
+    "textured": true
+   },
+   {
+    "name": "M_GR_hood",
+    "textured": true
+   },
+   {
+    "name": "M_GR_Face",
+    "textured": true
+   },
+   {
+    "name": "M_GR_top",
+    "textured": true
+   },
+   {
+    "name": "M_GR_Collar",
+    "textured": false
+   },
+   {
+    "name": "M_GR_badge",
+    "textured": true
+   },
+   {
+    "name": "M_GR_scarf",
+    "textured": true
+   },
+   {
+    "name": "M_GR_pants",
+    "textured": true
+   }
+  ],
+  "bones": [
+   {
+    "name": "root",
+    "parent": "Armature",
+    "localMatrix": [
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     1
+    ],
+    "worldMatrix": [
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     1
+    ]
+   },
+   {
+    "name": "pelvis",
+    "parent": "root",
+    "localMatrix": [
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0.87875,
+     0,
+     1
+    ],
+    "worldMatrix": [
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0.87875,
+     0,
+     1
+    ]
+   },
+   {
+    "name": "spine_01",
+    "parent": "pelvis",
+    "localMatrix": [
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0.1295,
+     0,
+     1
+    ],
+    "worldMatrix": [
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     1.00825,
+     0,
+     1
+    ]
+   },
+   {
+    "name": "spine_02",
+    "parent": "spine_01",
+    "localMatrix": [
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0.1295,
+     0,
+     1
+    ],
+    "worldMatrix": [
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     1.13775,
+     0,
+     1
+    ]
+   },
+   {
+    "name": "spine_03",
+    "parent": "spine_02",
+    "localMatrix": [
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0.1295,
+     0,
+     1
+    ],
+    "worldMatrix": [
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     1.26725,
+     0,
+     1
+    ]
+   },
+   {
+    "name": "spine_04",
+    "parent": "spine_03",
+    "localMatrix": [
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0.1295,
+     0,
+     1
+    ],
+    "worldMatrix": [
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     1.39675,
+     0,
+     1
+    ]
+   },
+   {
+    "name": "neck_01",
+    "parent": "spine_04",
+    "localMatrix": [
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0.111,
+     0,
+     1
+    ],
+    "worldMatrix": [
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     1.50775,
+     0,
+     1
+    ]
+   },
+   {
+    "name": "neck_02",
+    "parent": "neck_01",
+    "localMatrix": [
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0.04625,
+     0,
+     1
+    ],
+    "worldMatrix": [
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     1.554,
+     0,
+     1
+    ]
+   },
+   {
+    "name": "neck_03",
+    "parent": "neck_02",
+    "localMatrix": [
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0.02775,
+     0,
+     1
+    ],
+    "worldMatrix": [
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     1.58175,
+     0,
+     1
+    ]
+   },
+   {
+    "name": "head",
+    "parent": "neck_03",
+    "localMatrix": [
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0.02775,
+     0,
+     1
+    ],
+    "worldMatrix": [
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     1.6095,
+     0,
+     1
+    ]
+   },
+   {
+    "name": "clavicle_r",
+    "parent": "spine_04",
+    "localMatrix": [
+     0,
+     0,
+     -1,
+     0,
+     -1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0.0555,
+     0,
+     1
+    ],
+    "worldMatrix": [
+     0,
+     0,
+     -1,
+     0,
+     -1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     1.45225,
+     0,
+     1
+    ]
+   },
+   {
+    "name": "upperarm_r",
+    "parent": "clavicle_r",
+    "localMatrix": [
+     0.303292,
+     -0.916268,
+     -0.261663,
+     0,
+     0.09857,
+     0.303291,
+     -0.947786,
+     0,
+     0.947786,
+     0.261663,
+     0.182302,
+     0,
+     0,
+     0.222,
+     0,
+     1
+    ],
+    "worldMatrix": [
+     0.916268,
+     -0.261663,
+     -0.303292,
+     0,
+     -0.303291,
+     -0.947786,
+     -0.09857,
+     0,
+     -0.261663,
+     0.182302,
+     -0.947786,
+     0,
+     -0.222,
+     1.45225,
+     0,
+     1
+    ]
+   },
+   {
+    "name": "lowerarm_r",
+    "parent": "upperarm_r",
+    "localMatrix": [
+     0.995936,
+     0.080422,
+     -0.04054,
+     0,
+     -0.08959,
+     0.930698,
+     -0.354647,
+     0,
+     0.009209,
+     0.356838,
+     0.934121,
+     0,
+     0,
+     0.24399,
+     0,
+     1
+    ],
+    "worldMatrix": [
+     0.898761,
+     -0.344213,
+     -0.271563,
+     0,
+     -0.271563,
+     -0.923313,
+     0.271563,
+     0,
+     -0.344213,
+     -0.170324,
+     -0.923313,
+     0,
+     -0.296,
+     1.221,
+     -0.02405,
+     1
+    ]
+   },
+   {
+    "name": "hand_r",
+    "parent": "lowerarm_r",
+    "localMatrix": [
+     -0.383338,
+     -0.105681,
+     -0.917542,
+     0,
+     0.136933,
+     0.97595,
+     -0.169618,
+     0,
+     0.913401,
+     -0.190662,
+     -0.359647,
+     0,
+     0,
+     0.170311,
+     0,
+     1
+    ],
+    "worldMatrix": [
+     0,
+     0.385806,
+     0.92258,
+     0,
+     -0.083578,
+     -0.919352,
+     0.384456,
+     0,
+     0.996501,
+     -0.077107,
+     0.032245,
+     0,
+     -0.34225,
+     1.06375,
+     0.0222,
+     1
+    ]
+   },
+   {
+    "name": "clavicle_l",
+    "parent": "spine_04",
+    "localMatrix": [
+     0,
+     0,
+     1,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0.0555,
+     0,
+     1
+    ],
+    "worldMatrix": [
+     0,
+     0,
+     1,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     1.45225,
+     0,
+     1
+    ]
+   },
+   {
+    "name": "upperarm_l",
+    "parent": "clavicle_l",
+    "localMatrix": [
+     0.303292,
+     0.916268,
+     0.261663,
+     0,
+     -0.09857,
+     0.303291,
+     -0.947786,
+     0,
+     -0.947786,
+     0.261663,
+     0.182302,
+     0,
+     0,
+     0.222,
+     0,
+     1
+    ],
+    "worldMatrix": [
+     0.916268,
+     0.261663,
+     0.303292,
+     0,
+     0.303291,
+     -0.947786,
+     -0.09857,
+     0,
+     0.261663,
+     0.182302,
+     -0.947786,
+     0,
+     0.222,
+     1.45225,
+     0,
+     1
+    ]
+   },
+   {
+    "name": "lowerarm_l",
+    "parent": "upperarm_l",
+    "localMatrix": [
+     0.991338,
+     0.063794,
+     0.114803,
+     0,
+     -0.026182,
+     0.952556,
+     -0.303234,
+     0,
+     -0.128701,
+     0.297602,
+     0.945975,
+     0,
+     0,
+     0.24399,
+     0,
+     1
+    ],
+    "worldMatrix": [
+     0.957719,
+     0.219863,
+     0.185567,
+     0,
+     0.185567,
+     -0.964951,
+     0.185567,
+     0,
+     0.219863,
+     -0.143286,
+     -0.964951,
+     0,
+     0.296,
+     1.221,
+     -0.02405,
+     1
+    ]
+   },
+   {
+    "name": "hand_l",
+    "parent": "lowerarm_l",
+    "localMatrix": [
+     -0.256025,
+     0.201083,
+     0.945525,
+     0,
+     -0.050745,
+     0.973981,
+     -0.220876,
+     0,
+     -0.965337,
+     -0.10453,
+     -0.23916,
+     0,
+     0,
+     0.249236,
+     0,
+     1
+    ],
+    "worldMatrix": [
+     0,
+     -0.385806,
+     -0.92258,
+     0,
+     0.083578,
+     -0.919352,
+     0.384456,
+     0,
+     -0.996501,
+     -0.077107,
+     0.032245,
+     0,
+     0.34225,
+     0.9805,
+     0.0222,
+     1
+    ]
+   },
+   {
+    "name": "thigh_r",
+    "parent": "pelvis",
+    "localMatrix": [
+     0.989664,
+     -0.101269,
+     -0.101797,
+     0,
+     -0.101795,
+     -0.994806,
+     0,
+     0,
+     -0.101265,
+     0.010362,
+     -0.994806,
+     0,
+     -0.13505,
+     0.00925,
+     0,
+     1
+    ],
+    "worldMatrix": [
+     0.989664,
+     -0.101269,
+     -0.101797,
+     0,
+     -0.101795,
+     -0.994806,
+     0,
+     0,
+     -0.101265,
+     0.010362,
+     -0.994806,
+     0,
+     -0.13505,
+     0.888,
+     0,
+     1
+    ]
+   },
+   {
+    "name": "calf_r",
+    "parent": "thigh_r",
+    "localMatrix": [
+     0.998547,
+     0.036184,
+     0.039944,
+     0,
+     -0.037298,
+     0.998926,
+     0.027503,
+     0,
+     -0.038905,
+     -0.028953,
+     0.998823,
+     0,
+     0,
+     0.399827,
+     0,
+     1
+    ],
+    "worldMatrix": [
+     0.980498,
+     -0.136704,
+     -0.141385,
+     0,
+     -0.141384,
+     -0.989675,
+     -0.023564,
+     0,
+     -0.136702,
+     0.043093,
+     -0.989675,
+     0,
+     -0.175751,
+     0.49025,
+     0,
+     1
+    ]
+   },
+   {
+    "name": "foot_r",
+    "parent": "calf_r",
+    "localMatrix": [
+     0.980471,
+     -0.141384,
+     -0.136701,
+     0,
+     -0.065321,
+     0.42152,
+     -0.904464,
+     0,
+     0.185499,
+     0.89573,
+     0.404053,
+     0,
+     0,
+     0.392553,
+     0,
+     1
+    ],
+    "worldMatrix": [
+     1.000026,
+     -0.000001,
+     -0.000003,
+     0,
+     -0.000001,
+     -0.447214,
+     0.894427,
+     0,
+     0.000005,
+     -0.894428,
+     -0.447214,
+     0,
+     -0.231251,
+     0.10175,
+     -0.00925,
+     1
+    ]
+   },
+   {
+    "name": "ball_r",
+    "parent": "foot_r",
+    "localMatrix": [
+     -1,
+     0,
+     -0.000006,
+     0,
+     0.000003,
+     0.894427,
+     -0.447213,
+     0,
+     0.000005,
+     -0.447213,
+     -0.894428,
+     0,
+     0,
+     0.144785,
+     0,
+     1
+    ],
+    "worldMatrix": [
+     -1.000026,
+     0.000007,
+     0.000005,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0.000001,
+     1.000001,
+     0.000001,
+     0,
+     -0.231251,
+     0.037,
+     0.12025,
+     1
+    ]
+   },
+   {
+    "name": "thigh_l",
+    "parent": "pelvis",
+    "localMatrix": [
+     0.989664,
+     0.101269,
+     0.101797,
+     0,
+     0.101795,
+     -0.994806,
+     0,
+     0,
+     0.101265,
+     0.010362,
+     -0.994806,
+     0,
+     0.13505,
+     0.00925,
+     0,
+     1
+    ],
+    "worldMatrix": [
+     0.989664,
+     0.101269,
+     0.101797,
+     0,
+     0.101795,
+     -0.994806,
+     0,
+     0,
+     0.101265,
+     0.010362,
+     -0.994806,
+     0,
+     0.13505,
+     0.888,
+     0,
+     1
+    ]
+   },
+   {
+    "name": "calf_l",
+    "parent": "thigh_l",
+    "localMatrix": [
+     0.998547,
+     -0.036184,
+     -0.039944,
+     0,
+     0.037298,
+     0.998926,
+     0.027503,
+     0,
+     0.038905,
+     -0.028953,
+     0.998823,
+     0,
+     0,
+     0.399827,
+     0,
+     1
+    ],
+    "worldMatrix": [
+     0.980498,
+     0.136704,
+     0.141385,
+     0,
+     0.141384,
+     -0.989675,
+     -0.023564,
+     0,
+     0.136702,
+     0.043093,
+     -0.989675,
+     0,
+     0.175751,
+     0.49025,
+     0,
+     1
+    ]
+   },
+   {
+    "name": "foot_l",
+    "parent": "calf_l",
+    "localMatrix": [
+     0.980471,
+     0.141384,
+     0.136701,
+     0,
+     0.065321,
+     0.42152,
+     -0.904464,
+     0,
+     -0.185499,
+     0.89573,
+     0.404053,
+     0,
+     0,
+     0.392553,
+     0,
+     1
+    ],
+    "worldMatrix": [
+     1.000026,
+     0.000001,
+     0.000003,
+     0,
+     0.000001,
+     -0.447214,
+     0.894427,
+     0,
+     -0.000005,
+     -0.894428,
+     -0.447214,
+     0,
+     0.231251,
+     0.10175,
+     -0.00925,
+     1
+    ]
+   },
+   {
+    "name": "ball_l",
+    "parent": "foot_l",
+    "localMatrix": [
+     -1,
+     0,
+     0.000006,
+     0,
+     -0.000003,
+     0.894427,
+     -0.447213,
+     0,
+     -0.000005,
+     -0.447213,
+     -0.894428,
+     0,
+     0,
+     0.144785,
+     0,
+     1
+    ],
+    "worldMatrix": [
+     -1.000026,
+     -0.000007,
+     -0.000005,
+     0,
+     0,
+     0,
+     1,
+     0,
+     -0.000001,
+     1.000001,
+     0.000001,
+     0,
+     0.231251,
+     0.037,
+     0.12025,
+     1
+    ]
+   }
+  ]
+ },
+ "upstream": {
+  "ref": "285b45bfd4447ea29744d3fe932fd0cd987199e5",
+  "sha256": "afb0b2edf1a025fabe21697462919f8f3c34ee150430817728e498cc92e4b1f0",
+  "bytes": 648640,
+  "triangles": 11253,
+  "meshes": [
+   {
+    "name": "SK_GR_BackPouch",
+    "triangles": 210
+   },
+   {
+    "name": "SK_GR_BeltPouch",
+    "triangles": 262
+   },
+   {
+    "name": "SK_GR_Boot_L",
+    "triangles": 270
+   },
+   {
+    "name": "SK_GR_Boot_R",
+    "triangles": 252
+   },
+   {
+    "name": "SK_GR_Carabiner",
+    "triangles": 76
+   },
+   {
+    "name": "SK_GR_Cuff_R",
+    "triangles": 124
+   },
+   {
+    "name": "SK_GR_Eyes",
+    "triangles": 70
+   },
+   {
+    "name": "SK_GR_Glove_L",
+    "triangles": 258
+   },
+   {
+    "name": "SK_GR_Glove_R",
+    "triangles": 258
+   },
+   {
+    "name": "SK_GR_Harness",
+    "triangles": 597
+   },
+   {
+    "name": "SK_GR_HipPouch",
+    "triangles": 188
+   },
+   {
+    "name": "SK_GR_Holster",
+    "triangles": 339
+   },
+   {
+    "name": "SK_GR_Hood",
+    "triangles": 660
+   },
+   {
+    "name": "SK_GR_Jacket",
+    "triangles": 1923
+   },
+   {
+    "name": "SK_GR_Knee_L",
+    "triangles": 74
+   },
+   {
+    "name": "SK_GR_Knee_R",
+    "triangles": 70
+   },
+   {
+    "name": "SK_GR_MagPouches",
+    "triangles": 210
+   },
+   {
+    "name": "SK_GR_Neck",
+    "triangles": 48
+   },
+   {
+    "name": "SK_GR_Radio",
+    "triangles": 70
+   },
+   {
+    "name": "SK_GR_RadioBadge",
+    "triangles": 70
+   },
+   {
+    "name": "SK_GR_Scarf",
+    "triangles": 434
+   },
+   {
+    "name": "SK_GR_ShoulderTab",
+    "triangles": 70
+   },
+   {
+    "name": "SK_GR_Sleeve_L",
+    "triangles": 798
+   },
+   {
+    "name": "SK_GR_Sleeve_R",
+    "triangles": 718
+   },
+   {
+    "name": "SK_GR_Trousers_L",
+    "triangles": 1361
+   },
+   {
+    "name": "SK_GR_Trousers_R",
+    "triangles": 1619
+   },
+   {
+    "name": "SK_GR_UtilityPouch",
+    "triangles": 224
+   }
+  ],
+  "textures": [
+   {
+    "size": [
+     2048,
+     2048
+    ],
+    "mime": "image/jpeg"
+   }
+  ],
+  "materials": [
+   {
+    "name": "M_GR_rig",
+    "textured": true
+   },
+   {
+    "name": "M_GR_boots",
+    "textured": true
+   },
+   {
+    "name": "M_GR_gear",
+    "textured": true
+   },
+   {
+    "name": "M_GR_gloves",
+    "textured": true
+   },
+   {
+    "name": "M_GR_eyes",
+    "textured": true
+   },
+   {
+    "name": "M_GR_hood",
+    "textured": true
+   },
+   {
+    "name": "M_GR_top",
+    "textured": true
+   },
+   {
+    "name": "M_GR_badge",
+    "textured": true
+   },
+   {
+    "name": "M_GR_scarf",
+    "textured": true
+   },
+   {
+    "name": "M_GR_pants",
+    "textured": true
+   }
+  ],
+  "bones": [
+   {
+    "name": "root",
+    "parent": "Armature",
+    "localMatrix": [
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     1
+    ],
+    "worldMatrix": [
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     1
+    ]
+   },
+   {
+    "name": "pelvis",
+    "parent": "root",
+    "localMatrix": [
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0.87875,
+     0,
+     1
+    ],
+    "worldMatrix": [
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0.87875,
+     0,
+     1
+    ]
+   },
+   {
+    "name": "spine_01",
+    "parent": "pelvis",
+    "localMatrix": [
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0.1295,
+     0,
+     1
+    ],
+    "worldMatrix": [
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     1.00825,
+     0,
+     1
+    ]
+   },
+   {
+    "name": "spine_02",
+    "parent": "spine_01",
+    "localMatrix": [
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0.1295,
+     0,
+     1
+    ],
+    "worldMatrix": [
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     1.13775,
+     0,
+     1
+    ]
+   },
+   {
+    "name": "spine_03",
+    "parent": "spine_02",
+    "localMatrix": [
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0.1295,
+     0,
+     1
+    ],
+    "worldMatrix": [
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     1.26725,
+     0,
+     1
+    ]
+   },
+   {
+    "name": "spine_04",
+    "parent": "spine_03",
+    "localMatrix": [
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0.1295,
+     0,
+     1
+    ],
+    "worldMatrix": [
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     1.39675,
+     0,
+     1
+    ]
+   },
+   {
+    "name": "neck_01",
+    "parent": "spine_04",
+    "localMatrix": [
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0.111,
+     0,
+     1
+    ],
+    "worldMatrix": [
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     1.50775,
+     0,
+     1
+    ]
+   },
+   {
+    "name": "neck_02",
+    "parent": "neck_01",
+    "localMatrix": [
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0.04625,
+     0,
+     1
+    ],
+    "worldMatrix": [
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     1.554,
+     0,
+     1
+    ]
+   },
+   {
+    "name": "neck_03",
+    "parent": "neck_02",
+    "localMatrix": [
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0.02775,
+     0,
+     1
+    ],
+    "worldMatrix": [
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     1.58175,
+     0,
+     1
+    ]
+   },
+   {
+    "name": "head",
+    "parent": "neck_03",
+    "localMatrix": [
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0.02775,
+     0,
+     1
+    ],
+    "worldMatrix": [
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     1.6095,
+     0,
+     1
+    ]
+   },
+   {
+    "name": "clavicle_r",
+    "parent": "spine_04",
+    "localMatrix": [
+     0,
+     0,
+     -1,
+     0,
+     -1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0.0555,
+     0,
+     1
+    ],
+    "worldMatrix": [
+     0,
+     0,
+     -1,
+     0,
+     -1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     1.45225,
+     0,
+     1
+    ]
+   },
+   {
+    "name": "upperarm_r",
+    "parent": "clavicle_r",
+    "localMatrix": [
+     0.303292,
+     -0.916268,
+     -0.261663,
+     0,
+     0.09857,
+     0.303291,
+     -0.947786,
+     0,
+     0.947786,
+     0.261663,
+     0.182302,
+     0,
+     0,
+     0.222,
+     0,
+     1
+    ],
+    "worldMatrix": [
+     0.916268,
+     -0.261663,
+     -0.303292,
+     0,
+     -0.303291,
+     -0.947786,
+     -0.09857,
+     0,
+     -0.261663,
+     0.182302,
+     -0.947786,
+     0,
+     -0.222,
+     1.45225,
+     0,
+     1
+    ]
+   },
+   {
+    "name": "lowerarm_r",
+    "parent": "upperarm_r",
+    "localMatrix": [
+     0.995936,
+     0.080422,
+     -0.04054,
+     0,
+     -0.08959,
+     0.930698,
+     -0.354647,
+     0,
+     0.009209,
+     0.356838,
+     0.934121,
+     0,
+     0,
+     0.24399,
+     0,
+     1
+    ],
+    "worldMatrix": [
+     0.898761,
+     -0.344213,
+     -0.271563,
+     0,
+     -0.271563,
+     -0.923313,
+     0.271563,
+     0,
+     -0.344213,
+     -0.170324,
+     -0.923313,
+     0,
+     -0.296,
+     1.221,
+     -0.02405,
+     1
+    ]
+   },
+   {
+    "name": "hand_r",
+    "parent": "lowerarm_r",
+    "localMatrix": [
+     0.954226,
+     -0.175922,
+     -0.241877,
+     0,
+     0.136933,
+     0.97595,
+     -0.169618,
+     0,
+     0.2659,
+     0.128733,
+     0.955367,
+     0,
+     0,
+     0.170311,
+     0,
+     1
+    ],
+    "worldMatrix": [
+     0.988652,
+     -0.124828,
+     -0.083578,
+     0,
+     -0.083578,
+     -0.919352,
+     0.384456,
+     0,
+     -0.124828,
+     -0.373108,
+     -0.919352,
+     0,
+     -0.34225,
+     1.06375,
+     0.0222,
+     1
+    ]
+   },
+   {
+    "name": "clavicle_l",
+    "parent": "spine_04",
+    "localMatrix": [
+     0,
+     0,
+     1,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0.0555,
+     0,
+     1
+    ],
+    "worldMatrix": [
+     0,
+     0,
+     1,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     1.45225,
+     0,
+     1
+    ]
+   },
+   {
+    "name": "upperarm_l",
+    "parent": "clavicle_l",
+    "localMatrix": [
+     0.303292,
+     0.916268,
+     0.261663,
+     0,
+     -0.09857,
+     0.303291,
+     -0.947786,
+     0,
+     -0.947786,
+     0.261663,
+     0.182302,
+     0,
+     0,
+     0.222,
+     0,
+     1
+    ],
+    "worldMatrix": [
+     0.916268,
+     0.261663,
+     0.303292,
+     0,
+     0.303291,
+     -0.947786,
+     -0.09857,
+     0,
+     0.261663,
+     0.182302,
+     -0.947786,
+     0,
+     0.222,
+     1.45225,
+     0,
+     1
+    ]
+   },
+   {
+    "name": "lowerarm_l",
+    "parent": "upperarm_l",
+    "localMatrix": [
+     0.991338,
+     0.063794,
+     0.114803,
+     0,
+     -0.026182,
+     0.952556,
+     -0.303234,
+     0,
+     -0.128701,
+     0.297602,
+     0.945975,
+     0,
+     0,
+     0.24399,
+     0,
+     1
+    ],
+    "worldMatrix": [
+     0.957719,
+     0.219863,
+     0.185567,
+     0,
+     0.185567,
+     -0.964951,
+     0.185567,
+     0,
+     0.219863,
+     -0.143286,
+     -0.964951,
+     0,
+     0.296,
+     1.221,
+     -0.02405,
+     1
+    ]
+   },
+   {
+    "name": "hand_l",
+    "parent": "lowerarm_l",
+    "localMatrix": [
+     0.989805,
+     0.078518,
+     0.118833,
+     0,
+     -0.050745,
+     0.973981,
+     -0.220876,
+     0,
+     -0.133084,
+     0.212593,
+     0.968035,
+     0,
+     0,
+     0.249236,
+     0,
+     1
+    ],
+    "worldMatrix": [
+     0.988652,
+     0.124828,
+     0.083578,
+     0,
+     0.083578,
+     -0.919352,
+     0.384456,
+     0,
+     0.124828,
+     -0.373108,
+     -0.919352,
+     0,
+     0.34225,
+     0.9805,
+     0.0222,
+     1
+    ]
+   },
+   {
+    "name": "thigh_r",
+    "parent": "pelvis",
+    "localMatrix": [
+     0.989664,
+     -0.101269,
+     -0.101797,
+     0,
+     -0.101795,
+     -0.994806,
+     0,
+     0,
+     -0.101265,
+     0.010362,
+     -0.994806,
+     0,
+     -0.13505,
+     0.00925,
+     0,
+     1
+    ],
+    "worldMatrix": [
+     0.989664,
+     -0.101269,
+     -0.101797,
+     0,
+     -0.101795,
+     -0.994806,
+     0,
+     0,
+     -0.101265,
+     0.010362,
+     -0.994806,
+     0,
+     -0.13505,
+     0.888,
+     0,
+     1
+    ]
+   },
+   {
+    "name": "calf_r",
+    "parent": "thigh_r",
+    "localMatrix": [
+     0.998547,
+     0.036184,
+     0.039944,
+     0,
+     -0.037298,
+     0.998926,
+     0.027503,
+     0,
+     -0.038905,
+     -0.028953,
+     0.998823,
+     0,
+     0,
+     0.399827,
+     0,
+     1
+    ],
+    "worldMatrix": [
+     0.980498,
+     -0.136704,
+     -0.141385,
+     0,
+     -0.141384,
+     -0.989675,
+     -0.023564,
+     0,
+     -0.136702,
+     0.043093,
+     -0.989675,
+     0,
+     -0.175751,
+     0.49025,
+     0,
+     1
+    ]
+   },
+   {
+    "name": "foot_r",
+    "parent": "calf_r",
+    "localMatrix": [
+     0.980471,
+     -0.141384,
+     -0.136701,
+     0,
+     -0.065321,
+     0.42152,
+     -0.904464,
+     0,
+     0.185499,
+     0.89573,
+     0.404053,
+     0,
+     0,
+     0.392553,
+     0,
+     1
+    ],
+    "worldMatrix": [
+     1.000026,
+     -0.000001,
+     -0.000003,
+     0,
+     -0.000001,
+     -0.447214,
+     0.894427,
+     0,
+     0.000005,
+     -0.894428,
+     -0.447214,
+     0,
+     -0.231251,
+     0.10175,
+     -0.00925,
+     1
+    ]
+   },
+   {
+    "name": "ball_r",
+    "parent": "foot_r",
+    "localMatrix": [
+     -1,
+     0,
+     -0.000006,
+     0,
+     0.000003,
+     0.894427,
+     -0.447213,
+     0,
+     0.000005,
+     -0.447213,
+     -0.894428,
+     0,
+     0,
+     0.144785,
+     0,
+     1
+    ],
+    "worldMatrix": [
+     -1.000026,
+     0.000007,
+     0.000005,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0.000001,
+     1.000001,
+     0.000001,
+     0,
+     -0.231251,
+     0.037,
+     0.12025,
+     1
+    ]
+   },
+   {
+    "name": "thigh_l",
+    "parent": "pelvis",
+    "localMatrix": [
+     0.989664,
+     0.101269,
+     0.101797,
+     0,
+     0.101795,
+     -0.994806,
+     0,
+     0,
+     0.101265,
+     0.010362,
+     -0.994806,
+     0,
+     0.13505,
+     0.00925,
+     0,
+     1
+    ],
+    "worldMatrix": [
+     0.989664,
+     0.101269,
+     0.101797,
+     0,
+     0.101795,
+     -0.994806,
+     0,
+     0,
+     0.101265,
+     0.010362,
+     -0.994806,
+     0,
+     0.13505,
+     0.888,
+     0,
+     1
+    ]
+   },
+   {
+    "name": "calf_l",
+    "parent": "thigh_l",
+    "localMatrix": [
+     0.998547,
+     -0.036184,
+     -0.039944,
+     0,
+     0.037298,
+     0.998926,
+     0.027503,
+     0,
+     0.038905,
+     -0.028953,
+     0.998823,
+     0,
+     0,
+     0.399827,
+     0,
+     1
+    ],
+    "worldMatrix": [
+     0.980498,
+     0.136704,
+     0.141385,
+     0,
+     0.141384,
+     -0.989675,
+     -0.023564,
+     0,
+     0.136702,
+     0.043093,
+     -0.989675,
+     0,
+     0.175751,
+     0.49025,
+     0,
+     1
+    ]
+   },
+   {
+    "name": "foot_l",
+    "parent": "calf_l",
+    "localMatrix": [
+     0.980471,
+     0.141384,
+     0.136701,
+     0,
+     0.065321,
+     0.42152,
+     -0.904464,
+     0,
+     -0.185499,
+     0.89573,
+     0.404053,
+     0,
+     0,
+     0.392553,
+     0,
+     1
+    ],
+    "worldMatrix": [
+     1.000026,
+     0.000001,
+     0.000003,
+     0,
+     0.000001,
+     -0.447214,
+     0.894427,
+     0,
+     -0.000005,
+     -0.894428,
+     -0.447214,
+     0,
+     0.231251,
+     0.10175,
+     -0.00925,
+     1
+    ]
+   },
+   {
+    "name": "ball_l",
+    "parent": "foot_l",
+    "localMatrix": [
+     -1,
+     0,
+     0.000006,
+     0,
+     -0.000003,
+     0.894427,
+     -0.447213,
+     0,
+     -0.000005,
+     -0.447213,
+     -0.894428,
+     0,
+     0,
+     0.144785,
+     0,
+     1
+    ],
+    "worldMatrix": [
+     -1.000026,
+     -0.000007,
+     -0.000005,
+     0,
+     0,
+     0,
+     1,
+     0,
+     -0.000001,
+     1.000001,
+     0.000001,
+     0,
+     0.231251,
+     0.037,
+     0.12025,
+     1
+    ]
+   }
+  ]
+ },
+ "differingBones": [
+  "hand_r",
+  "hand_l"
+ ],
+ "alignment": {
+  "scale": 1.85,
+  "rotationY": -1.5707963267948966,
+  "translation": [
+   0,
+   0.925,
+   0
+  ]
+ },
+ "parts": [
+  {
+   "id": 0,
+   "label": "Right trousers",
+   "category": "clothing",
+   "bodyCandidate": true,
+   "decision": "reuse-fit",
+   "module": "clothing.trousers",
+   "note": "Retain silhouette; repair waistband and test knees after separation.",
+   "at": [
+    -0.23,
+    0.61,
+    0
+   ],
+   "sourceNode": "tripo_part_0",
+   "triangles": 26622,
+   "weldedVertices": 13516,
+   "boundaryEdges": 426,
+   "nonManifoldEdges": 21,
+   "bounds": {
+    "min": [
+     -0.280158,
+     0.082664,
+     -0.160181
+    ],
+    "max": [
+     0.020815,
+     0.973732,
+     0.159993
+    ]
+   },
+   "center": [
+    -0.129671,
+    0.528198,
+    -0.000094
+   ]
+  },
+  {
+   "id": 1,
+   "label": "Generated rifle / right hand",
+   "category": "discard",
+   "bodyCandidate": false,
+   "decision": "replace",
+   "module": "weapon.external",
+   "note": "Right hand is fused into this source piece. Extract as a reference, then rebuild the glove; use Workbench rifles.",
+   "at": [
+    -1.95,
+    1.12,
+    0
+   ],
+   "sourceNode": "tripo_part_1",
+   "triangles": 19710,
+   "weldedVertices": 9895,
+   "boundaryEdges": 90,
+   "nonManifoldEdges": 9,
+   "bounds": {
+    "min": [
+     -0.417906,
+     0.281923,
+     -0.040312
+    ],
+    "max": [
+     -0.279902,
+     1.179321,
+     0.263245
+    ]
+   },
+   "center": [
+    -0.348904,
+    0.730622,
+    0.111466
+   ]
+  },
+  {
+   "id": 2,
+   "label": "Left trousers",
+   "category": "clothing",
+   "bodyCandidate": true,
+   "decision": "reuse-fit",
+   "module": "clothing.trousers",
+   "note": "Retain silhouette and match the opposite waistband and knee joins.",
+   "at": [
+    0.23,
+    0.61,
+    0
+   ],
+   "sourceNode": "tripo_part_2",
+   "triangles": 22324,
+   "weldedVertices": 11367,
+   "boundaryEdges": 418,
+   "nonManifoldEdges": 9,
+   "bounds": {
+    "min": [
+     -0.006294,
+     0.082677,
+     -0.156965
+    ],
+    "max": [
+     0.273827,
+     0.973329,
+     0.159887
+    ]
+   },
+   "center": [
+    0.133766,
+    0.528003,
+    0.001461
+   ]
+  },
+  {
+   "id": 3,
+   "label": "Right sleeve",
+   "category": "clothing",
+   "bodyCandidate": true,
+   "decision": "repair",
+   "module": "clothing.jacket",
+   "note": "Rebuild shoulder/armhole joins to the clean jacket; preserve the sleeve and cuff outline.",
+   "at": [
+    -0.64,
+    1.38,
+    0
+   ],
+   "sourceNode": "tripo_part_3",
+   "triangles": 11663,
+   "weldedVertices": 5989,
+   "boundaryEdges": 321,
+   "nonManifoldEdges": 9,
+   "bounds": {
+    "min": [
+     -0.406917,
+     1.020866,
+     -0.139353
+    ],
+    "max": [
+     -0.146047,
+     1.513848,
+     0.075158
+    ]
+   },
+   "center": [
+    -0.276482,
+    1.267357,
+    -0.032098
+   ]
+  },
+  {
+   "id": 4,
+   "label": "Jacket + fused vest",
+   "category": "fused",
+   "bodyCandidate": true,
+   "decision": "rebuild",
+   "module": "clothing.jacket",
+   "note": "Vest relief is part of the torso mesh. Reconstruct a complete cloth torso and clean UVs before making a separate carrier.",
+   "at": [
+    0,
+    1.43,
+    0
+   ],
+   "sourceNode": "tripo_part_4",
+   "triangles": 30192,
+   "weldedVertices": 16118,
+   "boundaryEdges": 2070,
+   "nonManifoldEdges": 18,
+   "bounds": {
+    "min": [
+     -0.213198,
+     0.943591,
+     -0.199995
+    ],
+    "max": [
+     0.259308,
+     1.555846,
+     0.200448
+    ]
+   },
+   "center": [
+    0.023055,
+    1.249718,
+    0.000226
+   ]
+  },
+  {
+   "id": 5,
+   "label": "Left sleeve",
+   "category": "clothing",
+   "bodyCandidate": true,
+   "decision": "repair",
+   "module": "clothing.jacket",
+   "note": "Repair shoulder/armhole joins; preserve the patch as an independent future material region.",
+   "at": [
+    0.64,
+    1.38,
+    0
+   ],
+   "sourceNode": "tripo_part_5",
+   "triangles": 13056,
+   "weldedVertices": 6668,
+   "boundaryEdges": 282,
+   "nonManifoldEdges": 3,
+   "bounds": {
+    "min": [
+     0.139181,
+     0.946397,
+     -0.140147
+    ],
+    "max": [
+     0.403455,
+     1.513835,
+     0.079626
+    ]
+   },
+   "center": [
+    0.271318,
+    1.230116,
+    -0.03026
+   ]
+  },
+  {
+   "id": 6,
+   "label": "Harness + front satchel",
+   "category": "fused",
+   "bodyCandidate": false,
+   "decision": "rebuild",
+   "module": "rig.cross-body",
+   "note": "Strap, attachment details and satchel form one piece; rebuild separate straps and a removable bag.",
+   "at": [
+    -1.28,
+    1.66,
+    0
+   ],
+   "sourceNode": "tripo_part_6",
+   "triangles": 9481,
+   "weldedVertices": 4995,
+   "boundaryEdges": 515,
+   "nonManifoldEdges": 0,
+   "bounds": {
+    "min": [
+     -0.198172,
+     1.003869,
+     0.011343
+    ],
+    "max": [
+     0.1498,
+     1.538215,
+     0.274493
+    ]
+   },
+   "center": [
+    -0.024186,
+    1.271042,
+    0.142918
+   ]
+  },
+  {
+   "id": 7,
+   "label": "Scarf",
+   "category": "equipment",
+   "bodyCandidate": false,
+   "decision": "repair",
+   "module": "neck.scarf",
+   "note": "Keep fabric language, repair inner surface and fit to a complete neck instead of hiding a hole.",
+   "at": [
+    0.68,
+    1.98,
+    0
+   ],
+   "sourceNode": "tripo_part_7",
+   "triangles": 6795,
+   "weldedVertices": 3628,
+   "boundaryEdges": 463,
+   "nonManifoldEdges": 3,
+   "bounds": {
+    "min": [
+     -0.122737,
+     1.397247,
+     -0.211718
+    ],
+    "max": [
+     0.131771,
+     1.630579,
+     0.134009
+    ]
+   },
+   "center": [
+    0.004517,
+    1.513913,
+    -0.038855
+   ]
+  },
+  {
+   "id": 8,
+   "label": "Hood + covered head",
+   "category": "fused",
+   "bodyCandidate": true,
+   "decision": "rebuild",
+   "module": "head.hood-mask",
+   "note": "Use the complete textured source as the facial reference. Split hood and mask from a complete head/neck; do not cap facial UV seams.",
+   "at": [
+    0,
+    2.1,
+    0
+   ],
+   "sourceNode": "tripo_part_8",
+   "triangles": 10758,
+   "weldedVertices": 5504,
+   "boundaryEdges": 252,
+   "nonManifoldEdges": 3,
+   "bounds": {
+    "min": [
+     -0.116577,
+     1.567304,
+     -0.137483
+    ],
+    "max": [
+     0.115848,
+     1.85,
+     0.141727
+    ]
+   },
+   "center": [
+    -0.000364,
+    1.708652,
+    0.002122
+   ]
+  },
+  {
+   "id": 9,
+   "label": "Belt pouch",
+   "category": "equipment",
+   "bodyCandidate": false,
+   "decision": "reuse-fit",
+   "module": "pouch.belt",
+   "note": "Reuse as shape reference; add a complete rear surface and independent belt mount.",
+   "at": [
+    -1.25,
+    0.96,
+    0
+   ],
+   "sourceNode": "tripo_part_9",
+   "triangles": 4199,
+   "weldedVertices": 2201,
+   "boundaryEdges": 203,
+   "nonManifoldEdges": 3,
+   "bounds": {
+    "min": [
+     -0.124126,
+     0.897446,
+     -0.240109
+    ],
+    "max": [
+     0.126284,
+     1.071823,
+     -0.1238
+    ]
+   },
+   "center": [
+    0.001079,
+    0.984634,
+    -0.181954
+   ]
+  },
+  {
+   "id": 10,
+   "label": "Sidearm holster",
+   "category": "equipment",
+   "bodyCandidate": false,
+   "decision": "repair",
+   "module": "holster.thigh",
+   "note": "Separate thigh straps and belt adapter; motion follows the thigh without stretching the belt.",
+   "at": [
+    -1.22,
+    0.51,
+    0
+   ],
+   "sourceNode": "tripo_part_10",
+   "triangles": 5510,
+   "weldedVertices": 2833,
+   "boundaryEdges": 155,
+   "nonManifoldEdges": 1,
+   "bounds": {
+    "min": [
+     -0.305212,
+     0.695877,
+     -0.111578
+    ],
+    "max": [
+     -0.179091,
+     1.037868,
+     0.059243
+    ]
+   },
+   "center": [
+    -0.242151,
+    0.866872,
+    -0.026167
+   ]
+  },
+  {
+   "id": 11,
+   "label": "Left boot",
+   "category": "clothing",
+   "bodyCandidate": true,
+   "decision": "reuse-fit",
+   "module": "clothing.boots",
+   "note": "Keep silhouette and repair the trouser/boot overlap boundary.",
+   "at": [
+    0.26,
+    0.09,
+    0
+   ],
+   "sourceNode": "tripo_part_11",
+   "triangles": 4430,
+   "weldedVertices": 2258,
+   "boundaryEdges": 84,
+   "nonManifoldEdges": 0,
+   "bounds": {
+    "min": [
+     0.144542,
+     0,
+     -0.149539
+    ],
+    "max": [
+     0.313706,
+     0.109698,
+     0.150524
+    ]
+   },
+   "center": [
+    0.229124,
+    0.054849,
+    0.000492
+   ]
+  },
+  {
+   "id": 12,
+   "label": "Left glove and wrist",
+   "category": "clothing",
+   "bodyCandidate": true,
+   "decision": "rebuild",
+   "module": "body.hand-l",
+   "note": "The existing closed shape cannot articulate fingers. Rebuild palm, thumb and finger groups using this outline.",
+   "at": [
+    0.64,
+    0.94,
+    0
+   ],
+   "sourceNode": "tripo_part_12",
+   "triangles": 4257,
+   "weldedVertices": 2160,
+   "boundaryEdges": 61,
+   "nonManifoldEdges": 0,
+   "bounds": {
+    "min": [
+     0.30657,
+     0.762638,
+     0.009609
+    ],
+    "max": [
+     0.417906,
+     0.97811,
+     0.120218
+    ]
+   },
+   "center": [
+    0.362238,
+    0.870374,
+    0.064913
+   ]
+  },
+  {
+   "id": 13,
+   "label": "Hip utility pouch",
+   "category": "equipment",
+   "bodyCandidate": false,
+   "decision": "reuse-fit",
+   "module": "pouch.utility",
+   "note": "Shape reference for a complete detachable pouch with a defined footprint.",
+   "at": [
+    1.23,
+    1.39,
+    0
+   ],
+   "sourceNode": "tripo_part_13",
+   "triangles": 3002,
+   "weldedVertices": 1574,
+   "boundaryEdges": 144,
+   "nonManifoldEdges": 0,
+   "bounds": {
+    "min": [
+     0.173678,
+     0.818905,
+     -0.050567
+    ],
+    "max": [
+     0.259882,
+     1.0187,
+     0.110936
+    ]
+   },
+   "center": [
+    0.21678,
+    0.918802,
+    0.030185
+   ]
+  },
+  {
+   "id": 14,
+   "label": "Shoulder tab",
+   "category": "equipment",
+   "bodyCandidate": false,
+   "decision": "replace",
+   "module": "carrier.shoulder",
+   "note": "Rebuild as part of the new carrier shoulder assembly; do not leave this tab floating on clothing.",
+   "at": [
+    -0.73,
+    2.05,
+    0
+   ],
+   "sourceNode": "tripo_part_14",
+   "triangles": 1058,
+   "weldedVertices": 581,
+   "boundaryEdges": 104,
+   "nonManifoldEdges": 0,
+   "bounds": {
+    "min": [
+     0.097471,
+     1.444162,
+     0.007149
+    ],
+    "max": [
+     0.205416,
+     1.523008,
+     0.132932
+    ]
+   },
+   "center": [
+    0.151444,
+    1.483585,
+    0.07004
+   ]
+  },
+  {
+   "id": 15,
+   "label": "Left knee pad",
+   "category": "equipment",
+   "bodyCandidate": false,
+   "decision": "reuse-fit",
+   "module": "guard.knee-l",
+   "note": "Repair back surface and author knee-bend fit with independent straps.",
+   "at": [
+    0.72,
+    0.52,
+    0
+   ],
+   "sourceNode": "tripo_part_15",
+   "triangles": 1190,
+   "weldedVertices": 634,
+   "boundaryEdges": 76,
+   "nonManifoldEdges": 0,
+   "bounds": {
+    "min": [
+     0.109012,
+     0.41214,
+     0.019703
+    ],
+    "max": [
+     0.22986,
+     0.580916,
+     0.09663
+    ]
+   },
+   "center": [
+    0.169436,
+    0.496528,
+    0.058166
+   ]
+  },
+  {
+   "id": 16,
+   "label": "Floating rifle detail",
+   "category": "discard",
+   "bodyCandidate": false,
+   "decision": "discard",
+   "module": "none",
+   "note": "Generated weapon fragment; excluded from the modular character.",
+   "at": [
+    -1.67,
+    2.21,
+    0
+   ],
+   "sourceNode": "tripo_part_16",
+   "triangles": 1126,
+   "weldedVertices": 579,
+   "boundaryEdges": 30,
+   "nonManifoldEdges": 0,
+   "bounds": {
+    "min": [
+     -0.361751,
+     0.766853,
+     0.214729
+    ],
+    "max": [
+     -0.300825,
+     0.909439,
+     0.272853
+    ]
+   },
+   "center": [
+    -0.331288,
+    0.838146,
+    0.243791
+   ]
+  },
+  {
+   "id": 17,
+   "label": "Right boot",
+   "category": "clothing",
+   "bodyCandidate": true,
+   "decision": "reuse-fit",
+   "module": "clothing.boots",
+   "note": "Retain outline; match ankle seam and sole height to the left boot.",
+   "at": [
+    -0.26,
+    0.09,
+    0
+   ],
+   "sourceNode": "tripo_part_17",
+   "triangles": 4147,
+   "weldedVertices": 2115,
+   "boundaryEdges": 81,
+   "nonManifoldEdges": 0,
+   "bounds": {
+    "min": [
+     -0.317867,
+     0.000294,
+     -0.149389
+    ],
+    "max": [
+     -0.147166,
+     0.109752,
+     0.150301
+    ]
+   },
+   "center": [
+    -0.232517,
+    0.055023,
+    0.000456
+   ]
+  },
+  {
+   "id": 18,
+   "label": "Utility pouch",
+   "category": "equipment",
+   "bodyCandidate": false,
+   "decision": "reuse-fit",
+   "module": "pouch.utility",
+   "note": "Rebuild back/mount surface and clean its texture; it must survive removal from the carrier.",
+   "at": [
+    1.24,
+    1.83,
+    0
+   ],
+   "sourceNode": "tripo_part_18",
+   "triangles": 3569,
+   "weldedVertices": 1877,
+   "boundaryEdges": 183,
+   "nonManifoldEdges": 0,
+   "bounds": {
+    "min": [
+     -0.272765,
+     1.014317,
+     0.038577
+    ],
+    "max": [
+     -0.142121,
+     1.226354,
+     0.180463
+    ]
+   },
+   "center": [
+    -0.207443,
+    1.120335,
+    0.10952
+   ]
+  },
+  {
+   "id": 19,
+   "label": "Magazine pouch cluster",
+   "category": "equipment",
+   "bodyCandidate": false,
+   "decision": "rebuild",
+   "module": "pouch.rifle",
+   "note": "Split the cluster into repeatable single pouches with independent contents and mount footprints.",
+   "at": [
+    1.22,
+    0.97,
+    0
+   ],
+   "sourceNode": "tripo_part_19",
+   "triangles": 3394,
+   "weldedVertices": 1763,
+   "boundaryEdges": 138,
+   "nonManifoldEdges": 0,
+   "bounds": {
+    "min": [
+     0.066308,
+     1.060082,
+     0.120706
+    ],
+    "max": [
+     0.189591,
+     1.284314,
+     0.224685
+    ]
+   },
+   "center": [
+    0.127949,
+    1.172198,
+    0.172696
+   ]
+  },
+  {
+   "id": 20,
+   "label": "Back pouch",
+   "category": "equipment",
+   "bodyCandidate": false,
+   "decision": "reuse-fit",
+   "module": "bag.daypack",
+   "note": "Reference only for the small bag silhouette; author a closed back and separate shoulder straps.",
+   "at": [
+    1.24,
+    0.49,
+    0
+   ],
+   "sourceNode": "tripo_part_20",
+   "triangles": 3365,
+   "weldedVertices": 1763,
+   "boundaryEdges": 159,
+   "nonManifoldEdges": 0,
+   "bounds": {
+    "min": [
+     -0.124022,
+     1.072176,
+     -0.274493
+    ],
+    "max": [
+     0.12246,
+     1.24277,
+     -0.163937
+    ]
+   },
+   "center": [
+    -0.000781,
+    1.157473,
+    -0.219215
+   ]
+  },
+  {
+   "id": 21,
+   "label": "Right wrist cuff",
+   "category": "clothing",
+   "bodyCandidate": true,
+   "decision": "repair",
+   "module": "clothing.cuff-r",
+   "note": "This is a cuff, not the missing right hand. Repair the wrist boundary after rebuilding the hand.",
+   "at": [
+    -0.65,
+    0.96,
+    0
+   ],
+   "sourceNode": "tripo_part_21",
+   "triangles": 1931,
+   "weldedVertices": 1041,
+   "boundaryEdges": 151,
+   "nonManifoldEdges": 0,
+   "bounds": {
+    "min": [
+     -0.399781,
+     0.947764,
+     -0.057752
+    ],
+    "max": [
+     -0.294165,
+     1.069241,
+     0.079508
+    ]
+   },
+   "center": [
+    -0.346973,
+    1.008503,
+    0.010878
+   ]
+  },
+  {
+   "id": 22,
+   "label": "Carabiner",
+   "category": "equipment",
+   "bodyCandidate": false,
+   "decision": "reuse-fit",
+   "module": "accessory.clip",
+   "note": "Make a complete small accessory with a clip point owned by its parent item.",
+   "at": [
+    -0.75,
+    0.16,
+    0
+   ],
+   "sourceNode": "tripo_part_22",
+   "triangles": 1222,
+   "weldedVertices": 642,
+   "boundaryEdges": 64,
+   "nonManifoldEdges": 0,
+   "bounds": {
+    "min": [
+     -0.137016,
+     0.847036,
+     0.143969
+    ],
+    "max": [
+     -0.064373,
+     1.010647,
+     0.173707
+    ]
+   },
+   "center": [
+    -0.100694,
+    0.928842,
+    0.158838
+   ]
+  },
+  {
+   "id": 23,
+   "label": "Right knee pad",
+   "category": "equipment",
+   "bodyCandidate": false,
+   "decision": "reuse-fit",
+   "module": "guard.knee-r",
+   "note": "Match left knee guard and author the mirrored fitted mount.",
+   "at": [
+    -0.72,
+    0.53,
+    0
+   ],
+   "sourceNode": "tripo_part_23",
+   "triangles": 1050,
+   "weldedVertices": 561,
+   "boundaryEdges": 70,
+   "nonManifoldEdges": 0,
+   "bounds": {
+    "min": [
+     -0.232322,
+     0.411856,
+     0.028306
+    ],
+    "max": [
+     -0.115311,
+     0.58023,
+     0.096196
+    ]
+   },
+   "center": [
+    -0.173816,
+    0.496043,
+    0.062251
+   ]
+  },
+  {
+   "id": 24,
+   "label": "Radio",
+   "category": "equipment",
+   "bodyCandidate": false,
+   "decision": "repair",
+   "module": "accessory.radio",
+   "note": "Separate the radio from its pouch; keep antenna/cable attached to the radio assembly.",
+   "at": [
+    1.25,
+    2.23,
+    0
+   ],
+   "sourceNode": "tripo_part_24",
+   "triangles": 690,
+   "weldedVertices": 364,
+   "boundaryEdges": 38,
+   "nonManifoldEdges": 0,
+   "bounds": {
+    "min": [
+     0.062246,
+     1.257539,
+     0.144475
+    ],
+    "max": [
+     0.175225,
+     1.370901,
+     0.183235
+    ]
+   },
+   "center": [
+    0.118735,
+    1.31422,
+    0.163855
+   ]
+  },
+  {
+   "id": 25,
+   "label": "Split eye fragment",
+   "category": "discard",
+   "bodyCandidate": true,
+   "decision": "replace",
+   "module": "body.head",
+   "note": "Do not use this damaged fragment for the new face. Use the complete textured head reference.",
+   "at": [
+    -0.45,
+    2.27,
+    0
+   ],
+   "sourceNode": "tripo_part_25",
+   "triangles": 627,
+   "weldedVertices": 356,
+   "boundaryEdges": 83,
+   "nonManifoldEdges": 0,
+   "bounds": {
+    "min": [
+     -0.072461,
+     1.688603,
+     0.078386
+    ],
+    "max": [
+     0.069941,
+     1.737894,
+     0.123159
+    ]
+   },
+   "center": [
+    -0.00126,
+    1.713249,
+    0.100773
+   ]
+  },
+  {
+   "id": 26,
+   "label": "Radio badge/detail",
+   "category": "equipment",
+   "bodyCandidate": false,
+   "decision": "replace",
+   "module": "accessory.radio",
+   "note": "Fold into the radio's material/detail definition instead of a separately floating component.",
+   "at": [
+    1.73,
+    2.23,
+    0
+   ],
+   "sourceNode": "tripo_part_26",
+   "triangles": 397,
+   "weldedVertices": 237,
+   "boundaryEdges": 75,
+   "nonManifoldEdges": 0,
+   "bounds": {
+    "min": [
+     0.08097,
+     1.263428,
+     0.136613
+    ],
+    "max": [
+     0.157356,
+     1.363638,
+     0.165128
+    ]
+   },
+   "center": [
+    0.119163,
+    1.313533,
+    0.150871
+   ]
+  }
+ ]
+}
