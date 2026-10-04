@@ -432,3 +432,13 @@ The 2.5-D top-down sprite look for the shooter (RimWorld style) and the retro ov
 - Cost to change: Low (re-run the bake after the importer).
 - Revisit if: A higher-detail runtime mesh, or a source with the textures on the split parts.
 - Owner feedback: —
+
+### TAC-J-44 · The Nokia index explains before it launches: a dithered preview, sounds down a phone line
+- Status: built  ·  Packet: WP-V5
+- Decision: In the index (`menu/`), the first tap, Enter or number key on a demo folds open an explainer under it instead of launching. The explainer holds a 112 x 44 pixel preview of the demo, drawn as grey shapes and ordered-dithered to the two LCD tones about ten times a second. Each demo has its own scene: the convoy under fire, an optic snapping onto a rifle, the operator turning while kit appears, a band member levelling up, a turning wireframe and so on. Below the preview sit the demo's description and a blinking "TAP AGAIN TO OPEN". A second tap on the item or the explainer, Enter, the same number or the OPEN soft key launches the demo; another item moves the explainer there; Escape or BACK folds it shut. While the explainer is open, the demo's sounds come in as if down a GSM call: telephone band, coarse quantiser, codec warble, line hiss, the 217 Hz buzz and occasional drop-outs. They play only when the site's sound preference is on. Sound and About still act at once. Under reduced motion the preview is a still frame and the fold does not animate.
+- Why: Owner request: tapping should explain the demo first, with a small dithered gameplay animation and phone-call sound.
+- Alternatives rejected: Dithered screenshots or video of each demo (bytes, and stale as the demos change); a separate preview screen (loses the place in the menu).
+- Cost / risk: One more tap to reach a demo.
+- Cost to change: Low (`assets/js/previews.js`).
+- Revisit if: The previews should show real captured gameplay.
+- Owner feedback: —

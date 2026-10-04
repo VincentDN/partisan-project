@@ -50,6 +50,24 @@ await check('index: the Nokia screen lies on the table and opens straight on the
   assert.match(first[1], /Weapon Modder/i, '2 is the weapon customiser');
   await page.keyboard.press('ArrowDown');
   assert.equal(await page.evaluate(() => window.PARP_INDEX.index), 1);
+  // the first press folds open the explainer with a dithered preview; the same key again launches the demo
+  await page.keyboard.press('3');
+  assert.equal(await page.evaluate(() => window.PARP_INDEX.open), 2, 'explainer open');
+  await page.waitForTimeout(400);
+  const ink = await page.locator('#fold-2 canvas').evaluate(c => {
+    const d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data;
+    let dark = 0;
+    for (let i = 0; i < d.length; i += 4) dark += d[i] < 60;
+    return dark / (d.length / 4);
+  });
+  assert.ok(ink > 0.05 && ink < 0.95, `the preview draws (${ink.toFixed(2)} ink)`);
+  assert.equal(await page.locator('.menu a[data-i="2"]').getAttribute('aria-expanded'), 'true');
+  // a tap on another item moves the explainer there; a second tap on it launches
+  await page.locator('.menu a[data-i="5"]').click();
+  assert.equal(await page.evaluate(() => window.PARP_INDEX.open), 5);
+  await page.keyboard.press('Escape');
+  assert.equal(await page.evaluate(() => window.PARP_INDEX.open), -1, 'Escape folds it shut');
+  await page.keyboard.press('3');
   await Promise.all([page.waitForURL(/operator\/?$/), page.keyboard.press('3')]);
   noProblems(page);
   await page.close();

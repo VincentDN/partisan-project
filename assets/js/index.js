@@ -1,15 +1,21 @@
 // Partisan Project index browser logic: a keyboard- and click-driven menu in the shape of a 1990s phone.
 // The menu items are real links (so it works without JS and for screen readers); this script adds
 // selection state, number-key jumps, soft keys, the sound toggle and the About screen.
+// The first tap (or Enter, or a number key) on a demo folds open its explainer: a short dithered loop of the demo and
+// its sounds down a phone line (previews.js). A second tap on the same item, or on the explainer, launches it.
 import {soundLayer} from '../../shared/sound-layer.js';
 import {ITEMS} from './items.js';
 import * as ui from '../../shared/ui-sounds.js';
+import {sceneFor, startPreview} from './previews.js';
 
 const $ = s => document.querySelector(s);
 const content = $('#content');
 const sound = soundLayer();
 let index = 0,
-  mode = 'menu';
+  mode = 'menu',
+  open = -1, // the item whose explainer is folded open
+  stopPreview = null;
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const clock = () => new Date().toLocaleTimeString('en-GB', {hour: '2-digit', minute: '2-digit'});
 function chrome(titleLeft, titleRight) {
@@ -27,7 +33,7 @@ function renderMenu() {
   mode = 'menu';
   const rows = ITEMS.map(
     (it, i) =>
-      `<li><a href="${it.href || '#'}" ${it.href && /^https?:/.test(it.href) ? 'rel="noopener"' : ''} data-i="${i}" ${i === index ? 'aria-current="true"' : ''}><span class="n">${i + 1}</span><span class="ic" aria-hidden="true">${it.icon || ''}</span><span>${it.action === 'sound' ? soundLabel() : it.label}</span></a></li>`,
+      `<li><a href="${it.href || '#'}" ${it.href && /^https?:/.test(it.href) ? 'rel="noopener"' : ''} data-i="${i}" ${i === index ? 'aria-current="true"' : ''}${it.href ? ` aria-expanded="false" aria-controls="fold-${i}"` : ''}><span class="n">${i + 1}</span><span class="ic" aria-hidden="true">${it.icon || ''}</span><span>${it.action === 'sound' ? soundLabel() : it.label}</span></a>${it.href ? `<div class="fold" id="fold-${i}" data-i="${i}" hidden></div>` : ''}</li>`,
   ).join('');
   content.innerHTML =
     chrome('MAIN MENU', `${index + 1}/${ITEMS.length}`) +
@@ -40,17 +46,70 @@ function renderMenu() {
         e.preventDefault();
         index = i;
         activate();
+      } else if (open !== i) {
+        // first tap: fold open the explainer; the second tap follows the link
+        e.preventDefault();
+        select(i, false);
+        fold(i);
+      } else {
+        ui.select();
+        closeFold(false);
       }
     });
     a.addEventListener('mouseenter', () => select(+a.dataset.i, false));
     a.addEventListener('focus', () => select(+a.dataset.i, false));
   }
+  open = -1;
   select(index, true);
+}
+/** Fold open item i's explainer (closing any other): the dithered preview, what the demo is, how to open it. */
+function fold(i) {
+  closeFold(false);
+  const it = ITEMS[i],
+    a = content.querySelector(`.menu a[data-i="${i}"]`),
+    box = content.querySelector(`#fold-${i}`);
+  if (!box) return;
+  open = i;
+  ui.select();
+  box.innerHTML = `<canvas aria-hidden="true"></canvas><p>${it.help}</p><p class="go">▶ TAP AGAIN TO OPEN</p>`;
+  box.hidden = false;
+  a.setAttribute('aria-expanded', 'true');
+  box.addEventListener('click', () => a.click(), {once: true}); // a tap on the explainer is the second tap
+  stopPreview = startPreview(box.querySelector('canvas'), sceneFor(it), {withSound: sound.prefs.on, reduceMotion});
+  requestAnimationFrame(() => box.classList.add('open'));
+  setSoftkey('OPEN');
+  $('#help').hidden = true; // the explainer carries the same text
+  box.scrollIntoView({block: 'nearest'});
+}
+function closeFold(sound = true) {
+  if (open < 0) return;
+  stopPreview?.();
+  stopPreview = null;
+  const box = content.querySelector(`#fold-${open}`),
+    a = content.querySelector(`.menu a[data-i="${open}"]`);
+  if (box) {
+    box.classList.remove('open');
+    box.hidden = true;
+    box.replaceChildren();
+  }
+  a?.setAttribute('aria-expanded', 'false');
+  open = -1;
+  setSoftkey('SELECT');
+  const help = $('#help');
+  if (help) help.hidden = false;
+  if (sound) ui.back();
+}
+function setSoftkey(label) {
+  const l = content.querySelector('#sk-l');
+  if (l) l.textContent = label;
 }
 function select(i, scroll = true) {
   const before = index;
   index = (i + ITEMS.length) % ITEMS.length;
-  if (mode === 'menu' && index !== before) ui.tap();
+  if (mode === 'menu' && index !== before) {
+    ui.tap();
+    if (open >= 0 && open !== index) closeFold(false);
+  }
   for (const a of content.querySelectorAll('.menu a')) a.toggleAttribute('aria-current', +a.dataset.i === index);
   for (const a of content.querySelectorAll('.menu a')) if (+a.dataset.i !== index) a.removeAttribute('aria-current');
   const cur = content.querySelector(`.menu a[data-i="${index}"]`);
@@ -71,9 +130,10 @@ function renderAbout() {
     softkeys('', 'BACK');
 }
 function activate() {
+  const it = ITEMS[index];
+  if (mode === 'menu' && it.href && open !== index) return fold(index); // the first select folds open the explainer
   ui.select();
   if (mode === 'about') return renderMenu();
-  const it = ITEMS[index];
   if (it.action === 'sound') {
     sound.prefs.on = !sound.prefs.on;
     sound.save();
@@ -84,9 +144,11 @@ function activate() {
     return;
   }
   if (it.action === 'about') return renderAbout();
+  closeFold(false);
   if (it.href) (/^https?:/.test(it.href) ? window.top : window).location.href = it.href; // outbound links leave the frame
 }
 function back() {
+  if (open >= 0) return closeFold();
   if (mode === 'about') {
     ui.back();
     renderMenu();
@@ -101,7 +163,7 @@ function press(k) {
   else if (k === 'back') back();
   else if (/^[1-9]$/.test(k) && mode === 'menu' && ITEMS[+k - 1]) {
     select(+k - 1);
-    activate();
+    activate(); // a number folds its explainer open; the same number again launches
   }
 }
 addEventListener('keydown', e => {
@@ -117,7 +179,13 @@ addEventListener('keydown', e => {
   };
   const k = map[e.key] || (/^[1-9]$/.test(e.key) ? e.key : null);
   if (!k) return;
-  if (e.key === 'Enter' && document.activeElement?.closest('.menu a') && mode === 'menu') return; // let the focused link navigate
+  if (e.key === 'Enter' && document.activeElement?.closest('.menu a') && mode === 'menu') {
+    // Enter on a focused link: the same two steps as a tap (explainer first, then the demo)
+    e.preventDefault();
+    const i = +document.activeElement.closest('.menu a').dataset.i;
+    if (i !== index) select(i, false);
+    return activate();
+  }
   e.preventDefault();
   press(k);
 });
@@ -151,5 +219,8 @@ window.PARP_INDEX = {
   },
   get index() {
     return index;
+  },
+  get open() {
+    return open;
   },
 };

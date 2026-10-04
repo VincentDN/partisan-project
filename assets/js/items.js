@@ -19,7 +19,7 @@ export const ITEMS = [
     label: 'Operator Modder',
     href: '../operator/',
     icon: px('0111001110111110101001010'),
-    help: 'Demo. Demo. Four operators: dress, repaint and pose them. Hero poses, idles.',
+    help: 'Demo. Recon, Base, Insurgent and Enforcer: dress, repaint and pose them, always armed. Hero poses, idles.',
   },
   {
     label: 'Art Style Lab',

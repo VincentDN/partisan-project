@@ -4,6 +4,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 ## [Unreleased]
 
+### Changed (Nokia index)
+- **Explain, then launch**: the first tap on a demo folds open a small explainer with a dithered preview of its gameplay and its sounds as if heard down a 1990s phone call. A second tap opens the demo. TAC-J-44.
+
 ### Documentation
 - **Walking Through, episode one** (`docs/podcast/walking-through-01-game-engines.md`): a researched, narration-ready episode on which engine could carry the project into a standalone Bannerlord-like game (Unreal 5, Unity 6, Godot 4, Bevy, Flax, Stride, O3DE, modding routes, staying on the web), weighed against this project. Recommends Godot 4 for the RimWorld-style direction, with Unity 6 as runner-up and Unreal 5 for a first-person version.
 
