@@ -134,6 +134,9 @@
   all: unset;
   display: block;
   width: 100%;
+  min-width: 24px; /* a 24 px touch target even for the narrow # column */
+  min-height: 24px;
+  box-sizing: border-box;
   padding: 6px 4px;
   font: 600 11px ui-monospace, Menlo, Consolas, monospace;
   letter-spacing: 0.08em;
