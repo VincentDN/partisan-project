@@ -107,7 +107,14 @@ async function rifleProp(id = 'ak74m') {
 }
 // Depth of field in the warehouse: focused where the camera looks (the hero), the room behind softens. Not in the
 // Art Style Lab, which draws its own screen-space passes.
-const dof = lab ? null : createDof(stage, {focus: cam => cam.position.distanceTo(stage.controls.target)});
+// The same pass gives the lens its grime and flares when a lamp or the rim light looks into it.
+const flareSources = [];
+warehouse.group.traverse(l => {
+  if (l.isPointLight)
+    flareSources.push({light: l, strength: 0.55}); // the hanging bulbs
+  else if (l.isSpotLight) flareSources.push({light: l, strength: l === warehouse.lights.rim ? 1.2 : 0.8});
+});
+const dof = lab ? null : createDof(stage, {focus: cam => cam.position.distanceTo(stage.controls.target), flares: () => flareSources});
 // the room's sound (shared/warehouse-ambience.js): voices, radio calls and weapon handling while the warehouse shows
 const ambience = lab ? null : warehouseAmbience();
 const roomButton = () => {

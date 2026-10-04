@@ -502,3 +502,13 @@ The 2.5-D top-down sprite look for the shooter (RimWorld style) and the retro ov
 - Cost to change: Low (`cncStock`, `mlokHandguard`, `cncGrip`, `clearMagazine` in `workbench/attachments.js`; the bake and export tools).
 - Revisit if: The crew should move in the Weapon Modder's background (a short looping video panorama), or the CNC kit gets real models.
 - Owner feedback: —
+
+### TAC-J-51 · A dirty lens in the Operator Modder
+- Status: built  ·  Packet: WP-V
+- Decision: The Operator Modder's depth-of-field pass (`operator/dof.js`) also draws a subtle dirty-lens flare, after Battlefield and Dishonored 2. Each frame the warehouse's lights are projected to the screen and weighted by how squarely they face the camera (spotlights by their cone, the bulbs always), how far off the frame's edge they sit, and their distance; the shader checks the depth buffer round each one, so a light behind the operator's head only glints past its edge. Visible lights add a tight halo, a thin horizontal streak, three faint tinted ghosts mirrored through the frame's centre, and light up a grime texture on the glass (soft smudges and dust specks, drawn on a canvas at load) near them. The rim light behind the operator counts most. In the default view nothing faces the lens, so it only shows when you orbit low or toward the lamps.
+- Why: Owner request: subtle dirty lens flares when light hits the camera directly, like Battlefield or Dishonored 2.
+- Alternatives rejected: Sprite flares drawn over the canvas (no occlusion by the scene); a full bloom chain (heavier, and it would soften the whole picture).
+- Cost / risk: Up to eight lights, five depth taps each, in the existing full-screen pass.
+- Cost to change: Low (the `lens()` shader function and `flareSources` strengths in `operator/operator.js`; `uLens` scales it all).
+- Revisit if: The Weapon Modder or the shooter should get the same lens.
+- Owner feedback: —

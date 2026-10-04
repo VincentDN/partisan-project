@@ -5,6 +5,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 ## [Unreleased]
 
 ### Added (Operator and Weapon Modders)
+- **Dirty lens** in the Operator Modder: when a lamp or the rim light looks into the camera it glints, streaks faintly and lights the grime on the glass; anything in front of the light hides it. TAC-J-51.
 - **Room sound**: the warehouse is alive with real recordings: rain on the roof, men talking in the next bay, radio calls, rifles being charged and loaded, bolts, brass, tools, laughter, coughs, footsteps. A Room sound button turns it off. TAC-J-49.
 
 ### Added (Weapon Modder)

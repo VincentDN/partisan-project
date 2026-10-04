@@ -160,6 +160,18 @@ await check('operator: loads, equipment toggles, zones are independent, hash rou
   // the crew in the background (three insurgents, one with a rifle in hand) and the depth of field on the room
   await page.waitForFunction(() => window.PARP_OPERATOR.crew?.figures.length === 3, null, {timeout: 60000});
   assert.equal(await page.evaluate(() => window.PARP_OPERATOR.dof.on), true, 'the background is out of focus');
+  // the dirty lens: looking up past the operator toward the rim light, the light is picked up as a flare source
+  const flares = await page.evaluate(async () => {
+    const o = window.PARP_OPERATOR,
+      {camera, controls} = o.stage;
+    camera.position.set(-0.4, 0.9, 2.2);
+    controls.target.set(-1.2, 2.4, -3);
+    controls.update();
+    o.stage.wake(2000);
+    await new Promise(r => setTimeout(r, 600));
+    return o.dof.uniforms.uFlareCount.value;
+  });
+  assert.ok(flares >= 1, `lens flare sources in view: ${flares}`);
   const crewInfo = await page.evaluate(() => {
     const o = window.PARP_OPERATOR,
       V = o.stage.T.Vector3;
