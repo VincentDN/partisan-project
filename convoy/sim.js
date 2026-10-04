@@ -691,18 +691,11 @@ export class Sim {
         p.reload = 0;
         p.reloading = null;
         p.cd = 0.35; // bring it up
-        p.aim = 0;
         this.sound({type: 'switch', x: p.x, z: p.z, weapon: p.weapon, unit: p.id});
       }
       if (input.reload) this.startReload(p);
       if (p.mags[p.weapon] === 0 && p.reload === 0) this.startReload(p);
-      // Aim, then fire: a string of shots starts after the weapon's warmup (the aim pie); a short let-go keeps it up.
-      const warm = WEAPONS[p.weapon].warmup || 0;
-      if (input.fire && input.ax !== undefined) {
-        p.aimIdle = 0;
-        p.aim = Math.min(warm, (p.aim || 0) + dt);
-        if (p.aim >= warm) this.shoot(p, input.ax, input.az);
-      } else if ((p.aimIdle = (p.aimIdle || 0) + dt) > 0.35) p.aim = 0;
+      if (input.fire && input.ax !== undefined) this.shoot(p, input.ax, input.az);
       this.interact(p, !!input.interact, dt);
     }
     // AI: perception and decisions at 5 Hz per unit (staggered), actions every step

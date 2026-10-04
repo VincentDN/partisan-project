@@ -24,6 +24,7 @@ const pages = [
   ['workbench', 'workbench/', async p => p.waitForSelector('#build .slot', {timeout: 60000})],
   ['operator', 'operator/', async p => p.waitForFunction(() => window.PARP_OPERATOR?.ready, null, {timeout: 60000})],
   ['operator (base)', 'operator/#base=base', async p => p.waitForFunction(() => window.PARP_OPERATOR?.ready, null, {timeout: 60000})],
+  ['rebel band', 'band/', async p => p.waitForFunction(() => window.PARP_BAND?.ready, null, {timeout: 60000})],
   ['partisan tactical', 'convoy/', async p => p.waitForFunction(() => window.PARP_SPRITES?.ready, null, {timeout: 60000})],
   [
     'partisan tactical, old 3-D view',

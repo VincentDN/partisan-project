@@ -685,7 +685,7 @@ export async function createSpriteRenderer(view) {
     }
     if (motes.length > 400) motes.splice(0, motes.length - 400);
   }
-  /** RimWorld's aim pie: a wedge over the shooter that fills while it aims before a string of shots. */
+  /** RimWorld's aim pie over an enemy shooter: a wedge that fills while it aims before its next burst. */
   function aimPie(u, frac) {
     const X = sx(u.x),
       Y = sy(u.z) - 1.55 * ppm,
@@ -702,9 +702,7 @@ export async function createSpriteRenderer(view) {
     ctx.fill();
   }
   function pies(sim) {
-    const p = sim.player,
-      warm = WEAPONS[p.weapon]?.warmup || 0;
-    if (p.alive && p.aim > 0 && p.aim < warm) aimPie(p, p.aim / warm);
+    const p = sim.player;
     for (const u of sim.units) {
       if (u === p || !u.alive || !(u.pause > 0) || !FIRING.has(u.state) || !u.alert || !u.visible?.some(e => e.alive)) {
         pauseMax.delete(u.id);
@@ -714,6 +712,64 @@ export async function createSpriteRenderer(view) {
       pauseMax.set(u.id, max);
       if (u.state === 'mounted' || u.escaped) continue;
       aimPie(u, 1 - u.pause / max);
+    }
+  }
+  /** Ammo and reload, on the map: rounds in the magazine and in reserve bottom left, a reload ring round the cursor. */
+  function ammoHud(sim, aim) {
+    const p = sim.player;
+    if (!p.alive) return;
+    const W = WEAPONS[p.weapon],
+      mag = p.mags[p.weapon],
+      reserve = p.reserve[p.weapon],
+      reloading = p.reload > 0 && p.reloading === p.weapon,
+      low = !reloading && mag <= Math.max(1, Math.floor(W.mag * 0.2));
+    const X = 16,
+      Y = Hh - 100; // above the controls line
+    ctx.fillStyle = 'rgba(12,14,10,.72)';
+    ctx.beginPath();
+    ctx.roundRect(X, Y, 168, 48, 6);
+    ctx.fill();
+    ctx.textBaseline = 'alphabetic';
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#c9c6b4';
+    ctx.font = '600 11px ui-monospace, monospace';
+    ctx.fillText(W.label.toUpperCase(), X + 10, Y + 16);
+    ctx.font = '700 22px ui-monospace, monospace';
+    ctx.fillStyle = low ? (Math.sin(performance.now() / 120) > 0 ? '#ff7a5c' : '#f2c9a0') : '#f2f2e6';
+    const count = reloading ? '--' : String(mag);
+    ctx.fillText(count, X + 10, Y + 40);
+    const cw = ctx.measureText(count).width;
+    ctx.font = '600 13px ui-monospace, monospace';
+    ctx.fillStyle = '#9b988a';
+    ctx.fillText(`/ ${W.mag}   ${reserve === Infinity ? '+∞' : '+' + reserve}`, X + 16 + cw, Y + 40);
+    if (reloading) {
+      const k = 1 - p.reload / W.reload;
+      ctx.fillStyle = 'rgba(255,255,255,.15)';
+      ctx.fillRect(X + 10, Y + 43, 148, 3);
+      ctx.fillStyle = '#ffd36b';
+      ctx.fillRect(X + 10, Y + 43, 148 * k, 3);
+      if (aim) {
+        // and round the cursor, so the eyes need not leave the fight
+        ctx.strokeStyle = 'rgba(0,0,0,.5)';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.arc(sx(aim.x), sy(aim.z), 17, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.strokeStyle = '#ffd36b';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.arc(sx(aim.x), sy(aim.z), 17, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * k);
+        ctx.stroke();
+        ctx.font = '600 10px ui-monospace, monospace';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#ffd36b';
+        ctx.fillText('RELOADING', sx(aim.x), sy(aim.z) + 32);
+      }
+    } else if (mag === 0 && aim) {
+      ctx.font = '600 10px ui-monospace, monospace';
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#ff7a5c';
+      ctx.fillText(reserve > 0 ? 'R RELOAD' : 'EMPTY', sx(aim.x), sy(aim.z) + 32);
     }
   }
   /** Hovering an enemy: the chance your next round hits it, RimWorld's targeting readout. */
@@ -920,6 +976,7 @@ export async function createSpriteRenderer(view) {
       screen.a *= Math.exp(-rdt * 7);
     }
     hitReadout(sim, aim);
+    if (aim) ammoHud(sim, aim);
     if (aim && p.alive) {
       ctx.strokeStyle = 'rgba(255,255,255,.85)';
       ctx.lineWidth = 1.5;

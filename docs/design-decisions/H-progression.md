@@ -147,3 +147,13 @@ list above is a starting point and is expected to change after feedback.
 - Cost to change: Low.
 - Revisit if: —
 - Owner feedback: —
+
+### TAC-H-12 · Rebel Band: a levelling and equipment demo on set paths
+- Status: built (demo)  ·  Packet: WP-P (early)
+- Decision: `band/` shows Bannerlord's party screen in the RimWorld + Nokia style. The stash is on the left, the leader or selected troop is a large paper-doll pawn in the middle, and the band is on the right by class (riflemen, heavy weapons, marksmen, support) with tier, count, experience and upgrade-ready counts. Troops climb set paths from the Village Volunteer, for example Partisan, then Rifleman, then Shock Trooper; or Hunter, Sharpshooter, Ghost Sniper; or Runner, then Medic, Signaller or Sapper. Each step spends the soldier's experience and the equipment the new troop carries, taken from the stash. The demo starts after a depot raid, with a generous stash and soldiers ready to upgrade. "Raid a patrol" gives experience, loot and volunteers, and levels the leader, whose Leadership raises the band limit. State lives in the browser (`parp-band`). The rules are pure and tested (`band/troops.js`).
+- Why: Owner request: a demo of levelling along set paths where every path needs specific equipment, with plenty of stolen weapons to play with.
+- Alternatives rejected: Free-form skill points (no equipment pressure); per-soldier inventories (too fine for a band screen).
+- Cost / risk: Numbers are placeholders; raids are a button, not missions.
+- Cost to change: Low (data in `band/troops.js`).
+- Revisit if: Missions should feed the band (convoy loot into the stash, casualties out of it).
+- Owner feedback: —

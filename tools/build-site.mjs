@@ -29,6 +29,7 @@ const ALLOW = [
   'operator',
   'viewer',
   'convoy',
+  'band',
   'docs/game-design-master-doc.html',
   'docs/moodboard',
   'inbound',

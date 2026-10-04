@@ -44,7 +44,7 @@ await check('index: the Nokia screen lies on the table and opens straight on the
     'LCD is laid on the phone with a projective transform',
   );
   assert.equal(await page.evaluate(() => window.PARP_INDEX.mode), 'menu', 'no splash screen');
-  assert.equal(await page.locator('.menu a').count(), 13);
+  assert.equal(await page.locator('.menu a').count(), 14);
   const first = await page.locator('.menu a').allInnerTexts();
   assert.match(first[0], /Weapon Workbench/i, '1 is the opening scene');
   assert.match(first[1], /Weapon Modder/i, '2 is the weapon customiser');
@@ -497,6 +497,23 @@ await check('design doc: sections and live progress render', async () => {
   assert.equal(await page.locator('#credits').count(), 0, 'no credits section');
   await page.click('#signal');
   await page.waitForSelector('.frame canvas', {timeout: 15000});
+  noProblems(page);
+  await page.close();
+});
+
+await check('rebel band: the band, the stash and an upgrade along a path', async () => {
+  const page = await open(browser, server.url + 'band/');
+  await page.evaluate(() => localStorage.removeItem('parp-band'));
+  await page.reload();
+  await page.waitForFunction(() => window.PARP_BAND?.ready, null, {timeout: 60000});
+  assert.ok((await page.locator('#groups .card').count()) >= 6, 'troop cards');
+  assert.ok((await page.locator('#stash .item').count()) >= 15, 'stash items');
+  await page.locator('#groups .card', {hasText: 'Village Volunteer'}).click();
+  const before = await page.evaluate(() => window.PARP_BAND.state.band.partisan.count);
+  await page.locator('.up', {hasText: 'Partisan'}).getByRole('button', {name: 'Upgrade 1'}).click();
+  assert.equal(await page.evaluate(() => window.PARP_BAND.state.band.partisan.count), before + 1);
+  await page.locator('#skirmish').click();
+  assert.equal(await page.evaluate(() => window.PARP_BAND.state.raids), 1);
   noProblems(page);
   await page.close();
 });

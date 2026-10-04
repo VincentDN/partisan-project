@@ -4,7 +4,6 @@
 // miss adds · burst/pause: how the AI fires it · splash: explosive {r, damage} · vehicle: damage to vehicles
 // lob: indirect fire that arcs over cover and lands near the aim point · reserve: spare rounds beyond the loaded one
 // speed: the projectile's flight speed in m/s (RimWorld-style: rounds are seen in flight, damage lands on arrival)
-// warmup: seconds the player aims before the first round of a string (the RimWorld aim pie)
 export const WEAPONS = {
   ak: {
     label: 'AK-74',
@@ -12,7 +11,7 @@ export const WEAPONS = {
     reload: 2.2,
     cd: 0.1,
     speed: 45,
-    warmup: 0.25,
+
     damage: 34,
     spread: 0.02,
     range: 70,
@@ -26,7 +25,7 @@ export const WEAPONS = {
     reload: 5,
     cd: 0.075,
     speed: 48,
-    warmup: 0.45,
+
     damage: 34,
     spread: 0.045,
     range: 80,
@@ -40,7 +39,7 @@ export const WEAPONS = {
     reload: 3,
     cd: 0.7,
     speed: 62,
-    warmup: 0.7,
+
     damage: 80,
     spread: 0.006,
     range: 95,
@@ -51,7 +50,7 @@ export const WEAPONS = {
   rpg: {
     label: 'RPG-7',
     speed: 28,
-    warmup: 0.8,
+
     mag: 1,
     reserve: 2,
     reload: 3.4,
@@ -68,7 +67,7 @@ export const WEAPONS = {
   gp: {
     label: 'GP-25',
     speed: 16,
-    warmup: 0.5,
+
     mag: 1,
     reserve: 3,
     reload: 2.4,
@@ -89,7 +88,7 @@ export const WEAPONS = {
     reload: 6,
     cd: 0.1,
     speed: 50,
-    warmup: 0.35,
+
     damage: 40,
     spread: 0.05,
     range: 100,

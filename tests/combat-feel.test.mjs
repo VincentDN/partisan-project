@@ -1,4 +1,4 @@
-// RimWorld-style shooting: rounds fly and land on arrival, the player aims before a string of shots, hit chance falls with range.
+// RimWorld-style shooting: rounds fly and land on arrival, the trigger fires at once, hit chance falls with range.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {Sim} from '../convoy/sim.js';
@@ -31,15 +31,11 @@ test('a round is in flight before it lands, and the hit lands on arrival', () =>
   assert.equal(s.impacts.at(-1).surface, 'flesh');
 });
 
-test('the player aims for the warmup before the first round, then fires freely', () => {
+test('the player fires on the first frame of a trigger pull (no wait before shooting)', () => {
   const s = new Sim({level: 'convoy', seed: 5});
   const p = s.player;
-  const fired = () => s.tracers.filter(t => t.unit === p.id).length;
-  const steps = Math.floor(WEAPONS.ak.warmup * 60) - 2;
-  for (let i = 0; i < steps; i++) s.step(1 / 60, {ax: p.x + 20, az: p.z, fire: true});
-  assert.equal(fired(), 0, 'still aiming');
-  for (let i = 0; i < 30; i++) s.step(1 / 60, {ax: p.x + 20, az: p.z, fire: true});
-  assert.ok(fired() >= 2, 'firing after the warmup');
+  s.step(1 / 60, {ax: p.x + 20, az: p.z, fire: true});
+  assert.equal(s.tracers.filter(t => t.unit === p.id).length, 1);
 });
 
 test('hit chance falls with range and with suppression', () => {

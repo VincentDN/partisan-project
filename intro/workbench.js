@@ -88,35 +88,66 @@ const radio=new T.Group();radio.position.copy(RADIO_AT);radio.rotation.y=.25;sce
 }
 
 // The Nokia, face up on the bench with its screen lit: "Load all demos" pushes in on it and opens the index on its LCD
-// (menu/ shows the same phone close up). Built like the menu's phone, at half its size; local +y is the top of the phone.
-const PHONE_AT=new T.Vector3(-.37,TABLE.top,.66),PHONE={w:.135,l:.3,t:.025,screen:{w:.1,h:.083,y:.085}};
+// (menu/ shows the same phone close up). Real size (a 3310: 113 x 48 x 22 mm); local +y is the top of the phone.
+// The LCD is the real 84 x 48 pixels, redrawn about 12 times a second: a dithered lambda turning in a sweeping light,
+// then a console log scrolling, in turn.
+const PHONE_AT=new T.Vector3(-.36,TABLE.top,.64),PHONE={w:.048,l:.113,t:.016,screen:{w:.034,h:.0195,y:.022}};
 const phone=new T.Group();phone.position.copy(PHONE_AT);phone.rotation.order='YXZ';phone.rotation.set(-Math.PI/2,Math.PI-.5,0);scene.add(phone);
+const LCD={w:84,h:48},lcd=document.createElement('canvas');lcd.width=LCD.w;lcd.height=LCD.h;
+const lcdTex=new T.CanvasTexture(lcd);lcdTex.colorSpace=T.SRGBColorSpace;lcdTex.magFilter=T.NearestFilter;lcdTex.minFilter=T.LinearFilter;
 {
  const mat=(color,rough=.55,extra={})=>new T.MeshStandardMaterial({color,roughness:rough,...extra});
- const shape=new T.Shape(),w=PHONE.w/2,h=PHONE.l/2,r=.035;
+ const shape=new T.Shape(),w=PHONE.w/2,h=PHONE.l/2,r=.012;
  shape.moveTo(-w+r,-h);shape.lineTo(w-r,-h);shape.quadraticCurveTo(w,-h,w,-h+r);shape.lineTo(w,h-r);shape.quadraticCurveTo(w,h,w-r,h);
  shape.lineTo(-w+r,h);shape.quadraticCurveTo(-w,h,-w,h-r);shape.lineTo(-w,-h+r);shape.quadraticCurveTo(-w,-h,-w+r,-h);
- const body=new T.Mesh(new T.ExtrudeGeometry(shape,{depth:PHONE.t,bevelEnabled:true,bevelThickness:.004,bevelSize:.004,bevelSegments:3,curveSegments:10}),mat(0x1f251c,.5));
+ const body=new T.Mesh(new T.ExtrudeGeometry(shape,{depth:PHONE.t,bevelEnabled:true,bevelThickness:.003,bevelSize:.002,bevelSegments:3,curveSegments:10}),mat(0x1f251c,.5));
  body.castShadow=body.receiveShadow=true;phone.add(body);
- const top=PHONE.t+.004,sc=PHONE.screen;
+ const top=PHONE.t+.003,sc=PHONE.screen;
  const add=(geo,material,x,y,z)=>{const m=new T.Mesh(geo,material);m.position.set(x,y,z);m.castShadow=m.receiveShadow=true;phone.add(m);return m;};
- add(new T.PlaneGeometry(sc.w+.02,sc.h+.02),mat(0x0c100a,.3),0,sc.y,top+.0005);
- // The LCD: Nokia green, dark pixels, glowing a little in the lamp-lit dark.
- const c=document.createElement('canvas');c.width=180;c.height=150;const g=c.getContext('2d');
- g.fillStyle='#9fb184';g.fillRect(0,0,180,150);g.fillStyle='#1f2a14';
- for(let i=0;i<4;i++)g.fillRect(8+i*7,30-i*5,5,6+i*5);// signal bars
- for(let i=0;i<4;i++)g.fillRect(150,10+i*7,22-i*4,5);// battery
- g.font='bold 22px monospace';g.textAlign='center';g.fillText('PARTISAN',90,74);
- g.font='bold 16px monospace';g.fillText('ALL DEMOS',90,98);g.fillRect(40,124,100,3);g.font='bold 14px monospace';g.fillText('Menu',90,144);
- const lcdTex=new T.CanvasTexture(c);lcdTex.colorSpace=T.SRGBColorSpace;
- add(new T.PlaneGeometry(sc.w,sc.h),new T.MeshStandardMaterial({map:lcdTex,emissive:0x9fb184,emissiveMap:lcdTex,emissiveIntensity:.55,roughness:.35}),0,sc.y,top+.001).castShadow=false;
- add(new T.BoxGeometry(.03,.004,.002),mat(0x0a0c09),0,sc.y+sc.h/2+.025,top+.0005);
+ add(new T.PlaneGeometry(sc.w+.008,sc.h+.009),mat(0x0c100a,.3),0,sc.y,top+.0003);// bezel
+ add(new T.PlaneGeometry(sc.w,sc.h),new T.MeshBasicMaterial({map:lcdTex,color:0xc8c8c8}),0,sc.y,top+.0006).castShadow=false;
+ add(new T.BoxGeometry(.012,.0015,.001),mat(0x0a0c09),0,sc.y+sc.h/2+.009,top+.0003);// earpiece
  const key=mat(0x3a4234,.45);
- add(new T.CylinderGeometry(.027,.027,.006,24).rotateX(Math.PI/2),mat(0x2b3126,.4),0,-.02,top+.003);
- for(const x of[-.042,.042])add(new T.CylinderGeometry(.015,.015,.005,18).rotateX(Math.PI/2),key,x,-.012,top+.0025);
- for(let row=0;row<4;row++)for(let col=0;col<3;col++)add(new T.BoxGeometry(.031,.017,.006),key,(col-1)*.035,-.065-row*.0225,top+.003);
+ add(new T.CylinderGeometry(.0075,.0075,.003,24).rotateX(Math.PI/2),mat(0x2b3126,.4),0,-.004,top+.0015);// the Navi key
+ for(const x of[-.016,.016])add(new T.BoxGeometry(.008,.005,.0025),key,x,-.006,top+.0012);
+ for(let row=0;row<4;row++)for(let col=0;col<3;col++)add(new T.BoxGeometry(.011,.0055,.0028),key,(col-1)*.0135,-.02-row*.0082,top+.0014);
 }
-const phoneScreen=()=>new T.Vector3(0,PHONE.screen.y,PHONE.t+.005).applyMatrix4(phone.matrixWorld);
+const LCD_ON='#1f2a14',LCD_OFF='#9fb184';
+const BAYER=[0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5];// 4 x 4 ordered dither
+const glyph=document.createElement('canvas');glyph.width=LCD.w;glyph.height=LCD.h;
+const LOG=['> partisan.sys v0.3','> altis-net .... ok','> radio 98.4 FM ok','> mount /demos','> 14 demos found','> squad: 3 alive','> convoy eta 04:12','> cache: 2 rifles','> mesh link ...ok','> awaiting input'];
+let lcdAt=-1;
+function drawLcd(time){
+ if(time-lcdAt<1/12)return;lcdAt=time;
+ const g=lcd.getContext('2d'),phase=Math.floor(time/9)%2;
+ g.fillStyle=LCD_OFF;g.fillRect(0,0,LCD.w,LCD.h);g.fillStyle=LCD_ON;
+ for(let i=0;i<4;i++)g.fillRect(1+i*2,6-i*1.5,1,1+i*1.5);// signal bars
+ for(let i=0;i<4;i++)g.fillRect(LCD.w-2-i*2,6-i*1.5,1,1+i*1.5);// battery
+ if(phase===0){
+  // a lambda in a light sweeping round it, shaded in grey then dithered to the LCD's two tones
+  const q=glyph.getContext('2d');q.clearRect(0,0,LCD.w,LCD.h);
+  const lx=LCD.w/2+Math.cos(time*1.3)*30,ly=LCD.h/2+Math.sin(time*1.3)*16;
+  const grad=q.createRadialGradient(lx,ly,2,lx,ly,46);grad.addColorStop(0,'#fff');grad.addColorStop(1,'#222');
+  q.fillStyle=grad;q.font='bold 44px serif';q.textAlign='center';q.textBaseline='middle';
+  q.save();q.translate(LCD.w/2,LCD.h/2+2);q.scale(1+Math.sin(time*.9)*.06,1);q.fillText('λ',0,0);q.restore();
+  const d=q.getImageData(0,0,LCD.w,LCD.h).data;
+  for(let y=0;y<LCD.h;y++)for(let x=0;x<LCD.w;x++){
+   const k=(y*LCD.w+x)*4,a=d[k+3]/255;if(a<.3)continue;
+   const v=(.3+.7*d[k]/255)*a;if(v*16>BAYER[(y&3)*4+(x&3)])g.fillRect(x,y,1,1);
+  }
+ }else{
+  // the console log, one line every half second, with a blinking cursor
+  g.font='7px monospace';g.textBaseline='top';g.textAlign='left';
+  const shown=Math.floor((time%9)*2),start=Math.max(0,shown-5);
+  for(let i=start;i<=Math.min(shown,LOG.length-1);i++)g.fillText(LOG[i],1,10+(i-start)*7);
+  if(Math.floor(time*2)%2)g.fillRect(1,10+(Math.min(shown,LOG.length-1)-start+1)*7,4,6);
+ }
+ // the LCD's hard edges: round to on/off so the canvas text does not grey
+ const img=g.getImageData(0,0,LCD.w,LCD.h),px=img.data;
+ for(let k=0;k<px.length;k+=4){const on=px[k+1]<120;px[k]=on?0x1f:0x9f;px[k+1]=on?0x2a:0xb1;px[k+2]=on?0x14:0x84;}
+ g.putImageData(img,0,0);lcdTex.needsUpdate=true;
+}
+const phoneScreen=()=>new T.Vector3(0,PHONE.screen.y,PHONE.t+.004).applyMatrix4(phone.matrixWorld);
 
 // FIA flag (Altis) draped over the near edge of the bench: most of it lies flat on the table
 // top under the rifle and the rest hangs down towards the operator's knees, swaying a little. The cloth is a grid
@@ -218,7 +249,7 @@ function begin(){
  mech.tap();// a key press on the phone
  phone.updateMatrixWorld(true);
  const focus=phoneScreen();// straight down onto the LCD, from the operator's side
- push={start:performance.now()/1000,from:camera.position.clone(),fromTarget:currentTarget.clone(),to:focus.clone().add(new T.Vector3(0,.2,-.07)),toTarget:focus,faded:false};
+ push={start:performance.now()/1000,from:camera.position.clone(),fromTarget:currentTarget.clone(),to:focus.clone().add(new T.Vector3(0,.075,-.025)),toTarget:focus,faded:false};
  if(reduceMotion)push.start-=PUSH_IN.duration*PUSH_IN.fadeAt;
 }
 start.addEventListener('click',begin);
@@ -239,6 +270,7 @@ function frame(){
  const k=1-Math.exp(-dt*(push?1.5:4));look.x+=(want.x-look.x)*k;look.y+=(want.y-look.y)*k;
  pose(time);placeRifle();
  drapeFlag(time);
+ drawLcd(time);
  radio.userData.dial.material.emissiveIntensity=1.3+Math.random()*.15;// valve glow flicker
  if(sound.bench){const at=radio.getWorldPosition(new T.Vector3()).project(camera);sound.bench.setPan(at.x*.8);}
  if(push){
@@ -258,7 +290,34 @@ function frame(){
  requestAnimationFrame(frame);
 }
 
+// ---------- Dithered load-in ----------
+// While the bench loads, a Nokia-green band sweeps through an 8 x 8 ordered dither on black; when it is ready the black
+// drops out pixel by pixel, from the middle outwards, instead of a plain fade. Quarter resolution, drawn pixelated.
+const B8=(()=>{let m=[[0]];for(let n=1;n<8;n*=2)m=[...m.map(r=>[...r.map(v=>4*v),...r.map(v=>4*v+2)]),...m.map(r=>[...r.map(v=>4*v+3),...r.map(v=>4*v+1)])];return m.flat();})();
+const dither=document.createElement('canvas');
+Object.assign(dither.style,{position:'fixed',inset:'0',width:'100%',height:'100%',zIndex:9,imageRendering:'pixelated',pointerEvents:'none'});
+document.body.append(dither);fade.classList.add('clear');
+let revealAt=null;
+function drawDither(){
+ const now=performance.now()/1000,w=Math.ceil(innerWidth/4),h=Math.ceil(innerHeight/4);
+ if(dither.width!==w||dither.height!==h){dither.width=w;dither.height=h;}
+ const g=dither.getContext('2d'),img=g.createImageData(w,h),px=img.data;
+ const k=revealAt===null?0:Math.min(1,(now-revealAt)/(reduceMotion?.25:1.1));
+ for(let y=0;y<h;y++)for(let x=0;x<w;x++){
+  const t=(B8[(y&7)*8+(x&7)]+.5)/64,o=(y*w+x)*4;
+  const r=Math.hypot(x/w-.5,(y/h-.5)*h/w)*1.4;// 0 in the middle
+  if(t*.55+r*.45<k*1.05)continue;// revealed
+  const band=revealAt===null?Math.max(0,1-Math.abs(((x/w+now*.35)%1.4)-.7)*4)*.5:0;// the loading sweep
+  if(t<band){px[o]=0x9f;px[o+1]=0xb1;px[o+2]=0x84;}else{px[o]=7;px[o+1]=9;px[o+2]=10;}
+  px[o+3]=255;
+ }
+ g.putImageData(img,0,0);
+ if(k<1)requestAnimationFrame(drawDither);else dither.remove();
+}
+requestAnimationFrame(drawDither);
+const reveal=()=>{revealAt=performance.now()/1000;};
+
 loadRifle().then(()=>{
  status.hidden=true;start.disabled=false;start.focus({preventScroll:true});
- requestAnimationFrame(frame);requestAnimationFrame(()=>fade.classList.add('clear'));
-}).catch(err=>{status.textContent='Could not load the rifle: '+err.message;fade.classList.add('clear');});
+ requestAnimationFrame(frame);requestAnimationFrame(reveal);
+}).catch(err=>{status.textContent='Could not load the rifle: '+err.message;reveal();});

@@ -220,6 +220,9 @@ function load(path) {
   return images.get(path);
 }
 
+/** Any image from the placeholder set, by its path under inbound/Placeholder Assets (cached; null when missing). */
+export const loadSet = path => load(path);
+
 function loadUrl(url) {
   return new Promise(resolve => {
     const img = new Image();

@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex"><meta name="googlebot" content="noindex, nofollow"><meta name="seo_hidden" content="true"><title>Partisan Project | Rebel Band</title><link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="band.css">
+</head>
+<body>
+<main class="band">
+  <section class="panel stash" aria-labelledby="stash-title" tabindex="0">
+    <h2 class="plate" id="stash-title">Stash</h2>
+    <p class="sub">Stolen from the army depot at Kavala. Equipment a step needs is marked.</p>
+    <div id="stash" class="stash-list"></div>
+  </section>
+
+  <section class="centre" aria-labelledby="who" tabindex="0">
+    <div class="lcd-title"><span class="sig" aria-hidden="true"></span><h1>Rebel Band</h1><span class="bat" aria-hidden="true"></span></div>
+    <h2 id="who" class="who"></h2>
+    <p id="who-sub" class="who-sub"></p>
+    <canvas id="pawn" width="360" height="360" aria-hidden="true"></canvas>
+    <div id="detail" class="detail" aria-live="polite"></div>
+  </section>
+
+  <section class="panel party" aria-labelledby="band-title">
+    <div class="plate party-head"><h2 id="band-title"></h2><span id="size" class="size"></span></div>
+    <button id="leader-card" class="leader-card" type="button"></button>
+    <div id="groups"></div>
+  </section>
+
+  <footer class="bar">
+    <span class="sig" aria-hidden="true"></span>
+    <span id="status" class="status" role="status"></span>
+    <button id="skirmish" type="button">Raid a patrol <small>+XP, +loot</small></button>
+    <button id="reset" type="button">Reset</button>
+  </footer>
+</main>
+<div id="loading" class="loading">Loading the band…</div>
+<script type="module" src="./band.js"></script>
+</body></html>

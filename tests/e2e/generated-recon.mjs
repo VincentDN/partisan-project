@@ -109,7 +109,7 @@ try {
   await page.waitForFunction(() => window.PARP_OPERATOR.rig.blend === 1);
   // Reloading can abort optional in-flight resources; actual load/HTTP/JS errors still fail.
   assert.deepEqual(
-    page.problems.filter(p => !/ERR_ABORTED/.test(p)),
+    page.problems.filter(p => !/ERR_ABORTED|Failed to fetch/.test(p)), // downloads cut off by the test's own reloads
     [],
   );
   const axeSource = fs.readFileSync(createRequire(import.meta.url).resolve('axe-core/axe.min.js'), 'utf8');

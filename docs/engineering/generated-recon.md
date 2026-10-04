@@ -19,8 +19,14 @@ From the repository root, using Blender 4.4 and the repository's Node dependenci
 ```sh
 blender --background --python tools/assets/import-generated-recon.py --
 node tools/assets/optimize-pack.mjs build/generated-recon.raw.glb assets/models/operators/generated-recon.glb
+node tools/assets/bake-generated-recon.mjs
 npm run test:operator
 ```
+
+The bake step carries the textured source's colours onto the runtime model: the split parts have their own UVs and no
+material, so each part gets a tile in one 2048 px atlas and every texel takes the colour of the nearest point of the textured
+model. Every `M_GR_*` material carries the atlas, so the Operator Modder's "Original" colour shows the generated look and any
+other colour repaints the zone flat.
 
 The importer accepts optional source/output paths after `--`. The runtime model is 1.85 metres tall, faces +Z, and stands on y=0.
 The generated manifest records 11,253 triangles, 27 meshes and 26 bones. All equipment together fits the 15,000-triangle operator budget; carried rifles retain their separate existing budgets.

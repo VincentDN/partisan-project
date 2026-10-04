@@ -34,6 +34,12 @@ export const ITEMS = [
     help: 'Top-down missions in the RimWorld style: convoy ambush, compound assault, cave defence. Dress your squad, loot the army.',
   },
   {
+    label: 'Rebel Band',
+    href: '../band/',
+    icon: px('0111001110001001111101010'),
+    help: 'Test. Level your rebel band along set paths; every step needs stolen equipment from the stash. Raid patrols for experience and loot.',
+  },
+  {
     label: 'Advanced animations',
     href: '../intro/advanced.html',
     icon: px('1111101010111110101011111'),

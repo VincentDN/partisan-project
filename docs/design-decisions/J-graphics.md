@@ -402,3 +402,33 @@ The 2.5-D top-down sprite look for the shooter (RimWorld style) and the retro ov
 - Cost to change: Medium (simulation timing).
 - Revisit if: Rounds should be dodgeable (re-test the hit on arrival instead of at launch), or the inventory brings per-gun stats.
 - Owner feedback: —
+
+### TAC-J-41 · No aim wait for the player; ammo and reload on the map
+- Status: built  ·  Packet: WP-V5
+- Decision: The player's aim warmup from TAC-J-40 is removed: the trigger fires on the first frame. Army shooters keep RimWorld's aim pie before a burst (it tells you who is about to fire). The map shows the magazine and reserve bottom left (flashing when low), a reload bar, and a reload ring with "RELOADING" round the cursor; an empty magazine says "R RELOAD" or "EMPTY" there.
+- Why: Owner feedback: the wait before shooting read as a bug; a reload and an ammo counter were missing on the map.
+- Alternatives rejected: A shorter warmup (still a wait under direct control).
+- Cost / risk: Less of RimWorld's rhythm for the player; the enemy pies keep the read.
+- Cost to change: Low.
+- Revisit if: Orders-based (drafted) control returns, where a warmup belongs.
+- Owner feedback: "having to wait before shooting is probably a bug"
+
+### TAC-J-42 · A real-size Nokia with a live screen, and a dithered load-in for the opening scene
+- Status: built  ·  Packet: WP-V5
+- Decision: The opening scene's phone is a 3310 at real size (113 x 48 x 22 mm) with an 84 x 48 pixel LCD drawn about 12 times a second: a lambda turning in a sweeping light, ordered-dithered to the LCD's two tones, then a console log scrolling, in turn. The screen is unlit (backlit, never washed out by the lamp). While the scene loads, a Nokia-green band sweeps through an 8 x 8 ordered dither on black; when it is ready the black drops out from the middle outwards.
+- Why: Owner request.
+- Alternatives rejected: A video or GIF on the screen (bytes, and no dither control).
+- Cost / risk: The phone is small in the opening frame; the push-in still lands on its screen.
+- Cost to change: Low.
+- Revisit if: The phone becomes interactive in the scene.
+- Owner feedback: —
+
+### TAC-J-43 · The Recon wears its generated colours
+- Status: built  ·  Packet: WP-CG1 follow-up
+- Decision: `tools/assets/bake-generated-recon.mjs` bakes the textured generated model's colours onto the runtime Recon (one 2048 px atlas, one tile per part, nearest-point transfer in the importer's frame), so the Recon loads in its original look; "Original" in each colour zone shows it and any other colour repaints flat.
+- Why: Owner: the Recon's textures existed but were not loaded. The split-parts source the runtime model is built from has no material and per-part UVs, so the importer had used flat colours.
+- Alternatives rejected: Shipping the 193,534-triangle textured mesh (no separate equipment, no rig); per-part textures (27 images).
+- Cost / risk: The model grows from 281 KB to 633 KB; nearest-point transfer softens fine detail at seams.
+- Cost to change: Low (re-run the bake after the importer).
+- Revisit if: A higher-detail runtime mesh, or a source with the textures on the split parts.
+- Owner feedback: —

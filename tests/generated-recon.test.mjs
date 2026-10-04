@@ -11,8 +11,10 @@ import {BASES, TRIANGLE_BUDGET} from '../operator/config.js';
 const data = JSON.parse(fs.readFileSync('operator/poses.json'));
 const base = BASES['generated-recon'];
 const bytes = fs.readFileSync('assets/models/operators/generated-recon.glb');
+// The baked albedo texture needs a browser to decode; geometry, weights and poses do not, so textures are skipped here.
 const {scene} = await new GLTFLoader()
   .setMeshoptDecoder(MeshoptDecoder)
+  .register(() => ({name: 'skip-textures', loadTexture: () => Promise.resolve(null)}))
   .parseAsync(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength), '');
 const meshes = [];
 scene.traverse(o => {
@@ -22,7 +24,7 @@ const rig = new Rig(scene, posesForProfile(data, base.poseProfile));
 
 test('generated geometry is skinned, normalized, compact and within the complete equipment budget', () => {
   assert.equal(meshes.length, 27);
-  assert.ok(bytes.length < 500 * 1024);
+  assert.ok(bytes.length < 750 * 1024, 'geometry (about 300 KB) plus the baked 2048 px albedo atlas (about 335 KB)');
   let triangles = 0;
   for (const mesh of meshes) {
     assert.ok(mesh.isSkinnedMesh, mesh.name);

@@ -4,6 +4,14 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 ## [Unreleased]
 
+### Added (Rebel Band demo)
+- **Rebel Band** (`band/`, in the index): a levelling and equipment demo in the RimWorld + Nokia style. Your leader stands in the middle, the band is on the right by class, and the stolen stash is on the left. Troops climb set paths, each step needs specific equipment, and raids give experience, loot and volunteers. TAC-H-12.
+
+### Changed
+- **Partisan Tactical**: no aim wait for the player any more. The magazine, reserve and reload now show on the map, with a reload ring at the cursor. TAC-J-41.
+- **Opening scene**: the Nokia is at real size, and its LCD loops a dithered lambda and a console log. The scene now loads in with a Nokia-green ordered dither. TAC-J-42.
+- **Recon** now wears its generated colours: the textured model's look is baked onto the runtime model (`tools/assets/bake-generated-recon.mjs`). TAC-J-43.
+
 ### Changed (Partisan Tactical: RimWorld-style shooting)
 - **Rounds in flight**: bullets, rockets (with a smoke trail) and arcing grenades are drawn with the set's projectile sprites and land when they arrive; damage comes on arrival. TAC-J-40.
 - **Aim warmup and the aim pie**: you aim for a moment before a string of shots; army shooters show the pie while they aim. Hovering an enemy shows your hit chance.
