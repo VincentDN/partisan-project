@@ -155,10 +155,16 @@ view.addEventListener('pointermove', e => {
   const r = view.getBoundingClientRect();
   pointer = {x: e.clientX - r.left, y: e.clientY - r.top};
 });
+// Right mouse held: aim down the sights (a subtle zoom and a longer lean); a right click still gives squad orders.
+let aimZoom = false;
 view.addEventListener('pointerdown', e => {
   if (e.button === 0 && started && !sim.control.pending) fire = true;
+  if (e.button === 2) aimZoom = true;
 });
-addEventListener('pointerup', () => (fire = false));
+addEventListener('pointerup', e => {
+  if (e.button === 0) fire = false;
+  if (e.button === 2) aimZoom = false;
+});
 view.addEventListener('contextmenu', e => {
   e.preventDefault();
   const point = started && !sim.outcome && !sim.control.pending && selected.length ? aimPoint() : null;
@@ -180,6 +186,7 @@ view.addEventListener(
 function clearInput() {
   keys.clear();
   fire = false;
+  aimZoom = false;
   reload = false;
   wantWeapon = null;
 }
@@ -430,7 +437,7 @@ function frame() {
     $('#card').hidden = false;
   }
   sound.update(sim, {paused, scale: picker.scale, dt: elapsed});
-  R.draw(sim, {aim: started ? aimPoint() : null, selected});
+  R.draw(sim, {aim: started ? aimPoint() : null, selected, pointer: started ? pointer : null, aimZoom: aimZoom && started});
   if (now - panelAt > 120) {
     panelAt = now;
     updatePanel();

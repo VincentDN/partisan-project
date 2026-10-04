@@ -55,6 +55,20 @@ export const FILES = {
   smoke: 'Things/Mote/Smoke.png',
   dustPuff: 'Things/Mote/DustPuff.png',
   hitDirt: 'Things/Mote/ShotHit_Dirt.png',
+  // RimWorld-style combat: rounds in flight, flashes and what a hit throws up
+  bulletSmall: 'Things/Projectile/Bullet_Small.png',
+  bulletBig: 'Things/Projectile/Bullet_Big.png',
+  rocket: 'Things/Projectile/Rocket_Big.png',
+  grenade: 'Things/Projectile/Grenade.png',
+  sparkFlash: 'Things/Mote/SparkFlash.png',
+  sparkThrown: 'Things/Mote/SparkThrown.png',
+  debris: 'Things/Mote/ThrownDebris.png',
+  bloodSplash: 'Things/Mote/BloodSplash.png',
+  bodyImpact: 'Things/Mote/BodyImpact.png',
+  spatterA: 'Things/Filth/Spatter/SpatterA.png',
+  spatterB: 'Things/Filth/Spatter/SpatterB.png',
+  spatterC: 'Things/Filth/Spatter/SpatterC.png',
+  fireGlow: 'Things/Mote/FireGlow.png',
 };
 // Paper-doll layers, loaded on demand per direction.
 const DIRS = ['south', 'east', 'north'];

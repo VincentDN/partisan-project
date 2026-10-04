@@ -387,5 +387,18 @@ The 2.5-D top-down sprite look for the shooter (RimWorld style) and the retro ov
 - Status: built  ·  Packet: WP-V5
 - Decision: A half-size Nokia lies lit on the workbench in the opening scene, beside the rifle. "Customize this weapon" became "Load all demos": a key press, then the camera pushes down onto the phone's screen, fades, and the index (`menu/`, the same phone close up) opens. The Weapon Modder stays one entry in that index.
 - Why: Owner request; the index holds every demo, so it is the right first step.
+- Alternatives rejected: Keeping both buttons (the scene has one action by design).
+- Cost / risk: The Weapon Modder is one click further from the opening scene.
 - Cost to change: Low.
+- Revisit if: The opening scene gets a second purpose (a story beat, a save slot).
+- Owner feedback: —
+
+### TAC-J-40 · RimWorld-style shooting in the 2.5-D view: rounds in flight, aim warmup, motes, hit chance, camera feel
+- Status: built  ·  Packet: WP-V5
+- Decision: Compared with RimWorld's combat, the 2.5-D view drew hitscan lines and resolved hits at once. Now, as in RimWorld, where a round goes is decided when it is fired and it lands when it arrives: `sim.projectiles` holds rounds in flight at each weapon's speed (rifles 45 m/s, PKM 48, SVD 62, DShK 50, RPG 28, grenades 16 on an arc), drawn with the set's bullet, rocket and grenade sprites (the rocket trails smoke, the grenade arcs over its shadow); damage, bursts and impacts happen on arrival (`sim.impacts`). The player aims before a string of shots (`warmup`: 0.25 s rifle to 0.8 s RPG) and, like every army shooter waiting to fire, shows RimWorld's aim pie over the head. Hovering an enemy shows the hit chance (from the simulation's own spread model), "No clear shot" or "Out of range". Every shot flashes at the muzzle and lights the ground (stronger at night); hits throw dust and debris, sparks off metal, chips off walls, and blood that stays on the ground as filth; blasts throw debris, dust rings and a glow. Beyond RimWorld, at the owner's request: the camera kicks with your own shots, near misses, hits on you and blasts (none under reduced motion), a near blast flashes the screen and a hit reddens its edge, the camera follows the mouse (it leans toward the cursor's side of the screen), and holding the right mouse button zooms in a little and leans further (a right click still gives squad orders).
+- Why: Owner request: make the shooting feel like RimWorld's, with shake, flash, projectiles, a right-click zoom and a camera that moves with the mouse.
+- Alternatives rejected: Visual-only bullets over hitscan damage (the target would fall before the round reached it); RimWorld's click-to-target drafting in place of twin-stick control (a different game; the warmup and pie carry the feel).
+- Cost / risk: Hits land up to two seconds late for rockets, so the AI and tests see damage after the flight; the 3-D page gets the same delay without the sprites.
+- Cost to change: Medium (simulation timing).
+- Revisit if: Rounds should be dodgeable (re-test the hit on arrival instead of at launch), or the inventory brings per-gun stats.
 - Owner feedback: —

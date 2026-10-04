@@ -3,12 +3,55 @@
 // cd: seconds between rounds · spread: radians (1 sigma, before suppression and movement) · supp: suppression a near
 // miss adds · burst/pause: how the AI fires it · splash: explosive {r, damage} · vehicle: damage to vehicles
 // lob: indirect fire that arcs over cover and lands near the aim point · reserve: spare rounds beyond the loaded one
+// speed: the projectile's flight speed in m/s (RimWorld-style: rounds are seen in flight, damage lands on arrival)
+// warmup: seconds the player aims before the first round of a string (the RimWorld aim pie)
 export const WEAPONS = {
-  ak: {label: 'AK-74', mag: 30, reload: 2.2, cd: 0.1, damage: 34, spread: 0.02, range: 70, supp: 0.22, burst: [3, 4], pause: [0.45, 1.2]},
-  pkm: {label: 'PKM', mag: 100, reload: 5, cd: 0.075, damage: 34, spread: 0.045, range: 80, supp: 0.34, burst: [6, 10], pause: [0.5, 1.1]},
-  svd: {label: 'SVD', mag: 10, reload: 3, cd: 0.7, damage: 80, spread: 0.006, range: 95, supp: 0.3, burst: [1, 1], pause: [0.9, 1.8]},
+  ak: {
+    label: 'AK-74',
+    mag: 30,
+    reload: 2.2,
+    cd: 0.1,
+    speed: 45,
+    warmup: 0.25,
+    damage: 34,
+    spread: 0.02,
+    range: 70,
+    supp: 0.22,
+    burst: [3, 4],
+    pause: [0.45, 1.2],
+  },
+  pkm: {
+    label: 'PKM',
+    mag: 100,
+    reload: 5,
+    cd: 0.075,
+    speed: 48,
+    warmup: 0.45,
+    damage: 34,
+    spread: 0.045,
+    range: 80,
+    supp: 0.34,
+    burst: [6, 10],
+    pause: [0.5, 1.1],
+  },
+  svd: {
+    label: 'SVD',
+    mag: 10,
+    reload: 3,
+    cd: 0.7,
+    speed: 62,
+    warmup: 0.7,
+    damage: 80,
+    spread: 0.006,
+    range: 95,
+    supp: 0.3,
+    burst: [1, 1],
+    pause: [0.9, 1.8],
+  },
   rpg: {
     label: 'RPG-7',
+    speed: 28,
+    warmup: 0.8,
     mag: 1,
     reserve: 2,
     reload: 3.4,
@@ -24,6 +67,8 @@ export const WEAPONS = {
   },
   gp: {
     label: 'GP-25',
+    speed: 16,
+    warmup: 0.5,
     mag: 1,
     reserve: 3,
     reload: 2.4,
@@ -38,7 +83,20 @@ export const WEAPONS = {
     burst: [1, 1],
     pause: [2, 3],
   },
-  hmg: {label: 'DShK', mag: 150, reload: 6, cd: 0.1, damage: 40, spread: 0.05, range: 100, supp: 0.5, burst: [5, 8], pause: [0.5, 1]},
+  hmg: {
+    label: 'DShK',
+    mag: 150,
+    reload: 6,
+    cd: 0.1,
+    speed: 50,
+    warmup: 0.35,
+    damage: 40,
+    spread: 0.05,
+    range: 100,
+    supp: 0.5,
+    burst: [5, 8],
+    pause: [0.5, 1],
+  },
 };
 
 // What each army role carries and how it fights. sight: metres; suppressAt: belief confidence needed to fire blind
