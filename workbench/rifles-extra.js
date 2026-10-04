@@ -313,12 +313,25 @@ export const EXTRA = {
     surface: {
       base: {name: 'h-190', tex: 'steel', color: '#26292b', roughness: 0.45, metalness: 0.65},
       parts: {magazine: {name: 'mag', tex: 'steel', color: '#2f3234', roughness: 0.5, metalness: 0.55}},
+      // named regions become parts of their own, so the Workbench can swap them (the CNC kit)
       regions: [
-        {min: [-1, -1, -1], max: [-0.235, 1, 1], spec: {name: 'polymer', tex: 'wood', color: '#5e3c22', roughness: 0.6, metalness: 0}},
         {
+          node: 'stg44-stock',
+          min: [-1, -1, -1],
+          max: [-0.235, 1, 1],
+          spec: {name: 'polymer', tex: 'wood', color: '#5e3c22', roughness: 0.6, metalness: 0},
+        },
+        {
+          node: 'stg44-grip',
           min: [-0.16, -1, -1],
           max: [-0.03, -0.035, 1],
           spec: {name: 'bakelite', tex: 'bakelite', color: '#3a2116', roughness: 0.45, metalness: 0},
+        },
+        {
+          node: 'stg44-handguard',
+          min: [0.11, 0.0, -1],
+          max: [0.25, 1, 1],
+          spec: {name: 'h-190', tex: 'steel', color: '#26292b', roughness: 0.45, metalness: 0.65},
         },
       ],
     },
@@ -332,11 +345,21 @@ export const EXTRA = {
     baseGrams: 5100,
     stats: {ergo: 32, recoil: 52, handling: 36, loud: 90, sighting: 28},
     defaults: {build: {}, finish: {}},
-    parts: [part('magazine', 'Magazine', '30-round curved Kurz magazine.', ['Cube.004_2']), EMPTY.optic, EMPTY.sling, EMPTY.muzzle],
+    parts: [
+      part('magazine', 'Magazine', '30-round curved Kurz magazine.', ['Cube.004_2']),
+      part('stock', 'Stock', 'Walnut buttstock.', ['stg44-stock']),
+      part('grip', 'Pistol grip', 'Bakelite pistol grip.', ['stg44-grip']),
+      part('handguard', 'Handguard', 'Stamped steel handguard over the gas tube.', ['stg44-handguard']),
+      EMPTY.optic,
+      EMPTY.sling,
+      EMPTY.muzzle,
+    ],
     // Where the support hand holds the rifle, in metres from the grip socket (muzzle +x, up +y): operator/operator.js.
     handguardAt: [0.34, 0.047, 0],
     // Clamp-on mount points this source has no socket for, in metres on the laid-out rifle (workbench/universal.js).
     mounts: [
+      ['stock', 'Stock', [-0.34, 0.06, 0.01], [-1, 0, 0]],
+      ['handguard', 'Handguard', [0.18, 0.1, 0.01], [0, 1, 0]],
       ['buis', 'Back-up sight', [0.17, 0.131, 0.01], [0, 1, 0]],
       ['trigger', 'Trigger', [-0.025, 0.03, 0.01], [0, -1, 0]],
       ['charging', 'Charging handle', [0.1, 0.1, 0.036], [0, 0, 1]],
@@ -358,6 +381,13 @@ export const EXTRA = {
       optic: optic(['scope', 'micro'], rail(-0.04, 0.06)),
       sling: std.sling,
       magazine: magazine([{id: '30', grams: 450, label: '30-rnd', original: true}], ['none']),
+      stock: {factory: [{id: 'extended', grams: 700, label: 'Walnut stock', original: true}], library: []},
+      grip: {factory: [{id: 'factory', grams: 80, label: 'Bakelite grip', original: true}], library: []},
+      handguard: {
+        // the M-LOK tube's extent: the source's handguard is part of one mesh with the barrel
+        factory: [{id: 'factory', grams: 0, label: 'Steel handguard', original: true, span: [0.1, 0.27], axis: [0.1, 0.01], radius: 0.024}],
+        library: [],
+      },
     },
   },
   ppsh41: {
@@ -557,6 +587,7 @@ export const EXTRA = {
     handguardAt: [0.31, 0.06, 0],
     // Clamp-on mount points this source has no socket for, in metres on the laid-out rifle (workbench/universal.js).
     mounts: [
+      ['handguard', 'Handguard', [0.15, 0.09, -0.01], [0, 1, 0]],
       ['buis', 'Back-up sight', [0.2, 0.121, -0.01], [0, 1, 0]],
       ['charging', 'Charging handle', [-0.03, 0.1, 0.018], [0, 0, 1]],
       ['side', 'Side of forend', [0.33, 0.057, 0.002], [0, 0, 1]],
@@ -583,6 +614,7 @@ export const EXTRA = {
       },
       magazine: magazine([{id: '40', grams: 360, label: '40-rnd', original: true}], ['drum', 'none']),
       grip: {factory: [{id: 'factory', grams: 110, label: 'Wood grip', original: true}], library: ['classic']},
+      handguard: {factory: [{id: 'factory', grams: 0, label: 'Wood handguard', original: true}], library: []},
       stock: {factory: [{id: 'extended', grams: 700, label: 'Wood stock', original: true}], library: ['none']},
     },
   },

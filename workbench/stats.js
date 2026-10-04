@@ -62,13 +62,16 @@ export const MODIFIERS = {
     60: {rounds: 60, handling: -6, ergo: -4},
     drum: {rounds: 95, handling: -12, ergo: -8},
     none: {rounds: 0, handling: 2},
+    clear: {handling: 1},
   },
-  grip: {rk9: {ergo: 6}, factory: {ergo: 4}, classic: {}},
+  grip: {rk9: {ergo: 6}, factory: {ergo: 4}, classic: {}, cnc: {ergo: 5}},
+  handguard: {factory: {}, mlok: {ergo: 3, handling: 2}},
   stock: {
     extended: {},
     collapsed: {recoil: 3, handling: 6},
     folded: {recoil: 18, handling: 14, ergo: -6},
     none: {recoil: 25, handling: 16, ergo: -10},
+    cnc: {recoil: -2, handling: 4, ergo: 3},
   },
 };
 

@@ -14,8 +14,9 @@ export const UNIVERSAL = {
   trigger: ['match'],
   charging: ['ext'],
   sling: ['swivel', 'strap'],
-  grip: ['classic'],
-  stock: ['none'],
+  grip: ['classic', 'cnc'],
+  stock: ['none', 'cnc'],
+  handguard: ['mlok'], // where the handguard is its own part
 };
 
 const rail = (min, max) => ({min, max, step: 0.01});
@@ -60,11 +61,19 @@ export function complete(config) {
       const [label, detail] = PART[slot];
       config.parts.push({id: slot, label, detail, nodes: []});
     }
+    if (slot === 'magazine') continue;
     const ids = new Set([...conf.factory.map(o => o.id), ...conf.library.map(e => (typeof e === 'string' ? e : e.id))]);
     const extra = all.filter(id => !ids.has(id));
     // keep an "off" choice last
     const off = conf.library.filter(e => e === 'none');
     conf.library = [...conf.library.filter(e => e !== 'none'), ...extra, ...off];
+  }
+  // the translucent polymer magazine: the factory magazine again, smoked and see-through (same capacity)
+  const mag = config.slots.magazine;
+  if (mag && !mag.library.some(e => (e.id || e) === 'clear')) {
+    const f = mag.factory[0];
+    const rounds = f.rounds ?? Number(String(f.id).replace(/\D/g, '') || 0);
+    mag.library.unshift({id: 'clear', rounds, label: 'Translucent ' + f.label});
   }
   return config;
 }

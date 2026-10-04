@@ -515,6 +515,12 @@ const PRESETS = [
     hash: 'rifle=ak15k&muzzle=brake&optic=holo&magazine=60&stock=collapsed&handguard-finish=original&foregrip-finish=original&grip-finish=original&stock-finish=original&magazine-finish=original',
   },
   {
+    // the owner's reference: KPOS-style folding stock, M-LOK handguard, red dot over flip-up irons, translucent magazine
+    id: 'modern-rpk',
+    label: 'Modern RPK',
+    hash: 'rifle=rpk&stock=cnc&handguard=mlok&grip=cnc&magazine=clear&optic=micro&buis=flip&foregrip=bipod',
+  },
+  {
     id: 'marksman',
     label: 'Marksman',
     hash: 'optic=scope&foregrip=angled&handguard-finish=desert&stock-finish=desert&foregrip-finish=desert&suppressor-finish=fde',

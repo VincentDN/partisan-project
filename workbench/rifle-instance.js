@@ -125,7 +125,7 @@ export async function loadRifle(id, {decorate = () => {}} = {}) {
     const options = [...slotConfig.factory, ...library].map(o => {
       let object = null;
       if (o.build) {
-        object = o.build({original, materials});
+        object = o.build({original, materials, slot: slotConfig});
         object.traverse(m => {
           if (m.isMesh) {
             m.castShadow = m.receiveShadow = true;

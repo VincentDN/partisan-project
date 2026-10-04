@@ -128,29 +128,37 @@ function boxUV(geometry, toModel, tile) {
   return g;
 }
 
-// Split a (non-indexed) geometry by which region each triangle's centre falls in: [[geometry, spec]].
+// Split a (non-indexed) geometry by which region each triangle's centre falls in: [[geometry, spec, region|null]].
 function split(geometry, toModel, regions, fallback) {
   const p = geometry.attributes.position,
     groups = new Map(),
-    v = new T.Vector3(),
-    c = new T.Vector3();
+    v = new T.Vector3();
   for (let i = 0; i < p.count; i += 3) {
-    c.set(0, 0, 0);
-    for (let k = 0; k < 3; k++) c.add(v.fromBufferAttribute(p, i + k).applyMatrix4(toModel));
-    c.multiplyScalar(1 / 3);
-    const r = regions.find(r => r.min.every((m, k) => c.getComponent(k) >= m) && r.max.every((m, k) => c.getComponent(k) <= m));
-    const spec = r ? r.spec : fallback;
-    if (!groups.has(spec)) groups.set(spec, []);
-    groups.get(spec).push(i);
+    // a triangle belongs to a region when all three corners are inside it (give or take `slack`, 3 cm by default):
+    // a barrel's long triangles that only pass through a handguard's box stay with the rifle
+    const corners = [0, 1, 2].map(k =>
+      v
+        .fromBufferAttribute(p, i + k)
+        .applyMatrix4(toModel)
+        .clone(),
+    );
+    const inside = (r, q) => {
+      const e = r.slack ?? 0.03;
+      return r.min.every((m, k) => q.getComponent(k) >= m - e) && r.max.every((m, k) => q.getComponent(k) <= m + e);
+    };
+    const r = regions.find(r => corners.every(q => inside(r, q))) || null;
+    if (!groups.has(r)) groups.set(r, []);
+    groups.get(r).push(i);
   }
-  return [...groups].map(([spec, starts]) => {
+  if (!groups.has(null)) groups.set(null, []); // the mesh itself keeps whatever no region takes (maybe nothing)
+  return [...groups].map(([r, starts]) => {
     const g = new T.BufferGeometry();
     for (const [name, at] of Object.entries(geometry.attributes)) {
       const arr = new at.array.constructor(starts.length * 3 * at.itemSize);
       starts.forEach((s, j) => arr.set(at.array.subarray(s * at.itemSize, (s + 3) * at.itemSize), j * 3 * at.itemSize));
       g.setAttribute(name, new T.BufferAttribute(arr, at.itemSize, at.normalized));
     }
-    return [g, spec];
+    return [g, r ? r.spec : fallback, r];
   });
 }
 
@@ -193,15 +201,25 @@ export function paintSurface(model, config) {
     const toModel = inverse.clone().multiply(mesh.matrixWorld);
     const geometry = boxUV(mesh.geometry, toModel, tile);
     const fallback = owner.get(mesh) || s.base;
-    const pieces = !owner.has(mesh) && s.regions?.length ? split(geometry, toModel, s.regions, fallback) : [[geometry, fallback]];
-    const [[first, firstSpec], ...rest] = pieces;
+    const pieces = !owner.has(mesh) && s.regions?.length ? split(geometry, toModel, s.regions, fallback) : [[geometry, fallback, null]];
+    const [[first, firstSpec], ...rest] = pieces.sort((a, b) => (a[2] ? 1 : 0) - (b[2] ? 1 : 0)); // unclaimed first
     mesh.geometry = first;
     mesh.material = mat(firstSpec);
-    for (const [g, spec] of rest) {
+    for (const [g, spec, region] of rest) {
       const piece = new T.Mesh(g, mat(spec));
       piece.name = mesh.name + ':' + (spec.name || spec.tex);
       piece.castShadow = piece.receiveShadow = true;
       mesh.add(piece);
+      if (region?.node) {
+        // a region that is a part of its own (the StG's butt, grip, handguard): gather its pieces in one named node
+        let node = model.getObjectByName(region.node);
+        if (!node) {
+          node = new T.Group();
+          node.name = region.node;
+          model.add(node);
+        }
+        node.attach(piece);
+      }
     }
   }
 }
