@@ -443,12 +443,18 @@ await check('workbench: loads, swapping a part writes the hash, both rifles load
   await page.waitForFunction(() => document.querySelector('#title').textContent.includes('AK-15K'), null, {timeout: 60000});
   assert.equal(await page.locator('.fire').count(), 0, 'no test-fire control remains');
   assert.equal(await page.locator('#copy-code').count(), 1);
-  // the warehouse room is on, with depth of field; Studio swaps it out and Warehouse brings it back
-  assert.deepEqual(await page.evaluate(() => [window.PARP_WORKBENCH.warehouse.enabled, window.PARP_WORKBENCH.dof.on]), [true, true]);
-  await page.locator('[data-env="studio"]').click();
-  assert.equal(await page.evaluate(() => window.PARP_WORKBENCH.warehouse.enabled), false);
+  // the warehouse backdrop is a baked panorama that stays put; Backdrop swaps in the HDR sky, Warehouse brings it back
+  await page.waitForFunction(
+    () => window.PARP_WORKBENCH.room.texture && window.PARP_WORKBENCH.stage.scene.background === window.PARP_WORKBENCH.room.texture,
+    null,
+    {timeout: 30000},
+  );
+  await page.locator('#backdrop').click();
+  assert.equal(await page.evaluate(() => window.PARP_WORKBENCH.room.on), false);
   await page.locator('#room').click();
-  assert.equal(await page.evaluate(() => window.PARP_WORKBENCH.warehouse.enabled), true);
+  await page.waitForFunction(() => window.PARP_WORKBENCH.stage.scene.background === window.PARP_WORKBENCH.room.texture, null, {
+    timeout: 10000,
+  });
   // the room's sound: recorded beds start, and a radio call plays (squelch, call, squelch) on demand
   await page.evaluate(() => window.PARP_WORKBENCH.ambience.trigger('radio'));
   await page.waitForFunction(

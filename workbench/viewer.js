@@ -3,9 +3,6 @@ import {loadRifle as loadRifleInstance, applySlotState} from './rifle-instance.j
 import * as T from 'three';
 import {mountTopBar} from '../shared/topbar.js';
 import {createStage} from '../shared/stage.js';
-import {buildWarehouse} from '../operator/warehouse.js';
-import {createDof} from '../operator/dof.js';
-import {surfaceTexture} from './surface.js';
 import {warehouseAmbience} from '../shared/warehouse-ambience.js';
 import {renderStatsPanel} from './stats-panel.js';
 import {savePhoto, saveCard} from './export.js';
@@ -35,7 +32,7 @@ const stageEl = document.querySelector('#stage'),
 const buildPanel = document.querySelector('#build'),
   finishPanel = document.querySelector('#finish'),
   statsPanel = document.querySelector('#stats');
-let st, scene, renderer, camera, controls, floor, warehouse, rest;
+let st, scene, renderer, camera, controls, floor;
 let selected = null,
   hovered = null,
   tweens = [],
@@ -384,7 +381,6 @@ async function mount(id) {
   scene.add(rifle.model);
   const config = rifle.config;
   floor.position.y = new T.Box3().setFromObject(rifle.model).min.y - 0.002;
-  if (warehouse) warehouse.group.position.y = floor.position.y - REST_TOP; // the rifle lies on the gun rest
   for (const b of document.querySelectorAll('[data-rifle]')) b.setAttribute('aria-pressed', String(b.dataset.rifle === id));
   document.querySelector('#source').innerHTML =
     `Model: <a href="${config.source.url}">${config.source.title}</a> by <a href="${config.author.url}">${config.author.name}</a>, <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Loose rounds and spare magazine removed.`;
@@ -524,24 +520,6 @@ const PRESETS = [
     hash: 'optic=scope&foregrip=angled&handguard-finish=desert&stock-finish=desert&foregrip-finish=desert&suppressor-finish=fde',
   },
 ];
-// The gun rest the rifle lies on in the warehouse: a scarred trestle table under the pool of light.
-const REST_TOP = 1.0;
-function gunRest() {
-  const g = new T.Group();
-  g.name = 'gun rest';
-  const wood = new T.MeshLambertMaterial({color: 0x24170d, map: surfaceTexture('wood')});
-  const add = (w, h, d, x, y, z) => {
-    const geo = new T.BoxGeometry(w, h, d);
-    const m = new T.Mesh(geo, wood);
-    m.position.set(x, y, z);
-    m.castShadow = m.receiveShadow = true;
-    g.add(m);
-  };
-  add(1.5, 0.05, 0.6, 0, REST_TOP - 0.025, 0);
-  for (const x of [-0.62, 0.62]) for (const z of [-0.22, 0.22]) add(0.06, REST_TOP - 0.05, 0.06, x, (REST_TOP - 0.05) / 2, z);
-  add(1.3, 0.04, 0.04, 0, 0.25, 0); // stretcher
-  return g;
-}
 function applyPreset(preset) {
   restore('#' + preset.hash).then(() => view('hero'));
 }
@@ -562,36 +540,46 @@ try {
   Object.assign(st.key.shadow.camera, {left: -1.3, right: 1.3, top: 1.3, bottom: -1.3, near: 0.5, far: 8});
   st.key.shadow.camera.updateProjectionMatrix();
   scene.add(socketMarkers);
-  // The Operator Customiser's warehouse (operator/warehouse.js): the rifle on a gun rest in the pool of light, the
-  // room dark and soft behind it. The HDR lighting buttons swap it out; Warehouse brings it back.
-  warehouse = buildWarehouse(st);
-  rest = gunRest();
-  warehouse.group.add(rest);
-  const dof = createDof(st, {focus: cam => cam.position.distanceTo(controls.target)});
-  // the room's sound (shared/warehouse-ambience.js): voices, radio calls and weapon handling while the warehouse shows
-  const ambience = warehouseAmbience();
-  const roomButton = () => {
-    document.querySelector('#room')?.setAttribute('aria-pressed', String(warehouse.enabled));
-    dof.set(warehouse.enabled);
-    ambience.set(warehouse.enabled);
-  };
+  // The backdrop is the Operator Customiser's warehouse, baked to a 360° panorama from the camera side of the room
+  // (tools/assets/bake-warehouse-pano.mjs): a place that stays put as the camera orbits, softly out of focus. The rifle
+  // keeps the launch lighting (the HDR environment and its key light); the room only shows behind it. Backdrop swaps
+  // in the HDR sky, Warehouse brings the room back.
+  const ambience = warehouseAmbience(); // the room's sound (shared/warehouse-ambience.js)
+  const room = {on: false, texture: null};
+  const loadPano = () =>
+    (room.loading ??= new T.TextureLoader().loadAsync(new URL('../assets/backgrounds/warehouse-pano.jpg', import.meta.url).href).then(t => {
+      t.mapping = T.EquirectangularReflectionMapping;
+      t.colorSpace = T.SRGBColorSpace;
+      return (room.texture = t);
+    }));
+  async function setRoom(on) {
+    room.on = on;
+    scene.userData.fixedBackground = on;
+    document.querySelector('#room')?.setAttribute('aria-pressed', String(on));
+    ambience.set(on);
+    if (!on) return st.setBackdrop(true);
+    const t = await loadPano().catch(() => null);
+    if (!t || !room.on) return;
+    scene.background = t;
+    scene.backgroundBlurriness = 0.025;
+    scene.backgroundIntensity = 1;
+    scene.backgroundRotation.set(0, 0, 0);
+    document.querySelector('#backdrop')?.setAttribute('aria-pressed', 'false');
+    st.wake();
+  }
+  setRoom(true);
+  document.querySelector('#room')?.addEventListener('click', () => setRoom(!room.on));
+  const backdropButton = document.querySelector('#backdrop');
+  if (backdropButton)
+    backdropButton.onclick = () => {
+      if (room.on) setRoom(false);
+      else st.setBackdrop(!scene.background);
+    };
   const ambienceButton = document.querySelector('#ambience');
   ambienceButton?.setAttribute('aria-pressed', String(ambience.on));
   ambienceButton?.addEventListener('click', () => ambienceButton.setAttribute('aria-pressed', String(ambience.toggle())));
-  warehouse.on(true);
-  roomButton();
-  for (const b of document.querySelectorAll('[data-env], #backdrop'))
-    b.addEventListener('click', () => {
-      warehouse.on(false);
-      roomButton();
-    });
-  document.querySelector('#room')?.addEventListener('click', () => {
-    warehouse.on(!warehouse.enabled);
-    roomButton();
-  });
   window.PARP_WORKBENCH = {
-    warehouse,
-    dof,
+    room,
     ambience,
     stage: st,
     get rifle() {
