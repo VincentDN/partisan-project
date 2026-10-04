@@ -626,6 +626,14 @@ await check('rebel band: the band idles, the stash, and an upgrade under the cha
   assert.equal(await page.evaluate(() => window.PARP_BAND.promoting), true, 'the promotion plays');
   await page.waitForFunction(() => !window.PARP_BAND.promoting, null, {timeout: 10000});
   assert.equal(await page.locator('#who').innerText(), 'Fighter', 'the screen shows the new class');
+  // an upgrade during a promotion is never ignored: it cuts the animation short and goes through
+  await page.locator('#groups .card', {hasText: 'Village Infantry'}).click();
+  const up = () => page.locator('#ups .up', {hasText: 'Fighter'}).getByRole('button', {name: 'Upgrade 1'}).click();
+  await up();
+  await page.locator('#groups .card', {hasText: 'Village Infantry'}).click();
+  await up();
+  assert.equal(await page.evaluate(() => window.PARP_BAND.state.band.fighter.count), before + 3, 'both quick upgrades count');
+  await page.waitForFunction(() => !window.PARP_BAND.promoting, null, {timeout: 10000});
   // the class tree: every class as a node, a card with abilities, back to the band
   await page.locator('#tree-btn').click();
   assert.ok((await page.locator('#tree-view .node').count()) >= 40, 'every class in the tree');

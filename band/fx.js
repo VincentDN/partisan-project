@@ -55,7 +55,16 @@ export function idlePose(t, phase = 0) {
  * Play the promotion on `canvas`. drawOld / drawNew(g, t) paint the pawn (with its ground) onto a context the size
  * of the canvas. Resolves when it is done; the canvas then goes back to its idle loop (drawNew).
  */
+const runs = new WeakMap(); // canvas -> the promotion playing on it (a newer one, or endPromotion, stops the older)
+/** Stop any promotion on `canvas` and hand it back to its idle loop. */
+export function endPromotion(canvas) {
+  runs.set(canvas, {});
+  const cur = idlers.get(canvas);
+  if (cur) cur.busy = false;
+}
 export function promote(canvas, drawOld, drawNew, {title = 'PROMOTED', sub = ''} = {}) {
+  const token = {};
+  runs.set(canvas, token);
   const W = canvas.width,
     H = canvas.height,
     g = canvas.getContext('2d');
@@ -81,6 +90,7 @@ export function promote(canvas, drawOld, drawNew, {title = 'PROMOTED', sub = ''}
   return new Promise(done => {
     const t0 = performance.now() / 1000;
     const frame = () => {
+      if (runs.get(canvas) !== token) return done(); // cut short
       const now = performance.now() / 1000,
         k = (now - t0) / D,
         t = now;

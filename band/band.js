@@ -22,7 +22,7 @@ import {
 import {createTreeView} from './tree.js';
 import * as mech from '../workbench/mech.js';
 import * as ui from '../shared/ui-sounds.js';
-import {idle, idlePose, promote} from './fx.js';
+import {idle, idlePose, promote, endPromotion} from './fx.js';
 
 mountTopBar({title: 'Rebel Band', scene: 'viewer'});
 const $ = s => document.querySelector(s);
@@ -223,7 +223,9 @@ function renderBand() {
   );
 }
 const PAWN = {size: 300, cy: 190, ground: true};
-let promoting = false;
+let promoting = false,
+  promotions = 0,
+  finishPromotion = null;
 async function renderCentre() {
   const detail = $('#detail');
   if (selected === 'leader') {
@@ -338,29 +340,51 @@ function choose(id) {
 
 // ---------- actions ----------
 async function doUpgrade(from, to, n) {
-  if (promoting) return;
+  // a click during a promotion finishes it at once and goes on: an upgrade is never ignored
+  if (promoting) finishPromotion?.();
   const r = upgrade(S.band, S.stash, from, to, n);
   if (!r.n) return;
   S.band = r.band;
   S.stash = r.stash;
   save();
-  // the big pawn turns from the old class into the new one, to a fanfare; then the screen shows the new class
-  promoting = true;
-  mech.clunk(0.5);
-  ui.victory();
-  const canvas = $('#pawn'),
-    [drawOld, drawNew] = await Promise.all([painter(from, canvas, PAWN), painter(to, canvas, PAWN)]);
   selected = to;
-  render();
   $('#status').textContent = `${r.n} × ${TROOPS[from].label} → ${TROOPS[to].label}`;
-  await promote(canvas, drawOld, drawNew, {
-    title: 'PROMOTED',
-    sub: `${r.n > 1 ? r.n + ' × ' : ''}${TROOPS[from].label} → ${TROOPS[to].label}`,
-  });
-  promoting = false;
-  idle(canvas, drawNew);
-}
-// A raid on an army patrol: everyone gains experience, the leader too, and the band carries off what the patrol had.
+  try {
+    mech.clunk(0.5);
+    ui.victory();
+  } catch {
+    /* sound is optional */
+  }
+  // the big pawn turns from the old class into the new one, to a fanfare; then the screen shows the new class
+  const run = ++promotions;
+  promoting = true;
+  render();
+  const canvas = $('#pawn');
+  try {
+    const [drawOld, drawNew] = await Promise.all([painter(from, canvas, PAWN), painter(to, canvas, PAWN)]);
+    if (run !== promotions) return; // a newer upgrade took over
+    await Promise.race([
+      promote(canvas, drawOld, drawNew, {
+        title: 'PROMOTED',
+        sub: `${r.n > 1 ? r.n + ' × ' : ''}${TROOPS[from].label} → ${TROOPS[to].label}`,
+      }),
+      new Promise(done => {
+        finishPromotion = done; // cut short by the next upgrade
+        setTimeout(done, 4000); // and never longer than this, whatever the frame rate
+      }),
+    ]);
+  } catch (err) {
+    console.error(err);
+    $('#status').textContent += ` (the promotion could not play: ${err.message})`;
+  } finally {
+    if (run === promotions) {
+      promoting = false;
+      finishPromotion = null;
+      endPromotion(canvas);
+      renderCentre();
+    }
+  }
+} // A raid on an army patrol: everyone gains experience, the leader too, and the band carries off what the patrol had.
 $('#skirmish').onclick = () => {
   const rnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
   for (const [id, b] of Object.entries(S.band)) if (TROOPS[id].xp) b.xp += b.count * rnd(18, 40);
