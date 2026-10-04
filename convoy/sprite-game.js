@@ -8,8 +8,9 @@ import {Sim} from './sim.js';
 import {WEAPONS} from './weapons.js';
 import {activesFor, useAbility, cooldownLeft} from './abilities.js';
 import {DIFFICULTY, DEFAULT_DIFFICULTY} from './difficulty.js';
-import {SQUAD_KEY, loadSquad, newSquad, missionXp, award, canPromote, promote, progress} from './progression.js';
-import {TROOPS} from '../band/troops.js';
+import {SQUAD_KEY, loadSquad, newSquad, missionXp, award} from './progression.js';
+import {rollLoot, bank} from './loot.js';
+import {createCamp, el} from './camp.js';
 import {LEVELS, MISSIONS, DEFAULT_LEVEL} from './levels/index.js';
 import {createSquadPicker} from './squad-picker.js';
 import {createSoundscape} from './soundscape.js';
@@ -64,6 +65,7 @@ function newGame() {
     difficulty: diffId,
   });
   awarded = false;
+  lastLoot = lastEarned = null;
   R.snap(sim);
   started = false;
   selected = [];
@@ -74,17 +76,20 @@ function newGame() {
   picker.sync();
   $('#card-title').textContent = sim.level.title;
   $('#card-text').textContent = sim.level.brief;
-  $('#start').textContent = 'Start';
+  $('#start').textContent = 'Start mission';
   renderMissions();
   $('#card').hidden = false;
   renderLook();
   renderSquad();
+  renderCamp();
 }
 function renderMissions() {
   $('#missions').replaceChildren(
     ...MISSIONS.map((m, i) => {
       const b = document.createElement('button');
-      b.textContent = `${i + 1}. ${m.title}`;
+      const r = squad.record[m.id] || {played: 0, won: 0};
+      b.textContent = `${i + 1}. ${m.title}${r.won ? ' ✓' : ''}`;
+      b.title = `Played ${r.played}, won ${r.won}`;
       b.setAttribute('aria-pressed', String(m.id === levelId));
       b.onclick = () => {
         levelId = m.id;
@@ -319,109 +324,65 @@ function showDebrief(d) {
   $('#card-title').textContent = `${sim.level.title}: ${d.outcome === 'won' ? 'accomplished' : 'failed'}`;
   const text = $('#card-text');
   text.textContent = `${Math.floor(d.time / 60)}:${String(Math.floor(d.time % 60)).padStart(2, '0')} · ${d.armyDown} soldiers down, ${d.escaped} fled, ${d.vehiclesDestroyed} vehicles destroyed. ${d.byPartisan.map(u => `${u.name}: ${u.state}, ${u.kills} down`).join(' · ')}`;
-  // experience: paid once per mission, scaled by difficulty; promotions are offered right here
+  // experience and loot: paid once per mission, scaled by difficulty; promotions and the trader are right below
   if (!awarded) {
     awarded = true;
     lastEarned = missionXp(d, diffId);
-    squad = award(squad, lastEarned);
+    lastLoot = rollLoot(POOL, {
+      levelId,
+      debrief: d,
+      difficulty: DIFFICULTY[diffId],
+      seed: (Number(params.get('seed')) || Math.floor(Math.random() * 1e9)) + squad.missions,
+    });
+    squad = bank(
+      award(squad, lastEarned, {level: levelId, outcome: d.outcome, difficulty: diffId, loot: lastLoot.map(e => e.name)}),
+      lastLoot,
+    );
     saveSquad();
   }
-  const xp = document.createElement('div');
-  xp.className = 'debrief-xp';
-  xp.append(squadCards(lastEarned));
-  text.append(xp);
-  $('#start').textContent = 'Play again';
+  $('#start').textContent = 'Back to camp';
+  renderMissions();
   renderSquad();
+  renderCamp();
 }
 
-// ---------- squad: classes, experience and promotions (saved in this browser) ----------
+// ---------- the campaign: squad, loot, stash and trader (saved in this browser; drawn by convoy/camp.js) ----------
 let awarded = false,
-  lastEarned = null;
-const NAMES = {player: 'Lead rebel', mila: 'Mila', dragan: 'Dragan'};
-function el(tag, attrs = {}, ...kids) {
-  const e = document.createElement(tag);
-  for (const [k, v] of Object.entries(attrs))
-    if (v === null || v === undefined) continue;
-    else if (k === 'class') e.className = v;
-    else if (k.startsWith('on')) e[k] = v;
-    else e.setAttribute(k, v);
-  e.append(...kids.filter(k => k !== null && k !== undefined && k !== false));
-  return e;
-}
-/** One card per rebel: class, XP bar, abilities on the bar, and promotion buttons when there is enough XP. */
-function squadCards(earned = null) {
-  const wrap = el('div', {class: 'squad-cards'});
-  for (const id of Object.keys(squad.classes)) {
-    const cls = squad.classes[id],
-      t = TROOPS[cls],
-      pr = progress(squad, id);
-    const actives = activesFor(cls)
-      .map((a, i) => `${ABILITY_KEYS[i].toUpperCase()} ${a.name}`)
-      .join(' · ');
-    const gain = earned?.[id];
-    const promos = canPromote(squad, id)
-      ? el(
-          'div',
-          {class: 'promote', role: 'group', 'aria-label': `Promote ${NAMES[id]}`},
-          el('span', {}, 'Promote to:'),
-          ...t.to.map(to =>
-            el(
-              'button',
-              {
-                type: 'button',
-                'data-promote': `${id}:${to}`,
-                onclick: () => {
-                  const next = promote(squad, id, to);
-                  if (!next) return;
-                  squad = next;
-                  saveSquad();
-                  sim.say(
-                    sim.units.find(u => u.id === id) || sim.player,
-                    `${NAMES[id]} is now a ${TROOPS[to].label.toLowerCase()}.`,
-                    'promo-' + to,
-                    0,
-                  );
-                  renderSquad();
-                  if (sim.outcome && !$('#card').hidden) showDebrief(sim.debrief());
-                },
-              },
-              TROOPS[to].label,
-            ),
-          ),
-        )
-      : null;
-    wrap.append(
+  lastEarned = null,
+  lastLoot = null;
+const POOL = await fetch(new URL('./data/loot-pool.json', import.meta.url))
+  .then(r => r.json())
+  .then(d => d.items)
+  .catch(() => []);
+const camp = createCamp({
+  get: () => squad,
+  set: (next, why) => {
+    squad = next;
+    saveSquad();
+    if (why && sim) sim.say(sim.player, why, 'camp-' + why, 0);
+    renderSquad();
+    renderCamp();
+  },
+});
+/** The camp, under the briefing or the debrief: rebels and promotions, the stash, the trader. */
+function renderCamp() {
+  const box = $('#camp');
+  if (!box) return;
+  const debrief = !!sim?.outcome;
+  box.replaceChildren(
+    ...[
+      debrief ? el('h3', {}, 'Brought home') : null,
+      debrief ? camp.lootList(lastLoot) : null,
+      el('h3', {}, 'Squad'),
+      camp.squadCards({earned: debrief ? lastEarned : null}),
       el(
         'div',
-        {class: 'squad-card', 'data-squad': id},
-        el('b', {}, NAMES[id]),
-        el('span', {class: 'cls'}, ` ${t.label} · tier ${t.tier}`),
-        gain
-          ? el(
-              'span',
-              {class: 'gain'},
-              ` +${gain.total} XP (${gain.parts.map(([l, n]) => `${l} ${n}`).join(', ')}${gain.mult !== 1 ? `, ×${gain.mult}` : ''})`,
-            )
-          : null,
-        el(
-          'div',
-          {
-            class: 'xpbar',
-            role: 'meter',
-            'aria-label': `${NAMES[id]} experience`,
-            'aria-valuemin': 0,
-            'aria-valuemax': pr.need || 1,
-            'aria-valuenow': Math.min(pr.xp, pr.need || 1),
-          },
-          el('i', {style: `width:${Math.round(pr.frac * 100)}%`}),
-        ),
-        el('small', {}, pr.need ? `${pr.xp} / ${pr.need} XP to promote` : `${pr.xp} XP · top of the path`),
-        actives ? el('small', {class: 'acts'}, actives) : null,
-        promos,
+        {class: 'camp-cols'},
+        el('section', {}, el('h3', {}, 'Stash'), camp.stashView()),
+        el('section', {}, el('h3', {}, 'Trader'), camp.traderView()),
       ),
-    );
-  }
-  return wrap;
+    ].filter(Boolean),
+  );
 }
 function renderSquad() {
   const box = $('#squad');
@@ -431,16 +392,22 @@ function renderSquad() {
     {
       type: 'button',
       onclick: () => {
+        if (!confirm('Start the campaign over? The squad, its experience and the stash are lost.')) return;
         squad = newSquad();
         saveSquad();
         newGame();
       },
     },
-    'Reset squad',
+    'New campaign',
   );
+  const won = MISSIONS.filter(m => squad.record[m.id]?.won).length;
   box.replaceChildren(
-    squadCards(),
-    el('p', {class: 'note'}, `Missions: ${squad.missions}. Classes and promotions take effect at the next start.`),
+    camp.squadCards({compact: true}),
+    el(
+      'p',
+      {class: 'note'},
+      `Missions: ${squad.missions} · ${won} of ${MISSIONS.length} won · ${squad.scrip} scrip. Promotions take effect at the next start.`,
+    ),
     reset,
   );
 }

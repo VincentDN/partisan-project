@@ -4,6 +4,10 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 ## [Unreleased]
 
+### Added (Partisan Tactical campaign)
+- **Loot**: every mission brings home items rolled from the Equipment Wiki's Tarkov-style catalogue: equipment for the stash, trade goods for the trader, salvage from wrecked vehicles. More for winning and on harder difficulties. TAC-C-10.
+- **Camp**: between missions the card shows the three missions and their record, the squad with every next class and the equipment it costs, the stash and a trader (sell goods for scrip, buy equipment). Promotions now cost equipment as well as experience. The campaign persists in the browser. TAC-C-10.
+
 ### Added (Partisan Tactical: abilities, levelling, difficulty)
 - **Class abilities in every level**: each rebel's class from the Rebel Band tree sets its weapons, passives and up to three abilities on Z X V (rockets, FPV drones, guided missiles, breaching charges, smoke, sandbags, mines, recon reveals, jamming, healing, stealth and more), with cooldowns on an ability bar. TAC-B-15.
 - **Levelling**: the squad earns experience in missions (kills, objectives, survival, victory) and is promoted along the class tree from the debrief or the SQUAD panel; saved in the browser. TAC-H-14.

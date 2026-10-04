@@ -418,44 +418,71 @@ await check('art style lab: every style renders over the operator and switching 
 await check('squad control: keyboard, death transfer, all-down and reduced motion', () => checkSquadControl(browser, server.url));
 await check('squad control: timed slow-motion selection', () => checkSquadControl(browser, server.url, 'no-preference'));
 
-await check('partisan tactical: class abilities, difficulty, and XP and promotions at the debrief', async () => {
-  const page = await open(browser, server.url + 'convoy/?seed=7');
-  await page.evaluate(() => localStorage.removeItem('parp-squad-v1'));
-  await page.reload();
-  await page.waitForFunction(() => window.PARP_SPRITES?.ready, null, {timeout: 60000});
-  await page.locator('#difficulty').selectOption('hard');
-  assert.equal(await page.evaluate(() => window.PARP_SPRITES.sim.difficultyId), 'hard');
-  await page.locator('#start').click();
-  const used = await page.evaluate(() => {
-    const {sim, ability} = window.PARP_SPRITES;
-    return {cls: sim.player.cls, ok: ability(0), cd: Object.keys(sim.player.cooldowns).length};
-  });
-  assert.equal(used.cls, 'insurgent');
-  assert.ok(used.ok && used.cd === 1, 'Z uses the first ability and starts its cooldown');
-  assert.ok((await page.locator('#squad .squad-card').count()) === 3, 'the squad panel lists the three rebels');
-  await page.evaluate(() => {
-    const {sim} = window.PARP_SPRITES;
-    sim.kills.player = 30;
-    for (const u of sim.units.filter(u => u.side === 'partisan'))
-      sim.damage(
-        u,
-        sim.units.find(a => a.side === 'army'),
-        999,
-      );
-    sim.checkOutcome();
-  });
-  await page.locator('#card:not([hidden]) .debrief-xp').waitFor();
-  assert.match(await page.locator('.debrief-xp').innerText(), /XP/);
-  const promote = page.locator('.debrief-xp [data-promote^="player:"]').first();
-  await promote.click();
-  const squad = await page.evaluate(() => JSON.parse(localStorage.getItem('parp-squad-v1')));
-  assert.notEqual(squad.classes.player, 'insurgent', 'promoted along the tree and saved');
-  await page.locator('#start').click();
-  assert.equal(await page.evaluate(() => window.PARP_SPRITES.sim.player.cls), squad.classes.player);
-  await page.evaluate(() => localStorage.removeItem('parp-squad-v1'));
-  noProblems(page);
-  await page.close();
-});
+await check(
+  'partisan tactical: abilities, difficulty, and a campaign: loot, stash, trader and promotions that cost equipment',
+  async () => {
+    const page = await open(browser, server.url + 'convoy/?seed=7');
+    await page.evaluate(() => localStorage.removeItem('parp-squad-v1'));
+    await page.reload();
+    await page.waitForFunction(() => window.PARP_SPRITES?.ready, null, {timeout: 60000});
+    await page.locator('#difficulty').selectOption('hard');
+    assert.equal(await page.evaluate(() => window.PARP_SPRITES.sim.difficultyId), 'hard');
+    await page.locator('#start').click();
+    const used = await page.evaluate(() => {
+      const {sim, ability} = window.PARP_SPRITES;
+      return {cls: sim.player.cls, ok: ability(0), cd: Object.keys(sim.player.cooldowns).length};
+    });
+    assert.equal(used.cls, 'insurgent');
+    assert.ok(used.ok && used.cd === 1, 'Z uses the first ability and starts its cooldown');
+    assert.ok((await page.locator('#squad .squad-card').count()) === 3, 'the squad panel lists the three rebels');
+    await page.evaluate(() => {
+      const {sim} = window.PARP_SPRITES;
+      sim.kills.player = 30;
+      for (const u of sim.units.filter(u => u.side === 'partisan'))
+        sim.damage(
+          u,
+          sim.units.find(a => a.side === 'army'),
+          999,
+        );
+      sim.checkOutcome();
+    });
+    // the debrief: loot from the catalogue banked into the stash, experience, and the camp with its promotions
+    await page.locator('#card:not([hidden]) #camp .loot-list li').first().waitFor();
+    const camp = await page.evaluate(() => {
+      const s = JSON.parse(localStorage.getItem('parp-squad-v1'));
+      return {missions: s.missions, record: s.record.convoy, items: s.log.at(-1).loot.length, stash: s.stash};
+    });
+    assert.equal(camp.missions, 1);
+    assert.deepEqual(camp.record, {played: 1, won: 0});
+    assert.ok(camp.items >= 1, 'loot rolled');
+    assert.equal(await page.locator('#camp .loot-list li').count(), camp.items);
+    assert.match(await page.locator('#camp .squad-card').first().innerText(), /XP/);
+    // the start stash has the vest and helmet for Heavy Fighter
+    const promote = page.locator('#camp [data-promote="player:heavy"]');
+    assert.equal(await promote.isDisabled(), false);
+    await promote.click();
+    const squad = await page.evaluate(() => JSON.parse(localStorage.getItem('parp-squad-v1')));
+    assert.equal(squad.classes.player, 'heavy', 'promoted along the tree and saved');
+    assert.ok(!squad.stash.vest && !squad.stash.helmet, 'the equipment is spent');
+    // the trader: buy something with the starting scrip
+    const offer = page.locator('#camp .offers button:not([disabled])').first();
+    if (await offer.count()) {
+      const before = await page.evaluate(() => JSON.parse(localStorage.getItem('parp-squad-v1')).scrip);
+      await offer.click();
+      assert.ok((await page.evaluate(() => JSON.parse(localStorage.getItem('parp-squad-v1')).scrip)) < before, 'scrip spent');
+    }
+    await page.locator('#start').click(); // back to camp
+    assert.equal(await page.locator('#start').innerText(), 'Start mission');
+    await page.locator('#start').click();
+    assert.equal(await page.evaluate(() => window.PARP_SPRITES.sim.player.cls), 'heavy');
+    await page.reload();
+    await page.waitForFunction(() => window.PARP_SPRITES?.ready, null, {timeout: 60000});
+    assert.equal(await page.evaluate(() => window.PARP_SPRITES.squad.classes.player), 'heavy', 'the campaign persists');
+    await page.evaluate(() => localStorage.removeItem('parp-squad-v1'));
+    noProblems(page);
+    await page.close();
+  },
+);
 
 await check('convoy ambush: the convoy drives, the ambush springs, soldiers dismount and call out', async () => {
   const page = await open(browser, server.url + 'convoy/?seed=7');
