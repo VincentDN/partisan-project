@@ -45,6 +45,8 @@ Equipment and colour definitions live in `operator/generated-recon.js`. The hood
 
 - 48 operator/config/rig tests pass; actual skinned geometry is sampled across every pose and idle.
 - All eleven rifles pass sampled clearance and palm reach in eight carry poses, with full chest equipment.
+- Built-site browser acceptance passes, including decoded textures, colour preservation, equipment toggles, URL reload, idles, reduced motion, pose transitions and axe accessibility.
+- The complete browser smoke suite passes all 21 checks after integrating main.
 - Site build/link checks, ESLint and TypeScript pass. The build directory exclusion now normalizes Windows separators; otherwise an excluded study's broken links were copied into the artifact. Changed JavaScript files pass Prettier.
-- The full unit suite reports 204/207 passing: the existing standalone downloader is out of sync with its generator, its Python test expects a `python3` executable absent from this Windows PATH, and TAC-J-39 lacks the required decision-template fields. Those unrelated files were not changed here.
+- After integrating main at `2c2a7df`, the full unit suite reports 208/210 passing: the existing standalone downloader is out of sync with its generator, and its Python test expects a `python3` executable absent from this Windows PATH. Those unrelated files were not changed here.
 - Repository-wide Prettier reports existing formatting drift; unrelated files were not reformatted.
