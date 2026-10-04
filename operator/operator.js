@@ -13,6 +13,7 @@ import {buildWarehouse} from './warehouse.js';
 import {mountStash} from './stash.js';
 import {mountCrew} from './crew.js';
 import {createDof} from './dof.js';
+import {warehouseAmbience} from '../shared/warehouse-ambience.js';
 import {mountTopBar} from '../shared/topbar.js';
 import {camoFor, FABRIC} from '../shared/camo.js';
 import {Rig, blinkAt} from './rig.js';
@@ -107,10 +108,15 @@ async function rifleProp(id = 'ak74m') {
 // Depth of field in the warehouse: focused where the camera looks (the hero), the room behind softens. Not in the
 // Art Style Lab, which draws its own screen-space passes.
 const dof = lab ? null : createDof(stage, {focus: cam => cam.position.distanceTo(stage.controls.target)});
+// the room's sound (shared/warehouse-ambience.js): voices, radio calls and weapon handling while the warehouse shows
+const ambience = lab ? null : warehouseAmbience();
 const roomButton = () => {
   $('#room')?.setAttribute('aria-pressed', String(warehouse.enabled));
   dof?.set(warehouse.enabled);
+  ambience?.set(warehouse.enabled);
 };
+$('#ambience')?.setAttribute('aria-pressed', String(!!ambience?.on));
+$('#ambience')?.addEventListener('click', () => $('#ambience').setAttribute('aria-pressed', String(!!ambience?.toggle())));
 warehouse.on(true);
 roomButton();
 for (const b of document.querySelectorAll('[data-env], #backdrop'))
@@ -735,6 +741,7 @@ const crew = lab ? null : mountCrew({scene, warehouse, figure, rifleProp, stage,
 window.PARP_OPERATOR = {
   warehouse,
   dof,
+  ambience,
   get crew() {
     return crew;
   },

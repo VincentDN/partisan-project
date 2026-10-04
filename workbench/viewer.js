@@ -6,6 +6,7 @@ import {createStage} from '../shared/stage.js';
 import {buildWarehouse} from '../operator/warehouse.js';
 import {createDof} from '../operator/dof.js';
 import {surfaceTexture} from './surface.js';
+import {warehouseAmbience} from '../shared/warehouse-ambience.js';
 import {renderStatsPanel} from './stats-panel.js';
 import {savePhoto, saveCard} from './export.js';
 import {parseLegacy, toLegacy, encode, decode} from '../shared/loadout.js';
@@ -567,10 +568,16 @@ try {
   rest = gunRest();
   warehouse.group.add(rest);
   const dof = createDof(st, {focus: cam => cam.position.distanceTo(controls.target)});
+  // the room's sound (shared/warehouse-ambience.js): voices, radio calls and weapon handling while the warehouse shows
+  const ambience = warehouseAmbience();
   const roomButton = () => {
     document.querySelector('#room')?.setAttribute('aria-pressed', String(warehouse.enabled));
     dof.set(warehouse.enabled);
+    ambience.set(warehouse.enabled);
   };
+  const ambienceButton = document.querySelector('#ambience');
+  ambienceButton?.setAttribute('aria-pressed', String(ambience.on));
+  ambienceButton?.addEventListener('click', () => ambienceButton.setAttribute('aria-pressed', String(ambience.toggle())));
   warehouse.on(true);
   roomButton();
   for (const b of document.querySelectorAll('[data-env], #backdrop'))
@@ -585,6 +592,7 @@ try {
   window.PARP_WORKBENCH = {
     warehouse,
     dof,
+    ambience,
     stage: st,
     get rifle() {
       return rifle;

@@ -4,6 +4,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 ## [Unreleased]
 
+### Added (Operator and Weapon Modders)
+- **Room sound**: the warehouse is alive with real recordings: rain on the roof, men talking in the next bay, radio calls, rifles being charged and loaded, bolts, brass, tools, laughter, coughs, footsteps. A Room sound button turns it off. TAC-J-49.
+
 ### Added (Weapon Modder)
 - **Warehouse**: the rifle lies on a table in the Operator Customiser's warehouse, under the same lights, with the room blurred behind. A Warehouse lighting button brings it back after Studio, Outdoor or Sunset. TAC-J-48.
 - **Every rifle takes every attachment**: optics, muzzle devices, back-up sights, foregrips (GP-25 included), side-rail lights and lasers, triggers, charging handles and slings on all eleven rifles. TAC-J-48.

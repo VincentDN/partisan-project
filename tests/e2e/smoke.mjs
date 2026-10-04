@@ -449,6 +449,16 @@ await check('workbench: loads, swapping a part writes the hash, both rifles load
   assert.equal(await page.evaluate(() => window.PARP_WORKBENCH.warehouse.enabled), false);
   await page.locator('#room').click();
   assert.equal(await page.evaluate(() => window.PARP_WORKBENCH.warehouse.enabled), true);
+  // the room's sound: recorded beds start, and a radio call plays (squelch, call, squelch) on demand
+  await page.evaluate(() => window.PARP_WORKBENCH.ambience.trigger('radio'));
+  await page.waitForFunction(
+    () => window.PARP_WORKBENCH.ambience.stats.beds >= 3 && window.PARP_WORKBENCH.ambience.stats.loaded >= 5,
+    null,
+    {
+      timeout: 30000,
+    },
+  );
+  assert.equal(await page.evaluate(() => window.PARP_WORKBENCH.ambience.stats.played.radio), 1);
   // the retro MCX: every surface carries a nearest-filtered bitmap; an old rifle takes a modern grip and light
   await page.locator('[data-rifle="spear-retro"]').click();
   await page.waitForFunction(() => window.PARP_WORKBENCH.rifle?.id === 'spear-retro', null, {timeout: 60000});

@@ -482,3 +482,13 @@ The 2.5-D top-down sprite look for the shooter (RimWorld style) and the retro ov
 - Cost to change: Low (`UNIVERSAL` and `complete` in `workbench/universal.js`; `surface`, `mounts` and `stretch` per rifle).
 - Revisit if: A better StG 44 source is downloaded (swap the URL and drop its `surface`), or calibre-matched magazines are wanted per rifle.
 - Owner feedback: —
+
+### TAC-J-49 · The warehouse sounds lived in
+- Status: built  ·  Packet: WP-V
+- Decision: The Operator and Weapon Modders play the warehouse's sound while the room is shown (`shared/warehouse-ambience.js`), from real recordings only: 46 CC0 clips from Freesound, hand-picked and fetched, trimmed and loudness-normalised by `tools/audio/fetch-shooter-sounds.mjs --set warehouse` into `assets/audio/warehouse/`. Beds loop with crossfades: a large warehouse room tone, rain on a tin roof, men talking in the next bay (distant, dulled) and a lamp's hum. Every 2.5 to 8 seconds something happens somewhere in the room, placed left or right and further off (quieter, darker, wetter): radio calls between squelches through a handset band, an AK or RPK charged or a magazine seated, a Mauser or Mosin bolt worked, brass tipped on the bench, an ammo box, a ratchet, clamp or hammer, laughter, a cough, footsteps on concrete, a lighter, cards shuffled, a chair creaking, the shutter door. A room reverb (a two-second decay) sits under it all. It starts on the first click or key, stops in a background tab and with the HDR lighting, and a Room sound button turns it off (remembered in the browser).
+- Why: Owner request: background ambience on the Operator and Weapon Modders (voices, weapon handling, radio calls) from real sound libraries, not synthesis.
+- Alternatives rejected: One long ambience recording (it repeats audibly and cannot place events in the room); synthesised radio and foley (owner asked for recordings).
+- Cost / risk: 5.5 MB of audio, fetched lazily after the first gesture (beds first, events as they play). The radio chatter is English police and amateur traffic, not the insurgents' language.
+- Cost to change: Low (`EVENTS` and `BEDS` in `shared/warehouse-ambience.js`; the `WAREHOUSE` picks in the fetch tool).
+- Revisit if: Radio calls in the setting's language are recorded, or the crew's animations should trigger their own sounds.
+- Owner feedback: —

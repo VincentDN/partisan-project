@@ -2,18 +2,20 @@
 // category (heavy, grounded, outdoor). Downloads the high-quality previews, trims the silence, normalises, fades and
 // encodes small mono MP3s into assets/audio/shooter/<category>/, and writes assets/audio/shooter/manifest.json
 // (category -> files, with the Freesound id, title and author of each).
-//   node tools/audio/fetch-shooter-sounds.mjs [--per 3] [--only cat1,cat2]
+//   node tools/audio/fetch-shooter-sounds.mjs [--set shooter|warehouse] [--per 3] [--only cat1,cat2]
+// --set warehouse fetches the Operator and Weapon Modders' room ambience into assets/audio/warehouse/ (shared/warehouse-ambience.js).
 // Needs ffmpeg. Raw downloads are cached in .cache/freesound/ (git-ignored).
 import fs from 'node:fs';
 import path from 'node:path';
 import {execFileSync} from 'node:child_process';
 
-const OUT = 'assets/audio/shooter',
-  CACHE = '.cache/freesound';
 const arg = (k, d) => {
   const i = process.argv.indexOf(k);
   return i > 0 ? process.argv[i + 1] : d;
 };
+const SET = arg('--set', 'shooter'),
+  OUT = `assets/audio/${SET}`,
+  CACHE = '.cache/freesound';
 const PER = Number(arg('--per', 3)),
   ONLY = arg('--only', '')?.split(',').filter(Boolean);
 
@@ -46,6 +48,30 @@ export const CATEGORIES = {
   'amb-forest-night': {ids: [333221, 175020, 522299], q: ['night field crickets'], dur: [20, 600], clip: 40, loop: true, stereo: true},
   'amb-distant-battle': {ids: [326442, 150305, 350368, 840492], q: ['warzone'], dur: [8, 600], clip: 40, loop: true, stereo: true},
 };
+
+// The rebel warehouse behind the Operator and Weapon Modders: the room, rain on the roof, men talking in the next bay,
+// radio traffic, weapons being handled, tools, steps. Voices are wanted here, so these are all hand-picked ids.
+export const WAREHOUSE = {
+  'amb-room': {ids: [278987, 427861, 240895], q: ['warehouse ambience'], dur: [20, 600], clip: 40, loop: true, stereo: true},
+  'amb-rain': {ids: [521773, 333509], q: ['rain tin roof'], dur: [20, 600], clip: 40, loop: true, stereo: true},
+  hum: {ids: [638895], q: [], dur: [5, 300], clip: 20, loop: true},
+  voices: {ids: [741282, 438413, 343425], q: ['walla'], dur: [10, 600], clip: 30, loop: true, stereo: true},
+  laugh: {ids: [480806, 481735, 482787], q: ['men laughing'], dur: [1, 20], clip: 4},
+  cough: {ids: [401334, 743360, 447496], q: ['cough man'], dur: [0.3, 5], clip: 1.6},
+  'radio-chatter': {ids: [100416, 435383, 648463, 353712], q: ['radio chatter'], dur: [2, 60], clip: 8},
+  'radio-squelch': {ids: [524205, 760245, 47646, 522164], q: ['radio squelch'], dur: [0.2, 5], clip: 1.2},
+  'gun-handling': {ids: [675008, 171632, 725397, 379977, 263513], q: ['ak47 handling'], dur: [0.3, 30], clip: 3},
+  bolt: {ids: [802673, 267895], q: ['bolt action'], dur: [0.3, 5], clip: 2},
+  'shells-table': {ids: [370805, 371199], q: ['bullet shells'], dur: [0.3, 5], clip: 1.6},
+  'ammo-box': {ids: [320353, 386698], q: ['ammo box'], dur: [0.3, 10], clip: 2},
+  tools: {ids: [181634, 181635, 513346], q: ['tools workshop'], dur: [0.5, 120], clip: 3},
+  footsteps: {ids: [459964, 368833], q: ['footsteps concrete'], dur: [2, 20], clip: 4},
+  zippo: {ids: [85713, 42144], q: ['zippo'], dur: [0.5, 5], clip: 2},
+  cards: {ids: [256508, 447918], q: ['cards shuffle'], dur: [0.5, 10], clip: 2},
+  creak: {ids: [23406, 117289], q: ['chair creak'], dur: [0.3, 5], clip: 1.6},
+  'metal-door': {ids: [410560], q: ['metal door warehouse'], dur: [1, 15], clip: 4},
+};
+const SETS = {shooter: CATEGORIES, warehouse: WAREHOUSE};
 
 const UA = {'User-Agent': 'Mozilla/5.0 (partisan-project sound fetch)'};
 // a download that stops answering must not hang the whole run
@@ -187,7 +213,7 @@ const manifestPath = path.join(OUT, 'manifest.json');
 const manifest = fs.existsSync(manifestPath)
   ? JSON.parse(fs.readFileSync(manifestPath, 'utf8'))
   : {source: 'Freesound, CC0 only', categories: {}};
-for (const [cat, spec] of Object.entries(CATEGORIES)) {
+for (const [cat, spec] of Object.entries(SETS[SET])) {
   if (ONLY?.length && !ONLY.includes(cat)) continue;
   if (fs.existsSync(path.join(OUT, cat))) fs.rmSync(path.join(OUT, cat), {recursive: true});
   manifest.categories[cat] = {loop: !!spec.loop, files: await fetchCategory(cat, spec)};
