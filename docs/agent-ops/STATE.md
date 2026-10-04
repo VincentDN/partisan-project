@@ -11,6 +11,7 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json); full plan: [ta
 - What happened: Added `operator/compare.html`, linked from the Operator Modder. Left: complete original inbound GLB, byte-for-byte with its 4K texture and 193534 triangles. Right: existing modular model in rest pose, 14523 triangles. Display-only orientation/ground alignment; synchronized cameras and lighting, full/torso/face views, wireframe and mobile layout. Source import script records a hash; source is registered as an inspection reference, explicitly exempt from the gameplay budget for this as-is comparison request.
 - Verification: built-site comparison test and axe pass, including byte identity, decoded 4K texture, 1.85 m alignment, keyboard camera sync, reload and mobile overflow. Build/link, lint/typecheck pass. Full unit suite stays at 208/210 with the two pre-existing downloader failures.
 - Next step: Review `operator/compare.html` and `docs/engineering/generated-recon.md`. Main remains unchanged under the latest repository-protection instruction. Local preview: http://localhost:8132/operator/compare.html
+- Upstream note: latest fetched main is `907f86d` and includes a separate Recon colour bake plus other demo changes. Those later commits are not merged here; this comparison intentionally shows this branch's verified textured conversion. Reconcile the two model pipelines deliberately before any future integration.
 <!-- handoff:end -->
 
 ## Resume here
