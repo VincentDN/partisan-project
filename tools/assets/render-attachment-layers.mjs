@@ -20,8 +20,10 @@ await page.locator('[data-view="three"]').click();
 await page.waitForTimeout(2500);
 
 // build every attachment once (files load asynchronously), then render layer by layer
-const plan = await page.evaluate(() => {
+const plan = await page.evaluate(async () => {
   const r = window.PARP_WORKBENCH.rifle;
+  const {buildOption} = await import('./rifle-instance.js');
+  for (const [slot, s] of Object.entries(r.slots)) for (const o of s.options) buildOption(r, slot, o);
   const out = [];
   for (const [slot, s] of Object.entries(r.slots))
     for (const o of s.options) if (o.object) out.push({slot, id: o.id, label: o.label, slotLabel: s.spec.label});

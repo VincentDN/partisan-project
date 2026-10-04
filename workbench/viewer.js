@@ -3,12 +3,14 @@ import {loadRifle as loadRifleInstance, applySlotState} from './rifle-instance.j
 import * as T from 'three';
 import {mountTopBar} from '../shared/topbar.js';
 import {createStage} from '../shared/stage.js';
+import {disposeModel, prefetchModels} from '../shared/model-cache.js';
 import {warehouseAmbience} from '../shared/warehouse-ambience.js';
 import {renderStatsPanel} from './stats-panel.js';
 import {savePhoto, saveCard} from './export.js';
 import {parseLegacy, toLegacy, encode, decode} from '../shared/loadout.js';
 import {MODELS, DEFAULT_MODEL, RAIL_OF} from './models.js';
 import {resolve, fits} from './rails.js';
+import {ATTACHMENT_FILES} from './attachments.js';
 import {blockedBy} from './stats.js';
 import * as mech from './mech.js';
 
@@ -50,12 +52,7 @@ const loadRifle = id => loadRifleInstance(id, {decorate: installCamo});
 
 function disposeRifle(r) {
   r.model.removeFromParent();
-  r.model.traverse(o => {
-    if (o.isMesh) {
-      o.geometry.dispose();
-      o.material.dispose();
-    }
-  });
+  disposeModel(r.model); // its materials and own geometry; the parsed file stays cached for the next switch
   socketMarkers.clear();
   for (const l of r.socketLabels || []) l.el.remove();
   document.querySelector('#parts').replaceChildren();
@@ -602,14 +599,9 @@ try {
       mech.setDown();
       switchRifle(b.dataset.rifle)?.then(() => mech.charge());
     };
-  // Warm the HTTP cache with the other rifles once the page is idle, so switching is instant.
-  (window.requestIdleCallback || setTimeout)(
-    () => {
-      if (navigator.connection?.saveData) return; // respect Data Saver
-      for (const [id, m] of Object.entries(MODELS)) if (id !== rifle.id) fetch(m.url).catch(() => {});
-    },
-    {timeout: 4000},
-  );
+  // Parse the other rifles in the background, one per idle moment, so switching is instant (shared/model-cache.js).
+  // Then the attachment files, so a first pick shows at once too.
+  prefetchModels([...Object.values(MODELS).map(m => new URL(m.url, new URL('./', import.meta.url)).href), ...ATTACHMENT_FILES]);
   document.querySelector('#photo').onclick = () => savePhoto({renderer, scene, camera, rifle});
   let lastFile = 0;
   document.querySelector('#wear').oninput = e => {

@@ -49,7 +49,8 @@ function lensDirt() {
 
 export function createDof(stage, {focus = () => 3.5, flares = () => []} = {}) {
   const size = new T.Vector2();
-  const target = new T.WebGLRenderTarget(1, 1, {type: T.HalfFloatType, depthTexture: new T.DepthTexture(1, 1)});
+  // 4× MSAA: the scene draws here, not to the canvas, so the canvas's own antialiasing never applies
+  const target = new T.WebGLRenderTarget(1, 1, {type: T.HalfFloatType, depthTexture: new T.DepthTexture(1, 1), samples: 4});
   const material = new T.ShaderMaterial({
     uniforms: {
       tColor: {value: target.texture},

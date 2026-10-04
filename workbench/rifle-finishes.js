@@ -5,8 +5,11 @@ const CAMO_SCALE = 4; // texture repeats per meter
 // Wear (0–1) is one shared uniform for the whole rifle: scuffs expose bare metal, low spots gather dust.
 
 export function installCamo(model, wearUniform = {value: 0}) {
-  model.updateMatrixWorld(true);
-  const inverse = model.matrixWorld.clone().invert();
+  // project in the rifle's own space, also for an attachment built later (rifle-instance.js marks the rifle model)
+  let space = model;
+  for (let p = model; p; p = p.parent) if (p.userData.isRifleModel) space = p;
+  space.updateMatrixWorld(true);
+  const inverse = space.matrixWorld.clone().invert();
   model.traverse(o => {
     if (!o.isMesh || !RECOLOURED.has(o.material.name)) return;
     const uniforms = {
@@ -63,7 +66,7 @@ export function targetMeshes(rifle, target) {
   const meshes = [];
   rifle.slots[target.part.id].options
     .find(o => o.id === target.option)
-    .object.traverse(m => {
+    .object?.traverse(m => {
       if (m.isMesh) meshes.push(m);
     });
   return meshes;

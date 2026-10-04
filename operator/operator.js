@@ -22,6 +22,7 @@ import * as mech from '../workbench/mech.js';
 import {Grip, GRIPS} from './grip.js';
 import {PALETTES, CAMO_IDS, VIEWS, HERO_AZIMUTH, TRIANGLE_BUDGET, ROSTER, BASES, DEFAULT_BASE, defaultsFor} from './config.js';
 import {loadRifle} from '../workbench/rifle-instance.js';
+import {disposeModel, prefetchModels} from '../shared/model-cache.js';
 import {MODELS} from '../workbench/models.js';
 import {applyLoadout, emptyLoadout, installCamo} from '../workbench/apply-loadout.js';
 import {encode, decode, parseLegacy} from '../shared/loadout.js';
@@ -341,6 +342,7 @@ async function syncWeapon() {
   weaponId = key;
   if (weapon) {
     weapon.holder.removeFromParent();
+    disposeModel(weapon.holder);
     weapon = null;
   }
   if (choice === 'none') {
@@ -745,6 +747,8 @@ stage.onFrame((dt, t) => {
 // Test hook: lets browser tests await a fully loaded operator and inspect state.
 // the background crew loads after the hero, so it never delays the operator
 const crew = lab ? null : mountCrew({scene, warehouse, figure, rifleProp, stage, reduceMotion});
+// Parse the rifles in the background, one per idle moment, so picking a weapon is instant (shared/model-cache.js).
+prefetchModels(Object.values(MODELS).map(m => new URL(m.url, new URL('../workbench/', import.meta.url)).href));
 window.PARP_OPERATOR = {
   warehouse,
   dof,

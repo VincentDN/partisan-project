@@ -14,8 +14,7 @@
 // Built attachments are illustrative low-poly shapes, not measured replicas.
 import * as T from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
-import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
-import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
+import {loadModel} from '../shared/model-cache.js';
 
 // Real (downloaded, CC0 / CC BY) attachment parts. Replace a code-built `build` with
 //   build: glb('red-dot.glb', {position:[0,0,0], rotation:[0,0,0], scale:1})
@@ -23,15 +22,14 @@ import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
 // add its budget to assets/register.json). Geometry arrives asynchronously into an empty group,
 // so the slot works immediately and the part pops in when loaded. Units: metres in slot space
 // (+x toward the muzzle, +y up, +z right side, origin at the mount point).
-const partLoader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
-export const glb =
-  (file, {position = [0, 0, 0], rotation = [0, 0, 0], scale = 1} = {}) =>
-  () => {
+/** Every model file an attachment can come from, for prefetching (shared/model-cache.js). */
+export const ATTACHMENT_FILES = new Set();
+export const glb = (file, {position = [0, 0, 0], rotation = [0, 0, 0], scale = 1} = {}) => {
+  ATTACHMENT_FILES.add(new URL(`../assets/models/attachments/${file}`, import.meta.url).href);
+  return () => {
     const group = new T.Group();
-    partLoader.load(
-      new URL(`../assets/models/attachments/${file}`, import.meta.url).href,
-      gltf => {
-        const model = gltf.scene;
+    loadModel(new URL(`../assets/models/attachments/${file}`, import.meta.url).href).then(
+      model => {
         model.position.set(...position);
         model.rotation.set(...rotation);
         model.scale.setScalar(scale);
@@ -44,11 +42,11 @@ export const glb =
         group.add(model);
         group.dispatchEvent({type: 'loaded'}); // rifle-instance.js repaints late parts (the retro MCX)
       },
-      undefined,
       err => console.error(`attachment ${file} failed to load`, err),
     );
     return group;
   };
+};
 
 // A real part out of one of the downloaded Sketchfab files in assets/models/weapons/ (CC BY 4.0 / CC0, see the register).
 //   file     the GLB; `nodes` picks some nodes out of a set (names as in the file, sanitised like the rifles' parts)
@@ -57,14 +55,12 @@ export const glb =
 //   anchor   which point of the rotated part sits at the slot origin, per axis: 'min', 'max' or 'c' (centre)
 //   offset   metres, added after anchoring
 const nodeId = name => T.PropertyBinding.sanitizeNodeName(name);
-export const real =
-  (file, {nodes, scale = 1, rotation = [0, 0, 0], anchor = ['min', 'c', 'c'], offset = [0, 0, 0]} = {}) =>
-  () => {
+export const real = (file, {nodes, scale = 1, rotation = [0, 0, 0], anchor = ['min', 'c', 'c'], offset = [0, 0, 0]} = {}) => {
+  ATTACHMENT_FILES.add(new URL(`../assets/models/weapons/${file}`, import.meta.url).href);
+  return () => {
     const group = new T.Group();
-    partLoader.load(
-      new URL(`../assets/models/weapons/${file}`, import.meta.url).href,
-      gltf => {
-        const src = gltf.scene;
+    loadModel(new URL(`../assets/models/weapons/${file}`, import.meta.url).href).then(
+      src => {
         src.updateMatrixWorld(true);
         let part = src;
         if (nodes) {
@@ -99,11 +95,11 @@ export const real =
         group.add(wrap);
         group.dispatchEvent({type: 'loaded'});
       },
-      undefined,
       err => console.error(`attachment ${file} failed to load`, err),
     );
     return group;
   };
+};
 // Forward is +z in most of the downloaded parts and -z in the AK kit; these turn either onto +x.
 export const Z_FWD = [0, Math.PI / 2, 0];
 export const Z_BACK = [0, -Math.PI / 2, 0];
