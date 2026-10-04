@@ -528,7 +528,7 @@ const REST_TOP = 1.0;
 function gunRest() {
   const g = new T.Group();
   g.name = 'gun rest';
-  const wood = new T.MeshStandardMaterial({color: 0x2a1c12, map: surfaceTexture('wood'), roughness: 0.85, metalness: 0});
+  const wood = new T.MeshLambertMaterial({color: 0x24170d, map: surfaceTexture('wood')});
   const add = (w, h, d, x, y, z) => {
     const geo = new T.BoxGeometry(w, h, d);
     const m = new T.Mesh(geo, wood);

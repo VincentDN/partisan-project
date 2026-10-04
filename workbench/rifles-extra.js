@@ -284,7 +284,10 @@ export const EXTRA = {
       ['stock', 'Stock', [-2.0, 0.27, 0], [-1, 0, 0]],
     ],
     slots: {
-      muzzle: muzzle([{id: 'slx', grams: 700, label: 'SLX suppressor', original: true}]),
+      muzzle: muzzle([
+        // the file leaves a gap between the brake adapter and the can: seat it over the adapter
+        {id: 'slx', grams: 700, label: 'SLX suppressor', original: true, pose: {nodes: {'6.8 slx suppressor_19': [-0.045, 0, 0]}}},
+      ]),
       optic: {
         rail: rail(-0.06, 0.1),
         factory: [{id: 'eotech', fp: [-0.05, 0.05], grams: 310, sightHeight: 0.055, label: 'EOTech XPS2', original: true}],

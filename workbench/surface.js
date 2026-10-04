@@ -14,6 +14,7 @@
 import * as T from 'three';
 
 const nodeId = n => T.PropertyBinding.sanitizeNodeName(n);
+const RETRO_TILE = 0.32; // metres per 32-px bitmap: 1 cm texels, chunky at arm's length
 const BAYER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5].map(v => (v + 0.5) / 16);
 
 // A small seeded value noise, so the textures come out the same on every load.
@@ -161,7 +162,7 @@ export function paintRetro(object, model) {
     if (!mesh.isMesh || mesh.userData.retro) return;
     mesh.userData.retro = true;
     const old = mesh.material;
-    mesh.geometry = boxUV(mesh.geometry, inverse.clone().multiply(mesh.matrixWorld), 0.16);
+    mesh.geometry = boxUV(mesh.geometry, inverse.clone().multiply(mesh.matrixWorld), RETRO_TILE);
     mesh.material = material(
       {name: old.name, tex: 'steel', color: old.color, roughness: 0.85, metalness: Math.min(old.metalness, 0.25)},
       true,
@@ -175,7 +176,7 @@ export function paintRetro(object, model) {
 export function paintSurface(model, config) {
   const s = config.surface,
     retro = !!s.retro,
-    tile = retro ? 0.16 : 0.25;
+    tile = retro ? RETRO_TILE : 0.25;
   model.updateMatrixWorld(true);
   const inverse = model.matrixWorld.clone().invert(),
     owner = new Map(); // mesh -> spec, from the parts
