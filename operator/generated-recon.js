@@ -79,6 +79,6 @@ export function generatedRecon(weaponSlot) {
       },
       {id: 'sand', label: 'Sand patrol', state: {'z.top': 'tan', 'z.pants': 'khaki', 'z.hood': 'tan', 'z.rig': 'brown', weapon: 'ak15k'}},
     ],
-    defaults: {pose: 'ready', idle: 'calm'},
+    defaults: {pose: 'hero', idle: 'calm'},
   };
 }

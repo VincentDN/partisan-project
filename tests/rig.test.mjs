@@ -110,10 +110,10 @@ test('pose angles are sane (|deg| <= 180) and every pose has a label and detail'
     }
 });
 
-test('the pose library has the required breadth, and lowered poses stay physically plausible', () => {
+test('the pose library is the three rifle poses, and lowered poses stay physically plausible', () => {
   const ids = Object.keys(poseData.poses);
-  assert.ok(ids.length >= 10, `need >= 10 poses, have ${ids.length}`);
-  for (const id of ['hero', 'crouch', 'kneel', 'salute']) assert.ok(ids.includes(id), id);
+  assert.deepEqual(ids, ['hero', 'relaxed', 'ready'], 'three poses: hero (rifle up, the default), relaxed, low ready');
+  for (const id of ids) assert.ok(poseData.poses[id].weapon, `${id}: the rifle is in hand`);
   for (const [id, p] of Object.entries(poseData.poses)) {
     const lower = p.lower || 0;
     assert.ok(lower >= 0 && lower <= 0.6, `${id}: lower ${lower} m`);

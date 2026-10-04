@@ -3,66 +3,6 @@
  "skeleton": "ue5-mannequin-83",
  "note": "Rotations are degrees in CHARACTER space [x pitch, y turn, z roll] applied on top of the A-pose rest. Character faces +Z, its left is +X. Hanging limbs: x<0 swings forward, z>0 (right side) / z<0 (left side) brings the arm toward the body.",
  "poses": {
-  "relaxed": {
-   "label": "Relaxed",
-   "detail": "Weight easy on one leg, arms loose.",
-   "bones": {
-    "upperarm_r": [
-     -4,
-     0,
-     20
-    ],
-    "lowerarm_r": [
-     -14,
-     0,
-     0
-    ],
-    "upperarm_l": [
-     -4,
-     0,
-     -20
-    ],
-    "lowerarm_l": [
-     -14,
-     0,
-     0
-    ],
-    "thigh_r": [
-     -2,
-     0,
-     3
-    ],
-    "thigh_l": [
-     2,
-     0,
-     -1
-    ],
-    "calf_l": [
-     4,
-     0,
-     0
-    ],
-    "pelvis": [
-     0,
-     0,
-     1.5
-    ],
-    "spine_02": [
-     0,
-     0,
-     -1
-    ],
-    "head": [
-     0,
-     6,
-     0
-    ]
-   },
-   "curl": {
-    "r": 0.35,
-    "l": 0.35
-   }
-  },
   "hero": {
    "label": "Hero · rifle up",
    "detail": "The moodboard hero pose: rifle upright at the right side, gripped one-handed at chest height, weight on the back foot.",
@@ -161,6 +101,94 @@
     }
    }
   },
+  "relaxed": {
+   "label": "Relaxed",
+   "detail": "Weight easy on one leg, rifle hanging muzzle-down on its sling, right hand on the grip.",
+   "bones": {
+    "upperarm_r": [
+     -4,
+     0,
+     20
+    ],
+    "lowerarm_r": [
+     -14,
+     0,
+     0
+    ],
+    "upperarm_l": [
+     -4,
+     0,
+     -20
+    ],
+    "lowerarm_l": [
+     -14,
+     0,
+     0
+    ],
+    "thigh_r": [
+     -2,
+     0,
+     3
+    ],
+    "thigh_l": [
+     2,
+     0,
+     -1
+    ],
+    "calf_l": [
+     4,
+     0,
+     0
+    ],
+    "pelvis": [
+     0,
+     0,
+     1.5
+    ],
+    "spine_02": [
+     0,
+     0,
+     -1
+    ],
+    "head": [
+     0,
+     6,
+     0
+    ]
+   },
+   "curl": {
+    "r": 0.85,
+    "l": 0.35
+   },
+   "weapon": {
+    "anchor": "spine_03",
+    "hold": [
+     -0.3,
+     -0.24,
+     0.06
+    ],
+    "muzzle": [
+     0.12,
+     -0.95,
+     0.25
+    ],
+    "up": [
+     0,
+     0.3,
+     1
+    ],
+    "hands": {
+     "r": "grip"
+    },
+    "pole": {
+     "r": [
+      -0.5,
+      -1,
+      -0.4
+     ]
+    }
+   }
+  },
   "ready": {
    "label": "Low ready",
    "detail": "Rifle across the body, muzzle down and forward.",
@@ -216,575 +244,6 @@
      0,
      1,
      0
-    ],
-    "hands": {
-     "r": "grip",
-     "l": "handguard"
-    }
-   }
-  },
-  "comms": {
-   "label": "Radio check",
-   "detail": "Hand at the shoulder radio.",
-   "bones": {
-    "upperarm_r": [
-     -30,
-     0,
-     18
-    ],
-    "lowerarm_r": [
-     -118,
-     0,
-     0
-    ],
-    "upperarm_l": [
-     -4,
-     0,
-     -20
-    ],
-    "lowerarm_l": [
-     -14,
-     0,
-     0
-    ],
-    "head": [
-     2,
-     -10,
-     3
-    ]
-   },
-   "curl": {
-    "r": 0.5,
-    "l": 0.35
-   }
-  },
-  "overwatch": {
-   "label": "Overwatch",
-   "detail": "Thumbs in the vest, scanning.",
-   "bones": {
-    "upperarm_r": [
-     4,
-     0,
-     34
-    ],
-    "lowerarm_r": [
-     -60,
-     0,
-     0
-    ],
-    "upperarm_l": [
-     4,
-     0,
-     -34
-    ],
-    "lowerarm_l": [
-     -60,
-     0,
-     0
-    ],
-    "thigh_r": [
-     0,
-     0,
-     6
-    ],
-    "thigh_l": [
-     0,
-     0,
-     -6
-    ],
-    "head": [
-     -2,
-     0,
-     0
-    ]
-   },
-   "curl": {
-    "r": 0.6,
-    "l": 0.6
-   }
-  },
-  "crouch": {
-   "label": "Crouch",
-   "detail": "Low and ready behind cover, rifle forward.",
-   "lower": 0.44,
-   "bones": {
-    "thigh_r": [
-     -88,
-     0,
-     6
-    ],
-    "calf_r": [
-     92,
-     0,
-     0
-    ],
-    "foot_r": [
-     -4,
-     0,
-     0
-    ],
-    "thigh_l": [
-     -88,
-     0,
-     -6
-    ],
-    "calf_l": [
-     92,
-     0,
-     0
-    ],
-    "foot_l": [
-     -4,
-     0,
-     0
-    ],
-    "spine_01": [
-     14,
-     0,
-     0
-    ],
-    "spine_02": [
-     10,
-     0,
-     0
-    ],
-    "spine_03": [
-     6,
-     0,
-     0
-    ],
-    "neck_01": [
-     -18,
-     0,
-     0
-    ],
-    "head": [
-     -10,
-     0,
-     0
-    ],
-    "upperarm_r": [
-     6,
-     36,
-     36
-    ],
-    "lowerarm_r": [
-     -57,
-     0,
-     0
-    ],
-    "upperarm_l": [
-     -31,
-     -6,
-     -57
-    ],
-    "lowerarm_l": [
-     5,
-     0,
-     0
-    ]
-   },
-   "curl": {
-    "r": 0.85,
-    "l": 0.7
-   },
-   "weapon": {
-    "anchor": "spine_03",
-    "hold": [
-     -0.14,
-     -0.06,
-     0.14
-    ],
-    "muzzle": [
-     0.5,
-     -0.35,
-     0.8
-    ],
-    "up": [
-     0,
-     1,
-     0
-    ],
-    "hands": {
-     "r": "grip",
-     "l": "handguard"
-    }
-   }
-  },
-  "kneel": {
-   "label": "Kneel",
-   "detail": "One knee down, watching the road.",
-   "lower": 0.5,
-   "bones": {
-    "thigh_r": [
-     -4,
-     0,
-     5
-    ],
-    "calf_r": [
-     100,
-     0,
-     0
-    ],
-    "foot_r": [
-     0,
-     0,
-     0
-    ],
-    "thigh_l": [
-     -88,
-     0,
-     -5
-    ],
-    "calf_l": [
-     88,
-     0,
-     0
-    ],
-    "foot_l": [
-     0,
-     0,
-     0
-    ],
-    "spine_01": [
-     8,
-     0,
-     0
-    ],
-    "spine_02": [
-     8,
-     0,
-     0
-    ],
-    "spine_03": [
-     4,
-     0,
-     0
-    ],
-    "neck_01": [
-     -12,
-     0,
-     0
-    ],
-    "head": [
-     -4,
-     12,
-     0
-    ],
-    "upperarm_r": [
-     6,
-     36,
-     36
-    ],
-    "lowerarm_r": [
-     -57,
-     0,
-     0
-    ],
-    "upperarm_l": [
-     -31,
-     -6,
-     -57
-    ],
-    "lowerarm_l": [
-     5,
-     0,
-     0
-    ]
-   },
-   "curl": {
-    "r": 0.85,
-    "l": 0.7
-   },
-   "weapon": {
-    "anchor": "spine_03",
-    "hold": [
-     -0.08,
-     -0.06,
-     0.14
-    ],
-    "muzzle": [
-     0.6,
-     -0.3,
-     0.7
-    ],
-    "up": [
-     0,
-     1,
-     0
-    ],
-    "hands": {
-     "r": "grip",
-     "l": "handguard"
-    }
-   }
-  },
-  "salute": {
-   "label": "Salute",
-   "detail": "Right hand to the brow, heels together.",
-   "bones": {
-    "upperarm_r": [
-     -55,
-     60,
-     -10
-    ],
-    "lowerarm_r": [
-     5,
-     0,
-     -125
-    ],
-    "hand_r": [
-     0,
-     0,
-     0
-    ],
-    "upperarm_l": [
-     -4,
-     0,
-     -22
-    ],
-    "lowerarm_l": [
-     -8,
-     0,
-     0
-    ],
-    "thigh_r": [
-     0,
-     0,
-     6
-    ],
-    "thigh_l": [
-     0,
-     0,
-     -6
-    ],
-    "head": [
-     -3,
-     0,
-     0
-    ],
-    "spine_03": [
-     -3,
-     0,
-     0
-    ]
-   },
-   "curl": {
-    "r": 0,
-    "l": 0.4
-   }
-  },
-  "highready": {
-   "label": "High ready",
-   "detail": "Rifle tucked in, muzzle up and left.",
-   "bones": {
-    "upperarm_r": [
-     9,
-     46,
-     27
-    ],
-    "lowerarm_r": [
-     -72,
-     0,
-     0
-    ],
-    "upperarm_l": [
-     -50,
-     -18,
-     -70
-    ],
-    "lowerarm_l": [
-     -15,
-     0,
-     0
-    ],
-    "spine_02": [
-     -2,
-     0,
-     0
-    ]
-   },
-   "curl": {
-    "r": 0.85,
-    "l": 0.7
-   },
-   "weapon": {
-    "anchor": "spine_03",
-    "hold": [
-     -0.13,
-     -0.03,
-     0.24
-    ],
-    "muzzle": [
-     0.28,
-     0.72,
-     0.62
-    ],
-    "up": [
-     0,
-     0.3,
-     -1
-    ],
-    "hands": {
-     "r": "grip",
-     "l": "handguard"
-    }
-   }
-  },
-  "port": {
-   "label": "Port arms",
-   "detail": "Rifle across the chest, muzzle up and to the left, both hands on.",
-   "bones": {
-    "pelvis": [
-     0,
-     -4,
-     1.5
-    ],
-    "head": [
-     0,
-     8,
-     0
-    ]
-   },
-   "curl": {
-    "r": 0.85,
-    "l": 0.7
-   },
-   "weapon": {
-    "anchor": "spine_03",
-    "hold": [
-     -0.17,
-     -0.06,
-     0.22
-    ],
-    "muzzle": [
-     0.6,
-     0.75,
-     0.25
-    ],
-    "up": [
-     0,
-     0.1,
-     -1
-    ],
-    "hands": {
-     "r": "grip",
-     "l": "handguard"
-    }
-   }
-  },
-  "gunner": {
-   "label": "Gunner · low angle",
-   "detail": "Machine gun across the chest, muzzle up and to the left, both hands on, chin down to the lens: made for the Low angle view.",
-   "bones": {
-    "pelvis": [
-     0,
-     -6,
-     2
-    ],
-    "thigh_r": [
-     -4,
-     0,
-     6
-    ],
-    "thigh_l": [
-     3,
-     0,
-     -4
-    ],
-    "head": [
-     5,
-     5,
-     0
-    ]
-   },
-   "curl": {
-    "r": 0.9,
-    "l": 0.75
-   },
-   "weapon": {
-    "anchor": "spine_03",
-    "hold": [
-     -0.15,
-     -0.08,
-     0.24
-    ],
-    "muzzle": [
-     0.62,
-     0.72,
-     0.3
-    ],
-    "up": [
-     0,
-     0.1,
-     -1
-    ],
-    "hands": {
-     "r": "grip",
-     "l": "handguard"
-    }
-   }
-  },
-  "herotwo": {
-   "label": "Hero · both hands",
-   "detail": "The hero pose with the support hand up on the handguard, rifle upright in front of the right shoulder.",
-   "bones": {
-    "thigh_r": [
-     -5,
-     0,
-     5
-    ],
-    "calf_r": [
-     6,
-     0,
-     0
-    ],
-    "thigh_l": [
-     4,
-     0,
-     -3
-    ],
-    "pelvis": [
-     0,
-     -6,
-     2
-    ],
-    "spine_03": [
-     0,
-     8,
-     -1
-    ],
-    "neck_01": [
-     0,
-     4,
-     0
-    ],
-    "head": [
-     2,
-     8,
-     0
-    ]
-   },
-   "curl": {
-    "r": 0.9,
-    "l": 0.7
-   },
-   "weapon": {
-    "anchor": "spine_03",
-    "hold": [
-     -0.2,
-     0.02,
-     0.2
-    ],
-    "muzzle": [
-     0.3,
-     1,
-     0.3
-    ],
-    "up": [
-     0.3,
-     0.1,
-     -1
     ],
     "hands": {
      "r": "grip",
@@ -1083,120 +542,6 @@
        0.95,
        -0.2,
        0.23
-      ],
-      "up": [
-       0,
-       1,
-       0
-      ]
-     }
-    },
-    "crouch": {
-     "weapon": {
-      "hold": [
-       -0.14,
-       -0.03,
-       0.3
-      ],
-      "muzzle": [
-       0.95,
-       -0.25,
-       0.23
-      ],
-      "up": [
-       0,
-       1,
-       0
-      ]
-     }
-    },
-    "kneel": {
-     "weapon": {
-      "hold": [
-       -0.12,
-       -0.03,
-       0.3
-      ],
-      "muzzle": [
-       0.95,
-       -0.25,
-       0.23
-      ],
-      "up": [
-       0,
-       1,
-       0
-      ]
-     }
-    },
-    "highready": {
-     "weapon": {
-      "hold": [
-       -0.17,
-       0.04,
-       0.35
-      ],
-      "muzzle": [
-       0.8,
-       0.65,
-       0.1
-      ],
-      "up": [
-       0,
-       1,
-       0
-      ]
-     }
-    },
-    "port": {
-     "weapon": {
-      "hold": [
-       -0.12,
-       -0.02,
-       0.32
-      ],
-      "muzzle": [
-       1,
-       0.42,
-       0.07
-      ],
-      "up": [
-       0,
-       1,
-       0
-      ]
-     }
-    },
-    "gunner": {
-     "weapon": {
-      "hold": [
-       -0.12,
-       -0.02,
-       0.33
-      ],
-      "muzzle": [
-       1,
-       0.45,
-       0.07
-      ],
-      "up": [
-       0,
-       1,
-       0
-      ]
-     }
-    },
-    "herotwo": {
-     "weapon": {
-      "hold": [
-       -0.2,
-       0.07,
-       0.32
-      ],
-      "muzzle": [
-       0.85,
-       1,
-       0.05
       ],
       "up": [
        0,

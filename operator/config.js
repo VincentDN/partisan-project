@@ -306,7 +306,7 @@ export const PRESETS = [
     label: 'Gunner · low angle',
     view: 'low',
     state: {
-      pose: 'gunner',
+      pose: 'ready',
       head: 'bare',
       comms: 'off',
       face: 'mask',
@@ -582,7 +582,7 @@ BASES.insurgent = {
       },
     },
   ],
-  defaults: {pose: 'ready'},
+  defaults: {pose: 'hero'},
   status: 'available',
 };
 BASES.enforcer = {
@@ -624,7 +624,7 @@ export const defaultsFor = base => ({
   base: base.id,
   ...Object.fromEntries(base.slots.map(s => [s.id, s.default])),
   ...Object.fromEntries(base.zones.map(z => [`z.${z.id}`, z.default])),
-  pose: 'relaxed',
+  pose: 'hero',
   idle: 'calm',
   look: 'on',
   build: '',

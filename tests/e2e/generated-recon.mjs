@@ -62,13 +62,8 @@ try {
   await page.waitForFunction(() => window.PARP_OPERATOR.weapon?.rifle.id === 'ak74m' && window.PARP_OPERATOR.pivot.visible);
   for (const [pose, sides] of [
     ['hero', ['r']],
+    ['relaxed', ['r']],
     ['ready', ['r', 'l']],
-    ['crouch', ['r', 'l']],
-    ['kneel', ['r', 'l']],
-    ['highready', ['r', 'l']],
-    ['port', ['r', 'l']],
-    ['gunner', ['r', 'l']],
-    ['herotwo', ['r', 'l']],
   ]) {
     await page.evaluate(p => window.PARP_OPERATOR.set('pose', p), pose);
     await page.waitForTimeout(1500);
@@ -97,9 +92,9 @@ try {
   for (const id of weapons) {
     await page.evaluate(id => window.PARP_OPERATOR.set('weapon', id), id);
     await page.waitForFunction(id => window.PARP_OPERATOR.weapon?.rifle.id === id, id);
-    for (const pose of ['hero', 'ready', 'crouch', 'kneel', 'highready', 'port', 'gunner', 'herotwo']) {
+    for (const pose of ['hero', 'relaxed', 'ready']) {
       await page.evaluate(pose => window.PARP_OPERATOR.set('pose', pose), pose);
-      await page.waitForTimeout(250);
+      await page.waitForTimeout(1200); // let the pose and the hand IK blend in (slow software-rendered frames in CI)
       assert.deepEqual(await page.evaluate(reconClearance), [], `${id}/${pose}: rifle penetrates the torso or equipment`);
       const palms = await page.evaluate(reconPalmDistances);
       assert.ok(
@@ -118,11 +113,12 @@ try {
   await page.emulateMedia({reducedMotion: 'no-preference'});
   await page.waitForFunction(() => window.PARP_OPERATOR.weapon?.rifle, null, {timeout: 60000}); // let the rifle finish loading first
   await page.reload();
-  await page.waitForFunction(() => window.PARP_OPERATOR?.ready);
+  await page.waitForFunction(() => window.PARP_OPERATOR?.ready && window.PARP_OPERATOR.weapon?.rifle, null, {timeout: 60000});
   await page.evaluate(() => {
     window.PARP_OPERATOR.set('look', 'off');
     window.PARP_OPERATOR.set('idle', 'alert');
   });
+  await page.waitForTimeout(800); // the frame loop is running again before measuring
   const moving = await head();
   await page.waitForTimeout(450);
   assert.notDeepEqual(await head(), moving);
@@ -135,7 +131,7 @@ try {
   await page.waitForFunction(() => window.PARP_OPERATOR.rig.blend === 1);
   // Reloading can abort optional in-flight resources; actual load/HTTP/JS errors still fail.
   assert.deepEqual(
-    page.problems.filter(p => !/ERR_ABORTED|Failed to fetch/.test(p)), // downloads cut off by the test's own reloads
+    page.problems.filter(p => !/ERR_ABORTED|Failed to fetch|Couldn't load texture blob/.test(p)), // downloads (and their texture blobs) cut off by the test's own reloads
     [],
   );
   const axeSource = fs.readFileSync(createRequire(import.meta.url).resolve('axe-core/axe.min.js'), 'utf8');
@@ -146,7 +142,7 @@ try {
   });
   assert.deepEqual(violations, [], 'Generated Recon accessibility');
   console.log(
-    'Generated Recon browser acceptance passed: textures, protected face, equipment, palms, 11 rifles in eight carry poses, URL reload, idle, blending, reduced motion and roster switching.',
+    'Generated Recon browser acceptance passed: textures, protected face, equipment, palms, 11 rifles in the three carry poses (hero, relaxed, low ready), URL reload, idle, blending, reduced motion and roster switching.',
   );
 } finally {
   await browser.close();
