@@ -23,6 +23,7 @@ const zone = (id, label, camera = 'torso', palette = 'fabric') => ({
   camera,
   palette,
   default: 'original',
+  preserveTexture: true,
 });
 export function generatedRecon(weaponSlot) {
   return {
@@ -32,6 +33,8 @@ export function generatedRecon(weaponSlot) {
     model: '../assets/models/operators/generated-recon.glb',
     packs: [],
     poseProfile: 'generatedRecon',
+    // Measured inside the source gloves; the generated wrists extend farther from the palms.
+    grip: {palms: {r: [-0.015, 0.145, 0.04], l: [0.015, 0.145, 0.04]}},
     parts,
     slots: [
       slot('rig', 'Chest equipment', 'torso', 'full', [

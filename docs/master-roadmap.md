@@ -214,7 +214,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-C9` | Idle polish: blink and head-follow of the camera (reduced-motion safe) | M (20) | done | — | `WP-C1` |
 | `WP-C10` | More hairstyles and facial-hair options for bare-head looks | M (20) | done | bpy | `WP-C4` |
 | `WP-C11` | Secondary motion: scarf drape and strap follow-through on the idle | S (8) | done | bpy, browser | `WP-C9` |
-| `WP-CG1` | Generated Recon: import split model, fit animation rig and expose modular equipment | M (20) | done | bpy, browser | — |
+| `WP-CG1` | Generated Recon: textured modular model, fitted animation rig and weapon clearance | M (20) | done | bpy, browser | — |
 
 ### M3 · Integration and sharing
 

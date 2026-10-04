@@ -4,12 +4,15 @@ Coordinates below are measured in the source's Blender frame (+X forward, +Z up)
 """
 import bpy, bmesh, math, os, sys
 from mathutils import Vector, Matrix
+sys.path.insert(0, os.path.dirname(__file__))
+import generated_recon_textures as textures
 
 args = sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else []
 source = args[0] if args else 'inbound/Models/PARP_Recon_hooded_model_splitparts_v01_05.glb'
 out = args[1] if len(args) > 1 else 'build/generated-recon.raw.glb'
 bpy.ops.object.select_all(action='SELECT')
 bpy.ops.object.delete(use_global=False)
+reference=textures.load_reference(os.path.join(os.path.dirname(source),'PARP_Recon_hooded_model_v01_05.glb'))
 bpy.ops.import_scene.gltf(filepath=os.path.abspath(source))
 # The split source has no materials. Preserve each region as a separate, repaintable material.
 NAMES = {0:'Trousers_R',2:'Trousers_L',3:'Sleeve_R',4:'Jacket',5:'Sleeve_L',6:'Harness',7:'Scarf',8:'Hood',9:'BeltPouch',10:'Holster',11:'Boot_L',12:'Glove_L',13:'HipPouch',14:'ShoulderTab',15:'Knee_L',17:'Boot_R',18:'UtilityPouch',19:'MagPouches',20:'BackPouch',21:'Glove_R',22:'Carabiner',23:'Knee_R',24:'Radio',25:'Eyes',26:'RadioBadge'}
@@ -27,9 +30,9 @@ for zone,(ids,color) in ZONES.items():
 def point(x,y,z): return Vector((y*1.85,-x*1.85,(z+.5)*1.85))
 meshes={}
 for obj in list(bpy.context.scene.objects):
-    if obj.type != 'MESH': continue
+    if obj.type != 'MESH' or obj==reference: continue
     idx=int(obj.name.rsplit('_',1)[1])
-    if idx not in NAMES:  # Generated rifle and its floating detail: runtime weapons replace them.
+    if idx not in NAMES or idx in [8,25]:  # Generated rifle and its floating detail: runtime weapons replace them.
         bpy.data.objects.remove(obj,do_unlink=True);continue
     transform=obj.matrix_world.copy()
     for v in obj.data.vertices: v.co=point(*(transform@v.co))
@@ -48,6 +51,8 @@ for obj in list(bpy.context.scene.objects):
     # Smooth normals retain the source's designed facets without exposing every decimation triangle.
     for p in obj.data.polygons: p.use_smooth=True
     meshes[idx]=obj
+meshes[8]=textures.complete_head(reference,materials[8])
+textures.bake(reference,meshes,os.path.dirname(os.path.abspath(out)))
 # The right glove was fused into the generated rifle; part 21 is only its cuff.
 # Reuse the complete left glove, mirrored and translated to the measured right wrist.
 meshes[21].name='SK_GR_Cuff_R'
@@ -69,7 +74,10 @@ for ring in range(2):
         faces.extend([(a,b,a+12),(b,b+12,a+12)])
 neck_data=bpy.data.meshes.new('GeneratedNeckRepair');neck_data.from_pydata(verts,[],faces);neck_data.update()
 neck=bpy.data.objects.new('SK_GR_Neck',neck_data);bpy.context.collection.objects.link(neck)
-neck.data.materials.append(materials[8]);meshes[28]=neck
+collar=materials[8].copy();collar.name='M_GR_Collar'
+for link in list(collar.node_tree.links):collar.node_tree.links.remove(link)
+collar.node_tree.links.new(collar.node_tree.nodes['Principled BSDF'].outputs['BSDF'],collar.node_tree.nodes['Material Output'].inputs['Surface'])
+neck.data.materials.append(collar);meshes[28]=neck
 arm_data=bpy.data.armatures.new('GeneratedRecon');arm=bpy.data.objects.new('Armature',arm_data);bpy.context.collection.objects.link(arm)
 bpy.context.view_layer.objects.active=arm;arm.select_set(True);bpy.ops.object.mode_set(mode='EDIT')
 def bone(name,a,b,parent=None):
@@ -89,7 +97,9 @@ for side,s in [('r',-1),('l',1)]:
     bone('clavicle_'+side,(0,0,.285),(0,.12*s,.285),'spine_04')
     bone('upperarm_'+side,(0,.12*s,.285),(-.013,.16*s,.16),'clavicle_'+side)
     bone('lowerarm_'+side,(-.013,.16*s,.16),(.012,.185*s,wrist),'upperarm_'+side)
-    bone('hand_'+side,(.012,.185*s,wrist),(.035,.19*s,wrist-.055),'lowerarm_'+side)
+    hand=bone('hand_'+side,(.012,.185*s,wrist),(.035,.19*s,wrist-.055),'lowerarm_'+side)
+    # Match Grip's +Z palm normal: both palms face inward in the hanging-arm rest.
+    hand.align_roll(Vector((-s,0,0)))
     bone('thigh_'+side,(0,.073*s,-.02),(0,.095*s,-.235),'pelvis')
     bone('calf_'+side,(0,.095*s,-.235),(-.005,.125*s,-.445),'thigh_'+side)
     bone('foot_'+side,(-.005,.125*s,-.445),(.065,.125*s,-.48),'calf_'+side)
@@ -124,10 +134,10 @@ for idx,obj in meshes.items():
         for name,w in weights(idx,v.co).items():
             if w>1e-5: obj.vertex_groups[name].add([v.index],w,'REPLACE')
     mod=obj.modifiers.new('Deform','ARMATURE');mod.object=arm;obj.parent=arm
-# Keep the fitted straight-arm rest pose. Per-base pose offsets are data in generated-recon-poses.json.
+# Keep the fitted straight-arm rest pose. Per-base pose offsets are data in operator/poses.json.
 bpy.ops.object.select_all(action='DESELECT');arm.select_set(True)
 for obj in meshes.values():obj.select_set(True)
 bpy.context.view_layer.objects.active=arm
 os.makedirs(os.path.dirname(os.path.abspath(out)),exist_ok=True)
-bpy.ops.export_scene.gltf(filepath=os.path.abspath(out),export_format='GLB',use_selection=True,export_animations=False,export_yup=True)
+bpy.ops.export_scene.gltf(filepath=os.path.abspath(out),export_format='GLB',use_selection=True,export_animations=False,export_yup=True,export_image_format='JPEG')
 print('GENERATED_RECON',sum(len(o.data.polygons) for o in meshes.values()),'triangles;',len(arm_data.bones),'bones')

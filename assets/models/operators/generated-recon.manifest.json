@@ -1,6 +1,6 @@
 {
- "generated": "2026-10-03",
- "triangles": 11253,
+ "generated": "2026-10-04",
+ "triangles": 14523,
  "bones": [
   "root",
   "pelvis",
@@ -73,13 +73,6 @@
    ]
   },
   {
-   "node": "SK_GR_Eyes",
-   "triangles": 70,
-   "materials": [
-    "M_GR_eyes"
-   ]
-  },
-  {
    "node": "SK_GR_Glove_L",
    "triangles": 258,
    "materials": [
@@ -116,9 +109,10 @@
   },
   {
    "node": "SK_GR_Hood",
-   "triangles": 660,
+   "triangles": 4000,
    "materials": [
-    "M_GR_hood"
+    "M_GR_hood",
+    "M_GR_Face"
    ]
   },
   {
@@ -153,7 +147,7 @@
    "node": "SK_GR_Neck",
    "triangles": 48,
    "materials": [
-    "M_GR_hood"
+    "M_GR_Collar"
    ]
   },
   {
@@ -224,50 +218,68 @@
   {
    "name": "M_GR_rig",
    "baseColor": [
-    0.076,
-    0.091,
-    0.044
+    1,
+    1,
+    1
    ],
-   "textured": false
+   "textured": true
   },
   {
    "name": "M_GR_boots",
    "baseColor": [
-    0.036,
-    0.042,
-    0.03
+    1,
+    1,
+    1
    ],
-   "textured": false
+   "textured": true
   },
   {
    "name": "M_GR_gear",
    "baseColor": [
-    0.03,
-    0.04,
-    0.025
+    1,
+    1,
+    1
    ],
-   "textured": false
+   "textured": true
   },
   {
    "name": "M_GR_gloves",
    "baseColor": [
-    0.053,
-    0.065,
-    0.04
+    1,
+    1,
+    1
    ],
-   "textured": false
-  },
-  {
-   "name": "M_GR_eyes",
-   "baseColor": [
-    0.019,
-    0.026,
-    0.017
-   ],
-   "textured": false
+   "textured": true
   },
   {
    "name": "M_GR_hood",
+   "baseColor": [
+    1,
+    1,
+    1
+   ],
+   "textured": true
+  },
+  {
+   "name": "M_GR_Face",
+   "baseColor": [
+    1,
+    1,
+    1
+   ],
+   "textured": true
+  },
+  {
+   "name": "M_GR_top",
+   "baseColor": [
+    1,
+    1,
+    1
+   ],
+   "textured": true
+  },
+  {
+   "name": "M_GR_Collar",
    "baseColor": [
     0.136,
     0.165,
@@ -276,40 +288,31 @@
    "textured": false
   },
   {
-   "name": "M_GR_top",
-   "baseColor": [
-    0.141,
-    0.171,
-    0.13
-   ],
-   "textured": false
-  },
-  {
    "name": "M_GR_badge",
    "baseColor": [
-    0.571,
-    0.216,
-    0.041
+    1,
+    1,
+    1
    ],
-   "textured": false
+   "textured": true
   },
   {
    "name": "M_GR_scarf",
    "baseColor": [
-    0.361,
-    0.347,
-    0.254
+    1,
+    1,
+    1
    ],
-   "textured": false
+   "textured": true
   },
   {
    "name": "M_GR_pants",
    "baseColor": [
-    0.087,
-    0.098,
-    0.061
+    1,
+    1,
+    1
    ],
-   "textured": false
+   "textured": true
   }
  ]
 }

@@ -4,6 +4,11 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 ## [Unreleased]
 
+### Fixed (Recon textures and weapon poses, WP-CG1)
+- Transfer the textured inbound model onto the modular Recon with a shared 2K atlas. Replace broken split eyes with the complete head, preserving its face UVs and repairing seam caps. Hood recolouring leaves the face intact; clothing colours retain fabric detail.
+- Align glove bones and measured palm centres with the rifle grip solver. Refit eight carry poses to clear chest equipment and keep both hands within reach across eleven rifles. The complete operator remains within budget at 14,523 triangles and about 1.1 MB.
+- Honor the existing site-build directory exclusion on Windows, preventing unpublished study links from entering the built site.
+
 ### Changed (Operator Modder and opening scene)
 - **Recon is the default operator**: the generated Recon, renamed from "Generated Recon", opens the Operator Modder; the kitbashed Recon is deprecated (off the roster, old links still work). TAC-J-38.
 - **Always armed**: the AK-74M by default, or your Workbench build if you made one; rifle-less poses carry it slung across the back. No more "None" weapon.

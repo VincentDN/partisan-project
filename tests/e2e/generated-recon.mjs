@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {createRequire} from 'node:module';
 import {launch, open, startServer} from './browser.mjs';
+import {reconClearance, reconPalmDistances} from './recon-clearance.mjs';
 const server = await startServer(8197),
   browser = await launch();
 try {
@@ -25,11 +26,21 @@ try {
       }
     }
     o.set('z.top', 'navy');
+    o.set('scarf', 'on');
+    o.set('comms', 'on');
     o.set('z.pants', 'khaki');
     o.set('pose', 'ready');
     o.set('idle', 'alert');
     const m = n => o.meshes.find(m => m.material.name === n).material;
     if (m('M_GR_top') === m('M_GR_pants') || m('M_GR_top').color.equals(m('M_GR_pants').color)) errors.push('shared colours');
+    for (const name of ['M_GR_top', 'M_GR_pants', 'M_GR_hood', 'M_GR_Face']) {
+      const material = m(name);
+      if (!material.map?.image || material.map.image.width !== 2048) errors.push('missing decoded atlas: ' + name);
+    }
+    const face = m('M_GR_Face').color.clone();
+    o.set('z.hood', 'navy');
+    if (!m('M_GR_Face').color.equals(face)) errors.push('hood colour changed the face');
+    if (!m('M_GR_hood').map) errors.push('hood recolouring lost texture');
     return errors;
   });
   assert.deepEqual(failures, []);
@@ -54,6 +65,10 @@ try {
     ['ready', ['r', 'l']],
     ['crouch', ['r', 'l']],
     ['kneel', ['r', 'l']],
+    ['highready', ['r', 'l']],
+    ['port', ['r', 'l']],
+    ['gunner', ['r', 'l']],
+    ['herotwo', ['r', 'l']],
   ]) {
     await page.evaluate(p => window.PARP_OPERATOR.set('pose', p), pose);
     await page.waitForTimeout(1500);
@@ -62,7 +77,7 @@ try {
         {Vector3: V, Quaternion: Q} = o.stage.T;
       return sides.map(side => {
         const h = o.rig.bones.get('hand_' + side);
-        const palm = h.getWorldPosition(new V()).add(new V(0, 0.072, 0.028).applyQuaternion(h.getWorldQuaternion(new Q())));
+        const palm = h.getWorldPosition(new V()).add(o.rig.grip.palms[side].clone().applyQuaternion(h.getWorldQuaternion(new Q())));
         const at = side === 'r' ? [-0.028, -0.058, 0] : o.weapon.rifle.config.handguardAt || [0.3, 0.008, 0];
         return palm.distanceTo(o.pivot.localToWorld(new V(...at)));
       });
@@ -71,6 +86,7 @@ try {
       distances.every(d => d < 0.025),
       `${pose}: palms miss grips ${distances}`,
     );
+    assert.deepEqual(await page.evaluate(reconClearance), [], `${pose}: rifle penetrates the torso or equipment`);
   }
   const weapons = await page.evaluate(() =>
     window.PARP_OPERATOR.base.slots
@@ -81,6 +97,16 @@ try {
   for (const id of weapons) {
     await page.evaluate(id => window.PARP_OPERATOR.set('weapon', id), id);
     await page.waitForFunction(id => window.PARP_OPERATOR.weapon?.rifle.id === id, id);
+    for (const pose of ['hero', 'ready', 'crouch', 'kneel', 'highready', 'port', 'gunner', 'herotwo']) {
+      await page.evaluate(pose => window.PARP_OPERATOR.set('pose', pose), pose);
+      await page.waitForTimeout(250);
+      assert.deepEqual(await page.evaluate(reconClearance), [], `${id}/${pose}: rifle penetrates the torso or equipment`);
+      const palms = await page.evaluate(reconPalmDistances);
+      assert.ok(
+        palms.every(d => d < 0.025),
+        `${id}/${pose}: palms miss grips ${palms}`,
+      );
+    }
   }
   assert.ok(
     await page.evaluate(() => !window.PARP_OPERATOR.base.slots.find(s => s.id === 'weapon').options.some(o => o.id === 'none')),
@@ -120,7 +146,7 @@ try {
   });
   assert.deepEqual(violations, [], 'Generated Recon accessibility');
   console.log(
-    'Generated Recon browser acceptance passed: equipment, hands, colours, URL reload, four weapon poses, idle, blending, reduced motion and roster switching.',
+    'Generated Recon browser acceptance passed: textures, protected face, equipment, palms, 11 rifles in eight carry poses, URL reload, idle, blending, reduced motion and roster switching.',
   );
 } finally {
   await browser.close();
