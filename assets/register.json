@@ -1181,6 +1181,28 @@
     "triangles": 200000
    },
    "notes": "Untouched complete inbound model for the owner-requested as-is comparison view: 193534 triangles and original 4K texture. Inspection reference; excluded from the gameplay operator budget."
+  },
+  {
+   "id": "recon-split-reference",
+   "label": "Recon — source teardown",
+   "path": "assets/models/operators/recon-split-reference.glb",
+   "kind": "reference",
+   "status": "real",
+   "budget": {
+    "triangles": 200000
+   },
+   "notes": "Byte-identical split source for numbered inspection: 27 pieces, 195765 triangles. Diagnostic reference only; excluded from the gameplay operator budget."
+  },
+  {
+   "id": "recon-modular",
+   "label": "Recon clothing foundation",
+   "path": "assets/models/operators/recon-modular.glb",
+   "kind": "character",
+   "notes": "CM2 hood-free clothing foundation: 5,263 triangles, canonical 26-bone skeleton. Broader chest and neck; complete jacket, waist and fitted masked head. Fresh cloth maps; no hood, vest, harness or bags. Mask separation and articulated hands remain CM3. Rebuild with assets:recon-foundation.",
+   "status": "real",
+   "budget": {
+    "triangles": 8000
+   }
   }
  ],
  "pipeline": [

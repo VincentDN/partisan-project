@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex"><meta name="seo_hidden" content="true">
+<title>Partisan Project | Recon clothing foundation</title><link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="compare.css"><style>.stage{height:clamp(470px,72vh,900px)} section{max-width:1200px;margin:auto} .toolbar{justify-content:center}</style>
+<script type="importmap">{"imports":{"three":"../vendor/three/build/three.module.min.js","three/addons/":"../vendor/three/examples/jsm/"}}</script>
+</head><body><main>
+<div class="intro"><div><h1>Recon: clean clothing foundation</h1><p>A hood-free base with a broader chest, fuller neck and clean clothing beneath the equipment.</p></div><nav aria-label="Operator views"><a href="./#base=recon-modular">Customise this body</a> · <a href="teardown.html">Source teardown</a> · <a href="compare.html">Original comparison</a></nav></div>
+<div class="toolbar"><div role="group" aria-label="Camera"><button data-camera="front" aria-pressed="true">Front</button> <button data-camera="back" aria-pressed="false">Back</button> <button data-camera="left" aria-pressed="false">Left</button> <button data-camera="right" aria-pressed="false">Right</button></div>
+<label>Pose <select id="pose"><option value="rest">Rest shape</option></select></label>
+<label>Idle <select id="idle"><option value="off">Held</option><option value="calm">Calm</option><option value="alert">Alert</option><option value="weary">Weary</option></select></label>
+<button id="wire" aria-pressed="false">Wireframe</button>
+<label>Light rotation <input id="light-rotation" type="range" min="0" max="360" value="255"><output id="light-angle">255°</output></label></div>
+<p id="status" role="status">Loading clothing foundation…</p>
+<section aria-label="Clothing inspection"><div id="foundation-stage" class="stage" role="group" tabindex="0" aria-label="Clean Recon clothing. Drag or use arrow keys to orbit; plus and minus zoom."></div><p class="stats" id="stats"></p></section>
+<p class="footnote">CM2 · The vest, harness and bags are absent from this body. Jacket, trousers and cuffs use new cloth textures. The outer hood has been removed. The fitted masked head and fixed-finger gloves remain temporary parts for CM3; new carriers and attachment mounts come later. This view leaves the weapon out so all clothing surfaces can be inspected.</p>
+</main><noscript>This inspection requires JavaScript and WebGL.</noscript><script type="module" src="foundation.js"></script></body></html>

@@ -1,0 +1,214 @@
+{
+ "generated": "2026-10-05",
+ "triangles": 5263,
+ "bones": [
+  "root",
+  "pelvis",
+  "spine_01",
+  "spine_02",
+  "spine_03",
+  "spine_04",
+  "neck_01",
+  "neck_02",
+  "neck_03",
+  "head",
+  "clavicle_r",
+  "upperarm_r",
+  "lowerarm_r",
+  "hand_r",
+  "clavicle_l",
+  "upperarm_l",
+  "lowerarm_l",
+  "hand_l",
+  "thigh_r",
+  "calf_r",
+  "foot_r",
+  "ball_r",
+  "thigh_l",
+  "calf_l",
+  "foot_l",
+  "ball_l"
+ ],
+ "meshes": [
+  {
+   "node": "SK_CM_Boot_L",
+   "triangles": 266,
+   "materials": [
+    "M_GR_boots"
+   ]
+  },
+  {
+   "node": "SK_CM_Boot_R",
+   "triangles": 246,
+   "materials": [
+    "M_GR_boots"
+   ]
+  },
+  {
+   "node": "SK_CM_Cuff_R",
+   "triangles": 90,
+   "materials": [
+    "M_CM_Jacket"
+   ]
+  },
+  {
+   "node": "SK_CM_Face",
+   "triangles": 933,
+   "materials": [
+    "M_GR_Face",
+    "M_CM_HeadCover"
+   ]
+  },
+  {
+   "node": "SK_CM_Glove_L",
+   "triangles": 258,
+   "materials": [
+    "M_GR_gloves"
+   ]
+  },
+  {
+   "node": "SK_CM_Glove_R",
+   "triangles": 258,
+   "materials": [
+    "M_GR_gloves"
+   ]
+  },
+  {
+   "node": "SK_CM_Head",
+   "triangles": 428,
+   "materials": [
+    "M_CM_HeadCover"
+   ]
+  },
+  {
+   "node": "SK_CM_Jacket",
+   "triangles": 1300,
+   "materials": [
+    "M_CM_Jacket"
+   ]
+  },
+  {
+   "node": "SK_CM_Neck",
+   "triangles": 68,
+   "materials": [
+    "M_CM_Neck"
+   ]
+  },
+  {
+   "node": "SK_CM_Placket",
+   "triangles": 20,
+   "materials": [
+    "M_CM_Jacket"
+   ]
+  },
+  {
+   "node": "SK_CM_Trousers_L",
+   "triangles": 650,
+   "materials": [
+    "M_CM_Trousers"
+   ]
+  },
+  {
+   "node": "SK_CM_Trousers_R",
+   "triangles": 650,
+   "materials": [
+    "M_CM_Trousers"
+   ]
+  },
+  {
+   "node": "SK_CM_Waist",
+   "triangles": 92,
+   "materials": [
+    "M_CM_Trousers"
+   ]
+  },
+  {
+   "node": "SK_CM_Welt_L",
+   "triangles": 2,
+   "materials": [
+    "M_CM_Seams"
+   ]
+  },
+  {
+   "node": "SK_CM_Welt_R",
+   "triangles": 2,
+   "materials": [
+    "M_CM_Seams"
+   ]
+  }
+ ],
+ "materials": [
+  {
+   "name": "M_GR_boots",
+   "baseColor": [
+    1,
+    1,
+    1
+   ],
+   "textured": true
+  },
+  {
+   "name": "M_CM_Jacket",
+   "baseColor": [
+    1,
+    1,
+    1
+   ],
+   "textured": true
+  },
+  {
+   "name": "M_GR_Face",
+   "baseColor": [
+    1,
+    1,
+    1
+   ],
+   "textured": true
+  },
+  {
+   "name": "M_CM_HeadCover",
+   "baseColor": [
+    1,
+    1,
+    1
+   ],
+   "textured": true
+  },
+  {
+   "name": "M_GR_gloves",
+   "baseColor": [
+    1,
+    1,
+    1
+   ],
+   "textured": true
+  },
+  {
+   "name": "M_CM_Neck",
+   "baseColor": [
+    1,
+    1,
+    1
+   ],
+   "textured": true
+  },
+  {
+   "name": "M_CM_Trousers",
+   "baseColor": [
+    1,
+    1,
+    1
+   ],
+   "textured": true
+  },
+  {
+   "name": "M_CM_Seams",
+   "baseColor": [
+    1,
+    1,
+    1
+   ],
+   "textured": true
+  }
+ ]
+}

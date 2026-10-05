@@ -1,0 +1,61 @@
+{
+ "version": 1,
+ "status": "authoring-contract",
+ "futureBaseId": "recon-modular",
+ "referenceAudit": "assets/models/operators/recon-source-audit.json",
+ "skeleton": {
+  "id": "recon-v1",
+  "baselineSha256": "489f884166b40b3d4e45613fe4c24dba558dff19d63e5b8a18c4641e2f401ae7",
+  "boneTable": "current.bones",
+  "units": "metres",
+  "up": "+Y",
+  "forward": "+Z",
+  "characterLeft": "+X",
+  "referenceHeight": 1.85,
+  "matrixLayout": "column-major",
+  "matrixTolerance": 0.00001,
+  "extensionId": "recon-v2",
+  "extensionRule": "Preserve all 26 v1 bone names, parents and rest transforms. Add finger joints under hand_l/hand_r; no reparenting or re-rolling existing joints. Record any incompatible change under a new major contract.",
+  "fingerNaming": "{thumb,index,middle,ring,pinky}_{01,02,03}_{l,r}",
+  "handFrames": "Bone local +Y follows wrist to knuckles; +Z points into the palm. Use the measured rest matrices, not inferred world Euler rotations.",
+  "legacyPalmOffsets": {"r": [-0.015,0.145,0.04], "l": [0.015,0.145,0.04]},
+  "newPalmOffsets": "Measure after rebuilding hands; legacy offsets are not a fit guarantee."
+ },
+ "mounts": {
+  "version": 1,
+  "transformSpace": "parent-local",
+  "transform": ["position", "quaternion", "scale"],
+  "quaternionOrder": "xyzw",
+  "uniformScale": 1,
+  "surfaceAxes": {"column": "+X", "row": "+Y", "outward": "+Z"},
+  "rootTypes": ["body", "carrier", "belt", "bag", "headwear"],
+  "requiredItemFields": ["id", "skeletonId", "fitProfile", "owner", "mountType", "footprint", "excludes", "coverage", "materialRegions", "triangleCount"],
+  "placement": "Discrete validated cells in a parent surface frame, with a bounded authored depth offset; no unrestricted world dragging.",
+  "ownership": "Each item has one owner. Removing an owner removes its children from the active assembly; undo restores the subtree. Empty clothing is always complete.",
+  "coverage": "Optional optimisation only after complete exposed body validation; never use coverage masks to hide missing source surfaces.",
+  "fitProfiles": ["recon-standard"],
+  "fitStatus": "Conventions fixed; mount dimensions/transforms are authored and validated with CM5-CM7 assets."
+ },
+ "modules": [
+  {"id":"clothing.jacket","sourceParts":[3,4,5,21],"work":"Rebuild clean torso and shoulder joins; sleeve/cuff silhouettes may be retained.","ownerBone":"spine_03","binding":"skin"},
+  {"id":"clothing.trousers","sourceParts":[0,2],"work":"Repair waist and leg seams; complete surfaces beneath holster and knee kit.","ownerBone":"pelvis","binding":"skin"},
+  {"id":"clothing.boots","sourceParts":[11,17],"work":"Repair ankle joins and soles.","ownerBone":"pelvis","binding":"skin"},
+  {"id":"body.head-hands","sourceParts":[1,8,12,25],"work":"Complete textured head reference; rebuild neck, mask, hood and both articulated gloves as distinct meshes.","ownerBone":"root","binding":"skin"},
+  {"id":"carrier.light","sourceParts":[4,14],"work":"New closed front/rear bags, shoulders, placard and cummerbund; independent of clothing.","ownerBone":"spine_03","binding":"skin"},
+  {"id":"pouch.rifle","sourceParts":[19],"work":"Repeatable single pouch with separate contents and a closed back.","ownerBone":"spine_03","binding":"mount"},
+  {"id":"pouch.utility","sourceParts":[9,13,18],"work":"Closed detachable pouch family and separate belt/carrier fit definitions.","ownerBone":"spine_03","binding":"mount"},
+  {"id":"accessory.radio","sourceParts":[24,26],"work":"Radio and pouch separate; antenna/cable owned by radio.","ownerBone":"spine_03","binding":"mount"},
+  {"id":"belt.field","sourceParts":[9,10,22],"work":"New complete belt with holster adapter and accessory anchors.","ownerBone":"pelvis","binding":"skin"},
+  {"id":"bag.daypack","sourceParts":[20],"work":"New small bag with closed back and fitted strap routes.","ownerBone":"spine_03","binding":"skin"},
+  {"id":"rig.cross-body","sourceParts":[6],"work":"Rebuild straps separately from removable satchel.","ownerBone":"spine_03","binding":"skin"},
+  {"id":"neck.scarf","sourceParts":[7],"work":"Repair inner surface; complete neck must exist beneath.","ownerBone":"neck_02","binding":"skin"},
+  {"id":"guard.knee","sourceParts":[15,23],"work":"Complete back and straps, separate left/right fit.","ownerBone":"pelvis","binding":"skin"}
+ ],
+ "budget": {
+  "operatorMaximum": 15000,
+  "weaponMaximum": 30000,
+  "allocation": {"bodyClothing":8000,"carrier":1700,"pouches":1400,"belt":450,"bag":1450,"headwear":650,"smallKit":350,"reserve":1000},
+  "bodyAllocation": {"jacketSleeves":2600,"trousers":1800,"boots":600,"gloves":900,"headNeck":1700,"seamReserve":400},
+  "rule": "Count the actual assembled combination, including repeated items and hidden loaded geometry. These allocations are targets, not measurements or permission to exceed the cap."
+ }
+}

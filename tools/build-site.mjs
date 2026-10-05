@@ -59,7 +59,9 @@ function copy(rel) {
   fs.mkdirSync(path.dirname(dest), {recursive: true});
   fs.copyFileSync(src, dest);
 }
-ALLOW.forEach(copy);
+// the owner's drop folders come and go (outbound/ is emptied now and then): ship them when they exist
+const OPTIONAL = new Set(['inbound', 'outbound']);
+for (const rel of ALLOW) if (!OPTIONAL.has(rel) || fs.existsSync(rel)) copy(rel);
 
 // Machine-readable packets drive the live progress bars on the design doc.
 fs.copyFileSync('docs/agent-ops/packets.json', path.join(out, 'docs/packets.json'));

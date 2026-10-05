@@ -556,6 +556,8 @@ function render() {
     }),
   );
   $('#base-title').innerHTML = `${base.label},<br>low-poly.`;
+  $('#base-description').textContent =
+    base.description || 'Choose an operator, change equipment and colours, then combine a pose with an idle style.';
 }
 async function switchBase(id) {
   mech.setDown();

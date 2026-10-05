@@ -90,6 +90,18 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 - **Partisan Tactical**: no aim wait for the player any more. The magazine, reserve and reload now show on the map, with a reload ring at the cursor. TAC-J-41.
 - **Opening scene**: the Nokia is at real size, and its LCD loops a dithered lambda and a console log. The scene now loads in with a Nokia-green ordered dither. TAC-J-42.
 - **Recon** now wears its generated colours: the textured model's look is baked onto the runtime model (`tools/assets/bake-generated-recon.mjs`). TAC-J-43.
+
+### Changed (Recon foundation proportions, WP-CM2)
+- Remove the outer hood from the clean foundation, preserve the textured eyes and rebuild a closed, fitted masked head. Broaden the chest and neck, smooth underarm deformation and retain wrist seam constraints. The foundation now uses 5,263 triangles; the original Recon remains available.
+
+### Added (Recon clean clothing foundation, WP-CM2)
+- Add an opt-in Recon foundation with a complete jacket, finished waist/neck, repaired clothing surfaces and fresh cloth textures. Remove the vest, harness and bags from this body; preserve the current Recon for comparison. The new foundation is 7,902 triangles on the unchanged 26-bone skeleton.
+- Inspect it unarmed from four sides, switch poses and idles, or customise colours and carry rifles in the Operator Modder. Fit a separate grip and carry profile to the new sleeves; retain temporary headwear and fixed-finger gloves until CM3.
+
+### Added (Recon source teardown, WP-CM1)
+- Inspect all 27 original split pieces in assembled, exploded and body-candidate views; select, isolate, frame and inspect measured repair decisions. The stripped view exposes the fused vest, open torso, missing neck and right hand that need rebuilding.
+- Record the canonical textured source, corrected skeleton and modular mount contract, with measured geometry allocations and a repeatable source audit. New carriers and the clean body remain subsequent modelling work.
+
 ### Planned (Deep character customisation, WP-CM0)
 - Added a staged Recon-inspired modular character roadmap and dependency-linked work packets: complete underlying clothing/body, distinct carrier families, individual attachments and bags, fit validation, accessible editing and versioned outfits. This records planned work; new equipment is not implemented yet.
 

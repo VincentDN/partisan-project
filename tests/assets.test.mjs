@@ -42,14 +42,18 @@ test('the Sketchfab importer scales to real size, keeps weapon units for the Wor
   fs.rmSync(tmp, {recursive: true, force: true});
 });
 
-test('outbound/sketchfab-download.py is the current standalone build of the downloader and its model list', async () => {
+test('the standalone downloader builds, and any copy in outbound/ is current', async () => {
   const fs = await import('node:fs');
   const {build} = await import('../tools/assets/build-outbound-downloader.mjs');
-  assert.equal(
-    fs.readFileSync('outbound/sketchfab-download.py', 'utf8'),
-    build(),
-    'stale: run node tools/assets/build-outbound-downloader.mjs',
-  );
+  const script = build();
+  assert.match(script, /def read_secret/);
+  // outbound/ is the owner's drop folder and is emptied now and then; a copy that is there must match the build
+  if (fs.existsSync('outbound/sketchfab-download.py'))
+    assert.equal(
+      fs.readFileSync('outbound/sketchfab-download.py', 'utf8'),
+      script,
+      'stale: run node tools/assets/build-outbound-downloader.mjs',
+    );
   const {sources} = JSON.parse(fs.readFileSync('tools/assets/sketchfab-sources.json', 'utf8'));
   assert.ok(sources.length >= 39);
   for (const s of sources) assert.match(s.uid, /^[0-9a-f]{32}$/, `${s.id}: bad uid`);
@@ -57,15 +61,23 @@ test('outbound/sketchfab-download.py is the current standalone build of the down
 
 test('the downloader shows * while a token is typed or pasted and handles backspace', async () => {
   const {execFileSync} = await import('node:child_process');
+  const fs = await import('node:fs');
+  const os = await import('node:os');
+  const path = await import('node:path');
+  const {build} = await import('../tools/assets/build-outbound-downloader.mjs');
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'parp-dl-'));
+  const file = path.join(dir, 'sketchfab-download.py');
+  fs.writeFileSync(file, build());
   const code = [
     'import sys, importlib.util',
     'sys.dont_write_bytecode = True',
-    "spec = importlib.util.spec_from_file_location('d', 'outbound/sketchfab-download.py')",
+    `spec = importlib.util.spec_from_file_location('d', ${JSON.stringify(file)})`,
     'm = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)',
     'keys = iter(list("ab") + ["\\x08"] + list("c") + ["\\r"])',
     'print("RESULT=" + m.read_secret("t ", getwch=lambda: next(keys)))',
   ].join('\n');
   const out = execFileSync('python3', ['-c', code], {encoding: 'utf8'});
+  fs.rmSync(dir, {recursive: true, force: true});
   assert.match(out, /RESULT=ac\n?$/);
   assert.match(out, /\*/, 'prints asterisks');
   assert.doesNotMatch(out, /abc|RESULT=ab/, 'never echoes the secret itself');

@@ -2530,7 +2530,7 @@
    "milestone": "M2",
    "size": "S",
    "bu": 8,
-   "status": "ready",
+   "status": "done",
    "deps": [
     "WP-CM0"
    ],
@@ -2554,7 +2554,7 @@
    "milestone": "M2",
    "size": "M",
    "bu": 20,
-   "status": "planned",
+   "status": "done",
    "deps": [
     "WP-CM1"
    ],
@@ -2565,9 +2565,11 @@
    ],
    "inputs": [
     "docs/character-customisation-roadmap.md",
-    "docs/engineering/generated-recon.md"
+    "docs/engineering/generated-recon.md",
+    "docs/engineering/recon-modular-audit.md",
+    "tools/assets/recon-modular-contract.json"
    ],
-   "acceptance": "Carrier/harness removal exposes complete front, back, shoulder and waist surfaces; clean cloth textures have no baked gear remnants; 360-degree strip contact sheet passes."
+   "acceptance": "npm run test:foundation; hood-free closed masked head, broader chest and neck, complete clothing with no gear remnants, canonical skeleton and <=8,000 triangles; four-side/pose strip sheet."
   },
   {
    "id": "WP-CM3",
@@ -2576,7 +2578,7 @@
    "milestone": "M2",
    "size": "M",
    "bu": 20,
-   "status": "planned",
+   "status": "ready",
    "deps": [
     "WP-CM2"
    ],
@@ -2587,7 +2589,12 @@
    ],
    "inputs": [
     "docs/character-customisation-roadmap.md",
-    "docs/engineering/generated-recon.md"
+    "docs/engineering/generated-recon.md",
+    "docs/engineering/recon-clothing-foundation.md",
+    "tools/assets/build-recon-foundation.py",
+    "tools/assets/recon_foundation_geometry.py",
+    "tools/assets/recon-modular-contract.json",
+    "tools/assets/recon_foundation_head.py"
    ],
    "acceptance": "Head, hood, mask and neck join without gaps; both gloves support relaxed, open and rifle grip shapes; legacy bone names remain compatible and skeleton additions are versioned."
   },
@@ -2598,7 +2605,7 @@
    "milestone": "M2",
    "size": "S",
    "bu": 8,
-   "status": "planned",
+   "status": "ready",
    "deps": [
     "WP-CM1"
    ],
@@ -2606,7 +2613,9 @@
    "needs": [],
    "inputs": [
     "docs/character-customisation-roadmap.md",
-    "docs/engineering/generated-recon.md"
+    "docs/engineering/generated-recon.md",
+    "docs/engineering/recon-modular-audit.md",
+    "tools/assets/recon-modular-contract.json"
    ],
    "acceptance": "Pure-data tests cover parent dependencies, repeated item instances, mount footprints, conflicts, coverage masks and full-outfit triangle accounting."
   },
