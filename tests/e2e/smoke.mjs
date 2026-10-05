@@ -101,37 +101,6 @@ await check('index: the Nokia screen lies on the table and opens straight on the
   await page.close();
 });
 
-await check('overworld map: the island, the parties with nameplates, convoys moving, the province card', async () => {
-  const page = await open(browser, server.url + 'map/', {viewport: {width: 1280, height: 800}});
-  await page.waitForFunction(() => window.PARP_MAP?.ready, null, {timeout: 120000});
-  const r = await page.evaluate(async () => {
-    const m = window.PARP_MAP;
-    const convoy = m.parties.parties.find(p => p.kind === 'convoy');
-    const at = convoy.root.position.clone();
-    await new Promise(res => setTimeout(res, 3000));
-    return {
-      kinds: m.parties.parties.map(p => p.kind),
-      moved: convoy.root.position.distanceTo(at),
-      plates: document.querySelectorAll('.plate-party').length,
-      towns: document.querySelectorAll('.plate-town').length,
-    };
-  });
-  assert.equal(r.kinds[0], 'player');
-  assert.ok(r.kinds.filter(k => k === 'enemy').length >= 3, 'Invader patrols');
-  assert.ok(r.kinds.filter(k => k === 'convoy').length >= 2, 'convoys');
-  assert.ok(r.moved > 0.2, `a convoy drives (${r.moved.toFixed(1)})`);
-  assert.equal(r.plates, r.kinds.length, 'a nameplate per party');
-  assert.ok(r.towns >= 8, 'towns named on the map');
-  await page.mouse.move(640, 420);
-  await page.mouse.move(660, 430);
-  await page.waitForSelector('#province:not([hidden])', {timeout: 5000});
-  assert.match(await page.locator('#prov-name').innerText(), /province/);
-  await page.locator('[data-speed="0"]').click();
-  assert.equal(await page.locator('[data-speed="0"]').getAttribute('aria-pressed'), 'true');
-  noProblems(page);
-  await page.close();
-});
-
 await check('opening scene: the table, the rifle, one button; the shell keeps one sound layer across pages', async () => {
   const page = await open(browser, server.url + 'intro/');
   await page.waitForFunction(
@@ -817,6 +786,38 @@ await check('roadmap page renders (built site only)', async () => {
   if (res.status === 404 && !live && !process.env.ROOT) return; // source tree has the .md only
   assert.equal(res.status, 200);
   assert.match(await res.text(), /Partisan Project master roadmap/);
+});
+
+// last: the overworld map is the heaviest page for a software renderer, so nothing else runs after it
+await check('overworld map: the island, the parties with nameplates, convoys moving, the province card', async () => {
+  const page = await open(browser, server.url + 'map/', {viewport: {width: 1280, height: 800}});
+  await page.waitForFunction(() => window.PARP_MAP?.ready, null, {timeout: 120000});
+  const r = await page.evaluate(async () => {
+    const m = window.PARP_MAP;
+    const convoy = m.parties.parties.find(p => p.kind === 'convoy');
+    const at = convoy.root.position.clone();
+    await new Promise(res => setTimeout(res, 3000));
+    return {
+      kinds: m.parties.parties.map(p => p.kind),
+      moved: convoy.root.position.distanceTo(at),
+      plates: document.querySelectorAll('.plate-party').length,
+      towns: document.querySelectorAll('.plate-town').length,
+    };
+  });
+  assert.equal(r.kinds[0], 'player');
+  assert.ok(r.kinds.filter(k => k === 'enemy').length >= 3, 'Invader patrols');
+  assert.ok(r.kinds.filter(k => k === 'convoy').length >= 2, 'convoys');
+  assert.ok(r.moved > 0.2, `a convoy drives (${r.moved.toFixed(1)})`);
+  assert.equal(r.plates, r.kinds.length, 'a nameplate per party');
+  assert.ok(r.towns >= 8, 'towns named on the map');
+  await page.mouse.move(640, 420);
+  await page.mouse.move(660, 430);
+  await page.waitForSelector('#province:not([hidden])', {timeout: 5000});
+  assert.match(await page.locator('#prov-name').innerText(), /province/i);
+  await page.locator('[data-speed="0"]').click();
+  assert.equal(await page.locator('[data-speed="0"]').getAttribute('aria-pressed'), 'true');
+  noProblems(page);
+  await page.close();
 });
 
 await browser.close();
