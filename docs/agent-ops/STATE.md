@@ -5,12 +5,12 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json); full plan: [ta
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-05 10:14 UTC · codex · WP-CM2 · done**
+**2026-10-05 10:30 UTC · codex · WP-CM2 · done**
 
-- Branch `codex/generated-operator-equipment` at `51c4edb`; working tree clean.
-- Last commits: 51c4edb feat(WP-CM2): rebuild clean Recon clothing foundation · f1b03ae docs(WP-CM1): record teardown verification and clean-body handoff · 855c47b feat(WP-CM1): add Recon source teardown and modular authoring contract
-- What happened: Completed and pushed 51c4edb: opt-in 7,902-triangle clean clothing foundation, fresh cloth maps, continuous jacket and wrist seams, unchanged canonical skeleton, separate carry fit and inspection sheet. Foundation source/built browser checks, 24 carries, 88 existing Recon carries, built smoke, build/check, lint, typecheck, formatting and plan sync pass. Full units 220/222 with two unchanged downloader failures. Preview serves the verified model on localhost:8132.
-- Next step: CM3: separate head/hood/mask and rebuild articulated gloves using docs/engineering/recon-clothing-foundation.md, tools/assets/build-recon-foundation.py and recon_foundation_geometry.py. CM4 item resolver is also ready. Preserve foundation wrist constraints and original models; reconcile origin/main 17eb192 deliberately, with no main merge or push.
+- Branch `codex/generated-operator-equipment` at `5bfc454`; working tree clean.
+- Last commits: 5bfc454 fix(WP-CM2): remove foundation hood and strengthen chest and neck · 3e4d278 docs(WP-CM2): record completed foundation handoff · 51c4edb feat(WP-CM2): rebuild clean Recon clothing foundation
+- What happened: Completed and pushed 5bfc454: remove the outer hood, rebuild a closed fitted masked head around the preserved eyes, broaden chest and neck, smooth underarm weights and anchor the collar to the torso. Foundation now 5,263 triangles with the unchanged skeleton. Geometry/pose tests and 24 rifle carries pass; refreshed sheet, build/check, lint, typecheck, formatting and plan sync pass. Full units 221/223 with two unchanged downloader failures. Local preview updated.
+- Next step: CM3: separate the remaining face covering and rebuild articulated gloves using the foundation authoring scripts, including recon_foundation_head.py. CM4 item resolver is also ready. Keep collar/wrist constraints and original models; no main merge or push.
 <!-- handoff:end -->
 
 ## Resume here
