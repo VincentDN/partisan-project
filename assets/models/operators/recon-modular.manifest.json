@@ -1,6 +1,6 @@
 {
  "generated": "2026-10-05",
- "triangles": 5263,
+ "triangles": 5568,
  "bones": [
   "root",
   "pelvis",
@@ -16,10 +16,40 @@
   "upperarm_r",
   "lowerarm_r",
   "hand_r",
+  "index_01_r",
+  "index_02_r",
+  "index_03_r",
+  "middle_01_r",
+  "middle_02_r",
+  "middle_03_r",
+  "ring_01_r",
+  "ring_02_r",
+  "ring_03_r",
+  "pinky_01_r",
+  "pinky_02_r",
+  "pinky_03_r",
+  "thumb_01_r",
+  "thumb_02_r",
+  "thumb_03_r",
   "clavicle_l",
   "upperarm_l",
   "lowerarm_l",
   "hand_l",
+  "index_01_l",
+  "index_02_l",
+  "index_03_l",
+  "middle_01_l",
+  "middle_02_l",
+  "middle_03_l",
+  "ring_01_l",
+  "ring_02_l",
+  "ring_03_l",
+  "pinky_01_l",
+  "pinky_02_l",
+  "pinky_03_l",
+  "thumb_01_l",
+  "thumb_02_l",
+  "thumb_03_l",
   "thigh_r",
   "calf_r",
   "foot_r",
@@ -45,37 +75,113 @@
    ]
   },
   {
-   "node": "SK_CM_Cuff_R",
-   "triangles": 90,
+   "node": "SK_CM_Ear_L",
+   "triangles": 108,
    "materials": [
-    "M_CM_Jacket"
+    "M_CM_Skin"
    ]
   },
   {
-   "node": "SK_CM_Face",
-   "triangles": 933,
+   "node": "SK_CM_Ear_R",
+   "triangles": 108,
    "materials": [
-    "M_GR_Face",
-    "M_CM_HeadCover"
+    "M_CM_Skin"
+   ]
+  },
+  {
+   "node": "SK_CM_Eye_Brow_L",
+   "triangles": 4,
+   "materials": [
+    "M_CM_Iris"
+   ]
+  },
+  {
+   "node": "SK_CM_Eye_Brow_R",
+   "triangles": 4,
+   "materials": [
+    "M_CM_Iris"
+   ]
+  },
+  {
+   "node": "SK_CM_Eye_Glint_L",
+   "triangles": 12,
+   "materials": [
+    "M_CM_Eyes"
+   ]
+  },
+  {
+   "node": "SK_CM_Eye_Glint_R",
+   "triangles": 12,
+   "materials": [
+    "M_CM_Eyes"
+   ]
+  },
+  {
+   "node": "SK_CM_Eye_Iris_L",
+   "triangles": 12,
+   "materials": [
+    "M_CM_Iris"
+   ]
+  },
+  {
+   "node": "SK_CM_Eye_Iris_R",
+   "triangles": 12,
+   "materials": [
+    "M_CM_Iris"
+   ]
+  },
+  {
+   "node": "SK_CM_Eye_Pupil_L",
+   "triangles": 12,
+   "materials": [
+    "M_CM_Pupil"
+   ]
+  },
+  {
+   "node": "SK_CM_Eye_Pupil_R",
+   "triangles": 12,
+   "materials": [
+    "M_CM_Pupil"
+   ]
+  },
+  {
+   "node": "SK_CM_Eye_White_L",
+   "triangles": 12,
+   "materials": [
+    "M_CM_Eyes"
+   ]
+  },
+  {
+   "node": "SK_CM_Eye_White_R",
+   "triangles": 12,
+   "materials": [
+    "M_CM_Eyes"
    ]
   },
   {
    "node": "SK_CM_Glove_L",
-   "triangles": 258,
+   "triangles": 600,
    "materials": [
-    "M_GR_gloves"
+    "M_CM_Gloves"
    ]
   },
   {
    "node": "SK_CM_Glove_R",
-   "triangles": 258,
+   "triangles": 600,
    "materials": [
-    "M_GR_gloves"
+    "M_CM_Gloves"
    ]
   },
   {
    "node": "SK_CM_Head",
    "triangles": 428,
+   "materials": [
+    "M_CM_Skin"
+   ]
+  },
+  {
+   "node": "SK_CM_HeadCap",
+   "triangles": 166,
    "materials": [
     "M_CM_HeadCover"
    ]
@@ -88,10 +194,31 @@
    ]
   },
   {
+   "node": "SK_CM_Lips",
+   "triangles": 6,
+   "materials": [
+    "M_CM_Lips"
+   ]
+  },
+  {
+   "node": "SK_CM_Mask",
+   "triangles": 144,
+   "materials": [
+    "M_CM_HeadCover"
+   ]
+  },
+  {
    "node": "SK_CM_Neck",
    "triangles": 68,
    "materials": [
     "M_CM_Neck"
+   ]
+  },
+  {
+   "node": "SK_CM_Nose",
+   "triangles": 8,
+   "materials": [
+    "M_CM_Skin"
    ]
   },
   {
@@ -148,16 +275,43 @@
    "textured": true
   },
   {
-   "name": "M_CM_Jacket",
+   "name": "M_CM_Skin",
    "baseColor": [
-    1,
-    1,
-    1
+    0.503,
+    0.323,
+    0.168
    ],
-   "textured": true
+   "textured": false
   },
   {
-   "name": "M_GR_Face",
+   "name": "M_CM_Iris",
+   "baseColor": [
+    0.087,
+    0.063,
+    0.03
+   ],
+   "textured": false
+  },
+  {
+   "name": "M_CM_Eyes",
+   "baseColor": [
+    0.791,
+    0.738,
+    0.604
+   ],
+   "textured": false
+  },
+  {
+   "name": "M_CM_Pupil",
+   "baseColor": [
+    0.007,
+    0.008,
+    0.007
+   ],
+   "textured": false
+  },
+  {
+   "name": "M_CM_Gloves",
    "baseColor": [
     1,
     1,
@@ -175,13 +329,22 @@
    "textured": true
   },
   {
-   "name": "M_GR_gloves",
+   "name": "M_CM_Jacket",
    "baseColor": [
     1,
     1,
     1
    ],
    "textured": true
+  },
+  {
+   "name": "M_CM_Lips",
+   "baseColor": [
+    0.175,
+    0.091,
+    0.068
+   ],
+   "textured": false
   },
   {
    "name": "M_CM_Neck",

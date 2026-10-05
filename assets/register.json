@@ -1198,7 +1198,7 @@
    "label": "Recon clothing foundation",
    "path": "assets/models/operators/recon-modular.glb",
    "kind": "character",
-   "notes": "CM2 hood-free clothing foundation: 5,263 triangles, canonical 26-bone skeleton. Broader chest and neck; complete jacket, waist and fitted masked head. Fresh cloth maps; no hood, vest, harness or bags. Mask separation and articulated hands remain CM3. Rebuild with assets:recon-foundation.",
+   "notes": "CM3 modular foundation: 5,568 triangles including removable mask and cap, complete stylized head and 1,200-triangle articulated gloves. Recon v2 adds thirty finger joints while preserving all 26 v1 body frames. Rebuild with assets:recon-foundation.",
    "status": "real",
    "budget": {
     "triangles": 8000

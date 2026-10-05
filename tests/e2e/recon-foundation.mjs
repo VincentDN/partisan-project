@@ -15,13 +15,33 @@ try {
     return {
       triangles: f.meshes.reduce((s, m) => s + m.geometry.index.count / 3, 0),
       height: new f.stage.T.Box3().setFromObject(f.scene).getSize(new f.stage.T.Vector3()).y,
-      cloth: f.meshes.filter(m => m.material.name.startsWith('M_CM_')).every(m => m.material.map?.image.width === 256),
-      face: f.meshes.find(m => m.material.name === 'M_GR_Face').material.map.image.width,
+      cloth: f.meshes
+        .filter(m => /M_CM_(Jacket|Trousers|Neck|Gloves|HeadCover)/.test(m.material.name))
+        .every(m => m.material.map?.image.width === 256),
+      eyes: f.meshes.filter(m => m.material.name === 'M_CM_Pupil').length,
     };
   });
   assert.ok(base.triangles <= 8000 && Math.abs(base.height - 1.827) < 0.01);
   assert.ok(base.cloth);
-  assert.equal(base.face, 2048);
+  assert.equal(base.eyes, 2);
+  for (const value of ['none', 'mask', 'cap', 'both']) {
+    await page.locator('#headwear').selectOption(value);
+    assert.deepEqual(
+      await page.evaluate(() => {
+        const m = window.PARP_RECON_FOUNDATION.meshes;
+        return [m.find(x => x.name === 'SK_CM_Mask').visible, m.find(x => x.name === 'SK_CM_HeadCap').visible];
+      }),
+      [value === 'mask' || value === 'both', value === 'cap' || value === 'both'],
+    );
+  }
+  await page.locator('#headwear').selectOption('none');
+  const handStates = [];
+  for (const value of ['open', 'relaxed', 'grip', 'support']) {
+    await page.locator('#hands').selectOption(value);
+    handStates.push(await page.evaluate(() => window.PARP_RECON_FOUNDATION.rig.bones.get('index_02_r').quaternion.toArray().join(',')));
+  }
+  assert.equal(new Set(handStates).size, 4);
+  await page.locator('#hands').selectOption('pose');
   const poses = await page.locator('#pose option').evaluateAll(options => options.map(o => o.value));
   for (const pose of poses) {
     await page.locator('#pose').selectOption(pose);
@@ -100,6 +120,9 @@ try {
   await modder.waitForFunction(() => window.PARP_OPERATOR?.ready && window.PARP_OPERATOR.weapon?.rifle.id === 'ak74m', null, {
     timeout: 60000,
   });
+  const skinTone = await modder.evaluate(() =>
+    window.PARP_OPERATOR.meshes.find(m => m.material.name === 'M_CM_Skin').material.color.getHex(),
+  );
   for (const weapon of ['ak74m', 'g3', 'ak15k']) {
     await modder.evaluate(id => window.PARP_OPERATOR.set('weapon', id), weapon);
     await modder.waitForFunction(id => window.PARP_OPERATOR.weapon?.rifle.id === id, weapon);
@@ -116,21 +139,25 @@ try {
   await modder.evaluate(() => {
     window.PARP_OPERATOR.set('z.top', 'navy');
     window.PARP_OPERATOR.set('z.pants', 'khaki');
+    window.PARP_OPERATOR.set('mask', 'none');
+    window.PARP_OPERATOR.set('cap', 'fitted');
   });
   const hash = await modder.evaluate(() => location.hash);
   await modder.reload();
   await modder.waitForFunction(() => window.PARP_OPERATOR?.ready);
   assert.equal(await modder.evaluate(() => location.hash), hash);
   assert.ok(
-    await modder.evaluate(() => {
+    await modder.evaluate(skinTone => {
       const o = window.PARP_OPERATOR;
       return (
         o.base.id === 'recon-modular' &&
         o.state['z.top'] === 'navy' &&
+        !o.meshes.find(m => m.name === 'SK_CM_Mask').visible &&
+        o.meshes.find(m => m.name === 'SK_CM_HeadCap').visible &&
         o.meshes.filter(m => m.material.name === 'M_CM_Jacket').every(m => m.material.map?.image.width === 256) &&
-        o.meshes.find(m => m.material.name === 'M_GR_Face').material.color.getHex() === 0xffffff
+        o.meshes.find(m => m.material.name === 'M_CM_Skin').material.color.getHex() === skinTone
       );
-    }),
+    }, skinTone),
   );
   await modder.evaluate(() => window.PARP_OPERATOR.switchBase('generated-recon'));
   await modder.waitForFunction(() => window.PARP_OPERATOR.base.id === 'generated-recon');

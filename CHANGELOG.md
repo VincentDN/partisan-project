@@ -4,6 +4,10 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 ## [Unreleased]
 
+### Added (Recon headwear and articulated hands, WP-CM3)
+- Add a complete stylized head beneath independently removable mask and cap, and cuffed gloves with thirty finger joints. The original Recon remains available; the foundation keeps its hood-free silhouette and stronger chest/neck.
+- Compare open, relaxed, rifle and support grips in the inspector. Headwear choices round-trip with saved outfits; poses select hand shapes automatically. The 5,568-triangle model preserves all 26 original body bones and records the recon-v2 extension.
+
 ### Changed (Recon foundation proportions, WP-CM2)
 - Remove the outer hood from the clean foundation, preserve the textured eyes and rebuild a closed, fitted masked head. Broaden the chest and neck, smooth underarm deformation and retain wrist seam constraints. The foundation now uses 5,263 triangles; the original Recon remains available.
 

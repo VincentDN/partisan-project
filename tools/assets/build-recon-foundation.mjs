@@ -27,16 +27,38 @@ execFileSync(process.execPath, ['tools/assets/optimize-pack.mjs', 'build/recon-f
 const result = await io.read(output);
 const oldBones = baseline.getRoot().listSkins()[0].listJoints();
 const joints = result.getRoot().listSkins()[0].listJoints();
-if (joints.length !== oldBones.length) throw Error('Skeleton joint count changed');
-for (const joint of joints) {
-  const old = oldBones.find(n => n.getName() === joint.getName());
+if (joints.length !== oldBones.length + 30) throw Error('Recon v2 must add exactly thirty finger joints');
+for (const old of oldBones) {
+  const joint = joints.find(n => n.getName() === old.getName());
   if (
-    !old ||
+    !joint ||
     old.getParentNode()?.getName() !== joint.getParentNode()?.getName() ||
     joint.getMatrix().some((v, i) => Math.abs(v - old.getMatrix()[i]) > 1e-5)
   )
-    throw Error('Skeleton contract changed: ' + joint.getName());
+    throw Error('Skeleton contract changed: ' + old.getName());
 }
+const additions = joints.filter(joint => !oldBones.some(old => old.getName() === joint.getName()));
+for (const joint of additions) {
+  const match = /^(thumb|index|middle|ring|pinky)_0([123])_([lr])$/.exec(joint.getName());
+  if (!match) throw Error('Unexpected skeleton addition ' + joint.getName());
+  const parent = match[2] === '1' ? `hand_${match[3]}` : `${match[1]}_0${Number(match[2]) - 1}_${match[3]}`;
+  if (joint.getParentNode()?.getName() !== parent) throw Error('Incorrect finger parent ' + joint.getName());
+}
+fs.writeFileSync(
+  output.replace('.glb', '.rig.json'),
+  JSON.stringify(
+    {
+      version: 2,
+      id: 'recon-v2',
+      extends: 'recon-v1',
+      baselineSha256: sourceHash,
+      palmOffsets: {r: [0, 0.078, 0.024], l: [0, 0.078, 0.024]},
+      addedBones: additions.map(j => ({name: j.getName(), parent: j.getParentNode().getName(), localMatrix: j.getMatrix()})),
+    },
+    null,
+    1,
+  ) + '\n',
+);
 if (digest(source) !== sourceHash) throw Error('Existing Recon was modified');
 const report = JSON.parse(fs.readFileSync('build/recon-foundation-report.json'));
 const manifest = JSON.parse(fs.readFileSync(output.replace('.glb', '.manifest.json')));
@@ -57,4 +79,4 @@ fs.writeFileSync(
     1,
   ) + '\n',
 );
-console.log(`Clean foundation: ${manifest.triangles} triangles; all 26 baseline joints preserved.`);
+console.log(`Clean foundation: ${manifest.triangles} triangles; 26 baseline joints preserved, 30 finger joints added.`);
