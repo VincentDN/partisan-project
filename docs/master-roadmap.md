@@ -124,6 +124,9 @@ The current convoy is still a disposable combat scenario. The next goal is a com
 on that map**: risk owned kit, search bodies/cargo, survive a timed exit, bank once, and redeploy with recovered gear.
 Defeat, timeout and abandonment lose deployed equipment. More maps follow that playable gate.
 
+![Concept keyframe: four low-poly rebels around a map table in a lamp-lit hideout, planning the next raid](moodboard/keyframe-3-war-room.jpg)
+*Between raids: the squad plans the next ambush over the island map. The overworld and loot metagame target mood; concept art, reference only.*
+
 The [tactical roadmap](tactical-roadmap.md) now contains the code audit, loss rules, save/transaction design,
 packet dependencies, survival/economy work, three-mission progression, customiser integration and acceptance matrix.
 Physical gear and permanent catalogue discoveries are separate. The initial browser release is solo PvE with AI
