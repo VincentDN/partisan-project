@@ -77,11 +77,13 @@ export function perceive(sim, u) {
         : u.weapon === 'svd'
           ? 60
           : 48;
+  const sight = Math.min(range, sim.vision ?? Infinity); // nobody sees farther than the rebels' fog of war shows
   const halfFov = scanning ? 1.6 : u.side === 'partisan' || mounted || u.state === 'turret' || u.alert ? Math.PI : 1.25;
   u.visible = [];
   for (const e of sim.enemiesOf(u)) {
     const d = dist(u, e);
-    if (d > range) continue;
+    if (d > sight) continue;
+    if (!sim.onScreen?.(u.side === 'army' ? u : e)) continue; // you see them, they see you: only on the player's screen
     let da = Math.atan2(e.z - u.z, e.x - u.x) - u.facing;
     da = Math.atan2(Math.sin(da), Math.cos(da));
     if (Math.abs(da) > halfFov) continue;
@@ -91,7 +93,7 @@ export function perceive(sim, u) {
     if (u.side === 'army' && !u.alert) {
       // Before the alarm a soldier only grows suspicious: movement and closeness make you easier to spot.
       const pace = !e.moving ? 0.6 : e.speed < 2 ? 1 : 2.2;
-      u.suspicion += 0.2 * (0.4 + sim.awareness * 1.2) * (1 - d / range) * pace * (e.mods?.noise ?? 1);
+      u.suspicion += 0.2 * (0.4 + sim.awareness * 1.2) * (1 - d / sight) * pace * (e.mods?.noise ?? 1);
       if (u.suspicion < 1) continue;
       sim.alert(u);
     }
@@ -423,17 +425,29 @@ function followSlot(sim, u) {
   const p = sim.player;
   const followers = sim.units.filter(o => o.side === 'partisan' && o.alive && o !== p && o.order?.type === 'follow');
   const k = followers.indexOf(u);
-  const back = p.facing + Math.PI,
+  // behind the way the player is going (not where he aims, or the squad would circle him as he turns)
+  const h = (sim.followHeading ||= {x: p.x, z: p.z, a: p.facing});
+  if (Math.hypot(p.x - h.x, p.z - h.z) > 0.6) Object.assign(h, {a: Math.atan2(p.z - h.z, p.x - h.x), x: p.x, z: p.z});
+  const back = h.a + Math.PI,
     side = (k % 2 ? 1 : -1) * (1 + Math.floor(k / 2)) * 1.4;
   return {x: p.x + Math.cos(back) * 2.2 - Math.sin(back) * side, z: p.z + Math.sin(back) * 2.2 + Math.cos(back) * side};
 }
 
 export function partisanThink(sim, u) {
-  const o = (u.order ||= {type: 'hold'});
-  if (o.type === 'follow') {
+  // The squad moves up with you unless told otherwise. By default it keeps its starting (ambush) positions until the
+  // player has moved off 4 m, then follows; an order to follow (F) applies at once.
+  const o = (u.order ||= {type: 'follow', settled: true});
+  if (o.settled) {
+    const start = (sim.squadStart ||= {x: sim.player.x, z: sim.player.z});
+    if (Math.hypot(sim.player.x - start.x, sim.player.z - start.z) > 4) delete o.settled;
+  }
+  if (o.type === 'follow' && o.settled) u.moveTo = null;
+  else if (o.type === 'follow') {
     const slot = followSlot(sim, u);
-    u.speed = sim.player.speed;
-    u.moveTo = Math.hypot(slot.x - u.x, slot.z - u.z) > 1.2 ? slot : null;
+    const behind = Math.hypot(slot.x - u.x, slot.z - u.z);
+    // at the player's pace, running only to catch up when left behind
+    u.speed = behind > 8 ? Math.max(sim.player.speed, 5.8) : sim.player.speed;
+    u.moveTo = behind > 1.2 ? slot : null;
   } else if (o.type === 'move') {
     if (Math.hypot(o.x - u.x, o.z - u.z) < 0.5) {
       u.order = {type: 'hold', x: o.x, z: o.z};

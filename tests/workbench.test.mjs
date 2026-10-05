@@ -113,3 +113,20 @@ test('every take in the foley manifest exists, is a WAV', async () => {
       assert.equal(fs.readFileSync(p).subarray(0, 4).toString(), 'RIFF', p);
     }
 });
+
+test('every rifle takes every shared attachment (workbench/universal.js); magazines stay calibre-specific', async () => {
+  const {UNIVERSAL} = await import('../workbench/universal.js');
+  for (const [rifleId, config] of Object.entries(MODELS))
+    for (const slot of ['muzzle', 'optic', 'buis', 'foregrip', 'side', 'trigger', 'charging', 'sling']) {
+      const conf = config.slots[slot];
+      assert.ok(conf, `${rifleId}: no ${slot} slot`);
+      const ids = new Set([...conf.factory.map(o => o.id), ...conf.library.map(e => (typeof e === 'string' ? e : e.id))]);
+      for (const id of UNIVERSAL[slot]) assert.ok(ids.has(id), `${rifleId}/${slot}: missing ${id}`);
+      const mounted = config.sockets.some(s => s[0] === slot) || config.mounts?.some(m => m[0] === slot);
+      assert.ok(mounted, `${rifleId}/${slot}: no mount point`);
+      assert.ok(
+        config.parts.some(p => p.id === slot),
+        `${rifleId}/${slot}: no part`,
+      );
+    }
+});

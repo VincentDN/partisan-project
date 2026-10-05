@@ -1,0 +1,463 @@
+{
+ "source": "Freesound, CC0 only",
+ "categories": {
+  "amb-room": {
+   "loop": true,
+   "files": [
+    {
+     "file": "amb-room/amb-room-1.mp3",
+     "id": 278987,
+     "title": "Large Warehouse/Factory Ambience.wav",
+     "author": "fimrod",
+     "seconds": 22.41,
+     "source": "https://freesound.org/s/278987/"
+    },
+    {
+     "file": "amb-room/amb-room-2.mp3",
+     "id": 427861,
+     "title": "Roomtone Warehouse Fans Vents Large",
+     "author": "leonelmail",
+     "seconds": 40.05,
+     "source": "https://freesound.org/s/427861/"
+    },
+    {
+     "file": "amb-room/amb-room-3.mp3",
+     "id": 148357,
+     "title": "women_talking_warehouse.wav",
+     "author": "mannhawks",
+     "seconds": 40.05,
+     "source": "https://freesound.org/s/148357/"
+    }
+   ]
+  },
+  "amb-rain": {
+   "loop": true,
+   "files": [
+    {
+     "file": "amb-rain/amb-rain-1.mp3",
+     "id": 521773,
+     "title": "Indoors_Shed_RainOnTinRoof_01.wav",
+     "author": "MrFossy",
+     "seconds": 40.05,
+     "source": "https://freesound.org/s/521773/"
+    },
+    {
+     "file": "amb-rain/amb-rain-2.mp3",
+     "id": 333509,
+     "title": "January rain on a roof.aif",
+     "author": "mmorgaine",
+     "seconds": 24.82,
+     "source": "https://freesound.org/s/333509/"
+    }
+   ]
+  },
+  "hum": {
+   "loop": true,
+   "files": [
+    {
+     "file": "hum/hum-1.mp3",
+     "id": 638895,
+     "title": "Fluorescent lightbulb hum buzz (Extended)",
+     "author": "Developer_Jake",
+     "seconds": 20.04,
+     "source": "https://freesound.org/s/638895/"
+    }
+   ]
+  },
+  "voices": {
+   "loop": true,
+   "files": [
+    {
+     "file": "voices/voices-1.mp3",
+     "id": 741282,
+     "title": "Crowd walla (french english) INT",
+     "author": "xkeril",
+     "seconds": 30.04,
+     "source": "https://freesound.org/s/741282/"
+    },
+    {
+     "file": "voices/voices-2.mp3",
+     "id": 438413,
+     "title": "G29-53-Men - Prison Mess Hall.wav",
+     "author": "craigsmith",
+     "seconds": 30.04,
+     "source": "https://freesound.org/s/438413/"
+    },
+    {
+     "file": "voices/voices-3.mp3",
+     "id": 343425,
+     "title": "Senators/Men Talking.mp3",
+     "author": "dominictreis",
+     "seconds": 30.04,
+     "source": "https://freesound.org/s/343425/"
+    }
+   ]
+  },
+  "laugh": {
+   "loop": false,
+   "files": [
+    {
+     "file": "laugh/laugh-1.mp3",
+     "id": 480806,
+     "title": "R15-82-Men Laughing Heartily.wav",
+     "author": "craigsmith",
+     "seconds": 4.05,
+     "source": "https://freesound.org/s/480806/"
+    },
+    {
+     "file": "laugh/laugh-2.mp3",
+     "id": 481735,
+     "title": "R15-32-Man Laughing Heartily.wav",
+     "author": "craigsmith",
+     "seconds": 4.05,
+     "source": "https://freesound.org/s/481735/"
+    },
+    {
+     "file": "laugh/laugh-3.mp3",
+     "id": 482787,
+     "title": "R16-04-Man Laughing.wav",
+     "author": "craigsmith",
+     "seconds": 4.05,
+     "source": "https://freesound.org/s/482787/"
+    }
+   ]
+  },
+  "cough": {
+   "loop": false,
+   "files": [
+    {
+     "file": "cough/cough-1.mp3",
+     "id": 401334,
+     "title": "Man Coughing",
+     "author": "ckvoiceover",
+     "seconds": 1.65,
+     "source": "https://freesound.org/s/401334/"
+    },
+    {
+     "file": "cough/cough-2.mp3",
+     "id": 743360,
+     "title": "Strong Double Cough",
+     "author": "qubodup",
+     "seconds": 1.1,
+     "source": "https://freesound.org/s/743360/"
+    },
+    {
+     "file": "cough/cough-3.mp3",
+     "id": 447496,
+     "title": "to clear one's throat",
+     "author": "florianreichelt",
+     "seconds": 1.65,
+     "source": "https://freesound.org/s/447496/"
+    }
+   ]
+  },
+  "radio-chatter": {
+   "loop": false,
+   "files": [
+    {
+     "file": "radio-chatter/radio-chatter-1.mp3",
+     "id": 100416,
+     "title": "radio chatter 01.wav",
+     "author": "pushkin",
+     "seconds": 8.05,
+     "source": "https://freesound.org/s/100416/"
+    },
+    {
+     "file": "radio-chatter/radio-chatter-2.mp3",
+     "id": 435383,
+     "title": "Police radio chatter",
+     "author": "Iam_calderon",
+     "seconds": 8.05,
+     "source": "https://freesound.org/s/435383/"
+    },
+    {
+     "file": "radio-chatter/radio-chatter-3.mp3",
+     "id": 648463,
+     "title": "Police Chatter",
+     "author": "-Andreas",
+     "seconds": 3.42,
+     "source": "https://freesound.org/s/648463/"
+    },
+    {
+     "file": "radio-chatter/radio-chatter-4.mp3",
+     "id": 353712,
+     "title": "Radio Going in and Out then a Cut at the End",
+     "author": "DRFX",
+     "seconds": 6.69,
+     "source": "https://freesound.org/s/353712/"
+    }
+   ]
+  },
+  "radio-squelch": {
+   "loop": false,
+   "files": [
+    {
+     "file": "radio-squelch/radio-squelch-1.mp3",
+     "id": 524205,
+     "title": "Radio Sign Off / Squelch",
+     "author": "JovianSounds",
+     "seconds": 1.23,
+     "source": "https://freesound.org/s/524205/"
+    },
+    {
+     "file": "radio-squelch/radio-squelch-2.mp3",
+     "id": 760245,
+     "title": "Walkie-talkie end of transmission",
+     "author": "LukaCafuka",
+     "seconds": 0.47,
+     "source": "https://freesound.org/s/760245/"
+    },
+    {
+     "file": "radio-squelch/radio-squelch-3.mp3",
+     "id": 47646,
+     "title": "End radio transmission",
+     "author": "ReadeOnly",
+     "seconds": 0.42,
+     "source": "https://freesound.org/s/47646/"
+    },
+    {
+     "file": "radio-squelch/radio-squelch-4.mp3",
+     "id": 522164,
+     "title": "Radio Buzz / Squelch 1",
+     "author": "magnuswaker",
+     "seconds": 0.37,
+     "source": "https://freesound.org/s/522164/"
+    }
+   ]
+  },
+  "gun-handling": {
+   "loop": false,
+   "files": [
+    {
+     "file": "gun-handling/gun-handling-1.mp3",
+     "id": 675008,
+     "title": "AK-47 assault rifle being cocked 3x",
+     "author": "serøutōnin--deprivəd",
+     "seconds": 3.03,
+     "source": "https://freesound.org/s/675008/"
+    },
+    {
+     "file": "gun-handling/gun-handling-2.mp3",
+     "id": 171632,
+     "title": "Wasr RPK Charge Back1.mp3",
+     "author": "Pjkasinski3",
+     "seconds": 2.87,
+     "source": "https://freesound.org/s/171632/"
+    },
+    {
+     "file": "gun-handling/gun-handling-3.mp3",
+     "id": 725397,
+     "title": "An M16 Rifle being reloaded while empty; full sequence",
+     "author": "serøutōnin--deprivəd",
+     "seconds": 3.03,
+     "source": "https://freesound.org/s/725397/"
+    },
+    {
+     "file": "gun-handling/gun-handling-4.mp3",
+     "id": 379977,
+     "title": "Inserting Magazine.wav",
+     "author": "morganpurkis",
+     "seconds": 0.76,
+     "source": "https://freesound.org/s/379977/"
+    },
+    {
+     "file": "gun-handling/gun-handling-5.mp3",
+     "id": 263513,
+     "title": "AR15 Various Sounds",
+     "author": "wadaltmon",
+     "seconds": 3.03,
+     "source": "https://freesound.org/s/263513/"
+    }
+   ]
+  },
+  "bolt": {
+   "loop": false,
+   "files": [
+    {
+     "file": "bolt/bolt-1.mp3",
+     "id": 802673,
+     "title": "Mauser 98k - bolt-action mechanism sound",
+     "author": "Walking.With.Microphones",
+     "seconds": 2.04,
+     "source": "https://freesound.org/s/802673/"
+    },
+    {
+     "file": "bolt/bolt-2.mp3",
+     "id": 267895,
+     "title": "Mosin Nagant Bolt (fast).wav",
+     "author": "rammbostein",
+     "seconds": 2.04,
+     "source": "https://freesound.org/s/267895/"
+    }
+   ]
+  },
+  "shells-table": {
+   "loop": false,
+   "files": [
+    {
+     "file": "shells-table/shells-table-1.mp3",
+     "id": 370805,
+     "title": "Bullet Shell Thrown On Table.wav",
+     "author": "LilMati",
+     "seconds": 0.44,
+     "source": "https://freesound.org/s/370805/"
+    },
+    {
+     "file": "shells-table/shells-table-2.mp3",
+     "id": 371199,
+     "title": "Bullet Shells Thrown In Basket.wav",
+     "author": "LilMati",
+     "seconds": 0.34,
+     "source": "https://freesound.org/s/371199/"
+    }
+   ]
+  },
+  "ammo-box": {
+   "loop": false,
+   "files": [
+    {
+     "file": "ammo-box/ammo-box-1.mp3",
+     "id": 320353,
+     "title": "Metal Ammo Box",
+     "author": "theshaggyfreak",
+     "seconds": 2.04,
+     "source": "https://freesound.org/s/320353/"
+    },
+    {
+     "file": "ammo-box/ammo-box-2.mp3",
+     "id": 386698,
+     "title": "ammo box opening.wav",
+     "author": "tommy_mooney",
+     "seconds": 1.54,
+     "source": "https://freesound.org/s/386698/"
+    }
+   ]
+  },
+  "tools": {
+   "loop": false,
+   "files": [
+    {
+     "file": "tools/tools-1.mp3",
+     "id": 181634,
+     "title": "Tools Ratchet.wav",
+     "author": "CapsLok",
+     "seconds": 3.03,
+     "source": "https://freesound.org/s/181634/"
+    },
+    {
+     "file": "tools/tools-2.mp3",
+     "id": 181635,
+     "title": "Tools Screw Clamp.wav",
+     "author": "CapsLok",
+     "seconds": 3.03,
+     "source": "https://freesound.org/s/181635/"
+    },
+    {
+     "file": "tools/tools-3.mp3",
+     "id": 513346,
+     "title": "Hammering Nail",
+     "author": "se2001",
+     "seconds": 3.03,
+     "source": "https://freesound.org/s/513346/"
+    }
+   ]
+  },
+  "footsteps": {
+   "loop": false,
+   "files": [
+    {
+     "file": "footsteps/footsteps-1.mp3",
+     "id": 459964,
+     "title": "Footsteps on concrete",
+     "author": "florianreichelt",
+     "seconds": 4.05,
+     "source": "https://freesound.org/s/459964/"
+    },
+    {
+     "file": "footsteps/footsteps-2.mp3",
+     "id": 368833,
+     "title": "Footsteps_Quick.wav",
+     "author": "georgisound",
+     "seconds": 4.05,
+     "source": "https://freesound.org/s/368833/"
+    }
+   ]
+  },
+  "zippo": {
+   "loop": false,
+   "files": [
+    {
+     "file": "zippo/zippo-1.mp3",
+     "id": 85713,
+     "title": "Zippo_Light.aif",
+     "author": "tmkappelt",
+     "seconds": 0.34,
+     "source": "https://freesound.org/s/85713/"
+    },
+    {
+     "file": "zippo/zippo-2.mp3",
+     "id": 42144,
+     "title": "zippo.wav",
+     "author": "Vrezerino",
+     "seconds": 0.6,
+     "source": "https://freesound.org/s/42144/"
+    }
+   ]
+  },
+  "cards": {
+   "loop": false,
+   "files": [
+    {
+     "file": "cards/cards-1.mp3",
+     "id": 256508,
+     "title": "Riffle Card Shuffle",
+     "author": "Kodack",
+     "seconds": 2.04,
+     "source": "https://freesound.org/s/256508/"
+    },
+    {
+     "file": "cards/cards-2.mp3",
+     "id": 447918,
+     "title": "Shuffle cards",
+     "author": "Breviceps",
+     "seconds": 0.65,
+     "source": "https://freesound.org/s/447918/"
+    }
+   ]
+  },
+  "creak": {
+   "loop": false,
+   "files": [
+    {
+     "file": "creak/creak-1.mp3",
+     "id": 23406,
+     "title": "Creak from a chair in Whalewatching Capt Stan MacKinnon's office - Cape Breton.wav",
+     "author": "stackpool",
+     "seconds": 1.2,
+     "source": "https://freesound.org/s/23406/"
+    },
+    {
+     "file": "creak/creak-2.mp3",
+     "id": 117289,
+     "title": "chairsqueak.wav",
+     "author": "Alexsani",
+     "seconds": 0.94,
+     "source": "https://freesound.org/s/117289/"
+    }
+   ]
+  },
+  "metal-door": {
+   "loop": false,
+   "files": [
+    {
+     "file": "metal-door/metal-door-1.mp3",
+     "id": 410560,
+     "title": "Metal warehouse door opened with chains.wav",
+     "author": "MichelleGrobler",
+     "seconds": 4.05,
+     "source": "https://freesound.org/s/410560/"
+    }
+   ]
+  }
+ }
+}

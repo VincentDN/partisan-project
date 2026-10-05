@@ -119,6 +119,18 @@ export const ORDNANCE = {
   tandem: {label: 'Tandem round', speed: 30, damage: 0, splash: {r: 3.6, damage: 130}, vehicle: 380, spread: 0, range: 80, supp: 0.9},
   atgm: {label: 'Guided missile', speed: 34, damage: 0, splash: {r: 4, damage: 150}, vehicle: 600, spread: 0, range: 130, supp: 1},
   fpv: {label: 'FPV drone', speed: 18, damage: 0, splash: {r: 3.2, damage: 110}, vehicle: 260, spread: 0, range: 150, supp: 1},
+  frag: {label: 'Hand grenade', speed: 13, damage: 0, splash: {r: 4.5, damage: 115}, vehicle: 60, lob: true, spread: 0, range: 28, supp: 1},
+  wreck: {
+    label: 'Vehicle explosion',
+    silent: true,
+    speed: 0,
+    damage: 0,
+    splash: {r: 7, damage: 140},
+    vehicle: 400,
+    spread: 0,
+    range: 0,
+    supp: 1,
+  },
   mine: {label: 'Mine', speed: 0, damage: 0, splash: {r: 3.5, damage: 140}, vehicle: 320, spread: 0, range: 0, supp: 1},
 };
 /** A weapon or a piece of ordnance by id. */

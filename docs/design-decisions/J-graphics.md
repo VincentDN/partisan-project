@@ -193,7 +193,7 @@ The 2.5-D top-down sprite look for the shooter (RimWorld style) and the retro ov
 - Owner feedback: —
 
 ### TAC-J-20 · The overworld looks like a retro handheld region map: banded greens, flat blue sea, yellow routes, red-roofed towns
-- Status: planned  ·  Packet: WP-V14, WP-V15
+- Status: superseded (TAC-K-04: the 3-D world map is the overworld)  ·  Packet: WP-V14, WP-V15
 - Decision: A low-resolution height grid drawn in green bands (light highland to dark coast) with a thick coast outline on flat blue sea, scaled with nearest-neighbour. Routes are yellow on land and blue on the sea; towns and bases are small red-roofed icons.
 - Why: That is the fourth reference and the owner's brief. It reads instantly as 'a map you travel on', it is very cheap to render, and it contrasts with the tactical view so you always know which layer you are in.
 - Alternatives rejected: A painted map (art volume); a satellite or realistic terrain map (does not match the retro direction); reusing the tactical renderer for it (wrong scale and no overview).
@@ -213,7 +213,7 @@ The 2.5-D top-down sprite look for the shooter (RimWorld style) and the retro ov
 - Owner feedback: —
 
 ### TAC-J-22 · The whole island fits one screen at an integer zoom; entering a node zooms into its tactical map
-- Status: planned  ·  Packet: WP-V16
+- Status: superseded (TAC-K-04: the 3-D world map is the overworld)  ·  Packet: WP-V16
 - Decision: The overview shows everything at 1x or 2x with optional pan; selecting a node and entering a mission is a zoom transition into the tactical view.
 - Why: A small island is readable in one glance, which suits a demo and phones. The zoom transition shows how the two layers relate (the tactical map is a close-up of a place on the overworld).
 - Alternatives rejected: A scrolling world map (more art and UI); a menu list of missions (loses the overworld).
@@ -249,6 +249,7 @@ The 2.5-D top-down sprite look for the shooter (RimWorld style) and the retro ov
 - Alternatives rejected: Moving everything to 2-D (loses the Workbench's strengths); everything 3-D (loses the shooter's readability).
 - Cost / risk: Two renderers to maintain.
 - Cost to change: Low.
+- Amended by TAC-K-04: the overworld became the 3-D Bannerlord-style map, so it sits with the 3-D pages; the shooter stays 2-D.
 - Revisit if: The mismatch bothers players.
 - Owner feedback: —
 
@@ -451,4 +452,84 @@ The 2.5-D top-down sprite look for the shooter (RimWorld style) and the retro ov
 - Cost / risk: A frame read-back each frame while the picker is open (small, at a third of the resolution).
 - Cost to change: Low (`ditherOverlay` in `convoy/sprite-render.js`).
 - Revisit if: The picker should freeze time completely.
+- Owner feedback: —
+
+### TAC-J-46 · Fog of war, real recorded sound, and a warehouse for the Operator Customiser
+- Status: built  ·  Packet: WP-V
+- Decision: **Fog of war.** Partisan Tactical casts sight from every living rebel (220 rays out to 46 m, stopped by cover, vehicles and smoke). Everything outside it is darkened, and army soldiers there are not drawn (a reveal still marks them); gunfire, rounds in flight, vehicles and the comms log still give them away. **Sound.** The shooter's synthesis gives way to real recordings: 62 CC0 clips from Freesound (range and field recordings and public-domain military footage, mostly qubodup, serøutōnin--deprivəd, LilMati and florianreichelt), fetched, trimmed and loudness-normalised by `tools/audio/fetch-shooter-sounds.mjs` into `assets/audio/shooter/`. They cover rifle, marksman, machine-gun, heavy-gun, RPG and grenade-launcher shots (one recording per round, its tail choked by the next), impacts, ricochets, flybys, brass, grenade throws, grenade, large and vehicle explosions, diesel engines, burning wrecks, the player's footsteps and breathing, and countryside, night and distant-battle beds. The synthesis stays as the fallback until they load. **Operator Customiser.** Bannerlord's inventory layout: a stash column on the left (a placeholder handful from the loot pool), the operator in the middle and the kit on the right, dressed as an old fantasy game's UI in Nokia colours (tooled leather, bronze frames, LCD-plate headings). The operator stands in a pool of light in a dark rebel warehouse (concrete floor, brick walls, crates, barrels, shelving, a banner) with three-point lighting: a warm key spotlight from high front-left, a downlight making the pool on the floor, a cool rim from behind, a low fill. The warehouse is the default; Studio, Outdoor and Sunset still swap in the HDR lighting.
+- Why: Owner requests: fog of war and line of sight; good real gun and environment sounds, heavy and grounded, not synth; a Bannerlord-style GUI and lighting for the Operator Modder.
+- Alternatives rejected: Fog by grid cells (blocky at RimWorld's scale); a commercial sound library (cost, licences); an HDR of a warehouse (no pool of light, no control over the rim).
+- Cost / risk: The recordings are 7 MB; previews are 128 kbps. The fog costs a few thousand ray-box tests a frame.
+- Cost to change: Low (`updateFog` in `convoy/sprite-render.js`; categories and picks in the fetch tool; `operator/warehouse.js`, `operator/operator.css`).
+- Revisit if: Sounds need per-weapon recordings (a PKM of its own), or the stash becomes the real inventory.
+- Owner feedback: —
+
+### TAC-J-47 · The warehouse has a crew, a workbench in view, and a shallow depth of field
+- Status: built  ·  Packet: WP-V
+- Decision: Three more insurgents share the Operator Customiser's warehouse (`operator/crew.js`), each a clone of the Insurgent with its own skeleton, kit and colours, posed by the rig and breathing on its own idle: one sits on a crate to the right and keeps turning his head to watch your operator (glancing at the floor now and then); two stand at an open weapons crate at the back left with their backs to the camera, one turning a rifle over in his hands (placed like the hero's carry, both hands solved onto it), the other bent over the crate reaching in. The workbench stands against the back wall in view between them, under a hanging lamp, with a rifle lying on it; a work light hangs over the crate. A depth-of-field pass (`operator/dof.js`) keeps the operator sharp and softens the room: it focuses where the camera looks, keeps half a metre either side sharp and blurs up to nine pixels (at 900 px tall) over the next two metres. The crew loads after the hero from one parsed copy of the model; Studio, Outdoor and Sunset turn the room, crew and blur off.
+- Why: Owner request: three insurgents idling in the background (one on a box watching the hero, two going through a crate with their backs to the camera), the workbench visible, and camera blur on the background.
+- Alternatives rejected: Sprites or cut-outs for the crew (they would not catch the room's light); a blurred backdrop image (the camera orbits).
+- Cost / risk: Three more skinned characters and a full-screen pass; heavy on software renderers (the browser tests open one 3D page at a time).
+- Cost to change: Low (`CREW` and `CREW_POSES` in `operator/crew.js`; the blur's uniforms in `operator/dof.js`).
+- Revisit if: The crew should wear the player's band (classes from the Rebel Band), or the camera views need their own focus.
+- Owner feedback: —
+
+### TAC-J-48 · The Weapon Modder moves into the warehouse; every rifle takes every attachment
+- Status: built  ·  Packet: WP-V
+- Decision: **Room.** The Weapon Modder uses the Operator Customiser's warehouse (`operator/warehouse.js`, its three-point lighting and `operator/dof.js`): the rifle lies on a trestle table in the pool of light and the room goes soft behind it. A Warehouse button joins Studio, Outdoor and Sunset. **Compatibility.** `workbench/universal.js` gives every rifle the whole shared library for muzzle, optic, back-up sight, foregrip (GP-25 included), side rail, trigger, charging handle and sling, plus the AK grip and stock removal wherever the grip or stock is its own part. Where a source has no socket, the rifle names a clamp-on mount in metres on the laid-out rifle (`mounts` in `workbench/rifles-extra.js`). Magazines stay calibre-specific, and a stock moulded together with the handguard (M16, G3, Chauchat) stays fixed. **Models.** The M16's source is drawn too tall and too thin, so it is laid out at 63% height and 220% width (`stretch`). The Bren and the StG 44 come without textures (the StG is one black mesh), so `workbench/surface.js` box-projects UVs and paints canvas textures at load: blued steel and a walnut stock and grip on the Bren; on the StG, a walnut butt and a Bakelite grip split out of the mesh by region. **MCX retro textures** is a variant of the Spear: each surface keeps its colour under a 32-pixel, four-shade, Bayer-dithered bitmap with seams and rivets, nearest-filtered and flat-shaded, attachments included.
+- Why: Owner request: set the Weapon Modder against the warehouse, make all weapons take all attachments and fit well, fix the stretched M16, the low-quality StG and the untextured Bren, and try retro bitmap textures on the MCX.
+- Alternatives rejected: Per-rifle hand-made attachment lists (they drift; one table is tested against all rifles); a new StG model (Sketchfab downloads need the owner's token, so a better source is queued in `tools/assets/sketchfab-sources.json`); a triplanar shader for the textures (the finishes and wear already own the materials' shaders).
+- Cost / risk: Clamp-on mounts on old rifles are placed by measurement and approximate; the retro look depends on box projection, so curved parts show seams.
+- Cost to change: Low (`UNIVERSAL` and `complete` in `workbench/universal.js`; `surface`, `mounts` and `stretch` per rifle).
+- Revisit if: A better StG 44 source is downloaded (swap the URL and drop its `surface`), or calibre-matched magazines are wanted per rifle.
+- Owner feedback: —
+
+### TAC-J-49 · The warehouse sounds lived in
+- Status: built  ·  Packet: WP-V
+- Decision: The Operator and Weapon Modders play the warehouse's sound while the room is shown (`shared/warehouse-ambience.js`), from real recordings only: 46 CC0 clips from Freesound, hand-picked and fetched, trimmed and loudness-normalised by `tools/audio/fetch-shooter-sounds.mjs --set warehouse` into `assets/audio/warehouse/`. Beds loop with crossfades: a large warehouse room tone, rain on a tin roof, men talking in the next bay (distant, dulled) and a lamp's hum. Every 2.5 to 8 seconds something happens somewhere in the room, placed left or right and further off (quieter, darker, wetter): radio calls between squelches through a handset band, an AK or RPK charged or a magazine seated, a Mauser or Mosin bolt worked, brass tipped on the bench, an ammo box, a ratchet, clamp or hammer, laughter, a cough, footsteps on concrete, a lighter, cards shuffled, a chair creaking, the shutter door. A room reverb (a two-second decay) sits under it all. It starts on the first click or key, stops in a background tab and with the HDR lighting, and a Room sound button turns it off (remembered in the browser).
+- Why: Owner request: background ambience on the Operator and Weapon Modders (voices, weapon handling, radio calls) from real sound libraries, not synthesis.
+- Alternatives rejected: One long ambience recording (it repeats audibly and cannot place events in the room); synthesised radio and foley (owner asked for recordings).
+- Cost / risk: 5.5 MB of audio, fetched lazily after the first gesture (beds first, events as they play). The radio chatter is English police and amateur traffic, not the insurgents' language.
+- Cost to change: Low (`EVENTS` and `BEDS` in `shared/warehouse-ambience.js`; the `WAREHOUSE` picks in the fetch tool).
+- Revisit if: Radio calls in the setting's language are recorded, or the crew's animations should trigger their own sounds.
+- Owner feedback: —
+
+### TAC-J-50 · The Weapon Modder keeps its studio light over a baked warehouse; a CNC kit for the older rifles; the Operator Modder scene as a GLB
+- Status: built  ·  Packet: WP-V
+- Decision: **Backdrop.** The Weapon Modder goes back to its launch lighting (the sunset HDR and its key light, as before TAC-J-48); the warehouse is only a backdrop now: the Operator Modder's room, crew and workbench baked by `tools/assets/bake-warehouse-pano.mjs` into a 2048×1024 equirectangular JPG (60 kB) from the camera side of the room, with the floor pool dimmed. It stays put while the camera orbits (`scene.userData.fixedBackground` in `shared/stage.js`) and is slightly blurred. Backdrop swaps in the HDR sky, Warehouse brings the room back; the room sound plays with it. **CNC kit.** Four options sized from the part they replace, so one design fits every rifle: a KPOS-style skeletal folding stock on a buffer-tube adapter (stock), an octagonal M-LOK free-float tube with a full-length top rail (a new handguard slot, on the RPK and StG 44), a straight-backed machined grip (grip), and the factory magazine again in smoked translucent polymer with the same capacity (every rifle). The StG 44's butt, grip and handguard are now parts of their own, split out of its single mesh by region (a triangle belongs to a region only when all its corners are inside, so the barrel survives). A Modern RPK preset puts the owner's reference together: folding stock, M-LOK, red dot over flip-up irons, translucent magazine, bipod. **Scene export.** `tools/assets/export-operator-scene.mjs` writes the Operator Modder's default scene to `outbound/operator-modder-scene/` as one GLB (the posed operator and rifle, the crew, the warehouse, every light aimed down its -Z, the camera and its target), with `scene-settings.json` for what glTF cannot hold (fog, tone mapping, exposure, the depth of field, the hemisphere fill) and a reference screenshot.
+- Why: Owner request: the previous light on the Weapon Modder, the new background without a full 3-D room (unlink the weapon from the background light, or a 360 JPG); a modern CNC furniture option for the older rifles after the moodboard RPK; the default Operator Modder scene as a GLB for feedback.
+- Alternatives rejected: Keeping the 3-D room behind the rifle with its own light layer (heavier, and the HDR must still light the rifle); a hand-modelled kit per rifle (eleven to keep in step).
+- Cost / risk: The panorama is a still: the crew does not move in it; re-bake after changing the warehouse. The CNC parts are built from boxes and extrusions, approximations sized to each rifle's old part.
+- Cost to change: Low (`cncStock`, `mlokHandguard`, `cncGrip`, `clearMagazine` in `workbench/attachments.js`; the bake and export tools).
+- Revisit if: The crew should move in the Weapon Modder's background (a short looping video panorama), or the CNC kit gets real models.
+- Owner feedback: —
+
+### TAC-J-51 · A dirty lens in the Operator Modder
+- Status: built  ·  Packet: WP-V
+- Decision: The Operator Modder's depth-of-field pass (`operator/dof.js`) also draws a subtle dirty-lens flare, after Battlefield and Dishonored 2. Each frame the warehouse's lights are projected to the screen and weighted by how squarely they face the camera (spotlights by their cone, the bulbs always), how far off the frame's edge they sit, and their distance; the shader checks the depth buffer round each one, so a light behind the operator's head only glints past its edge. Visible lights add a tight halo, a thin horizontal streak, three faint tinted ghosts mirrored through the frame's centre, and light up a grime texture on the glass (soft smudges and dust specks, drawn on a canvas at load) near them. The rim light behind the operator counts most. In the default view nothing faces the lens, so it only shows when you orbit low or toward the lamps.
+- Why: Owner request: subtle dirty lens flares when light hits the camera directly, like Battlefield or Dishonored 2.
+- Alternatives rejected: Sprite flares drawn over the canvas (no occlusion by the scene); a full bloom chain (heavier, and it would soften the whole picture).
+- Cost / risk: Up to eight lights, five depth taps each, in the existing full-screen pass.
+- Cost to change: Low (the `lens()` shader function and `flareSources` strengths in `operator/operator.js`; `uLens` scales it all).
+- Revisit if: The Weapon Modder or the shooter should get the same lens.
+- Owner feedback: —
+
+### TAC-J-52 · Antialiasing everywhere, and models parsed once
+- Status: built  ·  Packet: WP-V
+- Decision: **Antialiasing.** The Operator Modder draws its scene into a render target for the depth of field, which bypassed the canvas's antialiasing entirely; the target now has 4× MSAA. **Loading.** `shared/model-cache.js` fetches and parses every model file once per page and hands out clones that share geometry and textures; clones dispose only what they own. A rifle used to fetch and parse about fifteen attachment files every time it loaded, even with none fitted; attachments are now built the first time they are chosen (`buildOption` in `workbench/rifle-instance.js`), with camo, wear, finishes and the retro bitmap applied as they arrive. Both modders parse the rifles (and the Workbench its attachment files) in the background, one per idle moment, respecting Data Saver. The Operator Modder disposes the weapon it puts down. Measured headless: a rifle reload went from 55-100 ms and ~20 requests to 2-7 ms and none; switching the carried weapon is 17-170 ms.
+- Why: Owner feedback: jagged at 1080p; long delays when clicking a weapon in the Operator Modder; better loading across the project.
+- Alternatives rejected: FXAA (blurrier than MSAA on thin rifle parts); preloading every attachment up front (the cost we removed).
+- Cost / risk: The parsed files stay in memory for the page's life (a few MB).
+- Cost to change: Low.
+- Revisit if: Memory on phones becomes a problem (evict the least used).
+- Owner feedback: —
+
+### TAC-J-53 · Overworld map test: a Bannerlord-style campaign map of the island
+- Status: built (test)  ·  Packet: WP-V
+- Decision: A new module, `map/`, on the Nokia index as Overworld Map: a 3-D campaign map in the manner of Mount & Blade II: Bannerlord. **The island** (`map/island.js`) is a seeded heightfield: an irregular Mediterranean coast with headlands, coves and a deep southern bay, a snow-capped massif in the north, a rocky eastern peak and rolling scrub hills. **Ground** (`map/terrain.js`): five CC0 aerial textures from Poly Haven (`assets/textures/terrain/`: beach sand, grass and rock, dry Mediterranean ground, bare rock, snowfield), mixed by height, slope and noise at two scales; the provinces show as a wash of the owner's colour with a bright line on each border (stronger as the camera climbs, Bannerlord's political view); cloud shadows drift over it. **Sea** (`map/water.js`): turquoise shallows to azure to deep blue from a depth map, moving ripples with a sun glint, foam on the beaches. **On the land** (`map/props.js`): instanced cypresses, umbrella pines, olive groves and scrub; whitewashed villages under terracotta with a blue-domed church; walled towns with towers; the Invader's fort (concrete wall, hangars, watchtowers); the Resistance's tent camp with a fire; dirt roads that follow the ground; waving faction flags, gulls, fishing boats, chimney smoke and drifting clouds. **Parties** (`map/parties.js`): the player is the hooded Recon on a knoll in the hero pose, rifle raised (the Operator Customiser's rig, pose data and hand IK, at token scale); three Invader patrols (the Recon in a slate-grey uniform, low-ready and relaxed) stand off in the distance, one on the ridge in view; three convoys (M-ATV, trucks, Humvees) drive their roads back and forth, turning round at the ends. Every party and town carries a Bannerlord nameplate (faction shield, name, strength). **HUD**: the date and time controls (pause, play, fast; space pauses), the party panel, the faction legend, a province card under the cursor, and the campaign menu bar, all placeholders, in the Operator Customiser's tooled-leather skin. The camera pans, turns and zooms like Bannerlord's, low and long up close, near top-down far out. Nine provinces: Kastro and Agia Marina (towns), Fort Orion, Myrtia (Invader); Pelekas and Korfos (independent); Lithia, Vrisi and Oros Camp (Resistance).
+- Why: Owner request: a Bannerlord-style overworld test with the hooded Recon on a province in the rifle-raised pose, territories, enemy soldiers in the distance with GUI placeholders, convoys driving, small map animations, a rocky Mediterranean island with snowy mountains and an azure coast.
+- Alternatives rejected: The retro handheld-RPG map (WP-V14, still planned; this is a 3-D test beside it); photogrammetry trees from Poly Haven (tens of thousands of triangles each, too heavy to scatter); real Bannerlord screenshots as reference (the store has none of the campaign map and the wiki blocks fetching; built from the known look instead).
+- Cost / risk: 3 MB of textures; about six thousand trees and a 2048 shadow map: heavy for software renderers (the headless tests run at about one frame a second), fine on a GPU. Nothing is wired to the campaign.
+- Cost to change: Low (data in `map/island.js`; each layer its own file).
+- Revisit if: The campaign needs travel, sieges or a real province state; then this becomes the overworld renderer.
 - Owner feedback: —

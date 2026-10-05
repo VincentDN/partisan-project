@@ -48,12 +48,13 @@ await check('index: the Nokia screen lies on the table and opens straight on the
   await page.reload();
   await page.waitForFunction(() => window.PARP_INDEX?.ready && window.PARP_MENU?.ready);
   const rows = await page.locator('.menu a').allInnerTexts();
-  assert.equal(rows.length, 8, 'four demos, the locked dev tools, sound, about, projects');
+  assert.equal(rows.length, 9, 'five demos, the locked dev tools, sound, about, projects');
   assert.match(rows[0], /Weapon Modder/i);
   assert.match(rows[1], /Operator Modder/i);
   assert.match(rows[2], /Top-down Shooter Tests/i);
   assert.match(rows[3], /Rebel Band/i);
-  assert.match(rows[4], /Dev tools - tap to unlock/i);
+  assert.match(rows[4], /Overworld Map/i);
+  assert.match(rows[5], /Dev tools - tap to unlock/i);
   await page.keyboard.press('ArrowDown');
   assert.equal(await page.evaluate(() => window.PARP_INDEX.index), 1);
   // the first press folds open the explainer with a dithered preview and a big LAUNCH button
@@ -80,18 +81,18 @@ await check('index: the Nokia screen lies on the table and opens straight on the
   await page.keyboard.press('Escape');
   assert.equal(await page.evaluate(() => window.PARP_INDEX.open), -1, 'Escape folds it shut');
   // dev tools: seven taps unlock the folder, which then shows its tools
-  for (let i = 0; i < 6; i++) await page.locator('.menu a[data-i="4"]').click();
-  assert.match(await page.locator('.menu a[data-i="4"]').innerText(), /tap to unlock/i, 'no countdown on screen: the pings climb');
+  for (let i = 0; i < 6; i++) await page.locator('.menu a[data-i="5"]').click();
+  assert.match(await page.locator('.menu a[data-i="5"]').innerText(), /tap to unlock/i, 'no countdown on screen: the pings climb');
   assert.doesNotMatch(await page.locator('#help').innerText(), /\d+ more tap/i);
   assert.equal(await page.evaluate(() => window.PARP_INDEX.devUnlocked), false);
-  await page.locator('.menu a[data-i="4"]').click();
+  await page.locator('.menu a[data-i="5"]').click();
   assert.equal(await page.evaluate(() => window.PARP_INDEX.devUnlocked), true);
   const dev = await page.evaluate(() => window.PARP_INDEX.rows);
   for (const name of ['Equipment Wiki', 'Asset Viewer', 'Game Design Doc', 'Moodboard', 'Advanced animations'])
     assert.ok(dev.includes(name), name);
   assert.equal(await page.evaluate(() => localStorage.getItem('parp-devtools')), 'unlocked');
-  await page.locator('.menu a[data-i="4"]').click();
-  assert.equal(await page.locator('.menu a').count(), 8, 'a tap folds the tools away again');
+  await page.locator('.menu a[data-i="5"]').click();
+  assert.equal(await page.locator('.menu a').count(), 9, 'a tap folds the tools away again');
   // LAUNCH opens the demo
   await page.locator('.menu a[data-i="1"]').click();
   await Promise.all([page.waitForURL(/operator\/?$/), page.locator('#fold-1 .launch').click()]);
@@ -154,6 +155,44 @@ await check('opening scene: the table, the rifle, one button; the shell keeps on
 await check('operator: loads, equipment toggles, zones are independent, hash round-trips, poses and weapon', async () => {
   const page = await open(browser, server.url + 'operator/#base=base');
   await page.waitForFunction(() => window.PARP_OPERATOR?.ready, null, {timeout: 60000});
+  // the Bannerlord layout: the stash on the left, the operator in the warehouse, the kit on the right
+  await page.waitForFunction(() => document.querySelectorAll('#stash tbody tr').length >= 10, null, {timeout: 20000});
+  assert.equal(await page.evaluate(() => window.PARP_OPERATOR.warehouse.enabled), true, 'the warehouse is the default room');
+  // the crew in the background (three insurgents, one with a rifle in hand) and the depth of field on the room
+  await page.waitForFunction(() => window.PARP_OPERATOR.crew?.figures.length === 3, null, {timeout: 60000});
+  assert.equal(await page.evaluate(() => window.PARP_OPERATOR.dof.on), true, 'the background is out of focus');
+  // the dirty lens: looking up past the operator toward the rim light, the light is picked up as a flare source
+  const flares = await page.evaluate(async () => {
+    const o = window.PARP_OPERATOR,
+      {camera, controls} = o.stage;
+    camera.position.set(-0.4, 0.9, 2.2);
+    controls.target.set(-1.2, 2.4, -3);
+    controls.update();
+    o.stage.wake(2000);
+    await new Promise(r => setTimeout(r, 600));
+    return o.dof.uniforms.uFlareCount.value;
+  });
+  assert.ok(flares >= 1, `lens flare sources in view: ${flares}`);
+  const crewInfo = await page.evaluate(() => {
+    const o = window.PARP_OPERATOR,
+      V = o.stage.T.Vector3;
+    const inspector = o.crew.figures.find(f => f.def.id === 'inspector');
+    return {
+      poses: o.crew.figures.map(f => f.rig.poseId).sort(),
+      handOnRifle: inspector.rig.bones.get('hand_r').getWorldPosition(new V()).distanceTo(inspector.holder.getWorldPosition(new V())),
+    };
+  });
+  assert.deepEqual(crewInfo.poses, ['inspect', 'rummage', 'sit']);
+  assert.ok(crewInfo.handOnRifle < 0.2, `the inspector holds his rifle (${crewInfo.handOnRifle.toFixed(2)} m)`);
+  const firstName = await page.locator('#stash tbody tr .nm').first().innerText();
+  await page.locator('#stash th[data-sort="value"] button').click();
+  assert.equal(await page.locator('#stash th[data-sort="value"]').getAttribute('aria-sort'), 'ascending');
+  await page.locator('[data-env="studio"]').click();
+  assert.equal(await page.evaluate(() => window.PARP_OPERATOR.warehouse.enabled), false, 'an HDR lighting swaps the room out');
+  assert.equal(await page.evaluate(() => window.PARP_OPERATOR.dof.on), false, 'and the depth of field with it');
+  await page.locator('#room').click();
+  assert.equal(await page.evaluate(() => window.PARP_OPERATOR.warehouse.enabled), true);
+  assert.ok(firstName.length > 2);
   const vis = mat => page.evaluate(n => window.PARP_OPERATOR.meshes.filter(m => m.material.name === n).some(m => m.visible), mat);
   assert.equal(await vis('M_Helmet'), true);
   await page.evaluate(() => window.PARP_OPERATOR.set('head', 'bare'));
@@ -176,7 +215,7 @@ await check('operator: loads, equipment toggles, zones are independent, hash rou
   assert.match(await page.evaluate(() => location.hash), /head=bare/);
   assert.match(await page.evaluate(() => location.hash), /z\.top=navy/);
   // reload restores
-  await page.reload();
+  await page.reload({waitUntil: 'domcontentloaded'}); // ready is awaited below; the load event can trail on a slow runner
   await page.waitForFunction(() => window.PARP_OPERATOR?.ready, null, {timeout: 60000});
   assert.equal(await page.evaluate(() => window.PARP_OPERATOR.state.head), 'bare');
   // roster switching keeps working (reload the same base) and resets looks to the base defaults
@@ -317,12 +356,12 @@ await check('operator: carries the Workbench build (P1 code) onto the character'
   });
   assert.deepEqual([r.rifle, r.muzzle, r.optic, r.stock], ['ak15k', 'brake', 'scope', 'fde']);
   assert.match(r.hash, /weapon=bench&build=P1\./, 'the link is self-contained: it carries the code');
+  await page.close(); // one 3D page at a time: the warehouse crew and depth of field are heavy for a software renderer
   // the link works in a fresh browser profile with no stored build
   const other = await open(browser, server.url + 'operator/' + r.hash);
-  await other.waitForFunction(() => window.PARP_OPERATOR?.weapon, null, {timeout: 60000});
+  await other.waitForFunction(() => window.PARP_OPERATOR?.weapon, null, {timeout: 90000});
   assert.equal(await other.evaluate(() => window.PARP_OPERATOR.weapon.rifle.build.muzzle), 'brake');
   await other.close();
-  await page.close();
 });
 
 await check('operator and viewer: the 3D stage is operable by keyboard (arrows orbit, +/- zoom)', async () => {
@@ -417,6 +456,56 @@ await check('workbench: loads, swapping a part writes the hash, both rifles load
   await page.waitForFunction(() => document.querySelector('#title').textContent.includes('AK-15K'), null, {timeout: 60000});
   assert.equal(await page.locator('.fire').count(), 0, 'no test-fire control remains');
   assert.equal(await page.locator('#copy-code').count(), 1);
+  // the warehouse backdrop is a baked panorama that stays put; Backdrop swaps in the HDR sky, Warehouse brings it back
+  await page.waitForFunction(
+    () => window.PARP_WORKBENCH.room.texture && window.PARP_WORKBENCH.stage.scene.background === window.PARP_WORKBENCH.room.texture,
+    null,
+    {timeout: 30000},
+  );
+  await page.locator('#backdrop').click();
+  assert.equal(await page.evaluate(() => window.PARP_WORKBENCH.room.on), false);
+  await page.locator('#room').click();
+  await page.waitForFunction(() => window.PARP_WORKBENCH.stage.scene.background === window.PARP_WORKBENCH.room.texture, null, {
+    timeout: 10000,
+  });
+  // the room's sound: recorded beds start, and a radio call plays (squelch, call, squelch) on demand
+  await page.evaluate(() => window.PARP_WORKBENCH.ambience.trigger('radio'));
+  await page.waitForFunction(
+    () => window.PARP_WORKBENCH.ambience.stats.beds >= 3 && window.PARP_WORKBENCH.ambience.stats.loaded >= 5,
+    null,
+    {
+      timeout: 30000,
+    },
+  );
+  assert.equal(await page.evaluate(() => window.PARP_WORKBENCH.ambience.stats.played.radio), 1);
+  // the retro MCX: every surface carries a nearest-filtered bitmap; an old rifle takes a modern grip and light
+  await page.locator('[data-rifle="spear-retro"]').click();
+  await page.waitForFunction(() => window.PARP_WORKBENCH.rifle?.id === 'spear-retro', null, {timeout: 60000});
+  const retro = await page.evaluate(() => {
+    const maps = [];
+    window.PARP_WORKBENCH.rifle.model.traverseVisible(o => o.isMesh && maps.push(o.material.map?.magFilter));
+    return {meshes: maps.length, nearest: maps.filter(f => f === 1003).length};
+  });
+  assert.ok(retro.meshes > 5 && retro.nearest === retro.meshes, JSON.stringify(retro));
+  await page.locator('[data-rifle="stg44"]').click();
+  await page.waitForFunction(() => window.PARP_WORKBENCH.rifle?.id === 'stg44', null, {timeout: 60000});
+  await page.locator('#build .chips button', {hasText: 'Vertical'}).first().click();
+  assert.match(await page.evaluate(() => location.hash), /foregrip=vertical/);
+  // the Modern RPK preset: the CNC kit (folding stock, M-LOK handguard, machined grip, translucent magazine)
+  await page.locator('#presets button', {hasText: 'Modern RPK'}).click();
+  await page.waitForFunction(
+    () => window.PARP_WORKBENCH.rifle?.id === 'rpk' && window.PARP_WORKBENCH.rifle.build.handguard === 'mlok',
+    null,
+    {
+      timeout: 60000,
+    },
+  );
+  assert.deepEqual(await page.evaluate(() => ['stock', 'handguard', 'grip', 'magazine'].map(s => window.PARP_WORKBENCH.rifle.build[s])), [
+    'cnc',
+    'mlok',
+    'cnc',
+    'clear',
+  ]);
   noProblems(page);
   await page.close();
 });
@@ -528,14 +617,45 @@ await check('convoy ambush: the convoy drives, the ambush springs, soldiers dism
     return {
       alarm: sim.alarm,
       dismounted: sim.units.filter(u => u.side === 'army' && u.state !== 'mounted').length,
+      soldiers: sim.units.filter(u => u.side === 'army').length,
       callouts: sim.callouts.length,
     };
   });
   assert.equal(r.alarm, true, 'the ambush is sprung');
-  assert.equal(r.dismounted, 11, 'every soldier is out (the MRAP gunner stays in his turret)');
+  assert.equal(r.dismounted, r.soldiers, 'every soldier is out (the MRAP gunner is in his turret, not mounted)');
+  assert.ok(r.soldiers < 11, 'the difficulty thins the convoy (Normal: about 70%)');
   assert.ok(r.callouts >= 3, `the army calls out (${r.callouts})`);
-  await page.waitForTimeout(500);
+  // the panel redraws every 120 ms of real frames: wait for it rather than for a fixed time
+  await page.waitForFunction(() => document.querySelectorAll('#comms li').length >= 3, null, {timeout: 10000}).catch(() => {});
   assert.ok((await page.locator('#comms li').count()) >= 3, 'callouts reach the comms log');
+  noProblems(page);
+  await page.close();
+});
+
+await check('partisan tactical: G throws a grenade, Shift sprints, the fog hides what the rebels cannot see', async () => {
+  const page = await open(browser, server.url + 'convoy/?seed=7');
+  await page.waitForFunction(() => window.PARP_SPRITES?.ready, null, {timeout: 90000});
+  await page.locator('#start').click();
+  await page.mouse.move(700, 300);
+  const before = await page.evaluate(() => window.PARP_SPRITES.sim.player.grenades);
+  await page.keyboard.press('g');
+  await page.waitForFunction(b => window.PARP_SPRITES.sim.player.grenades === b - 1, before, {timeout: 5000});
+  await page.keyboard.down('d');
+  await page.keyboard.down('Shift');
+  await page.waitForFunction(() => window.PARP_SPRITES.sim.player.sprinting, null, {timeout: 5000});
+  await page.keyboard.up('Shift');
+  await page.keyboard.up('d');
+  // the convoy is far off at the start: the fog hides its soldiers from the renderer, the simulation still has them
+  const hidden = await page.evaluate(() => {
+    const {sim} = window.PARP_SPRITES;
+    return sim.units.filter(
+      u =>
+        u.side === 'army' &&
+        u.alive &&
+        !sim.units.some(p => p.side === 'partisan' && Math.hypot(p.x - u.x, p.z - u.z) < 46 && sim.los(p.x, p.z, u.x, u.z)),
+    ).length;
+  });
+  assert.ok(hidden > 0, 'soldiers out of sight exist');
   noProblems(page);
   await page.close();
 });
@@ -666,6 +786,38 @@ await check('roadmap page renders (built site only)', async () => {
   if (res.status === 404 && !live && !process.env.ROOT) return; // source tree has the .md only
   assert.equal(res.status, 200);
   assert.match(await res.text(), /Partisan Project master roadmap/);
+});
+
+// last: the overworld map is the heaviest page for a software renderer, so nothing else runs after it
+await check('overworld map: the island, the parties with nameplates, convoys moving, the province card', async () => {
+  const page = await open(browser, server.url + 'map/', {viewport: {width: 1280, height: 800}});
+  await page.waitForFunction(() => window.PARP_MAP?.ready, null, {timeout: 120000});
+  const r = await page.evaluate(async () => {
+    const m = window.PARP_MAP;
+    const convoy = m.parties.parties.find(p => p.kind === 'convoy');
+    const at = convoy.root.position.clone();
+    await new Promise(res => setTimeout(res, 3000));
+    return {
+      kinds: m.parties.parties.map(p => p.kind),
+      moved: convoy.root.position.distanceTo(at),
+      plates: document.querySelectorAll('.plate-party').length,
+      towns: document.querySelectorAll('.plate-town').length,
+    };
+  });
+  assert.equal(r.kinds[0], 'player');
+  assert.ok(r.kinds.filter(k => k === 'enemy').length >= 3, 'Invader patrols');
+  assert.ok(r.kinds.filter(k => k === 'convoy').length >= 2, 'convoys');
+  assert.ok(r.moved > 0.2, `a convoy drives (${r.moved.toFixed(1)})`);
+  assert.equal(r.plates, r.kinds.length, 'a nameplate per party');
+  assert.ok(r.towns >= 8, 'towns named on the map');
+  await page.mouse.move(640, 420);
+  await page.mouse.move(660, 430);
+  await page.waitForSelector('#province:not([hidden])', {timeout: 5000});
+  assert.match(await page.locator('#prov-name').innerText(), /province/i);
+  await page.locator('[data-speed="0"]').click();
+  assert.equal(await page.locator('[data-speed="0"]').getAttribute('aria-pressed'), 'true');
+  noProblems(page);
+  await page.close();
 });
 
 await browser.close();

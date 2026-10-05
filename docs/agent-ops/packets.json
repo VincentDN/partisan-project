@@ -51,8 +51,12 @@
    "version": "0.8.0"
   },
   "V": {
-   "name": "Graphics: 2.5D top-down sprites and the retro overworld",
+   "name": "Graphics: 2.5D top-down sprites for the shooter (the overworld moved to W)",
    "version": "0.9.0"
+  },
+  "W": {
+   "name": "World campaign: the Bannerlord loop (map, missions, loot, upgrades)",
+   "version": "0.10.0"
   }
  },
  "packets": [
@@ -554,7 +558,7 @@
   },
   {
    "id": "WP-C8",
-   "title": "Pose library expansion: crouch, kneel, sit, salute, sling carry, rifle-on-shoulder",
+   "title": "Pose library expansion: crouch, kneel, sit, salute, sling carry, rifle-on-shoulder (pose set later cut to three by the owner: Hero, Relaxed, Low ready)",
    "track": "Characters",
    "milestone": "M2",
    "size": "M",
@@ -840,7 +844,7 @@
   },
   {
    "id": "WP-Q4",
-   "title": "Short guided first run across demos (preset > part > stat; look > pose)",
+   "title": "Short guided first run across demos (preset > part > stat; look > pose) (tours since deprecated, 4 October)",
    "track": "Quality",
    "milestone": "M5",
    "size": "S",
@@ -1228,10 +1232,8 @@
    "milestone": "S",
    "size": "M",
    "bu": 20,
-   "status": "planned",
+   "status": "done",
    "deps": [
-    "WP-S35",
-    "WP-S32",
     "WP-S4"
    ],
    "agent": "any",
@@ -1244,7 +1246,7 @@
     "convoy/objectives.js",
     "convoy/ai.js"
    ],
-   "acceptance": "Compound supports stealth and loud routes with owned kit, physical cache, reachable exits and radio-dependent QRF; destructible static mast has a typed target rule; headless and browser smoke pass. Vehicle QRF presentation is separately refined if it exceeds M."
+   "acceptance": "Compound supports stealth and loud routes with owned kit, physical cache, reachable exits and radio-dependent QRF; destructible static mast has a typed target rule; headless and browser smoke pass. Vehicle QRF presentation is separately refined if it exceeds M. Built 3 October ahead of the extraction gate (level data in convoy/levels/compound.js); its extraction-mode rework rides WP-S30 and WP-S35."
   },
   {
    "id": "WP-S6",
@@ -1253,11 +1255,8 @@
    "milestone": "S",
    "size": "M",
    "bu": 20,
-   "status": "planned",
+   "status": "done",
    "deps": [
-    "WP-S35",
-    "WP-S31",
-    "WP-S32",
     "WP-S3",
     "WP-S4"
    ],
@@ -1270,7 +1269,7 @@
     "convoy/ai.js",
     "convoy/objectives.js"
    ],
-   "acceptance": "Cave wave scheduler is data-driven; sensible owned loadout can defend or withdraw with carried supplies; off-map stash survives defeat; pathing, timer and browser smoke tests pass."
+   "acceptance": "Cave wave scheduler is data-driven; sensible owned loadout can defend or withdraw with carried supplies; off-map stash survives defeat; pathing, timer and browser smoke tests pass. Built 3 October ahead of the extraction gate (convoy/levels/cave.js); the campaign uses it as the Rebel Base Defence (WP-W11)."
   },
   {
    "id": "WP-S7",
@@ -1599,7 +1598,7 @@
    "milestone": "S",
    "size": "S",
    "bu": 8,
-   "status": "ready",
+   "status": "done",
    "deps": [
     "WP-S20"
    ],
@@ -1613,14 +1612,13 @@
   },
   {
    "id": "WP-S22",
-   "title": "Progression core: XP from kills, objectives and looting; levels 1-10 per rebel; perk points; persistent in the campaign save",
+   "title": "Progression core (as built): XP per rebel from kills, objectives, survival and victory, kept in the squad save; promotions replace levels and perk points",
    "track": "Tactical",
    "milestone": "S",
    "size": "M",
    "bu": 20,
-   "status": "planned",
+   "status": "done",
    "deps": [
-    "WP-S12",
     "WP-S20"
    ],
    "agent": "any",
@@ -1629,18 +1627,17 @@
     "docs/tactical-roadmap.md",
     "docs/design-decisions/H-progression.md"
    ],
-   "acceptance": "Unit tests: XP awards, level thresholds, save/load; XP is only banked for rebels that took part."
+   "acceptance": "convoy/progression.js awards XP after each mission (XP_PAY) and stores it per rebel; unit-tested. The campaign-wide save moves to WP-W1."
   },
   {
    "id": "WP-S23",
-   "title": "Upgrade trees: Bannerlord-style tiers per rebel with two branches, gated by the equipment carried",
+   "title": "Upgrade trees (as built): promotions along the Rebel Band class tree (44 classes, 7 tiers), costing XP and the equipment the new class carries",
    "track": "Tactical",
    "milestone": "S",
    "size": "M",
    "bu": 20,
-   "status": "planned",
+   "status": "done",
    "deps": [
-    "WP-S8",
     "WP-S22"
    ],
    "agent": "any",
@@ -1649,16 +1646,16 @@
     "docs/tactical-roadmap.md",
     "docs/design-decisions/H-progression.md"
    ],
-   "acceptance": "A rebel with an SVD can take the Marksman branch and one without cannot (unit test); the tree is data."
+   "acceptance": "A rebel is promoted only with the XP of its class and the new class's kit in the stash (band/troops.js, convoy/progression.js); unit-tested."
   },
   {
    "id": "WP-S24",
-   "title": "Perks and abilities: passive perks per level, active abilities with cooldowns unlocked by branch",
+   "title": "Perks and abilities (as built): passive class modifiers and active abilities with cooldowns, inherited along the path",
    "track": "Tactical",
    "milestone": "S",
    "size": "M",
    "bu": 20,
-   "status": "planned",
+   "status": "done",
    "deps": [
     "WP-S23"
    ],
@@ -1668,7 +1665,7 @@
     "docs/tactical-roadmap.md",
     "docs/design-decisions/H-progression.md"
    ],
-   "acceptance": "Each ability and perk has a unit test of its effect; none changes enemy health or aim."
+   "acceptance": "convoy/abilities.js: PASSIVES, ACTIVES, cooldowns, keyboard activation; every class has abilities; smoke covers use in a mission."
   },
   {
    "id": "WP-S25",
@@ -1692,15 +1689,14 @@
   },
   {
    "id": "WP-S26",
-   "title": "Rebel sheet UI: level, XP, tree with locked branches and the gear they need, perk picks",
+   "title": "Rebel sheet UI (as built): the camp screen shows each rebel's XP, abilities and what each promotion costs in XP and equipment",
    "track": "Tactical",
    "milestone": "S",
    "size": "S",
    "bu": 8,
-   "status": "planned",
+   "status": "done",
    "deps": [
-    "WP-S23",
-    "WP-S10"
+    "WP-S23"
    ],
    "agent": "any",
    "needs": [],
@@ -1708,7 +1704,7 @@
     "docs/tactical-roadmap.md",
     "docs/design-decisions/H-progression.md"
    ],
-   "acceptance": "Keyboard operable; axe passes; smoke test picks a perk."
+   "acceptance": "convoy/camp.js lists rebels, progress, abilities and missing kit per promotion; the Rebel Band tree view shows every path."
   },
   {
    "id": "WP-S27",
@@ -2090,15 +2086,13 @@
   },
   {
    "id": "WP-V2",
-   "title": "Renderer interface: extract the draw calls from convoy/game.js; the three.js code becomes renderer-3d behind ?view=3d",
+   "title": "Renderer split (as built): the sprite renderer reads the same simulation; the 3-D shooter page was retired instead of kept behind ?view=3d",
    "track": "Graphics",
    "milestone": "V",
    "size": "S",
    "bu": 8,
-   "status": "planned",
-   "deps": [
-    "WP-V1"
-   ],
+   "status": "done",
+   "deps": [],
    "agent": "any",
    "needs": [],
    "inputs": [
@@ -2106,7 +2100,7 @@
     "docs/design-decisions/J-graphics.md",
     "convoy/game.js"
    ],
-   "acceptance": "The game plays identically through the interface; the seeded fingerprint is unchanged."
+   "acceptance": "convoy/ runs sprite-game.js and sprite-render.js over convoy/sim.js; the old 3-D page is gone (TAC-J-36)."
   },
   {
    "id": "WP-V3",
@@ -2115,7 +2109,7 @@
    "milestone": "V",
    "size": "M",
    "bu": 20,
-   "status": "planned",
+   "status": "done",
    "deps": [
     "WP-V2"
    ],
@@ -2126,7 +2120,7 @@
     "docs/design-decisions/J-graphics.md",
     "convoy/game.js"
    ],
-   "acceptance": "The convoy plays in ?view=2d with orders, pause and AI view; smoke test."
+   "acceptance": "The convoy plays in ?view=2d with orders, pause and AI view; smoke test. Built with the placeholder art set (convoy/sprite-render.js, Canvas 2-D)."
   },
   {
    "id": "WP-V4",
@@ -2328,12 +2322,12 @@
   },
   {
    "id": "WP-V14",
-   "title": "Overworld island renderer: low-res height grid in banded greens, coast outline, flat sea, nearest-neighbour scaling",
+   "title": "(retired by TAC-K-04: the 3-D world map is the overworld; work moved to WP-W3, W4, W8) Overworld island renderer: low-res height grid in banded greens, coast outline, flat sea, nearest-neighbour scaling",
    "track": "Graphics",
    "milestone": "V",
    "size": "M",
    "bu": 20,
-   "status": "planned",
+   "status": "blocked",
    "deps": [
     "WP-V4",
     "WP-V17"
@@ -2349,12 +2343,12 @@
   },
   {
    "id": "WP-V15",
-   "title": "Overworld icons and routes: red-roofed towns, yellow land routes, blue sea routes, territory tint with non-colour cue, squad marker",
+   "title": "(retired by TAC-K-04: the 3-D world map is the overworld; work moved to WP-W3, W4, W8) Overworld icons and routes: red-roofed towns, yellow land routes, blue sea routes, territory tint with non-colour cue, squad marker",
    "track": "Graphics",
    "milestone": "V",
    "size": "S",
    "bu": 8,
-   "status": "planned",
+   "status": "blocked",
    "deps": [
     "WP-V14"
    ],
@@ -2368,12 +2362,12 @@
   },
   {
    "id": "WP-V16",
-   "title": "Overworld UI and transitions: integer pan/zoom, node panel, travel, clock, zoom into the tactical map",
+   "title": "(retired by TAC-K-04: the 3-D world map is the overworld; work moved to WP-W3, W4, W8) Overworld UI and transitions: integer pan/zoom, node panel, travel, clock, zoom into the tactical map",
    "track": "Graphics",
    "milestone": "V",
    "size": "M",
    "bu": 20,
-   "status": "planned",
+   "status": "blocked",
    "deps": [
     "WP-V15"
    ],
@@ -2387,7 +2381,7 @@
   },
   {
    "id": "WP-V17",
-   "title": "Overworld data: island.js format (nodes, routes, regions, starting control), reachability test, first island",
+   "title": "Overworld data: map/island.js format (nodes, routes, regions, starting control), reachability test, first island",
    "track": "Graphics",
    "milestone": "V",
    "size": "S",
@@ -2406,7 +2400,7 @@
   },
   {
    "id": "WP-V18",
-   "title": "Parity and switch: parity checklist, per-level contact sheets, 2-D default, 3-D behind ?view=3d for one release then removed",
+   "title": "Parity checklist and per-level contact sheets for the 2-D view (the 3-D view was already removed)",
    "track": "Graphics",
    "milestone": "V",
    "size": "S",
@@ -3004,6 +2998,501 @@
     "docs/engineering/generated-recon.md"
    ],
    "acceptance": "All published families pass explicit coverage matrix, worst-case kit/weapon stacks, migrations, accessible editor and measured load/memory budgets; gameplay adapters do not block this gallery release."
+  },
+  {
+   "id": "WP-W1",
+   "title": "Campaign save v1: one versioned state for world, band, stash and log; migrate the tactical squad and Rebel Band saves; storage adapter",
+   "track": "Campaign",
+   "milestone": "W",
+   "size": "S",
+   "bu": 8,
+   "status": "ready",
+   "deps": [],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/campaign-roadmap.md"
+   ],
+   "acceptance": "shared/campaign/state.js is pure and versioned; parp-squad-v1 and the Rebel Band save migrate into it; unit tests cover new, load, migrate and corrupt input."
+  },
+  {
+   "id": "WP-W2",
+   "title": "Mission bridge: deployment and result payloads, kit reserved on launch, result settled exactly once, refresh mid-mission counts as withdrawn",
+   "track": "Campaign",
+   "milestone": "W",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-W1"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/campaign-roadmap.md"
+   ],
+   "acceptance": "convoy/?campaign&encounter reads a deployment from the save and writes one result; settling twice is a no-op; a reload mid-mission settles as withdrawn; practice mode unchanged."
+  },
+  {
+   "id": "WP-W3",
+   "title": "The band on the map: navigation grid from the heightfield and roads, click to move, route preview, terrain speeds, follow camera",
+   "track": "Campaign",
+   "milestone": "W",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-W1"
+   ],
+   "agent": "any",
+   "needs": [
+    "browser"
+   ],
+   "inputs": [
+    "docs/campaign-roadmap.md"
+   ],
+   "acceptance": "Clicking land moves the player party along a valid path (never through sea); roads faster, snow and forest slower; path tests on map/island.js."
+  },
+  {
+   "id": "WP-W4",
+   "title": "Campaign clock: pause and three speeds, day and night tint and sight, pause on encounters and menus",
+   "track": "Campaign",
+   "milestone": "W",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-W3"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/campaign-roadmap.md"
+   ],
+   "acceptance": "Space pauses, 1-3 set speed; night tint and reduced sight; opening a menu or encounter stops time; reduced motion respected."
+  },
+  {
+   "id": "WP-W5",
+   "title": "World simulation core: seeded headless parties with goals, speeds and sight; save and restore; determinism tests",
+   "track": "Campaign",
+   "milestone": "W",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-W1",
+    "WP-W4"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/campaign-roadmap.md"
+   ],
+   "acceptance": "shared/campaign/world.js steps without a renderer; same seed and orders give the same world; state round-trips through the save."
+  },
+  {
+   "id": "WP-W6",
+   "title": "Convoys on the map: spawn at Invader seats, road routes, cargo manifest and escort on the nameplate, resupply on arrival",
+   "track": "Campaign",
+   "milestone": "W",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-W5"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/campaign-roadmap.md"
+   ],
+   "acceptance": "Convoys follow ROADS between settlements; their manifest and escort are visible; an arrival raises the garrison; unit tests."
+  },
+  {
+   "id": "WP-W7",
+   "title": "Hunters and heat: patrols, hunter columns spawned by heat, map sight (night, forest, band size), last-seen tracking, losing them",
+   "track": "Campaign",
+   "milestone": "W",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-W5"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/campaign-roadmap.md"
+   ],
+   "acceptance": "Attacks raise heat and hunters; hunters chase the last-seen point and can lose you; sight radii shown on the map; harness metrics for hunts per day."
+  },
+  {
+   "id": "WP-W8",
+   "title": "Encounters: contact rules and the encounter panel (Attack, Prepare ambush, Withdraw with a rearguard, Leave)",
+   "track": "Campaign",
+   "milestone": "W",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-W2",
+    "WP-W6",
+    "WP-W7"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/campaign-roadmap.md"
+   ],
+   "acceptance": "Contact pauses time and opens a keyboard-operable panel with both sides' strength and the ground; each option leads to a mission or a map outcome."
+  },
+  {
+   "id": "WP-W9",
+   "title": "Convoy encounter launches the Convoy Ambush, set up from the convoy party (vehicles, escort, cargo, time, ambush start); result back to the map",
+   "track": "Campaign",
+   "milestone": "W",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-W8"
+   ],
+   "agent": "any",
+   "needs": [
+    "browser"
+   ],
+   "inputs": [
+    "docs/campaign-roadmap.md"
+   ],
+   "acceptance": "A map convoy opens the convoy level with its escort and vehicles; win leaves a wreck and captures cargo; loss lets it pass; e2e map to mission to map."
+  },
+  {
+   "id": "WP-W10",
+   "title": "Settlement encounter launches the Compound Assault: defenders from garrison and militia, variants per settlement kind, night infiltration",
+   "track": "Campaign",
+   "milestone": "W",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-W8",
+    "WP-W13"
+   ],
+   "agent": "any",
+   "needs": [
+    "browser"
+   ],
+   "inputs": [
+    "docs/campaign-roadmap.md"
+   ],
+   "acceptance": "Marching on an Invader settlement opens the compound level scaled to its garrison; success raids or captures it on the map."
+  },
+  {
+   "id": "WP-W11",
+   "title": "Caught by an army launches the Rebel Base Defence: cave level at camp, new hasty-defence variant in the open",
+   "track": "Campaign",
+   "milestone": "W",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-W8"
+   ],
+   "agent": "any",
+   "needs": [
+    "browser"
+   ],
+   "inputs": [
+    "docs/campaign-roadmap.md"
+   ],
+   "acceptance": "A hunter touching the band at Oros Camp opens the cave defence with waves from its strength; in the open, a field defence level; overrun and victory both change the map. An overrun follows TAC-K-03: half of each camp stack lost (rounded down), fallen fighters wounded, fall back to the nearest friendly settlement, heat halved."
+  },
+  {
+   "id": "WP-W12",
+   "title": "Deploy screen: pick up to four fighters from the band; one squad model shared by the band and the missions",
+   "track": "Campaign",
+   "milestone": "W",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-W1",
+    "WP-W2"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/campaign-roadmap.md"
+   ],
+   "acceptance": "Before a mission the player picks fighters from the band; their classes, abilities and kit appear in the mission; the rest stay on the map."
+  },
+  {
+   "id": "WP-W13",
+   "title": "Return to the map: settle casualties, wounds, experience, kills and aftermath (wreck, smoke); autosave and result toast",
+   "track": "Campaign",
+   "milestone": "W",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-W9",
+    "WP-W11",
+    "WP-W12"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/campaign-roadmap.md"
+   ],
+   "acceptance": "The debrief returns to the map, which applies the result once and shows it in the world and a toast; reload-safe."
+  },
+  {
+   "id": "WP-W14",
+   "title": "Loot into the band: cargo manifest and level loot into the campaign stash, with its source",
+   "track": "Campaign",
+   "milestone": "W",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-W13"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/campaign-roadmap.md"
+   ],
+   "acceptance": "Debrief loot appears in the band stash labelled with where it came from; convoy loot follows the manifest."
+  },
+  {
+   "id": "WP-W15",
+   "title": "The band screen on the campaign save, opened from the map (P); promotions with experience and stolen kit",
+   "track": "Campaign",
+   "milestone": "W",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-W14"
+   ],
+   "agent": "any",
+   "needs": [
+    "browser"
+   ],
+   "inputs": [
+    "docs/campaign-roadmap.md"
+   ],
+   "acceptance": "band/ reads and writes the campaign state; promoting consumes the stash kit; standalone Rebel Band demo still works."
+  },
+  {
+   "id": "WP-W16",
+   "title": "Owned guns in the Weapon Modder: only owned attachments selectable, locked ones say where they drop; assign a build to a fighter",
+   "track": "Campaign",
+   "milestone": "W",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-W15"
+   ],
+   "agent": "any",
+   "needs": [
+    "browser"
+   ],
+   "inputs": [
+    "docs/campaign-roadmap.md"
+   ],
+   "acceptance": "In a campaign the Workbench shows owned parts only; a build assigned to a fighter is the weapon they carry next mission."
+  },
+  {
+   "id": "WP-W17",
+   "title": "Looks from kit: a fighter's class and owned wearables set the Operator Customiser look and the map figure",
+   "track": "Campaign",
+   "milestone": "W",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-W15"
+   ],
+   "agent": "any",
+   "needs": [
+    "browser"
+   ],
+   "inputs": [
+    "docs/campaign-roadmap.md"
+   ],
+   "acceptance": "Promoting a fighter or giving them a helmet changes their look in the customiser and on the map."
+  },
+  {
+   "id": "WP-W18",
+   "title": "Recruits and barter at friendly villages",
+   "track": "Campaign",
+   "milestone": "W",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-W15"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/campaign-roadmap.md"
+   ],
+   "acceptance": "Neutral and liberated villages barter item for item from a seeded weekly stock (TAC-K-01); liberated villages offer tier-1 recruits; no trader at camp in a campaign."
+  },
+  {
+   "id": "WP-W19",
+   "title": "Territory: capture settlements, what they give (recruits, food, rest), Invader counter-attacks to retake them",
+   "track": "Campaign",
+   "milestone": "W",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-W10",
+    "WP-W13"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/campaign-roadmap.md"
+   ],
+   "acceptance": "A captured settlement turns its province to the Resistance and gives its benefits; the Invader sends a party to retake it."
+  },
+  {
+   "id": "WP-W20",
+   "title": "Escalation director: Invader response tiers drive hunters, mission difficulty and enemy kit",
+   "track": "Campaign",
+   "milestone": "W",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-W19",
+    "WP-W7"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/campaign-roadmap.md"
+   ],
+   "acceptance": "Response tier rises with Resistance strength; tiers change hunter size, mission difficulty and enemy kit; harness shows the curve."
+  },
+  {
+   "id": "WP-W21",
+   "title": "Endgame and defeat: the Fort Orion assault, the camp-overrun defeat, campaign summary",
+   "track": "Campaign",
+   "milestone": "W",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-W20"
+   ],
+   "agent": "any",
+   "needs": [
+    "browser"
+   ],
+   "inputs": [
+    "docs/campaign-roadmap.md"
+   ],
+   "acceptance": "Taking the last Invader seat opens the final assault; winning or losing the campaign ends in a summary screen; a new campaign can start."
+  },
+  {
+   "id": "WP-W22",
+   "title": "Auto-resolve for small, lopsided fights, with the odds shown first",
+   "track": "Campaign",
+   "milestone": "W",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-W8"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/campaign-roadmap.md"
+   ],
+   "acceptance": "Offered only at 2.5x strength or against a lone patrol, never for camp defence, captures or the finale; odds and expected wounds shown first; results slightly worse than played (TAC-K-02); used by the harness."
+  },
+  {
+   "id": "WP-W23",
+   "title": "Campaign harness: fifty seeded headless campaigns with auto-resolve, pacing report and a tuning pass",
+   "track": "Campaign",
+   "milestone": "W",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-W20",
+    "WP-W22"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/campaign-roadmap.md"
+   ],
+   "acceptance": "tools/campaign/bench.mjs reports time to first encounter, first promotion, hunts per day and stash growth against the roadmap targets."
+  },
+  {
+   "id": "WP-W24",
+   "title": "Campaign end-to-end tests and performance: map to mission to map, two tabs and refresh safety, map at 30 fps on a mid phone",
+   "track": "Campaign",
+   "milestone": "W",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-W13",
+    "WP-W15"
+   ],
+   "agent": "any",
+   "needs": [
+    "browser"
+   ],
+   "inputs": [
+    "docs/campaign-roadmap.md"
+   ],
+   "acceptance": "Smoke covers a full campaign round trip; double settlement impossible across tabs; map frame budget measured."
+  },
+  {
+   "id": "WP-W25",
+   "title": "First-campaign prompts, design doc campaign section, changelog and index entry",
+   "track": "Campaign",
+   "milestone": "W",
+   "size": "S",
+   "bu": 8,
+   "status": "planned",
+   "deps": [
+    "WP-W21",
+    "WP-W24"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/campaign-roadmap.md"
+   ],
+   "acceptance": "A new player is guided through move, encounter, loot and promote; the design doc describes the campaign loop."
+  },
+  {
+   "id": "WP-W26",
+   "title": "Campaign decisions (delegated by the owner): barter at villages, auto-resolve for lopsided fights, camp overrun as a setback, the 3-D map replaces the retro overworld",
+   "track": "Campaign",
+   "milestone": "W",
+   "size": "XS",
+   "bu": 3,
+   "status": "done",
+   "deps": [],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/campaign-roadmap.md",
+    "docs/design-decisions/K-campaign.md"
+   ],
+   "acceptance": "TAC-K-01 to K-04 in docs/design-decisions/K-campaign.md; campaign roadmap updated; WP-V14 to V16 retired."
   }
  ]
 }

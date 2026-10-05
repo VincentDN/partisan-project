@@ -4,8 +4,53 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 ## [Unreleased]
 
+### Added (docs)
+- **Roadmap and design document consolidated** (5 October): the master roadmap's state, milestones, order of work, tracks, risks and decisions now match the code (eleven rifles, three missions, the sprite view, Rebel Band, Equipment Wiki, the map test, the campaign). Packets that shipped in another form are marked done as built (WP-S5, S6, S21 to S24, S26, V2, V3); the V milestone no longer holds the overworld. The design document's dispatches, campaign loop, progression, feature matrix, moodboard notes, open decisions and specs follow suit.
+- **Campaign decisions** (WP-W26, delegated by the owner): barter at friendly villages, auto-resolve only for lopsided fights, an overrun camp is a setback, the 3-D map is the overworld (TAC-K-01 to K-04, `docs/design-decisions/K-campaign.md`); WP-V14 to V16 retired.
+- **Campaign roadmap** (`docs/campaign-roadmap.md`, on the site as `docs/campaign-roadmap.html`): how every module becomes one Bannerlord-style game. The band moves on the world map; convoys launch the Convoy Ambush, settlements the Compound Assault, armies that catch you the Rebel Base Defence; loot promotes fighters, fits guns and changes looks. New milestone W (WP-W1 to W26, first playable loop at gate W-A).
+- **Walking Through, episode two**: two weeks of vibe-coded games, GPT-6 Astra and Claude Opus 5.5, and what they change for the project (engine choice, cost, assets, disclosure; three experiments). The podcast is now on the site: `docs/podcast/`, rendered with an episode index.
+
+### Added (Overworld Map, test)
+- **A Bannerlord-style campaign map** of the island, on the index as Overworld Map: rocky Mediterranean terrain with a snowy massif and an azure coast, nine provinces in their owners' colours, towns, villages, the Invader's fort and the Resistance camp, roads, forests, gulls, boats and drifting clouds. Your party (the hooded Recon, rifle raised) stands on a hill; Invader patrols stand in the distance; convoys drive the roads. Nameplates on every party and town, time controls, party panel and menu bar (placeholders). TAC-J-53.
+
+### Changed (Partisan Tactical)
+- **You see them, they see you**: soldiers see as far as you do (30 m) and cannot spot or shoot you from off the screen. The camera starts closer. TAC-B-17.
+- **Fog of war** no longer flickers; soldiers fade in and out of sight. TAC-B-17.
+- **The squad moves up with you** by default and catches up when left behind. TAC-B-17.
+
+### Changed (everywhere)
+- **Antialiasing** in the Operator Modder (it had none). **Faster loading**: every model is parsed once per page, attachments are built when first chosen, rifles are prepared in the background; switching weapons is near-instant. TAC-J-52.
+
+### Added (Operator and Weapon Modders)
+- **Dirty lens** in the Operator Modder: when a lamp or the rim light looks into the camera it glints, streaks faintly and lights the grime on the glass; anything in front of the light hides it. TAC-J-51.
+- **Room sound**: the warehouse is alive with real recordings: rain on the roof, men talking in the next bay, radio calls, rifles being charged and loaded, bolts, brass, tools, laughter, coughs, footsteps. A Room sound button turns it off. TAC-J-49.
+
+### Added (Weapon Modder)
+- **Warehouse backdrop**: the rifle keeps its studio lighting in front of a 360° picture of the Operator Customiser's warehouse (crew and workbench included) that stays put as you orbit. Backdrop shows the sky instead; Warehouse brings the room back. TAC-J-50.
+- **CNC kit**: a folding skeletal stock, an M-LOK handguard (RPK, StG 44), a machined grip and a translucent polymer magazine. A **Modern RPK** preset puts them together. TAC-J-50.
+- **Operator Modder scene as a GLB** in `outbound/operator-modder-scene/` (character, rifle, pose, crew, room, lights, camera, plus the render settings). TAC-J-50.
+- **Every rifle takes every attachment**: optics, muzzle devices, back-up sights, foregrips (GP-25 included), side-rail lights and lasers, triggers, charging handles and slings on all eleven rifles. TAC-J-48.
+- **MCX retro textures**: the Spear in chunky dithered bitmap textures. TAC-J-48.
+
+### Fixed (Weapon Modder)
+- **M16A1** no longer looks stretched (it was too tall and too thin). **Bren** has blued steel and a walnut stock and grip; **StG 44** a walnut butt and Bakelite grip instead of all black. TAC-J-48.
+
+### Added (Operator Customiser)
+- **A crew in the warehouse**: three insurgents idle in the background: one sits on a crate watching your operator, two go through an open weapons crate with their backs to the camera. The workbench, with a rifle on it, is in view under its lamp. TAC-J-47.
+- **Depth of field**: the operator stays sharp while the room behind softens. TAC-J-47.
+
+### Added (Partisan Tactical)
+- **Real sound**: shots, impacts, flybys, explosions, engines, fires, footsteps, breathing and ambience are now real CC0 recordings (Freesound), fetched and prepared by `tools/audio/fetch-shooter-sounds.mjs`. TAC-J-46.
+- **Fog of war**: the map darkens outside what your rebels can see, and enemies there are hidden. TAC-J-46.
+- **Sprint** on Shift (stamina), sneak on Ctrl; **hand grenades** on G (three each). TAC-B-16.
+- **Exploding vehicles**: a destroyed vehicle blows up, hurts whoever is near, can set off the next one and burns. TAC-B-16.
+
+### Changed
+- **Difficulty** now also sets how many soldiers turn up (Easy 55% to Brutal 100%); Normal fields about 70% of a level. TAC-B-16.
+- **Operator Customiser**: Bannerlord-style layout (stash left, kit right) in a textured retro Nokia skin; the operator stands in a lit spot in a dark rebel warehouse with three-point lighting. TAC-J-46.
+
 ### Changed (index, intro, operator, Rebel Band)
-- **Intro boot**: the workbench scene loads behind a Nokia-style boot. The backlight flickers on, a lambda draws in, PARTISAN types out, a boot log ticks through and a pixel snake runs round the border as the bench loads. Then READY blinks and the dither reveal plays. About five seconds; any key or click skips it once the bench has loaded.
+- **Intro boot**: the workbench scene loads behind a Nokia-style boot. The backlight fades up, a lambda draws in, PARTISAN types out, a boot log ticks through and a pixel snake runs round the border as the bench loads. Then READY blinks and the dither reveal plays. About five seconds; any key or click skips it once the bench has loaded.
 - **Nokia index**: four demos (Weapon Modder, Operator Modder, Top-down Shooter Tests, Rebel Band). The tools and documents (Equipment Wiki, Asset Viewer, Game Design Doc, Moodboard, Advanced animations, Art Style Lab, Master Roadmap) sit in a Dev tools folder that unlocks after seven taps. A demo's explainer has a big LAUNCH button, and tapping anything else folds it shut. The phone's blips are louder.
 - **Operator poses**: three, Hero (rifle up, the default), Relaxed (rifle hanging muzzle-down in the right hand) and Low ready. Relaxed clears the gear with all eleven rifles.
 - **Rebel Band**: every rebel idles (breathing, a weight shift, the gun swaying). The upgrade buttons sit right under the character. An upgrade plays an 8-bit fanfare while the character glows, dithers into the new class with a flash and light rays, and a PROMOTED banner shows.

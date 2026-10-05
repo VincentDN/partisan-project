@@ -72,22 +72,62 @@ export function segmentCircle(ax, az, bx, bz, cx, cz, r) {
 
 export const DAMAGE = 34;
 export const MAG = WEAPONS.ak.mag;
-const SPEED = {walk: 3, run: 4.6, sneak: 1.8};
+const SPEED = {walk: 3, run: 4.6, sneak: 1.8, sprint: 6.6};
+export const GRENADES = 3; // hand grenades each rebel carries (G)
+const KEY_ROLES = new Set(['leader', 'rto', 'turret']);
+
+/**
+ * A level with only `force` (0..1) of its soldiers: foot soldiers, convoy riders, wave squads and the reaction force.
+ * Leaders, radio operators and turret gunners always come; the rest are thinned evenly. The level object is not changed.
+ */
+export function thinLevel(L, force) {
+  if (!(force < 1)) return L;
+  const thin = list => {
+    const keepN = Math.max(1, Math.round(list.length * force));
+    const key = list.filter(u => KEY_ROLES.has(u.role)).length,
+      others = list.length - key,
+      spare = Math.max(0, keepN - key);
+    let seen = 0;
+    return list.filter(u => {
+      if (KEY_ROLES.has(u.role)) return true;
+      // keep `spare` of the others, spread through the list
+      const keep = Math.floor(((seen + 1) * spare) / others) > Math.floor((seen * spare) / others);
+      seen++;
+      return keep;
+    });
+  };
+  return {
+    ...L,
+    units: L.units ? thin(L.units) : L.units,
+    convoy: L.convoy && {...L.convoy, vehicles: L.convoy.vehicles.map(v => ({...v, crew: thin(v.crew)}))},
+    waves: L.waves?.map(w => ({...w, squads: w.squads?.map(q => ({...q, units: thin(q.units)}))})),
+    reinforcements: L.reinforcements && {...L.reinforcements, units: thin(L.reinforcements.units)},
+  };
+}
+
+/** Metres anyone can see, rebels and soldiers alike (role sights and optics are capped to it). */
+export const VISION = 30;
 
 export class Sim {
   /**
    * @param {{level?: object|string, seed?: number, awareness?: number, squad?: object, difficulty?: string}} opts
    *   level: a level object or id (convoy/levels/index.js); awareness 0..1: how well the army perceives and communicates
    *   squad: {rebel id: class id} (band/troops.js): the class sets a rebel's weapons, passives and abilities
-   *   difficulty: an id from convoy/difficulty.js
+   *   difficulty: an id from convoy/difficulty.js; given, it also thins the level's soldiers (its `force`)
    */
-  constructor({level = DEFAULT_LEVEL, seed = 7, awareness = 0.5, squad = null, difficulty = 'normal'} = {}) {
+  constructor({level = DEFAULT_LEVEL, seed = 7, awareness = 0.5, squad = null, difficulty = null} = {}) {
     this.level = typeof level === 'string' ? LEVELS[level] : level;
     if (!this.level) throw new Error(`unknown level ${level}`);
+    if (difficulty) this.level = thinLevel(this.level, difficultyOf(difficulty).force);
     this.rand = rng(seed);
     this.awareness = awareness;
-    this.difficultyId = difficulty;
-    this.difficulty = difficultyOf(difficulty);
+    // Everyone sees as far as the rebels' fog of war shows (convoy/sprite-render.js), and while a screen is watching,
+    // `view` is the part of the map on it: a soldier off the screen can neither spot nor shoot a rebel. You see them,
+    // they see you.
+    this.vision = VISION;
+    this.view = null; // {x0, x1, z0, z1} in metres, set by the renderer each frame
+    this.difficultyId = difficulty || 'normal';
+    this.difficulty = difficultyOf(this.difficultyId);
     // What abilities leave in the world (convoy/abilities.js): sandbag walls, smoke, mines, marks on revealed soldiers.
     this.fieldworks = []; // {x, z, w, d, h, kind}: block like cover
     this.smokes = []; // {x, z, r, t, until}: block sight
@@ -147,6 +187,8 @@ export class Sim {
         u.hp = u.maxHp = Math.round(100 * u.mods.hp);
       }
       u.cooldowns = {};
+      u.grenades = GRENADES;
+      u.stamina = 1;
       u.state = 'hold';
       u.facing = p.facing ?? 0;
     }
@@ -439,6 +481,7 @@ export class Sim {
    */
   shoot(u, tx, tz, extra = 0, wid = u.weapon) {
     const W = WEAPONS[wid];
+    if (u.side === 'army' && !this.onScreen(u)) return false; // off the player's screen: holds fire
     if (u.reload > 0 || u.cd > 0 || !u.alive || !(wid in u.mags)) return false;
     if (u.mags[wid] <= 0) {
       this.startReload(u, wid);
@@ -452,7 +495,12 @@ export class Sim {
     if (u.moving) u.bipod = false;
     const skill = (u.mods?.spread ?? 1) * (u.bipod ? 0.55 : 1) * (u.steady ? 0.2 : 1) * (u.side === 'army' ? this.difficulty.spread : 1);
     u.steady = 0;
-    const sigma = W.spread * (u === this.player ? 0.9 : 1.5) * skill + u.supp * 0.1 * (u.armour ?? 1) + (u.moving ? 0.045 : 0) + extra;
+    const sigma =
+      W.spread * (u === this.player ? 0.9 : 1.5) * skill +
+      u.supp * 0.1 * (u.armour ?? 1) +
+      (u.moving ? 0.045 : 0) +
+      (u.sprinting ? 0.09 : 0) +
+      extra;
     const g = (this.rand() + this.rand() + this.rand() - 1.5) * 1.15; // ~normal
     const a = base + g * sigma,
       dx = Math.cos(a),
@@ -509,6 +557,26 @@ export class Sim {
     return true;
   }
 
+  /** Throw a hand grenade from u toward (x, z): it arcs over cover, lands within its range and goes off on landing. */
+  throwGrenade(u, x, z) {
+    if (!u.alive || !(u.grenades > 0) || this.time < (u.grenadeAt ?? 0)) return false;
+    const W = munition('frag'),
+      d = Math.max(0.5, Math.hypot(x - u.x, z - u.z)),
+      k = d > W.range ? W.range / d : 1;
+    // a thrown grenade scatters a little with the distance
+    const s = (this.rand() - 0.5) * d * 0.08,
+      a = Math.atan2(z - u.z, x - u.x);
+    const x1 = u.x + (x - u.x) * k + Math.cos(a + Math.PI / 2) * s,
+      z1 = u.z + (z - u.z) * k + Math.sin(a + Math.PI / 2) * s;
+    u.grenades--;
+    u.grenadeAt = this.time + 1;
+    u.facing = a;
+    this.sound({type: 'throw', x: u.x, z: u.z, unit: u.id, side: u.side});
+    this.launch(u, 'frag', u.x, u.z, x1, z1, {lob: true});
+    if (u.side === 'partisan' && u !== this.player) this.say(u, 'Grenade out!', 'nade', 3);
+    return true;
+  }
+
   /** A round leaves the muzzle: it lands after its flight time (weapon speed), or at once without one. */
   launch(u, wid, x0, z0, x1, z1, {hit = null, hitBox = null, lob = false} = {}) {
     const W = munition(wid),
@@ -550,7 +618,8 @@ export class Sim {
   /** An explosive bursts at (x, z): splash damage with falloff, heavy suppression, and damage to a vehicle it struck. */
   explode(x, z, W, by, hitBox) {
     this.explosions.push({x, z, r: W.splash.r, t: this.time});
-    this.sound({type: 'explode', x, z, r: W.splash.r, lob: !!W.lob});
+    if (!W.silent) this.sound({type: 'explode', x, z, r: W.splash.r, lob: !!W.lob});
+    if (by?.side === 'partisan') this.raiseAlarm(null);
     if (this.explosions.length > 20) this.explosions.shift();
     for (const o of this.units) {
       if (!o.alive || o.escaped || o.state === 'mounted') continue;
@@ -602,8 +671,11 @@ export class Sim {
     v.hp = 0;
     v.destroyed = true;
     v.stopped = true;
+    v.burningUntil = this.time + 45;
     this.sound({type: 'wreck', x: v.x, z: v.z, id: v.id});
     for (const u of v.crew) if (u.alive && (u.state === 'mounted' || u.state === 'turret')) this.damage(u, by, 999);
+    // the fuel goes up: a blast round the wreck that hurts whoever is near and can set off the next vehicle
+    this.explode(v.x, v.z, munition('wreck'), by, {vehicle: v});
     const mate = this.units.filter(m => m.alive && m.side === 'army').sort((a, b) => dist(a, v) - dist(b, v))[0];
     if (mate) this.say(mate, v.kind === 'mrap' ? "We've lost the MRAP!" : 'Vehicle down!', 'vehicle', 3);
   }
@@ -749,7 +821,10 @@ export class Sim {
     const p = this.player;
     if (p.alive) {
       const len = Math.hypot(input.mx || 0, input.mz || 0);
-      p.speed = input.sneak ? SPEED.sneak : SPEED.run;
+      // Shift sprints while there is stamina (it drains in about five seconds and comes back resting); Ctrl sneaks
+      p.sprinting = !!input.sprint && !input.sneak && len > 0 && (p.stamina ?? 1) > 0.02;
+      p.stamina = Math.max(0, Math.min(1, (p.stamina ?? 1) + (p.sprinting ? -0.2 : len > 0 ? 0.08 : 0.16) * dt));
+      p.speed = input.sneak ? SPEED.sneak : p.sprinting ? SPEED.sprint : SPEED.run;
       p.moving = len > 0;
       const v = p.speed * this.pace(p);
       if (len > 0) this.slide(p, ((input.mx || 0) / len) * v * dt, ((input.mz || 0) / len) * v * dt);
@@ -764,6 +839,7 @@ export class Sim {
       if (input.reload) this.startReload(p);
       if (p.mags[p.weapon] === 0 && p.reload === 0) this.startReload(p);
       if (input.fire && input.ax !== undefined) this.shoot(p, input.ax, input.az);
+      if (input.grenade && input.ax !== undefined) this.throwGrenade(p, input.ax, input.az);
       this.interact(p, !!input.interact, dt);
     }
     // AI: perception and decisions at 5 Hz per unit (staggered), actions every step
@@ -793,6 +869,11 @@ export class Sim {
    * Give teammates an order (see partisanThink in convoy/ai.js): {type: 'hold'|'follow'|'move'|'attack'|'cover', x?, z?, target?, angle?}.
    * @param {string[]} ids partisan ids (the player is ignored)
    */
+  /** Is this point on the player's screen (always true with no screen, as in tests)? 1 m inside the edge. */
+  onScreen(u) {
+    const v = this.view;
+    return !v || (u.x > v.x0 + 1 && u.x < v.x1 - 1 && u.z > v.z0 + 1 && u.z < v.z1 - 1);
+  }
   order(ids, order) {
     const ACK = {hold: 'Holding.', follow: 'On you.', move: 'Moving.', attack: 'Engaging.', cover: 'Watching that sector.'};
     for (const u of this.units) {

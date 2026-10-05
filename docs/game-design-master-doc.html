@@ -55,7 +55,7 @@ h3{font-size:22px;color:var(--olive);margin-bottom:6px;letter-spacing:.06em}
 .row{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}
 /* hero */
 .hero{padding-top:46px;display:grid;gap:30px;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);align-items:center}
-.hero figure{margin:0;position:relative}
+.hero figure{margin:0;position:relative}.hero .war-room{max-width:58ch;margin:4px 0 18px}
 .hero h1{font-size:clamp(48px,7vw,96px)}.hero .tagline{margin:6px 0 16px;color:var(--spark);font-weight:650}.hero-body{max-width:58ch;color:var(--text);line-height:1.6;margin:0 0 14px}
 .bulletin{font:12px/1.5 var(--mono);color:var(--dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:18px}
 @media(max-width:860px){.hero{grid-template-columns:1fr}}
@@ -101,15 +101,17 @@ footer a{color:var(--olive)}
 
 <section class="hero" id="top" aria-labelledby="h-title">
   <div>
-    <p class="bulletin">Transmission 0.3.1 · 1 October 2026 · clandestine design bureau</p>
+    <p class="bulletin">Transmission 0.3.1 · 5 October 2026 · clandestine design bureau</p>
     <h1 id="h-title">Partisan Project</h1>
     <p class="lede tagline">Escape from Tarkov meets Mount and Blade with guns</p>
     <p class="hero-body">Inspired by the Antistasi mod for Arma 3. The basic idea is a PvE loop much like SP Tarkov. Instead of looting guns just for yourself, however, you play as a group of units and level up your characters and your Resistance through a Mount and Blade style overworld game. This makes gun and attachment collecting mean something at a gameplay level: stealing weapons lets you level up different characters and expand your Resistance.</p>
     <p class="hero-body">The metagame then escalates from small engagements, ambushes and supply raids to all-out warfare with vehicles, as you finally drive the Invader off your island.</p>
+    <figure class="war-room"><div class="frame"><img src="moodboard/keyframe-3-war-room.jpg" alt="Concept keyframe: four low-poly rebels around a map table in a lamp-lit hideout, the hooded recon pointing at the objective, a radio, compass and coffee among the papers, supply crates behind" width="2000" height="1125" loading="lazy"></div><figcaption>Between raids: the squad plans the next ambush over the island map. The overworld and loot metagame. Concept art, reference only.</figcaption></figure>
     <div class="row">
       <a class="btn" href="../operator/">Dress an operator</a>
       <a class="btn ghost" href="../workbench/">Strip a rifle</a>
-      <a class="btn ghost" href="master-roadmap.html">Read the roadmap</a>
+      <a class="btn ghost" href="../convoy/">Lead an ambush</a>
+      <a class="btn ghost" href="campaign-roadmap.html">The campaign plan</a>
     </div>
     <p class="note"><b>Design note</b> This page is both the in-universe handbook and the game design document. Grey boxes like this one step outside the fiction to say what is real, what is a placeholder and what is waiting on a decision.</p>
   </div>
@@ -121,13 +123,16 @@ footer a{color:var(--olive)}
 
 <section id="dispatches" aria-labelledby="h-dispatches">
   <p class="eyebrow">Dispatches</p><h2 id="h-dispatches">What you can use today</h2>
-  <p class="lede">Each dispatch is a demo. Status is honest: <span class="live">live</span> means it runs on this site; <span class="build">in build</span> means partly there; <span class="plan">planned</span> means a drawing and a packet.</p>
+  <p class="lede">Each dispatch is a demo. Status is honest: <span class="live">live</span> means it runs on this site; <span class="build">prototype</span>, <span class="build">demo</span> or <span class="build">test</span> means playable but partial; <span class="plan">planned</span> means a drawing and a packet.</p>
   <div class="grid g3" style="margin-top:22px">
-    <article class="card"><span class="chip live">Live</span><h3>Operator Modder</h3><p>Four operators on one skeleton (Base, Recon, Insurgent, Enforcer): modular kit, repainted zones, ten poses (hero, crouch, kneel, salute…) and three idles: calm, alert, weary. Every look is a link.</p><div class="row"><a class="btn" href="../operator/">Open</a></div></article>
-    <article class="card"><span class="chip live">Live</span><h3>Weapon Workbench</h3><p>AK-74M and AK-15K with twelve attachment slots, rails that stop parts overlapping,, handling stats that move as you swap, compatibility rules with reasons, finishes, camo, wear.</p><div class="row"><a class="btn" href="../workbench/">Open</a></div></article>
-    <article class="card"><span class="chip live">Live</span><h3>Asset Viewer</h3><p>The quartermaster's inspector. Checks any registered model against its triangle budget and licence before it reaches a demo.</p><div class="row"><a class="btn ghost" href="../viewer/">Open</a></div></article>
-    <article class="card"><span class="chip build">In build</span><h3>Real parts, more rifles</h3><p>Code-built placeholders give way to cleared CC0 geometry; the G3A3 joins as third rifle, then M16, Mk14, RPK, STG44, PPSh.</p><p class="note"><b>Blocked</b> on owner downloads and licence checks (packets A1, A9).</p></article>
-    <article class="card"><span class="chip live">Live · v1</span><h3>Recon, Insurgent, Enforcer</h3><p>Three more operators on the same skeleton, drawn from the moodboard: hooded recon, plaid-shirt insurgent, black-kit enforcer. Patches, props and art sign-off still to come.</p><div class="row"><a class="btn ghost" href="../operator/#base=recon">Meet them</a></div></article>
+    <article class="card"><span class="chip live">Live</span><h3>Weapon Modder</h3><p>Eleven rifles, from the AK-74M and the SIG Spear to the StG 44, Bren and Chauchat. Real attachments that fit every rifle, a CNC kit for the old ones, rails that stop parts overlapping, handling stats that move as you swap, finishes, camo, wear.</p><div class="row"><a class="btn" href="../workbench/">Open</a></div></article>
+    <article class="card"><span class="chip live">Live</span><h3>Operator Modder</h3><p>Recon, Insurgent, Enforcer and the Base operator: modular kit, repainted zones, patches, three hero poses with hands on any rifle, in a warehouse with its crew and its sound. Every look is a link.</p><div class="row"><a class="btn" href="../operator/">Open</a></div></article>
+    <article class="card"><span class="chip build">Prototype</span><h3>Partisan Tactical</h3><p>The missions, top-down: convoy ambush, compound assault, cave hideout defence. Play every rebel, give orders, use class abilities; bring loot home and promote your fighters with it.</p><div class="row"><a class="btn" href="../convoy/">Open</a></div></article>
+    <article class="card"><span class="chip build">Demo</span><h3>Rebel Band</h3><p>The party screen: 44 classes from Village Infantry to elite machine gunners, marksmen and drone operators. Every promotion costs experience and the kit the new class carries.</p><div class="row"><a class="btn ghost" href="../band/">Open</a></div></article>
+    <article class="card"><span class="chip build">Test</span><h3>Overworld Map</h3><p>The island, Bannerlord-style: provinces in their owners' colours, towns, the Invader's fort, your band on a hill, patrols and convoys on the roads. Not wired to the game yet.</p><div class="row"><a class="btn ghost" href="../map/">Open</a></div></article>
+    <article class="card"><span class="chip live">Live</span><h3>Equipment Wiki</h3><p>The quartermaster's catalogue: 4,227 items to loot, searchable by category and rarity. The missions roll their loot from it. Placeholder data.</p><div class="row"><a class="btn ghost" href="../wiki/">Open</a></div></article>
+    <article class="card"><span class="chip plan">Planned</span><h3>The campaign</h3><p>The demos as one game: march on the map, hit convoys and towns, get hunted, loot, upgrade, march on stronger. Decisions made; the first loop is next.</p><div class="row"><a class="btn ghost" href="campaign-roadmap.html">Read the plan</a></div></article>
+    <article class="card"><span class="chip live">Live</span><h3>Asset Viewer</h3><p>The inspector. Checks any registered model against its triangle budget before it reaches a demo.</p><div class="row"><a class="btn ghost" href="../viewer/">Open</a></div></article>
     <article class="card"><span class="chip plan">Planned · 2027</span><h3>Checkpoint &amp; the squad's mind</h3><p>A ruined-checkpoint diorama, and a visualiser for how a squad believes, doubts and breaks: belief and morale made visible.</p></article>
   </div>
 </section>
@@ -151,26 +156,34 @@ footer a{color:var(--olive)}
 <section id="design" aria-labelledby="h-design">
   <p class="eyebrow">Design</p><h2 id="h-design">Core loop, progression and features</h2>
   <p class="note"><b>Provisional</b> Setting canon (WP-D1) is undecided, so fiction-dependent details below are placeholders. Mechanics follow the pillars and the AI compendium.</p>
-  <h3 style="margin-top:20px">Core loop</h3>
+  <h3 style="margin-top:20px">The campaign loop</h3>
   <ol class="lede">
-    <li><b>Prepare</b>: build the loadout and operator in the customisers.</li>
-    <li><b>Infiltrate</b>: move through a small contested area, reading radio chatter and enemy calls.</li>
-    <li><b>Engage</b>: short, loud, chaotic fights where the enemy acts on what it believes it knows.</li>
-    <li><b>Withdraw</b>: leave with what you carried out; losses and finds feed the next preparation.</li>
+    <li><b>March</b>: your band moves on the island map while time runs. Invader convoys drive the roads; armies hunt you.</li>
+    <li><b>Strike</b>: reach a convoy and ambush it; march on a town and assault it. If an army catches you, defend the hideout.</li>
+    <li><b>Fight</b>: a short, loud mission where you play every rebel and the enemy acts on what it believes it knows.</li>
+    <li><b>Loot</b>: bring home what you took. Weapons, plates, radios, drones.</li>
+    <li><b>Upgrade</b>: promote fighters with the stolen kit, fit the guns in the Weapon Modder, and march on, stronger. The Invader answers with bigger hunters.</li>
   </ol>
+  <p class="note"><b>Design note</b> The missions, loot and promotions run today inside Partisan Tactical and the Rebel Band; the map is a test. Joining them is the <a href="campaign-roadmap.html">campaign roadmap</a>. Trade is barter at friendly villages, never a shop at home; auto-resolve covers only lopsided fights; an overrun hideout is a setback, not a game over (decisions TAC-K-01 to K-04).</p>
   <h3 style="margin-top:20px">Progression</h3>
-  <p class="lede">Progress is access, not power: new slots and options unlock, while enemy knowledge and learning speed scale difficulty (pillar 4). Unlock order and economy are provisional.</p>
+  <p class="lede">Progress is your band. Fighters earn experience and climb a class tree, and every promotion is paid for with the equipment the new class carries, so the gun you steal decides who you can become. Difficulty scales what the enemy knows and how fast it learns, never its health or aim (pillar 4). Numbers are provisional.</p>
   <h3 style="margin-top:20px">Feature matrix</h3>
   <div style="overflow-x:auto"><table class="note" style="width:100%;border-collapse:collapse">
     <thead><tr><th align="left">Feature</th><th align="left">State</th><th align="left">Where</th></tr></thead>
     <tbody>
-      <tr><td>Weapon customiser (3 rifles, rails, stats, share codes)</td><td>Playable</td><td><a href="../workbench/">Workbench</a></td></tr>
-      <tr><td>Operator customiser, poses, secondary motion</td><td>Playable</td><td><a href="../operator/">Operator</a></td></tr>
-      <tr><td>Asset viewer with triangle budgets</td><td>Playable</td><td><a href="../viewer/">Viewer</a></td></tr>
+      <tr><td>Weapon customiser (11 rifles, universal attachments, rails, stats, share codes)</td><td>Playable</td><td><a href="../workbench/">Weapon Modder</a></td></tr>
+      <tr><td>Operator customiser, poses, hands on any rifle, warehouse scene</td><td>Playable</td><td><a href="../operator/">Operator Modder</a></td></tr>
+      <tr><td>Three missions: convoy ambush, compound assault, cave hideout defence</td><td>Prototype</td><td><a href="../convoy/">Partisan Tactical</a></td></tr>
+      <tr><td>Squad play: orders, pause, swap between rebels, class abilities</td><td>Prototype</td><td><a href="../convoy/">Partisan Tactical</a></td></tr>
+      <tr><td>Enemy belief model and callouts (sight, hearing, radio; cover, suppression, flanking, retreat)</td><td>Prototype</td><td><a href="../convoy/">Partisan Tactical</a></td></tr>
+      <tr><td>Loot, stash and equipment-gated promotions</td><td>Prototype</td><td><a href="../convoy/">Camp</a> · <a href="../band/">Rebel Band</a></td></tr>
+      <tr><td>Item catalogue</td><td>Placeholder data</td><td><a href="../wiki/">Equipment Wiki</a></td></tr>
+      <tr><td>World map: provinces, settlements, parties</td><td>Test</td><td><a href="../map/">Overworld Map</a></td></tr>
+      <tr><td>Campaign: one save, missions from the map, hunters, territory, escalation</td><td>Planned</td><td><a href="campaign-roadmap.html">Campaign roadmap</a></td></tr>
+      <tr><td>Durable inventory and extraction (risk what you carry)</td><td>Planned</td><td><a href="https://github.com/VincentDN/partisan-project/blob/main/docs/tactical-roadmap.md">Tactical roadmap</a></td></tr>
       <tr><td>Opening scene, advanced animations, music</td><td>Playable</td><td><a href="../intro/">Intro</a></td></tr>
       <tr><td>Art styles and shaders (toon, cel, ink, clay, silhouette, Nokia LCD, PS1, night vision)</td><td>Playable</td><td><a href="../operator/?lab">Art Style Lab</a></td></tr>
-      <tr><td>Enemy belief model and callouts (sight, hearing, radio; cover, suppression, flanking, retreat)</td><td>Prototype</td><td><a href="../convoy/">Convoy Ambush</a></td></tr>
-      <tr><td>Missions, economy, factions</td><td>Provisional</td><td>Awaiting canon</td></tr>
+      <tr><td>Factions, setting and story</td><td>Provisional</td><td>Awaiting canon (WP-D1)</td></tr>
     </tbody>
   </table></div>
   <h3 style="margin-top:20px">AI in one paragraph</h3>
@@ -179,10 +192,10 @@ footer a{color:var(--olive)}
 
 <section id="operators" aria-labelledby="h-operators">
   <p class="eyebrow">Personnel</p><h2 id="h-operators">The operators</h2>
-  <p class="lede">One skeleton, many people. Poses and idles are data, so every new operator inherits the whole animation set the day it exists.</p>
+  <p class="lede">Many people, one pose language. Poses and idles are data and the hands are solved onto whatever rifle is carried, so every new operator inherits the whole set the day it exists.</p>
   <div class="grid g4" style="margin-top:22px">
     <article class="operator card"><div class="portrait"><span class="stamp">LIVE</span><img src="moodboard/recon-hero-pose.jpg" alt="Hero pose reference: hooded operator holding a rifle upright" loading="lazy" style="object-position:center"></div><h3>Base Operator</h3><p>Purchased low-poly soldier. 8,646 triangles, 83 bones, 21 modular meshes. Playable now. <a href="../operator/">Open</a></p></article>
-    <article class="operator card"><div class="portrait"><span class="stamp">LIVE v1</span><img src="moodboard/recon-turnaround.jpg" alt="Recon turnaround sheet: front, side and back views of a hooded operator" loading="lazy" style="object-position:left top"></div><h3>Recon</h3><p>Hood and face mask, houndstooth scarf, plate carrier, chest radio. Awaiting patches and owner sign-off. <a href="../operator/#base=recon">Open</a></p></article>
+    <article class="operator card"><div class="portrait"><span class="stamp">LIVE v1</span><img src="moodboard/recon-turnaround.jpg" alt="Recon turnaround sheet: front, side and back views of a hooded operator" loading="lazy" style="object-position:left top"></div><h3>Recon</h3><p>Hood and face mask, houndstooth scarf, plate carrier, chest radio. The default operator; awaiting owner sign-off. <a href="../operator/#base=recon">Open</a></p></article>
     <article class="operator card"><div class="portrait"><img src="moodboard/keyframe-1-nvg-plaid.jpg" alt="Operator in a tan helmet with night-vision tubes, green face cover and plaid shirt" loading="lazy" style="object-position:30% 30%"></div><h3>Insurgent</h3><p>Plaid shirt, shemagh, knit beanie, AK kit. Scrappy and recognisable. <a href="../operator/#base=insurgent">Open</a> <span class="chip build">v1</span></p></article>
     <article class="operator card"><div class="portrait"><img src="moodboard/keyframe-2-firefight.jpg" alt="Operator in black kit with olive belt pouches aiming a modern rifle" loading="lazy" style="object-position:35% 35%"></div><h3>Enforcer</h3><p>Black kit, bold pouches, beanie or NVG helmet, modern rifle. <a href="../operator/#base=enforcer">Open</a> <span class="chip build">v1</span></p></article>
   </div>
@@ -210,11 +223,11 @@ footer a{color:var(--olive)}
     <figure><div class="frame" style="background:#16200f"><img src="moodboard/ref-2d-armour-sprites-1.png" alt="Layered 2D sprite sheet: a bare body, then the same figure with a hood, an open helmet, a visored helmet and a visored helmet with a red tabard, plus gloves and two torso pieces" width="400" height="261" loading="lazy" style="image-rendering:pixelated;object-fit:contain"></div><figcaption>Layered people: one body, many heads and torsos. The model for our paper-doll characters and loot-driven looks.</figcaption></figure>
     <figure><div class="frame" style="background:#16200f"><img src="moodboard/ref-2d-armour-sprites-2.png" alt="More layered 2D sprites: three mail hoods, a kettle hat, and red and blue padded tunics" width="365" height="209" loading="lazy" style="image-rendering:pixelated;object-fit:contain"></div><figcaption>More layers: hoods, hats, tunics. Each is one swappable piece.</figcaption></figure>
     <figure class="twothirds"><div class="frame"><img src="moodboard/ref-2d-topdown-map.jpg" alt="RimWorld-style top-down 2D map: ruins with walls and urns, trees, bushes, flowers, rocks and a wrecked cart on grass and sand, with long diagonal shadows" width="1500" height="1020" loading="lazy"></div><figcaption>The world: 32 px tiles, seeded scatter, dark outlines, long shadows, walls with a visible front face.</figcaption></figure>
-    <figure class="third"><div class="frame"><img src="moodboard/ref-retro-overworld-map.jpg" alt="Retro handheld-RPG region map of an island: banded green landmass on flat blue sea with yellow routes and small red-roofed towns" width="533" height="575" loading="lazy" style="max-height:520px;object-fit:contain;background:#222"></div><figcaption>The overworld: banded greens, flat sea, yellow routes, red-roofed towns.</figcaption></figure>
+    <figure class="third"><div class="frame"><img src="moodboard/ref-retro-overworld-map.jpg" alt="Retro handheld-RPG region map of an island: banded green landmass on flat blue sea with yellow routes and small red-roofed towns" width="533" height="575" loading="lazy" style="max-height:520px;object-fit:contain;background:#222"></div><figcaption>The first overworld idea, a retro region map. Retired: the island became a Bannerlord-style 3-D map (TAC-K-04).</figcaption></figure>
     <div class="side" style="grid-column:span 12"><h3>2.5-D graphics direction</h3><ul>
       <li><b>The shooter becomes RimWorld-style 2.5-D top-down sprites</b>: thick dark outlines, flat fills with a shade, layered people, long sun shadows. The simulation does not change.</li>
-      <li><b>The campaign map becomes a retro island map</b> like a handheld-RPG region map, with territory shown by tint and by shape.</li>
-      <li>The plan is in the <a href="https://github.com/VincentDN/partisan-project/blob/main/docs/graphics-roadmap.md">graphics roadmap</a> (WP-V1 to V20).</li>
+      <li><b>The campaign map is a Bannerlord-style 3-D island</b> (<a href="../map/">Overworld Map</a>): rocky Mediterranean terrain, snowy peaks, an azure coast, provinces in their owners' colours.</li>
+      <li>The sprite view already runs on placeholder art; the plan for the real art is the <a href="https://github.com/VincentDN/partisan-project/blob/main/docs/graphics-roadmap.md">graphics roadmap</a>.</li>
     </ul></div>
   </div>
 
@@ -255,8 +268,8 @@ footer a{color:var(--olive)}
   <div id="milestones" aria-live="polite">
     <div class="ms"><div><h3>M0 · Foundation <small>v0.3.0</small></h3></div><div class="pct">loading…</div></div>
   </div>
-  <div class="row"><a class="btn" href="master-roadmap.html">Full master roadmap</a><a class="btn ghost" href="https://github.com/VincentDN/partisan-project/blob/main/docs/agent-ops/README.md">How the budget system works</a></div>
-  <p class="note"><b>Open decisions</b> (1) Setting canon: the earlier premise is Yantis, 2012, a prologue to a WW2044 timeline; the modern low-poly kit needs a reconciling decision. (2) Roster naming from the keyframes. (3) Credits and licences: out of scope, see the GitHub documentation. (4) When to drop <code>noindex</code>.</p>
+  <div class="row"><a class="btn" href="master-roadmap.html">Full master roadmap</a><a class="btn ghost" href="campaign-roadmap.html">Campaign roadmap</a><a class="btn ghost" href="https://github.com/VincentDN/partisan-project/blob/main/docs/agent-ops/README.md">How the budget system works</a></div>
+  <p class="note"><b>Open decisions</b> (1) Setting canon: the earlier premise is Yantis, 2012, a prologue to a WW2044 timeline; the island and its factions need a reconciling decision. (2) Roster naming and sign-off. (3) When to drop <code>noindex</code>. (4) Local PvE only, or funded live co-op. <b>Settled</b>: the 2.5-D shooter, the 3-D overworld, barter, auto-resolve and the hideout rules (TAC-K-01 to K-04). Credits and licences stay in the GitHub documentation.</p>
 </section>
 
 <section id="specs" aria-labelledby="h-specs">
@@ -267,8 +280,8 @@ footer a{color:var(--olive)}
       <tr><td>Operator + equipment</td><td>≤ 15,000 triangles, ≤ 60 draw calls</td><td>Readout in the Operator Modder; automated test</td></tr>
       <tr><td>Weapon + attachments</td><td>≤ 30,000 triangles</td><td>Asset Viewer; register budget</td></tr>
       <tr><td>Frame rate</td><td>Goal: 60 fps desktop, 30 fps mid-range phone</td><td>Adaptive resolution built in; device acceptance pending (WP-Q2)</td></tr>
-      <tr><td>Accessibility</td><td>Keyboard, focus, reduced motion, text contrast, WCAG 2.2 AA target</td><td>Audit pending (WP-Q1)</td></tr>
-      <tr><td>Assets</td><td>CC0 or CC BY 4.0 downloads only; everything registered</td><td>Register audit fails the build</td></tr>
+      <tr><td>Accessibility</td><td>Keyboard, focus, reduced motion, text contrast, WCAG 2.2 AA target</td><td>axe-core on every page in CI; manual screen-reader pass pending (WP-Q6)</td></tr>
+      <tr><td>Assets</td><td>Every model registered with its source</td><td>Asset register (<code>assets/register.json</code>)</td></tr>
       <tr><td>Privacy</td><td>No cookies, no analytics, no third-party requests</td><td>Site check; vendored three.js</td></tr>
       <tr><td>Stats</td><td>Illustrative handling values, not real-world data</td><td>Labelled in the demos</td></tr>
       <tr><td>Build</td><td>Relative URLs, allowlist deploy, link-checked</td><td>CI on every push</td></tr>

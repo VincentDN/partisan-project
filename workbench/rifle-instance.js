@@ -1,10 +1,12 @@
 import * as T from 'three';
-import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
-import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
+import {loadModel} from '../shared/model-cache.js';
 import {SLOTS, FINISHES, FINISH_TARGETS, FALLBACK_MATERIALS} from './attachments.js';
 import {MODELS} from './models.js';
-// Lay the longest axis along x with the muzzle (the slimmer end) at +x, scale to meters, center.
-export function normalize(root, scale) {
+import {paintSurface, paintRetro} from './surface.js';
+import {applyFinishState} from './rifle-finishes.js';
+// Lay the longest axis along x with the muzzle (the slimmer end) at +x, scale to meters, center. `stretch` [x, y, z]
+// corrects a source whose proportions are off (the M16's is too tall and too thin), in the laid-out axes.
+export function normalize(root, scale, stretch = null) {
   root.updateMatrixWorld(true);
   let size = new T.Box3().setFromObject(root).getSize(new T.Vector3());
   if (size.z > size.x && size.z >= size.y) root.rotation.y = Math.PI / 2;
@@ -32,11 +34,18 @@ export function normalize(root, scale) {
   });
   if (ends[0][1] - ends[0][0] < ends[1][1] - ends[1][0]) root.rotateY(Math.PI);
   root.scale.multiplyScalar(scale);
-  root.updateMatrixWorld(true);
-  const center = new T.Box3().setFromObject(root).getCenter(new T.Vector3());
+  let body = root;
+  if (stretch) {
+    body = new T.Group();
+    body.name = 'proportions';
+    body.scale.set(...stretch);
+    body.add(root);
+  }
+  body.updateMatrixWorld(true);
+  const center = new T.Box3().setFromObject(body).getCenter(new T.Vector3());
   const holder = new T.Group();
-  holder.add(root);
-  root.position.sub(center);
+  holder.add(body);
+  body.position.sub(center);
   return holder;
 }
 
@@ -44,7 +53,7 @@ const nodeName = name => T.PropertyBinding.sanitizeNodeName(name);
 // Load a rifle and build its parts, slots (with library options) and finish targets.
 export async function loadRifle(id, {decorate = () => {}} = {}) {
   const config = MODELS[id],
-    root = (await new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).loadAsync(new URL(config.url, import.meta.url).href)).scene;
+    root = await loadModel(new URL(config.url, import.meta.url).href);
   root.traverse(o => {
     if (o.isMesh) o.castShadow = o.receiveShadow = true;
   });
@@ -56,7 +65,18 @@ export async function loadRifle(id, {decorate = () => {}} = {}) {
     root.add(o);
     return o;
   });
-  const model = normalize(root, config.scale);
+  const model = normalize(root, config.scale, config.stretch);
+  // Mount points given in metres on the laid-out rifle (workbench/universal.js), for rifles whose source has no part there.
+  for (const [sid, label, p, d] of config.mounts || []) {
+    const o = new T.Object3D();
+    o.name = 'socket:' + sid;
+    o.position.set(...p);
+    o.userData = {id: sid, label, direction: new T.Vector3(...d)};
+    model.add(o);
+    sockets.push(o);
+  }
+  model.updateMatrixWorld(true);
+  if (config.surface) paintSurface(model, config);
   // Clone materials so highlighting, finishes and wireframe only touch this rifle's meshes.
   model.traverse(o => {
     if (o.isMesh) o.material = o.material.clone();
@@ -102,21 +122,8 @@ export async function loadRifle(id, {decorate = () => {}} = {}) {
       const o = typeof entry === 'string' ? {id: entry} : entry;
       return {...spec.library.find(l => l.id === o.id), ...o};
     });
-    const options = [...slotConfig.factory, ...library].map(o => {
-      let object = null;
-      if (o.build) {
-        object = o.build({original, materials});
-        object.traverse(m => {
-          if (m.isMesh) {
-            m.castShadow = m.receiveShadow = true;
-            m.material = m.material.clone();
-          }
-        });
-        object.visible = false;
-        container.add(object);
-      }
-      return {...o, object};
-    });
+    // Attachments are built the first time they are chosen (buildOption), not up front: most never are.
+    const options = [...slotConfig.factory, ...library].map(o => ({...o, object: null}));
     // Every mesh the slot can show belongs to its part, so clicks and highlights cover attachments too.
     part.objects = [];
     container.traverse(m => {
@@ -134,18 +141,26 @@ export async function loadRifle(id, {decorate = () => {}} = {}) {
       base: container.position.clone(),
       offset: 0,
       baseDetail: part.detail,
+      build: {original, materials, slot: slotConfig},
     };
   }
+  model.userData.isRifleModel = true; // camo projects in this space, also for attachments built later
   decorate(model);
   // A finish target covers a whole part (attachments included) or one option's object only.
   const finishTargets = FINISH_TARGETS.map(t => ({
     ...t,
     part: parts.find(p => p.id === (t.part || t.id)),
     finishes: t.finishes || FINISHES,
-  })).filter(t => t.part && (t.part.objects.length || t.option) && (!t.option || slots[t.part.id]?.options.some(o => o.id === t.option)));
+  })).filter(
+    t =>
+      t.part &&
+      (t.part.objects.length || t.option || slots[t.part.id]?.options.some(o => o.build)) &&
+      (!t.option || slots[t.part.id]?.options.some(o => o.id === t.option)),
+  );
   return {
     id,
     config,
+    decorate,
     model,
     parts: parts.filter(p => p.objects.length || slots[p.id]),
     sockets,
@@ -156,10 +171,37 @@ export async function loadRifle(id, {decorate = () => {}} = {}) {
   };
 }
 
+// Build an attachment the first time it is needed: its meshes join the part (clicks, highlights), take the rifle's
+// camo, wear and finishes, and the retro bitmap on the retro MCX; parts that arrive later from a file get the same.
+export function buildOption(rifle, id, option) {
+  const slot = rifle.slots[id];
+  if (option.object || !option.build) return option.object;
+  const object = option.build(slot.build);
+  object.visible = false;
+  slot.container.add(object);
+  const adopt = () => {
+    object.traverse(m => {
+      if (!m.isMesh || m.userData.adopted) return;
+      m.userData.adopted = true;
+      m.castShadow = m.receiveShadow = true;
+      m.material = m.material.clone();
+      slot.part.objects.push(m);
+    });
+    if (rifle.config.surface?.retro) paintRetro(object, rifle.model);
+    rifle.decorate(object);
+    for (const t of rifle.finishTargets) if (t.part === slot.part && rifle.finish[t.id]) applyFinishState(rifle, t.id, rifle.finish[t.id]);
+  };
+  adopt();
+  object.addEventListener('loaded', adopt);
+  option.object = object;
+  return object;
+}
+
 // Mutate geometry only. Callers own UI, transaction timing and persistence.
 export function applySlotState(rifle, id, optionId, offset) {
   const slot = rifle.slots[id],
     option = slot.options.find(o => o.id === optionId) || slot.options[0];
+  buildOption(rifle, id, option);
   rifle.build[id] = option.id;
   slot.original.visible = !!option.original;
   slot.original.rotation.set(0, option.pose?.rotationY || 0, 0);

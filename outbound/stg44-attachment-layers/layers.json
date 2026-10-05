@@ -1,0 +1,261 @@
+{
+ "rifle": "stg44",
+ "width": 3000,
+ "height": 2000,
+ "layers": [
+  "00 Rifle (factory build)",
+  "01 Muzzle: Suppressor",
+  "02 Muzzle: Compensator",
+  "03 Muzzle: AK-74 brake",
+  "04 Optic: 4\u00d7 scope",
+  "05 Optic: Micro dot",
+  "06 Optic: Holographic",
+  "07 Back-up sight: Flip-up sight",
+  "08 Foregrip: Vertical",
+  "09 Foregrip: Angled",
+  "10 Foregrip: Hand stop",
+  "11 Foregrip: Bipod",
+  "12 Foregrip: GP-25 launcher",
+  "13 Side rail: Weapon light",
+  "14 Side rail: Laser",
+  "15 Side rail: Light + laser",
+  "16 Magazine: Translucent 30-rnd",
+  "17 Handguard: CNC M-LOK",
+  "18 Pistol grip: Classic plum",
+  "19 Pistol grip: Machined grip",
+  "20 Stock: CNC folding stock",
+  "21 Trigger: Match trigger",
+  "22 Charging handle: Extended handle",
+  "23 Sling: Sling swivel",
+  "24 Sling: Two-point sling",
+  "25 Mount points (where each slot sits)"
+ ],
+ "mounts": [
+  {
+   "slot": "muzzle",
+   "label": "Muzzle",
+   "x": 2669.663693329088,
+   "y": 989.7510440658561
+  },
+  {
+   "slot": "optic",
+   "label": "Optic",
+   "x": 1530.9825383509888,
+   "y": 629.2398466653432
+  },
+  {
+   "slot": "buis",
+   "label": "Back-up sight",
+   "x": 1854.3531334027393,
+   "y": 758.3036268413417
+  },
+  {
+   "slot": "foregrip",
+   "label": "Foregrip",
+   "x": 1799.5757679956,
+   "y": 1025.8770631504917
+  },
+  {
+   "slot": "side",
+   "label": "Side rail",
+   "x": 1817.1408536704357,
+   "y": 927.9975801502363
+  },
+  {
+   "slot": "magazine",
+   "label": "Magazine",
+   "x": 1587.4049457606263,
+   "y": 882.2204191236137
+  },
+  {
+   "slot": "handguard",
+   "label": "Handguard",
+   "x": 1874.7291679307405,
+   "y": 841.1621545268246
+  },
+  {
+   "slot": "grip",
+   "label": "Pistol grip",
+   "x": 1358.1564088296163,
+   "y": 943.5869262536534
+  },
+  {
+   "slot": "stock",
+   "label": "Stock",
+   "x": 895.5251786852983,
+   "y": 757.4313901144611
+  },
+  {
+   "slot": "trigger",
+   "label": "Trigger",
+   "x": 1437.8156547859708,
+   "y": 928.1566808999755
+  },
+  {
+   "slot": "charging",
+   "label": "Charging handle",
+   "x": 1659.8735771133295,
+   "y": 824.8049795892964
+  },
+  {
+   "slot": "sling",
+   "label": "Sling",
+   "x": 742.1198693386305,
+   "y": 743.9848491479399
+  }
+ ],
+ "camera": {
+  "position": [
+   0.7228375961365447,
+   0.42056005593398993,
+   1.0514001398349746
+  ],
+  "fov": 35
+ },
+ "plan": [
+  {
+   "slot": "muzzle",
+   "id": "can",
+   "label": "Suppressor",
+   "slotLabel": "Muzzle"
+  },
+  {
+   "slot": "muzzle",
+   "id": "comp",
+   "label": "Compensator",
+   "slotLabel": "Muzzle"
+  },
+  {
+   "slot": "muzzle",
+   "id": "ak74",
+   "label": "AK-74 brake",
+   "slotLabel": "Muzzle"
+  },
+  {
+   "slot": "optic",
+   "id": "scope",
+   "label": "4\u00d7 scope",
+   "slotLabel": "Optic"
+  },
+  {
+   "slot": "optic",
+   "id": "micro",
+   "label": "Micro dot",
+   "slotLabel": "Optic"
+  },
+  {
+   "slot": "optic",
+   "id": "holo",
+   "label": "Holographic",
+   "slotLabel": "Optic"
+  },
+  {
+   "slot": "buis",
+   "id": "flip",
+   "label": "Flip-up sight",
+   "slotLabel": "Back-up sight"
+  },
+  {
+   "slot": "foregrip",
+   "id": "vertical",
+   "label": "Vertical",
+   "slotLabel": "Foregrip"
+  },
+  {
+   "slot": "foregrip",
+   "id": "angled",
+   "label": "Angled",
+   "slotLabel": "Foregrip"
+  },
+  {
+   "slot": "foregrip",
+   "id": "stop",
+   "label": "Hand stop",
+   "slotLabel": "Foregrip"
+  },
+  {
+   "slot": "foregrip",
+   "id": "bipod",
+   "label": "Bipod",
+   "slotLabel": "Foregrip"
+  },
+  {
+   "slot": "foregrip",
+   "id": "gp25",
+   "label": "GP-25 launcher",
+   "slotLabel": "Foregrip"
+  },
+  {
+   "slot": "side",
+   "id": "light",
+   "label": "Weapon light",
+   "slotLabel": "Side rail"
+  },
+  {
+   "slot": "side",
+   "id": "laser",
+   "label": "Laser",
+   "slotLabel": "Side rail"
+  },
+  {
+   "slot": "side",
+   "id": "combo",
+   "label": "Light + laser",
+   "slotLabel": "Side rail"
+  },
+  {
+   "slot": "magazine",
+   "id": "clear",
+   "label": "Translucent 30-rnd",
+   "slotLabel": "Magazine"
+  },
+  {
+   "slot": "handguard",
+   "id": "mlok",
+   "label": "CNC M-LOK",
+   "slotLabel": "Handguard"
+  },
+  {
+   "slot": "grip",
+   "id": "classic",
+   "label": "Classic plum",
+   "slotLabel": "Pistol grip"
+  },
+  {
+   "slot": "grip",
+   "id": "cnc",
+   "label": "Machined grip",
+   "slotLabel": "Pistol grip"
+  },
+  {
+   "slot": "stock",
+   "id": "cnc",
+   "label": "CNC folding stock",
+   "slotLabel": "Stock"
+  },
+  {
+   "slot": "trigger",
+   "id": "match",
+   "label": "Match trigger",
+   "slotLabel": "Trigger"
+  },
+  {
+   "slot": "charging",
+   "id": "ext",
+   "label": "Extended handle",
+   "slotLabel": "Charging handle"
+  },
+  {
+   "slot": "sling",
+   "id": "swivel",
+   "label": "Sling swivel",
+   "slotLabel": "Sling"
+  },
+  {
+   "slot": "sling",
+   "id": "strap",
+   "label": "Two-point sling",
+   "slotLabel": "Sling"
+  }
+ ]
+}

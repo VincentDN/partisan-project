@@ -16,8 +16,9 @@ export function selectControl(sim, id) {
   const next = controlCandidates(sim).find(u => u.id === id);
   if (!next || sim.outcome || (!sim.control.pending && sim.active.alive && sim.time < sim.control.readyAt)) return false;
   const previous = sim.active;
-  // A carried-out move order remains an AI order when control returns; a manually driven rebel holds here by default.
-  if (!previous.order) previous.order = {type: 'hold', x: previous.x, z: previous.z, angle: previous.facing};
+  // A carried-out move order remains an AI order when control returns; otherwise the rebel you leave falls in behind the
+  // one you take.
+  if (!previous.order) previous.order = {type: 'follow'};
   previous.moveTo = null;
   previous.moving = false;
   previous.thinkAt = sim.time;

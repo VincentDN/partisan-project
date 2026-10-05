@@ -55,6 +55,7 @@ node tools/agent/…          next-packet | handoff | usage | roadmap-table | co
 - Respect `prefers-reduced-motion` (idle animation off, camera moves instant), keyboard operation and visible focus on every control.
 - Budgets: operator + equipment ≤ 15,000 triangles; weapon ≤ 30,000; site ≤ 90 MB; first meaningful render < 3 s on broadband.
 - Keep modules small (< 300 lines) and start each file with a one-line purpose comment (the code map uses it).
+- **Images shown to the owner** (screenshots, renders, contact sheets, previews sent in the chat): also save a copy to `outbound/wip-images/` named by its timestamp, `YYYY-MM-DD_HHMMSS.png` (UTC; keep the source format's extension), and commit it. It is the owner's log of development shots.
 - Update in the same change: `packets.json` status, `npm run` table sync, `CHANGELOG.md` for user-visible changes, `assets/register.json` (triangle budgets) for models.
 
 ## Commit style

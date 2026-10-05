@@ -182,3 +182,23 @@ Built on [A-foundations.md](A-foundations.md) and designed around swapping ([G-s
 - Cost to change: Low (tables in `convoy/abilities.js` and `convoy/difficulty.js`).
 - Revisit if: Abilities need their own art and sounds, or the army gets abilities too.
 - Owner feedback: —
+
+### TAC-B-16 · Sprint, hand grenades, burning wrecks, and difficulty sets how many soldiers turn up
+- Status: built  ·  Packet: WP-S (late)
+- Decision: The active rebel sprints on Shift (6.6 m/s, about five seconds of stamina that comes back resting; wider aim while sprinting) and sneaks on Ctrl. G throws a hand grenade at the cursor: each rebel carries three, one a second, out to 28 m, arcing over cover and bursting on landing (4.5 m, 115 at the centre); the squad's "go" order moved to right-click only. A destroyed vehicle now explodes: a 7 m blast that hurts anyone near, sets off a vehicle parked close (an RPG into the lead jeep can chain down the column), and burns for 45 s. Difficulty also sets how many soldiers a level fields: Easy 55%, Normal 70%, Hard 85%, Brutal 100% of foot soldiers, convoy riders, wave squads and the reaction force, thinned evenly; leaders, radio operators and turret gunners always come, so the objectives and the radio rules still work.
+- Why: Owner request: sprint with Shift, grenades on G, too many enemy soldiers, and cars that explode when hit with the RPG.
+- Alternatives rejected: Fewer soldiers by editing the levels (difficulty would stop meaning anything); grenades as a class ability only (every rebel should have them).
+- Cost / risk: The levels were balanced at full strength; Normal is now lighter than designed.
+- Cost to change: Low (`thinLevel` in `convoy/sim.js`, `force` in `convoy/difficulty.js`).
+- Revisit if: A level needs a fixed garrison whatever the difficulty.
+- Owner feedback: —
+
+### TAC-B-17 · You see them, they see you; the squad moves up with you
+- Status: built  ·  Packet: WP-V
+- Decision: **Vision.** One range for everybody, `VISION` = 30 m in `convoy/sim.js`: the rebels' fog of war shows that far, and no soldier sees farther (role sights and optics are capped to it). While a screen is watching, the renderer tells the sim what is on it (`sim.view`), and a soldier outside it can neither spot a rebel nor fire (`sim.onScreen`): no more being shot by men you cannot see. The default zoom is closer (1.1, was 0.85). **Fog.** No more flicker: 360 rays (was 220), each frame's mask blended into the last (shifted with the camera, about 70 ms), and soldiers fade in and out of sight with a third of a second's grace instead of popping. **Squad.** Teammates follow by default (and the rebel you switch away from falls in behind): they keep their starting ambush positions until you move 4 m off, then stay in slots behind the way you are going (not where you aim), at your pace, running to catch up when more than 8 m behind. Explicit orders (F, H, move, attack, cover) work as before.
+- Why: Owner feedback: the fog flickers; soldiers see and shoot from beyond the screen's edge; zoom in a bit; same vision for both sides; the squad should move up with you.
+- Alternatives rejected: Zooming out to fit the old 42-65 m sights (the owner wants it closer); fog by grid cells (blocky).
+- Cost / risk: A marksman no longer outranges the fight; levels tuned around long sight lines play closer. On a very wide screen the view rule allows more than 30 m sideways only up to the vision range.
+- Cost to change: Low (`VISION`, `onScreen`, `partisanThink` follow in `convoy/ai.js`; the fog in `convoy/sprite-render.js`).
+- Revisit if: The marksman should regain reach (a scope that extends `vision` while aiming).
+- Owner feedback: —

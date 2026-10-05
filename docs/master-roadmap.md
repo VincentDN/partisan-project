@@ -1,150 +1,158 @@
 # Partisan Project master roadmap
 
-**Partisan Project** · version 0.3.0 · updated 3 October 2026 · master index and generated work queue
+**Partisan Project** · version 0.3.1 · consolidated 5 October 2026 · master index and generated work queue
 
-This document supersedes the four earlier plans (customiser, Partisan, content roster, workbench animation) and
-the 30 September 2026 master roadmap, which is kept for traceability in
+This is the one index for every plan. The detailed plans live beside it and are linked from their tracks in §5:
+[campaign](campaign-roadmap.md) (how the modules become one game), [tactical](tactical-roadmap.md) (inside a
+mission), [graphics](graphics-roadmap.md) (the 2.5-D look) and [character customisation](character-customisation-roadmap.md).
+The 30 September plan is kept for traceability in
 [`archive/legacy-master-roadmap-2026-09-30.md`](archive/legacy-master-roadmap-2026-09-30.md).
-Work is planned as **packets sized for two $20 subscriptions** (Claude Pro and ChatGPT Plus), passed back and
-forth between windows: see [`agent-ops/README.md`](agent-ops/README.md). The plan itself is data
-([`agent-ops/packets.json`](agent-ops/packets.json)); the tables below are generated from it.
+Work is planned as **packets sized for two $20 subscriptions**, passed back and forth between windows: see
+[`agent-ops/README.md`](agent-ops/README.md). The plan itself is data ([`agent-ops/packets.json`](agent-ops/packets.json));
+the tables in §6 are generated from it.
 
-> Links: [Design document (one-pager)](game-design-master-doc.html) · [Index](../) · [Art direction](art-direction.md) ·
-> [Engineering standards](engineering/standards.md) · [Decisions (ADRs)](adr/README.md)
+> Links: [Design document](game-design-master-doc.html) · [Index](../) · [Campaign roadmap](campaign-roadmap.md) ·
+> [Art direction](art-direction.md) · [Engineering standards](engineering/standards.md) · [Decisions (ADRs)](adr/README.md) ·
+> [Design decisions](design-decisions/README.md)
 
 ## 1. What Partisan Project is
 
-An **interactive game design document**. Instead of a static PDF, each aspect of the future game is a playable
-or inspectable demo, tied together by an in-universe design document and a Nokia-style index.
+*Escape from Tarkov meets Mount and Blade with guns.* A squad-based PvE game: you lead a resistance band across an
+occupied Mediterranean island, ambush convoys, raid compounds and defend your hideout, and every gun and plate you
+steal levels up your fighters and your Resistance. The metagame escalates from small ambushes to open war with
+vehicles until the Invader is driven off the island.
 
-**2026 goals (the two demos that must be excellent):**
+It is built as an **interactive game design document**: every part of the future game is a playable or inspectable
+demo on the site, tied together by the in-universe [design document](game-design-master-doc.html) and a Nokia-style
+index. The demos are now being joined into one game: the **campaign** (§5.8).
 
-1. **Operator Customiser**: a fully customisable operator with hero poses and equipment (roster: Base → Recon, Insurgent, Enforcer).
-2. **Weapon Workbench**: a fully customisable gun modder with many weapons and real attachments.
+**The two showcase demos that must be excellent:** the **Weapon Modder** (a gun modder with many rifles and real
+attachments) and the **Operator Modder** (fully customisable operators with hero poses). **The game:** the campaign
+loop of world map, three missions, loot and upgrades.
 
-Everything else (environment diorama, AI belief-model visualiser) is the 2027 horizon.
+## 2. Where we are (5 October 2026, v0.3.1)
 
-## 2. Where we are (v0.3.0, "Foundation")
-
-| Area | State |
+| Module | State |
 |---|---|
-| Home | Partisan Project index browser (1-bit LCD, dither, keypad), design document, this roadmap, moodboard |
-| Repository | Moved out of the portfolio site into `partisan-project`; buildless static site; three.js vendored; Pages workflow (needs one owner click, `WP-F8`) |
-| Operator Customiser | **Live**: four operators on one skeleton, *Base*, *Recon*, *Insurgent*, *Enforcer* (extension packs bound to the purchased soldier's rig by bone name); 10+ equipment slots, 8–10 colour zones per base, 5 hero poses, 3 idle animations, shareable URL looks, optional carried rifle as a prop |
-| Weapon Workbench | **Live**: AK-74M and AK-15K, 12 slots on three rails that cannot overlap (back-up sight, trigger, charging handle, sling…), stats and hover deltas, rules, presets, finishes, camo, wear, photo and loadout card |
-| Asset Viewer | **Live**: inspects registered GLBs against budgets |
-| Removed | Test fire, recoil, reload, range drill, bench scene with hands, Advanced animations experiment (returned as the opt-in Bench Lab, ADR 0008), code-built operator |
-| Not done | Real CC0 attachments and extra weapons (the build sandbox cannot reach OpenGameArt, itch.io, Sketchfab: see §5); roster patches/props and owner art sign-off |
+| **Weapon Modder** (`workbench/`) | **Live.** Eleven rifles from cleared sources: AK-74M, AK-15K, G3, M16A1, Mk 14 EBR, modernised RPK, SIG MCX Spear (plus a retro-textured variant), StG 44, PPSh-41, Bren, Chauchat. Real attachment parts, every rifle takes every attachment, a CNC furniture kit for the older rifles, rails that cannot overlap, stats and hover deltas, presets, finishes, camo, wear. Studio light over a baked warehouse panorama, warehouse ambience, handling sounds |
+| **Operator Modder** (`operator/`) | **Live.** Generated Recon by default plus Base, Insurgent and Enforcer; modular kit, colour zones, patches; three poses (Hero rifle-up, Relaxed, Low ready) with idles and hands solved onto any of the eleven rifles; the Workbench build carried onto the character; a warehouse with an idle crew, depth of field, dirty-lens flares and room sound; share card, P1 loadout codes |
+| **Partisan Tactical** (`convoy/`) | **Playable prototype.** Three missions: Convoy ambush, Compound assault, Cave hideout defence. RimWorld-style 2.5-D sprite view (the 3-D view is retired), rounds in flight, fog of war with the same 30 m sight for both sides, squad orders and tactical pause, play every rebel with a slow-motion swap, class abilities, grenades, sprint, difficulty, recorded sound. After a mission: XP, loot rolled from the Equipment Wiki catalogue, a stash, a trader and equipment-gated promotions (camp screen) |
+| **Rebel Band** (`band/`) | **Playable demo.** Bannerlord-style party screen: 44 classes in 7 tiers (heavy, medium, light), each promotion costs experience and the kit the new class carries; class tree view |
+| **Overworld Map** (`map/`) | **Test.** Bannerlord-style 3-D map of the island: provinces, nine settlements, roads, the Recon as your party, Invader patrols and convoys with nameplates, time controls. Not yet wired to anything; it becomes the campaign screen (§5.8) |
+| **Equipment Wiki** (`wiki/`) | **Live.** 4,227 lootable items (placeholder data) in a searchable catalogue; the loot tables roll from it |
+| **Shell** | Opening scene and boot, Nokia index on the table, shared top bar and music, Art Style Lab, Bench Lab, Asset Viewer, design document, this roadmap, the *Walking Through* podcast scripts |
+| **Engineering** | Buildless ES modules, vendored three.js, allowlist site build, GitHub Pages; 253 unit tests, Playwright smoke and axe-core accessibility runs in CI; models parsed once per page and cloned, prefetched after load; MSAA at 1080p |
+| **Not done** | The campaign itself (map, missions and upgrades as one loop, one save); durable item inventory and extraction rules; owner art sign-off on the roster; device performance acceptance; setting canon |
 
-## 3. Instruction log (what the owner asked for on 1 October 2026, and where it landed)
+## 3. Owner direction since 1 October (what changed the plan)
 
-| Instruction | Outcome |
+| Direction | Where it landed |
 |---|---|
-| Token-budget system for $20 plans, handing off between agents | `docs/agent-ops/` + `tools/agent/*` (WP-F3) |
-| Remove the project from vincentdenil-site, host in `partisan-project` with GitHub Pages; outbound links from `/projects` | Done in both repos; Pages workflow built; owner enables Pages (WP-F8) |
-| Rename to Partisan Project, abbreviation Partisan Project | Done everywhere |
-| Hierarchy: `workbench`, `viewer`, `docs`, `docs/moodboard` | Done, plus `operator`, `shared`, `assets`, `vendor`, `tools`, `tests` |
-| `docs/game-design-master-doc.html` (in-universe one-pager) and `docs/master-roadmap.md` | Done |
-| Ingest `feedback/` images for art direction; moodboard folder | `docs/moodboard/`, `docs/art-direction.md` |
-| Nokia-style / DOS dither index browser | `index.html` |
-| Remove shooting, operator and workbench hand animation features | Done (ADR 0005) |
-| Replace the generated operator with the purchased asset; Base Operator; Recon / Insurgent / Enforcer later | Base Operator live; others planned (M2) |
-| Character customiser separate from the workbench | `operator/` |
-| Idle animations and hero poses from the sheet | 10 poses (incl. the sheet's hero pose, crouch, kneel, salute), 3 idles, data-driven |
-| Replace generated assets and attachments with real CC0 counterparts; add all outstanding assets | **Pipeline and register done; downloads blocked in this sandbox** (M1/M4 packets list each one) |
-| Consolidate with the old roadmap into a master document and a one-page site | This file and the design document |
-| The earlier `partisan-project` contents (AI docs) move to vincentdenil-site/docs | Done: `vincentdenil.com/docs/partisan-ai/` |
+| Pitch: *Escape from Tarkov meets Mount and Blade with guns*; squad PvE with a Bannerlord-style overworld | Design document hero; §1; the campaign roadmap |
+| Make the shooter a RimWorld-style 2.5-D top-down game | Milestone **V**; the sprite view is the default, the 3-D view retired |
+| Play as the whole squad, upgrade fighters with stolen equipment | WP-S20 to S26 (built in the shooter); the Rebel Band demo |
+| Real weapons from Sketchfab sources, every rifle with every attachment | Milestone **M4** complete; the Weapon Modder universal attachments |
+| A Bannerlord-style 3-D world map | `map/` test; TAC-K-04 retires the retro overworld packets |
+| One loop: move on the map, convoys and cities launch missions, hunters launch the base defence, loot upgrades the band | [Campaign roadmap](campaign-roadmap.md), milestone **W**; decisions TAC-K-01 to K-04 delegated to the agent |
+| Fewer, better operator poses; tours removed | Three poses; onboarding tours deprecated |
 
 ## 4. Milestones
 
-Dates are **targets, not commitments**; capacity is measured in windows, not weeks (see agent-ops §3).
+Dates are **targets, not commitments**; capacity is measured in windows, not weeks (agent-ops §3). Progress per
+milestone is in §6.
 
-| Milestone | Target | Outcome | Exit gate |
-|---|---|---|---|
-| **M0 Foundation** v0.3.0 | 1 Oct 2026 | Restructure, removals, Operator Customiser v1, docs, Pages workflow | Owner enables Pages; live smoke test (WP-F8, WP-F10) |
-| **M1 Gun modder** v0.4.0 | mid Nov 2026 | Real CC0 attachments; G3A3 as third rifle; rail footprints; new slots; stat consistency | ≥ 3 weapons, visible compatibility reasons, hover deltas, presets, no code-built primitive left unregistered |
-| **M2 Operator roster** v0.5.0 | mid Dec 2026 | Recon, Insurgent, Enforcer on the shared skeleton; roster switcher; patches; more poses; idle polish; hair/face | Each operator signed off against its moodboard reference; ≤ 15 k triangles; no clipping in all poses. *v1 of Recon, Insurgent and Enforcer is live (v0.3.1); sign-off, patches and more poses remain* |
-| **M3 Integration** v0.6.0 | Jan 2027 | Workbench build carried onto the operator; per-weapon grip data; versioned share codes; combined share card | Round-trip of weapon + operator + pose through a link, including legacy AK hashes |
-| **M4 Roster 2** v0.7.0 | Q1 2027 | M16, Mk14, RPK, Spear (decision), STG44, PPSh; Bren and Chauchat sources | Each item shipped as real geometry or recorded as "no free source" |
-| **M5 Production** v1.0.0 | Q2 2027 | Accessibility, performance, credits, guided first run, release | Checklist in `engineering/standards.md` |
-| **2027 horizon** | after v1.0 | Ruined-checkpoint environment demo; belief-model visualiser from the AI compendium | Own packets (WP-E*) |
+| Milestone | Target | Outcome | Exit gate | State |
+|---|---|---|---|---|
+| **M0 Foundation** v0.3.0 | 1 Oct 2026 | Restructure, Operator Modder v1, docs, Pages | Live smoke test | Done |
+| **M1 Gun modder** v0.4.0 | Oct 2026 | Real attachments, rail footprints, new slots, stat consistency | ≥ 3 weapons, visible compatibility reasons, presets (WP-A10) | Finishes pass (A4) and exit tests (A10) remain |
+| **M2 Operator roster** v0.5.0 | Dec 2026 | Recon, Insurgent, Enforcer; then the deep modular Recon (WP-CM) | Owner sign-off per operator; ≤ 15 k triangles; no clipping | v1 roster live; the modular rebuild is next |
+| **M3 Integration** v0.6.0 | Dec 2026 | Build onto the operator, share codes, share card; looks from owned gear | Round-trip through a link | Grip data per weapon (I2) blocked on M1 exit |
+| **M4 Roster 2** v0.7.0 | Oct 2026 | Eight more rifles | Real geometry for each | Done |
+| **S Partisan Tactical** v0.8.0 | Q4 2026 | Missions, squad play, progression; then durable inventory and extraction | Convoy extraction gate (WP-S35) | Missions, squad play and progression built; inventory and extraction next |
+| **V Graphics** v0.9.0 | Q1 2027 | The 2.5-D look with real art (art bible, paper-doll people, terrain, structures, lighting) | Parity checklist (WP-V18) | Sprite view runs on placeholder art |
+| **W Campaign** v0.10.0 | Q1 2027 | The Bannerlord loop over map, missions, band and modders | Gate W-A: the first full loop in one save | Planned; decisions made; WP-W1 ready |
+| **M5 Production** v1.0.0 | Q2 2027 | Performance, manual accessibility pass, release | `engineering/standards.md` checklist | Audit and release checklist done; device acceptance remains |
+| **2027 horizon** | after v1.0 | Checkpoint diorama, belief-model visualiser | Own packets (WP-E*) | Planned |
 
-*Budget arithmetic.* Open work today is ~695 BU of packets (see §6). At the planning assumption of 8 usable windows per plan per week and 25 % reserve, one plan carries roughly 600 BU a week, so the plan is capacity-feasible with slack; the real constraint is **owner actions** (downloads, licence checks, art sign-off), which is why they sit at the top of every milestone. Re-run the calculation after two weeks of calibration data.
+*Budget arithmetic.* Open work is ~1,550 BU in 105 packets (§6), most of it in the campaign (W), the deep character
+rebuild (CM) and the extraction work (S). At the planning assumption of about 600 BU a week across both plans that is
+under three weeks of windows; the real constraints are **owner actions** (art sign-off, the setting canon, playtests)
+and the order of work, not raw capacity. Recalibrate after two more weeks of usage data.
+
+**Order of work.** 1) **W0–W3**, the campaign spine and the first playable loop (gate W-A), because it turns the demos
+into a game. 2) In parallel, small: **M1 exit** (A4, A10) and the tactical boundaries (WP-S28). 3) **Inventory and
+extraction** (S8, S29, S30), adopted by the campaign when they land. 4) **CM** deep character work. 5) **V** real art.
 
 ## 5. Tracks
 
-### 5.1 Weapons (Workbench)
+### 5.1 Weapons (Weapon Modder)
 
-Preserve what exists (finishes, camo, wear, presets, hash state, hover deltas, rules). Extend rule semantics
-(`requires`, `excludes`, `replaces`) with visible reasons; generalise rail length, pitch and footprints; add slots
-(sling mount, charging handle, trigger, dust-cover rail). Stats stay *illustrative* handling values, never claims
-about real-world performance.
+Done: eleven rifles from cleared Sketchfab sources (M4), real attachment parts, mounts snapped by a ray-cast audit,
+universal attachments on every rifle, the CNC kit, rail footprints, the new slots, stat consistency, presets. Stats are
+*illustrative* handling values, never real-world claims. Remaining: generalise finishes and camo to every real
+material (WP-A4) and the weapon-depth exit tests (WP-A10). In the campaign, the Modder shows only owned parts and assigns
+builds to fighters (WP-W16). Every model is listed in the asset register (`assets/register.json`).
 
-**Content stages** (sources are **leads**, not clearances; the owner verifies each exact asset page before download;
-full list with candidates and blockers: [`../assets/REGISTER.md`](../assets/REGISTER.md)):
+### 5.2 Characters (Operator Modder)
 
-| Stage | Items | Notes |
-|---|---|---|
-| 1 | Real attachment geometry (magazine, muzzle device, optic first), **G3A3** | Generic donor: byzmod3d *Low Poly Weapon Pack* (CC0); chilly-durango *Low Poly Firearms* (CC0) as modular reference. G3A3: 3DCADBrowser licence unknown, else a Sketchfab G3/CETME substitute. |
-| 2 | M16 / modernised M16, Mk14 EBR, modernised RPK, SIG Spear | RPK: look for D_U's catalogue (same author, CC BY 4.0), else kitbash; Spear has **no free source** (owner decision: pay or placeholder). Reference photo for the RPK target look is in the legacy roadmap archive. |
-| 3 | STG44 and PPSh-41 as modernised kitbashes; Bren and Chauchat sources only | Chauchat is the rarest free asset on the list. |
+Done: Base, Recon (generated, textured, the default), Insurgent and Enforcer on rigs that share the pose data; slots,
+colour zones, patches, hair and facial hair, blink, head-follow, secondary motion; three poses after the owner's cut
+(Hero rifle-up, Relaxed, Low ready) with runtime two-bone arm IK onto any rifle; the warehouse scene.
 
-Scope-honesty rules carried forward: better code-built shapes are an acceptable *interim* but do **not** satisfy
-"real downloaded geometry"; an uncleared source leaves its milestone open; a placeholder is labelled as one.
-
-**Why none of this shipped in v0.3.0.** The session that did the restructure could only reach npm, PyPI and the
-GitHub API. OpenGameArt, itch.io, Sketchfab, Poly Haven and Freesound were blocked by the sandbox's network policy.
-The owner's two actions (`WP-A1`: download packs into `assets-incoming/`) unblock the rest,
-and the import path (`import-asset.py` → `optimize-glb.mjs` → `register.mjs add --fulfils …`) was tested end to end on a synthetic model.
-
-### 5.2 Characters (Operator Customiser)
-
-Done: Base Operator **plus Recon, Insurgent and Enforcer v1** (original extension packs: hood, houndstooth scarf, chest radio, knit beanie, shemagh, a shirt torso, generated plaid and recon camo); slots (headgear, headset, face, body armour, chest rig, belt, backpack, holsters, pads, carried
-weapon); colour zones (top, trousers, armour, helmet, gear, gloves, boots, skin) with the pack's own camo plus four
-generated camos; ten poses (Relaxed, Hero rifle-up, Low ready, High ready, Shoulder arms, Crouch, Kneel, Salute, Radio check, Overwatch; legs fold via a `lower` offset); three idles (Calm,
-Alert scanning, Weary); URL looks; photo export; triangle/draw-call readout against budget.
-
-Next priority: [deep character customisation](character-customisation-roadmap.md), packets `WP-CM0`–`WP-CM21`. Rebuild a complete Recon underbody, then author interchangeable carrier families, individual pouches, belts and bags with fitting, compatibility and saved assemblies. The first gate is a stripped character plus one carrier, three pouch modules, a belt and a daypack. Reuse the older C-series patch, prop and headwear work where compatible; the new 3D release does not wait for inventory/sprite integration.
-
-*Pose model.* Poses and idles are JSON in character-space degrees applied over the rest pose. Legacy operators use the shared skeleton; the generated Recon has a fitted 26-bone skeleton and a pose profile. Runtime two-bone arm IK in `operator/grip.js` places palms on the carried rifle. The modular roadmap preserves this data interface while adding articulated hands and fitted gear. Weapon firing and recoil remain outside the Operator Modder.
+Next: [deep character customisation](character-customisation-roadmap.md) (`WP-CM1` to `CM21`): a clean Recon underbody,
+then interchangeable carriers, pouches, belts and bags with fitting and saved assemblies. In the campaign, looks follow
+owned kit and class (WP-W17, WP-CM19).
 
 ### 5.3 Integration and sharing
 
-Done: the Workbench build carries onto the operator ("Workbench build" weapon option; the operator link embeds the build so it works for anyone) and versioned `P1.` codes with backward compatibility for every old link (`shared/loadout.js`). Next: grip-contact data per weapon/stock combination (`WP-I2`) and a combined share card (`WP-I4`).
+Done: the Workbench build on the operator, versioned `P1.` codes with every old link still working, the combined share
+card. Next: grip contact data per weapon and stock (`WP-I2`, after M1's exit) and modular looks from owned equipment.
 
 ### 5.4 Quality and release
 
-Accessibility (WCAG 2.2 AA target), performance acceptance on a real mid-range phone, credits generated from the
-register, guided first run, release checklist. Targets: 60 fps desktop / 30 fps mid-range phone *as goals, not measured claims*.
-
-### 5.6 Partisan Tactical (the top-down shooter)
-
-**3 October review:** S1–S4 are implemented on main: level data, objectives, squad orders and new AI behaviours.
-The current convoy is still a disposable combat scenario. The next goal is a complete **persistent extraction loop
-on that map**: risk owned kit, search bodies/cargo, survive a timed exit, bank once, and redeploy with recovered gear.
-Defeat, timeout and abandonment lose deployed equipment. More maps follow that playable gate.
-
-The [tactical roadmap](tactical-roadmap.md) now contains the code audit, loss rules, save/transaction design,
-packet dependencies, survival/economy work, three-mission progression, customiser integration and acceptance matrix.
-Physical gear and permanent catalogue discoveries are separate. The initial browser release is solo PvE with AI
-squadmates; authoritative co-op and PvPvE are gated research, not existing features or v0.8.0 promises.
-Start with WP-S20/WP-S21 (whole-squad control), then WP-S28 and WP-S16, then WP-S8/WP-S29. Milestone S totals include optional online research and are relative
-BU estimates, not dates or subscription-window guarantees. This tactical work supersedes the older horizon wording
-above only for the now-existing shooter; other modules retain their own priorities.
-
-Claude’s merged WP-S20–S26 remain: switch between rebels, lose only on all-down, then per-rebel XP and equipment-gated branches. Their decision log is retained.
-
-### 5.7 Graphics (2.5-D sprites and the retro overworld)
-
-The shooter's world becomes RimWorld-style 2.5-D top-down sprites (thick outlines, paper-doll people, long shadows) and the
-campaign map a retro handheld-RPG island map. The simulation is untouched, so it runs in parallel with the gameplay work.
-Plan: [graphics-roadmap.md](graphics-roadmap.md) (milestone V, WP-V1 to V20). Reasoning: [design-decisions/J-graphics.md](design-decisions/I-graphics.md).
+Done: axe-core accessibility audit in CI with keyboard-operable 3-D stages, release checklist, load pass (models parsed
+once, prefetch after load), antialiasing. Remaining: device performance acceptance (60 fps desktop, 30 fps mid-range
+phone, *goals, not measured claims*, `WP-Q2`) and a manual screen-reader and zoom pass (`WP-Q6`).
 
 ### 5.5 Design documentation
 
-Setting reconciliation (`WP-D1`) comes first: the earlier premise (Yantis, 2012, a *WW2044* prologue) and the
-modern low-poly look must be reconciled before more art is made. Then GDD expansion, insignia, audio direction, a
-UI/UX style guide.
+Setting canon (`WP-D1`) is still the open owner decision: the earlier premise (Yantis, 2012, a *WW2044* prologue)
+against the present low-poly Mediterranean island. Faction insignia and flags (`WP-D3`) wait on it; the map's factions
+are placeholders until then. The design decisions log ([design-decisions/](design-decisions/README.md)) records every
+gameplay decision with its reasons.
+
+### 5.6 Partisan Tactical (the missions)
+
+![Concept keyframe: four low-poly rebels around a map table in a lamp-lit hideout, planning the next raid](moodboard/keyframe-3-war-room.jpg)
+*Between raids: the squad plans the next ambush over the island map. The overworld and loot metagame target mood;
+concept art, reference only.*
+
+Built: levels as data, objectives and debrief, squad orders and pause, guards, patrols, alarms, reinforcements and
+bounding waves; the **three missions**; playing every rebel with the slow-motion swap; XP, equipment-gated
+promotions and class abilities (WP-S20 to S26 as built, with promotions in place of levels and perk points); loot
+from the catalogue with a stash and a trader; fog of war, grenades, sprint, difficulty and recorded sound.
+
+Next, per the [tactical roadmap](tactical-roadmap.md): the tactical boundaries (`WP-S28`) and AI tuning harness
+(`WP-S16`), then durable inventory (`S8`), save transactions (`S29`) and the extraction lifecycle (`S30`): risk owned
+kit, search bodies and cargo, survive a timed exit, bank once. The campaign launches these same missions from the map
+(§5.8) and does not wait for the extraction work. Co-op and PvPvE stay gated research, not promises.
+
+### 5.7 Graphics (the 2.5-D look)
+
+The shooter is RimWorld-style 2.5-D sprites and already runs that way on placeholder art (`WP-V2`, `V3` done).
+Remaining: the art bible (`V1`), paper-doll people, equipment layers, animation states, terrain, structures,
+vehicles, effects, lighting, world-space UI, parity sheets and phone performance. The overworld is no longer part of
+this milestone: the 3-D map is the overworld (TAC-K-04), so `V14` to `V16` are retired. Plan:
+[graphics-roadmap.md](graphics-roadmap.md). Reasoning: [design-decisions/J-graphics.md](design-decisions/J-graphics.md).
+
+### 5.8 The campaign: the Bannerlord loop
+
+All the modules become one game: the band moves on the [world map](../map/), convoys launch the Convoy Ambush,
+settlements the Compound Assault, and hunting armies that catch you the Rebel Base Defence. Every mission ends in loot
+that promotes fighters on the band screen, fits guns in the Weapon Modder and changes looks in the Operator Modder.
+Trade is barter at friendly villages, auto-resolve covers only lopsided fights, and an overrun camp is a setback, not a
+game over (TAC-K-01 to K-04). Plan: [campaign-roadmap.md](campaign-roadmap.md) (milestone W, WP-W1 to W26; the first
+playable loop at gate W-A).
 
 ## 6. Work packets (generated)
 
@@ -163,8 +171,9 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | **TD** Tech debt (fill windows) | — | 4/4 | 44 BU | 100% |
 | **D** Design docs | — | 3/5 | 59 BU | 61% |
 | **H27** 2027 horizon | — | 0/3 | 48 BU | 0% |
-| **S** Partisan Tactical: extraction PvE, campaign and gated online research | v0.8.0 | 6/42 | 645 BU | 13% |
-| **V** Graphics: 2.5D top-down sprites and the retro overworld | v0.9.0 | 0/20 | 251 BU | 0% |
+| **S** Partisan Tactical: extraction PvE, campaign and gated online research | v0.8.0 | 13/42 | 645 BU | 31% |
+| **V** Graphics: 2.5D top-down sprites for the shooter (the overworld moved to W) | v0.9.0 | 2/20 | 251 BU | 11% |
+| **W** World campaign: the Bannerlord loop (map, missions, loot, upgrades) | v0.10.0 | 1/26 | 359 BU | 1% |
 
 ### M0 · Foundation
 
@@ -208,7 +217,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-C5` | Insurgent: plaid shirt, shemagh, bare head, AK-pattern kit built from Base parts plus new meshes | M (20) | done | bpy | `WP-C4` |
 | `WP-C6` | Enforcer: black kit, bold pouches, NVG helmet variant | M (20) | done | bpy | `WP-C4` |
 | `WP-C7` | Insignia and patch system: six sleeve patch designs, left and right (faction flags come with WP-D3) | M (20) | done | — | `WP-C4` |
-| `WP-C8` | Pose library expansion: crouch, kneel, sit, salute, sling carry, rifle-on-shoulder | M (20) | done | browser | `WP-C1` |
+| `WP-C8` | Pose library expansion: crouch, kneel, sit, salute, sling carry, rifle-on-shoulder (pose set later cut to three by the owner: Hero, Relaxed, Low ready) | M (20) | done | browser | `WP-C1` |
 | `WP-C9` | Idle polish: blink and head-follow of the camera (reduced-motion safe) | M (20) | done | — | `WP-C1` |
 | `WP-C10` | More hairstyles and facial-hair options for bare-head looks | M (20) | done | bpy | `WP-C4` |
 | `WP-C11` | Secondary motion: scarf drape and strap follow-through on the idle | S (8) | done | bpy, browser | `WP-C9` |
@@ -266,7 +275,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 |---|---|---|---|---|---|
 | `WP-Q1` | Accessibility audit across all demos (axe-core in CI, keyboard orbit, contrast, reduced motion) | M (20) | done | — | — |
 | `WP-Q2` | Performance acceptance: desktop 60 fps and a mid-range phone 30 fps, cold/warm load, memory under repeated actions | M (20) | planned | — | — |
-| `WP-Q4` | Short guided first run across demos (preset > part > stat; look > pose) | S (8) | done | — | — |
+| `WP-Q4` | Short guided first run across demos (preset > part > stat; look > pose) (tours since deprecated, 4 October) | S (8) | done | — | — |
 | `WP-Q5` | Release checklist and v1.0.0 tag for the 2026 demo | S (8) | done | — | `WP-Q1` |
 | `WP-Q6` | Manual accessibility pass: screen reader (NVDA/VoiceOver), zoom 200 %, high-contrast mode, a real phone | XS (3) | planned | owner | `WP-Q1` |
 
@@ -278,8 +287,8 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-S2` | Objectives and outcomes: eliminate, reach, destroy, steal, hold, protect, extract; debrief screen | S (8) | done | — | `WP-S1` |
 | `WP-S3` | Squad orders: select teammates, follow/hold/move/attack/cover, tactical pause, order markers | M (20) | done | — | `WP-S1` |
 | `WP-S4` | AI behaviours for new scenarios: guard posts, patrols, alarm propagation, radio reinforcements, bounding attack waves | S (8) | done | — | `WP-S1` |
-| `WP-S5` | Level 2 Compound assault: walled compound, towers, armoury cache, radio mast, stealth then alarm, extract | M (20) | planned | — | `WP-S35`, `WP-S32`, `WP-S4` |
-| `WP-S6` | Level 3 Cave hideout defence: cave, tunnels, fallback chamber, night, three attack waves, hold until dawn | M (20) | planned | — | `WP-S35`, `WP-S31`, `WP-S32`, `WP-S3`, `WP-S4` |
+| `WP-S5` | Level 2 Compound assault: walled compound, towers, armoury cache, radio mast, stealth then alarm, extract | M (20) | done | — | `WP-S4` |
+| `WP-S6` | Level 3 Cave hideout defence: cave, tunnels, fallback chamber, night, three attack waves, hold until dawn | M (20) | done | — | `WP-S3`, `WP-S4` |
 | `WP-S7` | Level visuals (retired: delivered by WP-V9 structures and WP-V12 lighting in the 2-D renderer) | S (8) | blocked | — | — |
 | `WP-S8` | Inventory domain: unique items, ownership, loadout slots, compatible magazines, capacity and schema | M (20) | planned | — | `WP-S28` |
 | `WP-S9` | Looting in levels: soldiers drop kit, vehicle cargo, hold E to search (exposed), carry limits, order a teammate to loot | M (20) | planned | — | `WP-S8`, `WP-S2` |
@@ -294,12 +303,12 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-S18` | Touch controls: twin-stick, tap to loot, long-press orders | S (8) | planned | — | `WP-S35`, `WP-S10`, `WP-S3` |
 | `WP-S19` | Docs: design doc sections (scenarios, loot loop, unlock economy), changelog, index entry renamed Partisan Tactical | XS (3) | planned | — | `WP-S17` |
 | `WP-S20` | Play as the whole squad: active-rebel pointer, loss when every rebel is down, forced swap on death, AI takes over the one you leave | M (20) | done | — | `WP-S1`, `WP-S3` |
-| `WP-S21` | Swap UX: switch button, slow-motion zoom-out, hover the new rebel, take control (reduced-motion safe) | S (8) | ready | — | `WP-S20` |
-| `WP-S22` | Progression core: XP from kills, objectives and looting; levels 1-10 per rebel; perk points; persistent in the campaign save | M (20) | planned | — | `WP-S12`, `WP-S20` |
-| `WP-S23` | Upgrade trees: Bannerlord-style tiers per rebel with two branches, gated by the equipment carried | M (20) | planned | — | `WP-S8`, `WP-S22` |
-| `WP-S24` | Perks and abilities: passive perks per level, active abilities with cooldowns unlocked by branch | M (20) | planned | — | `WP-S23` |
+| `WP-S21` | Swap UX: switch button, slow-motion zoom-out, hover the new rebel, take control (reduced-motion safe) | S (8) | done | — | `WP-S20` |
+| `WP-S22` | Progression core (as built): XP per rebel from kills, objectives, survival and victory, kept in the squad save; promotions replace levels and perk points | M (20) | done | — | `WP-S20` |
+| `WP-S23` | Upgrade trees (as built): promotions along the Rebel Band class tree (44 classes, 7 tiers), costing XP and the equipment the new class carries | M (20) | done | — | `WP-S22` |
+| `WP-S24` | Perks and abilities (as built): passive class modifiers and active abilities with cooldowns, inherited along the path | M (20) | done | — | `WP-S23` |
 | `WP-S25` | Teammate AI uses abilities; progression balance pass with the tuning harness | S (8) | planned | — | `WP-S24`, `WP-S16` |
-| `WP-S26` | Rebel sheet UI: level, XP, tree with locked branches and the gear they need, perk picks | S (8) | planned | — | `WP-S23`, `WP-S10` |
+| `WP-S26` | Rebel sheet UI (as built): the camp screen shows each rebel's XP, abilities and what each promotion costs in XP and equipment | S (8) | done | — | `WP-S23` |
 | `WP-S27` | Extraction roadmap: repository audit, staged delivery gates and synchronized work packets | S (8) | done | — | — |
 | `WP-S28` | Tactical boundaries: extract lifecycle/render/input seams while preserving seeded practice behaviour | M (20) | ready | — | `WP-S1`, `WP-S2`, `WP-S3`, `WP-S4`, `WP-S20`, `WP-S21` |
 | `WP-S29` | Persistence transactions: profile schema, reservation, idempotent settlement, migration and concurrent-tab ownership | M (20) | planned | — | `WP-S8` |
@@ -317,13 +326,13 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-S41` | Owner decision: approve a PvPvE experiment after co-op retention, fairness and cost review | XS (3) | blocked | owner | `WP-S40` |
 | `WP-S42` | Conditional PvPvE experiment: small closed raid population and fairness evaluation | M (20) | planned | browser, net | `WP-S41` |
 
-### V · Graphics: 2.5D top-down sprites and the retro overworld
+### V · Graphics: 2.5D top-down sprites for the shooter (the overworld moved to W)
 
 | ID | Packet | Size | Status | Needs | Depends on |
 |---|---|---|---|---|---|
 | `WP-V1` | Art bible: palette, outline rule, 1 m = 32 px scale, sun direction, shadow rule, sprite sizes, layer order | S (8) | ready | — | — |
-| `WP-V2` | Renderer interface: extract the draw calls from convoy/game.js; the three.js code becomes renderer-3d behind ?view=3d | S (8) | planned | — | `WP-V1` |
-| `WP-V3` | Canvas 2-D renderer: integer zoom and pan, y-sorted layers, picking, DPR; today's level with placeholder sprites | M (20) | planned | — | `WP-V2` |
+| `WP-V2` | Renderer split (as built): the sprite renderer reads the same simulation; the 3-D shooter page was retired instead of kept behind ?view=3d | S (8) | done | — | — |
+| `WP-V3` | Canvas 2-D renderer: integer zoom and pan, y-sorted layers, picking, DPR; today's level with placeholder sprites | M (20) | done | — | `WP-V2` |
 | `WP-V4` | Sprite tooling and Sprite Lab: atlas and manifest build, a viewer for layers, animations and palette swaps | S (8) | planned | — | `WP-V3` |
 | `WP-V5` | Paper-doll people: layered soldiers in front/back/side views with the outline pass; role silhouettes and factions | M (20) | planned | — | `WP-V4` |
 | `WP-V6` | Equipment layers: item id to sprite layers; weapons and vehicles baked from 3-D models by a top-down render-to-sprite pass | S (8) | planned | — | `WP-V5` |
@@ -334,13 +343,44 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-V11` | Effects: tracers, muzzle flash, sparks, dust, smoke, explosions, casings, suppression pulses (no gore) | S (8) | planned | — | `WP-V3` |
 | `WP-V12` | Lighting: time-of-day tint, darkness mask with lights, cave darkness, searchlight cone | M (20) | planned | — | `WP-V9`, `WP-V11` |
 | `WP-V13` | World-space UI: selection brackets, order markers, health pips, callouts and the AI-view overlay in 2-D | S (8) | planned | — | `WP-V3` |
-| `WP-V14` | Overworld island renderer: low-res height grid in banded greens, coast outline, flat sea, nearest-neighbour scaling | M (20) | planned | — | `WP-V4`, `WP-V17` |
-| `WP-V15` | Overworld icons and routes: red-roofed towns, yellow land routes, blue sea routes, territory tint with non-colour cue, squad marker | S (8) | planned | — | `WP-V14` |
-| `WP-V16` | Overworld UI and transitions: integer pan/zoom, node panel, travel, clock, zoom into the tactical map | M (20) | planned | — | `WP-V15` |
-| `WP-V17` | Overworld data: island.js format (nodes, routes, regions, starting control), reachability test, first island | S (8) | planned | — | `WP-V1` |
-| `WP-V18` | Parity and switch: parity checklist, per-level contact sheets, 2-D default, 3-D behind ?view=3d for one release then removed | S (8) | planned | — | `WP-V5`, `WP-V9`, `WP-V10`, `WP-V11`, `WP-V12`, `WP-V13` |
+| `WP-V14` | (retired by TAC-K-04: the 3-D world map is the overworld; work moved to WP-W3, W4, W8) Overworld island renderer: low-res height grid in banded greens, coast outline, flat sea, nearest-neighbour scaling | M (20) | blocked | — | `WP-V4`, `WP-V17` |
+| `WP-V15` | (retired by TAC-K-04: the 3-D world map is the overworld; work moved to WP-W3, W4, W8) Overworld icons and routes: red-roofed towns, yellow land routes, blue sea routes, territory tint with non-colour cue, squad marker | S (8) | blocked | — | `WP-V14` |
+| `WP-V16` | (retired by TAC-K-04: the 3-D world map is the overworld; work moved to WP-W3, W4, W8) Overworld UI and transitions: integer pan/zoom, node panel, travel, clock, zoom into the tactical map | M (20) | blocked | — | `WP-V15` |
+| `WP-V17` | Overworld data: map/island.js format (nodes, routes, regions, starting control), reachability test, first island | S (8) | planned | — | `WP-V1` |
+| `WP-V18` | Parity checklist and per-level contact sheets for the 2-D view (the 3-D view was already removed) | S (8) | planned | — | `WP-V5`, `WP-V9`, `WP-V10`, `WP-V11`, `WP-V12`, `WP-V13` |
 | `WP-V19` | Performance and phones: sprite and draw-call budget, caches, particle caps, 30 fps floor on a mid phone, non-colour cues | S (8) | planned | — | `WP-V12` |
 | `WP-V20` | Docs: Game Design Doc visuals section, changelog, moodboard, decision log | XS (3) | planned | — | `WP-V18` |
+
+### W · World campaign: the Bannerlord loop (map, missions, loot, upgrades)
+
+| ID | Packet | Size | Status | Needs | Depends on |
+|---|---|---|---|---|---|
+| `WP-W1` | Campaign save v1: one versioned state for world, band, stash and log; migrate the tactical squad and Rebel Band saves; storage adapter | S (8) | ready | — | — |
+| `WP-W2` | Mission bridge: deployment and result payloads, kit reserved on launch, result settled exactly once, refresh mid-mission counts as withdrawn | M (20) | planned | — | `WP-W1` |
+| `WP-W3` | The band on the map: navigation grid from the heightfield and roads, click to move, route preview, terrain speeds, follow camera | M (20) | planned | browser | `WP-W1` |
+| `WP-W4` | Campaign clock: pause and three speeds, day and night tint and sight, pause on encounters and menus | S (8) | planned | — | `WP-W3` |
+| `WP-W5` | World simulation core: seeded headless parties with goals, speeds and sight; save and restore; determinism tests | M (20) | planned | — | `WP-W1`, `WP-W4` |
+| `WP-W6` | Convoys on the map: spawn at Invader seats, road routes, cargo manifest and escort on the nameplate, resupply on arrival | S (8) | planned | — | `WP-W5` |
+| `WP-W7` | Hunters and heat: patrols, hunter columns spawned by heat, map sight (night, forest, band size), last-seen tracking, losing them | M (20) | planned | — | `WP-W5` |
+| `WP-W8` | Encounters: contact rules and the encounter panel (Attack, Prepare ambush, Withdraw with a rearguard, Leave) | S (8) | planned | — | `WP-W2`, `WP-W6`, `WP-W7` |
+| `WP-W9` | Convoy encounter launches the Convoy Ambush, set up from the convoy party (vehicles, escort, cargo, time, ambush start); result back to the map | M (20) | planned | browser | `WP-W8` |
+| `WP-W10` | Settlement encounter launches the Compound Assault: defenders from garrison and militia, variants per settlement kind, night infiltration | M (20) | planned | browser | `WP-W8`, `WP-W13` |
+| `WP-W11` | Caught by an army launches the Rebel Base Defence: cave level at camp, new hasty-defence variant in the open | M (20) | planned | browser | `WP-W8` |
+| `WP-W12` | Deploy screen: pick up to four fighters from the band; one squad model shared by the band and the missions | S (8) | planned | — | `WP-W1`, `WP-W2` |
+| `WP-W13` | Return to the map: settle casualties, wounds, experience, kills and aftermath (wreck, smoke); autosave and result toast | S (8) | planned | — | `WP-W9`, `WP-W11`, `WP-W12` |
+| `WP-W14` | Loot into the band: cargo manifest and level loot into the campaign stash, with its source | S (8) | planned | — | `WP-W13` |
+| `WP-W15` | The band screen on the campaign save, opened from the map (P); promotions with experience and stolen kit | M (20) | planned | browser | `WP-W14` |
+| `WP-W16` | Owned guns in the Weapon Modder: only owned attachments selectable, locked ones say where they drop; assign a build to a fighter | M (20) | planned | browser | `WP-W15` |
+| `WP-W17` | Looks from kit: a fighter's class and owned wearables set the Operator Customiser look and the map figure | S (8) | planned | browser | `WP-W15` |
+| `WP-W18` | Recruits and barter at friendly villages | S (8) | planned | — | `WP-W15` |
+| `WP-W19` | Territory: capture settlements, what they give (recruits, food, rest), Invader counter-attacks to retake them | M (20) | planned | — | `WP-W10`, `WP-W13` |
+| `WP-W20` | Escalation director: Invader response tiers drive hunters, mission difficulty and enemy kit | M (20) | planned | — | `WP-W19`, `WP-W7` |
+| `WP-W21` | Endgame and defeat: the Fort Orion assault, the camp-overrun defeat, campaign summary | M (20) | planned | browser | `WP-W20` |
+| `WP-W22` | Auto-resolve for small, lopsided fights, with the odds shown first | S (8) | planned | — | `WP-W8` |
+| `WP-W23` | Campaign harness: fifty seeded headless campaigns with auto-resolve, pacing report and a tuning pass | S (8) | planned | — | `WP-W20`, `WP-W22` |
+| `WP-W24` | Campaign end-to-end tests and performance: map to mission to map, two tabs and refresh safety, map at 30 fps on a mid phone | M (20) | planned | browser | `WP-W13`, `WP-W15` |
+| `WP-W25` | First-campaign prompts, design doc campaign section, changelog and index entry | S (8) | planned | — | `WP-W21`, `WP-W24` |
+| `WP-W26` | Campaign decisions (delegated by the owner): barter at villages, auto-resolve for lopsided fights, camp overrun as a setback, the 3-D map replaces the retro overworld | XS (3) | done | — | — |
 
 ### TD · Tech debt (fill windows)
 
@@ -375,15 +415,17 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 
 | Dimension | Coverage |
 |---|---|
-| Models and builds | Both rifles; default, folded stock, no optic, large scope, extended magazine, drum, extreme rail offsets; every operator × every pose |
-| Operator proportions | Base first; roster bases must pass the same pose set with no clipping |
-| State | Geometry, stats and hash agree after any change; unknown hash keys ignored; legacy AK hashes still load |
-| Audio | First gesture, mute, volume zero, track switch, autoplay blocked, hidden tab |
+| Models and builds | Every rifle with every attachment; folded stock, no optic, large scope, drum, extreme rail offsets; every operator × every pose |
+| Operator proportions | Each roster base passes the pose set with hands on every rifle and no clipping |
+| State | Geometry, stats and code agree after any change; unknown keys ignored; legacy AK hashes and P1 codes still load |
+| Missions | Seeded replays, objectives, orders, squad swap, abilities, loot and promotions (unit and smoke tests per mission) |
+| Campaign | One save across map, missions, band and modders; a result settles once; refresh and two tabs are safe (milestone W) |
+| Audio | First gesture, mute, volume zero, track switch, autoplay blocked, hidden tab, room sound on and off |
 | Navigation | Index → demo → back; copied links; `file://` is unsupported (modules), documented |
-| Input/accessibility | Pointer, touch, keyboard; reduced motion; visible focus; understandable errors |
-| Visual checks | Contact sheet per pose and per operator; owner sign-off |
-| Performance | Desktop and a mid-range phone; cold/warm load; stable memory over repeated changes |
-| Build | Allowlist build, link check, import-map check, size ≤ 90 MB |
+| Input and accessibility | Pointer, touch, keyboard; reduced motion; visible focus; axe-core on every page in CI |
+| Visual checks | Contact sheets per pose, per operator, per rifle; owner sign-off |
+| Performance | Desktop and a mid-range phone; cold and warm load; stable memory over repeated changes |
+| Build | Allowlist build, link check, import-map check, site under 900 MB |
 
 A passing test certifies mechanics, never art quality.
 
@@ -391,23 +433,32 @@ A passing test certifies mechanics, never art quality.
 
 | Risk | Mitigation |
 |---|---|
-| Free sources for Spear, RPK, Bren, Chauchat do not exist | The owner decides pay / commission / placeholder; never silently substitute |
+| The demos never become a game | The campaign spine and gate W-A come first (§4 order of work) |
+| Wiring four modules means four saves to merge | One state module and migrations first (WP-W1); each module keeps a standalone mode |
+| Two upgrade models (the shooter's three rebels, the band's troop tree) | One squad model shared by the band and the missions (WP-W12) |
 | Concept images are AI-assisted and reference commercial games | Documentary use only; never shipped as assets |
+| Placeholder data (Equipment Wiki, sprite art) is mistaken for final | Labelled as placeholder on every page; replaced through the V and W packets |
 | Plan limits change under us | Calibration loop; BU is relative; packets never exceed M |
-| Rig fidelity (clipping, stiff hands) in close-ups | Hero distance only for now; poses are data and cheap to retune; `WP-C8/C9` |
-| One-person bottleneck on art sign-off and downloads | Owner actions front-loaded in each milestone |
-| Single large legacy file (`workbench/viewer.js`) | `WP-T1`, scheduled as filler work |
-| Setting canon unresolved | `WP-D1` before more roster art |
+| One-person bottleneck on art sign-off and playtests | Owner actions listed in §9; the campaign harness (WP-W23) stands in for early tuning |
+| 3-D pages on phones (map, modders) | Device acceptance (WP-Q2, WP-W24); adaptive resolution; models parsed once |
+| Setting canon unresolved | `WP-D1` before more faction, insignia and roster art |
 
-## 9. Open decisions (owner)
+## 9. Decisions
 
-1. **Setting canon** for demos: Yantis / WW2044 prologue, or the modern low-poly world? (`WP-D1`)
-2. **Roster naming** from the keyframes (proposal in `art-direction.md` §4).
-3. **Credits and licences:** out of scope for the tooling; the pages point to the GitHub documentation or the owner.
-4. **Indexing:** pages are `noindex` (link-only) like the portfolio's projects. Flip when Partisan Project should be discoverable.
-5. **Budget calibration:** which plan meters to read, and the weekly window count, after the first two weeks.
+**Open (owner):**
+
+1. **Setting canon**: Yantis / WW2044 prologue, or the present Mediterranean island? (`WP-D1`)
+2. **Roster naming** from the keyframes (proposal in `art-direction.md` §4); sign-off of Recon, Insurgent, Enforcer.
+3. **Indexing:** pages are `noindex` (link-only). Flip when Partisan Project should be discoverable.
+4. **Online play:** local PvE only, or funded live co-op (`WP-S36`, after the tactical tests).
+5. **Budget calibration:** which plan meters to read, and the weekly window count.
+
+**Settled recently:** the shooter is 2.5-D sprites (TAC-J-01); the 3-D map is the overworld and trade is barter at
+friendly villages, auto-resolve only for lopsided fights, an overrun camp a setback (TAC-K-01 to K-04, delegated by
+the owner on 5 October); credits and licences stay out of the tooling (the pages point to the GitHub documentation).
 
 ## 10. Maintenance
 
 On every change update the packet status, regenerate the table (`roadmap-table.mjs`), the code map, the register and
-`CHANGELOG.md`. `npm test` fails if the roadmap table or the plan drift.
+`CHANGELOG.md`, and keep the design document's dispatches and feature matrix in step with §2. `npm test` fails if the
+roadmap table or the plan drift.

@@ -60,6 +60,7 @@ export const EXTRA = {
     title: 'HK G3A3',
     url: '../assets/models/weapons/g3.glb',
     scale: 0.0983263,
+    fixed: ['stock'], // one moulding with the grip and handguard
     author: DU,
     source: {title: 'low-poly HK G3', url: 'https://sketchfab.com/3d-models/86ff01824c394e349cda876a827fa69c'},
     specs: [
@@ -125,6 +126,9 @@ export const EXTRA = {
     title: 'M16A1',
     url: '../assets/models/weapons/m16.glb',
     scale: 0.005135,
+    // The source is drawn too tall and too thin for an M16A1 (990 mm long, about 240 mm from carry handle to grip).
+    stretch: [1, 0.63, 2.2],
+    fixed: ['stock'], // stock and handguard are one moulding
     author: DU,
     source: {title: 'low-poly M16', url: 'https://sketchfab.com/DU1701'},
     specs: [
@@ -145,7 +149,13 @@ export const EXTRA = {
       EMPTY.muzzle,
     ],
     // Where the support hand holds the rifle, in metres from the grip socket (muzzle +x, up +y): operator/operator.js.
-    handguardAt: [0.4, 0.19, 0],
+    handguardAt: [0.4, 0.12, 0],
+    // Clamp-on mount points this source has no socket for, in metres on the laid-out rifle (workbench/universal.js).
+    mounts: [
+      ['buis', 'Back-up sight', [0.16, 0.076, 0], [0, 1, 0]],
+      ['trigger', 'Trigger', [-0.165, -0.019, 0], [0, -1, 0]],
+      ['charging', 'Charging handle', [-0.2, 0.057, 0.026], [0, 0, 1]],
+    ],
     sockets: [
       ['muzzle', 'Muzzle', [111.45, 18.779, 0], [1, 0, 0]],
       ['optic', 'Carry-handle mount', [-8, 45, 0], [0, 1, 0]],
@@ -193,6 +203,11 @@ export const EXTRA = {
     ],
     // Where the support hand holds the rifle, in metres from the grip socket (muzzle +x, up +y): operator/operator.js.
     handguardAt: [0.357, 0.074, 0],
+    // Clamp-on mount points this source has no socket for, in metres on the laid-out rifle (workbench/universal.js).
+    mounts: [
+      ['trigger', 'Trigger', [-0.18, -0.005, -0.008], [0, -1, 0]],
+      ['charging', 'Charging handle', [0.03, 0.05, 0.02], [0, 0, 1]],
+    ],
     sockets: [
       ['muzzle', 'Muzzle', [186.96, 21.774, 0], [1, 0, 0]],
       ['optic', 'Top rail', [10, 31.592, 0], [0, 1, 0]],
@@ -269,7 +284,10 @@ export const EXTRA = {
       ['stock', 'Stock', [-2.0, 0.27, 0], [-1, 0, 0]],
     ],
     slots: {
-      muzzle: muzzle([{id: 'slx', grams: 700, label: 'SLX suppressor', original: true}]),
+      muzzle: muzzle([
+        // the file leaves a gap between the brake adapter and the can: seat it over the adapter
+        {id: 'slx', grams: 700, label: 'SLX suppressor', original: true, pose: {nodes: {'6.8 slx suppressor_19': [-0.045, 0, 0]}}},
+      ]),
       optic: {
         rail: rail(-0.06, 0.1),
         factory: [{id: 'eotech', fp: [-0.05, 0.05], grams: 310, sightHeight: 0.055, label: 'EOTech XPS2', original: true}],
@@ -291,6 +309,32 @@ export const EXTRA = {
     title: 'StG 44',
     url: '../assets/models/weapons/stg44.glb',
     scale: 0.103763,
+    // One black mesh in the source: split into a walnut butt, a Bakelite grip and stamped steel (workbench/surface.js).
+    surface: {
+      base: {name: 'h-190', tex: 'steel', color: '#26292b', roughness: 0.45, metalness: 0.65},
+      parts: {magazine: {name: 'mag', tex: 'steel', color: '#2f3234', roughness: 0.5, metalness: 0.55}},
+      // named regions become parts of their own, so the Workbench can swap them (the CNC kit)
+      regions: [
+        {
+          node: 'stg44-stock',
+          min: [-1, -1, -1],
+          max: [-0.235, 1, 1],
+          spec: {name: 'polymer', tex: 'wood', color: '#5e3c22', roughness: 0.6, metalness: 0},
+        },
+        {
+          node: 'stg44-grip',
+          min: [-0.16, -1, -1],
+          max: [-0.03, -0.035, 1],
+          spec: {name: 'bakelite', tex: 'bakelite', color: '#3a2116', roughness: 0.45, metalness: 0},
+        },
+        {
+          node: 'stg44-handguard',
+          min: [0.11, 0.0, -1],
+          max: [0.25, 1, 1],
+          spec: {name: 'h-190', tex: 'steel', color: '#26292b', roughness: 0.45, metalness: 0.65},
+        },
+      ],
+    },
     author: DU,
     source: {title: 'low-poly StG 44', url: 'https://sketchfab.com/DU1701'},
     specs: [
@@ -301,9 +345,27 @@ export const EXTRA = {
     baseGrams: 5100,
     stats: {ergo: 32, recoil: 52, handling: 36, loud: 90, sighting: 28},
     defaults: {build: {}, finish: {}},
-    parts: [part('magazine', 'Magazine', '30-round curved Kurz magazine.', ['Cube.004_2']), EMPTY.optic, EMPTY.sling, EMPTY.muzzle],
+    parts: [
+      part('magazine', 'Magazine', '30-round curved Kurz magazine.', ['Cube.004_2']),
+      part('stock', 'Stock', 'Walnut buttstock.', ['stg44-stock']),
+      part('grip', 'Pistol grip', 'Bakelite pistol grip.', ['stg44-grip']),
+      part('handguard', 'Handguard', 'Stamped steel handguard over the gas tube.', ['stg44-handguard']),
+      EMPTY.optic,
+      EMPTY.sling,
+      EMPTY.muzzle,
+    ],
     // Where the support hand holds the rifle, in metres from the grip socket (muzzle +x, up +y): operator/operator.js.
     handguardAt: [0.34, 0.047, 0],
+    // Clamp-on mount points this source has no socket for, in metres on the laid-out rifle (workbench/universal.js).
+    mounts: [
+      ['stock', 'Stock', [-0.34, 0.06, 0.01], [-1, 0, 0]],
+      ['handguard', 'Handguard', [0.18, 0.1, 0.01], [0, 1, 0]],
+      ['buis', 'Back-up sight', [0.17, 0.131, 0.01], [0, 1, 0]],
+      ['trigger', 'Trigger', [-0.025, 0.03, 0.01], [0, -1, 0]],
+      ['charging', 'Charging handle', [0.1, 0.1, 0.036], [0, 0, 1]],
+      ['foregrip', 'Under forend', [0.15, 0.02, 0.01], [0, -1, 0]],
+      ['side', 'Side of forend', [0.17, 0.07, 0.035], [0, 0, 1]],
+    ],
     sockets: [
       ['muzzle', 'Muzzle', [-4.479, 0.4161, 0], [-1, 0, 0]],
       ['optic', 'Optic mount', [-0.1, 1.073, 0], [0, 1, 0]],
@@ -319,6 +381,13 @@ export const EXTRA = {
       optic: optic(['scope', 'micro'], rail(-0.04, 0.06)),
       sling: std.sling,
       magazine: magazine([{id: '30', grams: 450, label: '30-rnd', original: true}], ['none']),
+      stock: {factory: [{id: 'extended', grams: 700, label: 'Walnut stock', original: true}], library: []},
+      grip: {factory: [{id: 'factory', grams: 80, label: 'Bakelite grip', original: true}], library: []},
+      handguard: {
+        // the M-LOK tube's extent: the source's handguard is part of one mesh with the barrel
+        factory: [{id: 'factory', grams: 0, label: 'Steel handguard', original: true, span: [0.1, 0.27], axis: [0.1, 0.01], radius: 0.024}],
+        library: [],
+      },
     },
   },
   ppsh41: {
@@ -339,6 +408,14 @@ export const EXTRA = {
     parts: [part('magazine', 'Drum magazine', '71-round drum.', ['Cylinder.002_2']), EMPTY.optic, EMPTY.sling, EMPTY.muzzle],
     // Where the support hand holds the rifle, in metres from the grip socket (muzzle +x, up +y): operator/operator.js.
     handguardAt: [0.45, 0.02, 0],
+    // Clamp-on mount points this source has no socket for, in metres on the laid-out rifle (workbench/universal.js).
+    mounts: [
+      ['buis', 'Back-up sight', [0.33, 0.087, 0], [0, 1, 0]],
+      ['trigger', 'Trigger', [0.045, -0.02, 0], [0, -1, 0]],
+      ['charging', 'Charging handle', [-0.03, 0.07, 0.022], [0, 0, 1]],
+      ['foregrip', 'Under forend', [0.28, 0.064, 0], [0, -1, 0]],
+      ['side', 'Side of forend', [0.3, 0.076, 0.012], [0, 0, 1]],
+    ],
     sockets: [
       ['muzzle', 'Muzzle', [-5.008, 0.8934, 0], [-1, 0, 0]],
       ['optic', 'Optic mount', [-1, 0.9535, 0], [0, 1, 0]],
@@ -361,6 +438,15 @@ export const EXTRA = {
     title: 'Bren Mk 2',
     url: '../assets/models/weapons/bren.glb',
     scale: 0.932484,
+    // The source has no textures and one grey for everything: blued steel, a walnut stock and grip (workbench/surface.js).
+    surface: {
+      base: {name: 'h-190', tex: 'steel', color: '#2c2f31', roughness: 0.5, metalness: 0.6},
+      parts: {
+        stock: {name: 'polymer', tex: 'wood', color: '#5a3b24', roughness: 0.65, metalness: 0},
+        grip: {name: 'polymer', tex: 'wood', color: '#5a3b24', roughness: 0.65, metalness: 0},
+        magazine: {name: 'mag', tex: 'steel', color: '#3a3d3a', roughness: 0.55, metalness: 0.5},
+      },
+    },
     author: {name: 'Sketchfab artist', url: 'https://sketchfab.com'},
     source: {title: 'Bren', url: 'https://sketchfab.com'},
     specs: [
@@ -381,6 +467,14 @@ export const EXTRA = {
     ],
     // Where the support hand holds the rifle, in metres from the grip socket (muzzle +x, up +y): operator/operator.js.
     handguardAt: [0.39, 0.07, 0],
+    // Clamp-on mount points this source has no socket for, in metres on the laid-out rifle (workbench/universal.js).
+    mounts: [
+      ['buis', 'Back-up sight', [0.3, -0.012, -0.004], [0, 1, 0]],
+      ['trigger', 'Trigger', [-0.205, -0.065, -0.004], [0, -1, 0]],
+      ['charging', 'Charging handle', [0, -0.03, 0.018], [0, 0, 1]],
+      ['foregrip', 'Under forend', [0.25, -0.075, -0.004], [0, -1, 0]],
+      ['side', 'Side of forend', [0.28, -0.04, 0.007], [0, 0, 1]],
+    ],
     sockets: [
       ['muzzle', 'Muzzle', [0.6093, -0.03155, 0], [1, 0, 0]],
       ['optic', 'Side mount', [-0.28, 0.006129, 0], [0, 1, 0]],
@@ -403,6 +497,7 @@ export const EXTRA = {
     title: 'Chauchat M1915 CSRG',
     url: '../assets/models/weapons/chauchat.glb',
     scale: 0.00122306,
+    fixed: ['stock'], // one moulding with the grip
     author: {name: 'Sketchfab artist', url: 'https://sketchfab.com'},
     source: {title: 'Chauchat', url: 'https://sketchfab.com'},
     specs: [
@@ -422,6 +517,14 @@ export const EXTRA = {
     ],
     // Where the support hand holds the rifle, in metres from the grip socket (muzzle +x, up +y): operator/operator.js.
     handguardAt: [0.37, 0.067, 0],
+    // Clamp-on mount points this source has no socket for, in metres on the laid-out rifle (workbench/universal.js).
+    mounts: [
+      ['buis', 'Back-up sight', [0.3, 0.068, -0.007], [0, 1, 0]],
+      ['trigger', 'Trigger', [-0.205, 0.005, -0.007], [0, -1, 0]],
+      ['charging', 'Charging handle', [-0.05, 0.04, 0.01], [0, 0, 1]],
+      ['foregrip', 'Under forend', [0.26, 0.042, -0.007], [0, -1, 0]],
+      ['side', 'Side of forend', [0.28, 0.055, 0.003], [0, 0, 1]],
+    ],
     sockets: [
       ['muzzle', 'Muzzle', [468.19, 36.795, 0], [1, 0, 0]],
       ['optic', 'Optic mount', [-20, 66, 0], [0, 1, 0]],
@@ -482,6 +585,13 @@ export const EXTRA = {
     ],
     // Where the support hand holds the rifle, in metres from the grip socket (muzzle +x, up +y): operator/operator.js.
     handguardAt: [0.31, 0.06, 0],
+    // Clamp-on mount points this source has no socket for, in metres on the laid-out rifle (workbench/universal.js).
+    mounts: [
+      ['handguard', 'Handguard', [0.15, 0.09, -0.01], [0, 1, 0]],
+      ['buis', 'Back-up sight', [0.2, 0.121, -0.01], [0, 1, 0]],
+      ['charging', 'Charging handle', [-0.03, 0.1, 0.018], [0, 0, 1]],
+      ['side', 'Side of forend', [0.33, 0.057, 0.002], [0, 0, 1]],
+    ],
     sockets: [
       ['muzzle', 'Muzzle', [6.685, 0.1267, 0], [1, 0, 0]],
       ['optic', 'Optic mount', [-0.2, 0.55, 0], [0, 1, 0]],
@@ -504,7 +614,16 @@ export const EXTRA = {
       },
       magazine: magazine([{id: '40', grams: 360, label: '40-rnd', original: true}], ['drum', 'none']),
       grip: {factory: [{id: 'factory', grams: 110, label: 'Wood grip', original: true}], library: ['classic']},
+      handguard: {factory: [{id: 'factory', grams: 0, label: 'Wood handguard', original: true}], library: []},
       stock: {factory: [{id: 'extended', grams: 700, label: 'Wood stock', original: true}], library: ['none']},
     },
   },
+};
+
+// The MCX with chunky, dithered bitmap textures over its own colours: a 90s shooter look (workbench/surface.js).
+EXTRA['spear-retro'] = {
+  ...EXTRA.spear,
+  label: 'MCX retro textures',
+  title: 'SIG MCX Spear, retro textures',
+  surface: {retro: true},
 };

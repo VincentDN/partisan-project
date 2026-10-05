@@ -3,11 +3,14 @@ import {loadRifle as loadRifleInstance, applySlotState} from './rifle-instance.j
 import * as T from 'three';
 import {mountTopBar} from '../shared/topbar.js';
 import {createStage} from '../shared/stage.js';
+import {disposeModel, prefetchModels} from '../shared/model-cache.js';
+import {warehouseAmbience} from '../shared/warehouse-ambience.js';
 import {renderStatsPanel} from './stats-panel.js';
 import {savePhoto, saveCard} from './export.js';
 import {parseLegacy, toLegacy, encode, decode} from '../shared/loadout.js';
 import {MODELS, DEFAULT_MODEL, RAIL_OF} from './models.js';
 import {resolve, fits} from './rails.js';
+import {ATTACHMENT_FILES} from './attachments.js';
 import {blockedBy} from './stats.js';
 import * as mech from './mech.js';
 
@@ -49,12 +52,7 @@ const loadRifle = id => loadRifleInstance(id, {decorate: installCamo});
 
 function disposeRifle(r) {
   r.model.removeFromParent();
-  r.model.traverse(o => {
-    if (o.isMesh) {
-      o.geometry.dispose();
-      o.material.dispose();
-    }
-  });
+  disposeModel(r.model); // its materials and own geometry; the parsed file stays cached for the next switch
   socketMarkers.clear();
   for (const l of r.socketLabels || []) l.el.remove();
   document.querySelector('#parts').replaceChildren();
@@ -514,6 +512,12 @@ const PRESETS = [
     hash: 'rifle=ak15k&muzzle=brake&optic=holo&magazine=60&stock=collapsed&handguard-finish=original&foregrip-finish=original&grip-finish=original&stock-finish=original&magazine-finish=original',
   },
   {
+    // the owner's reference: KPOS-style folding stock, M-LOK handguard, red dot over flip-up irons, translucent magazine
+    id: 'modern-rpk',
+    label: 'Modern RPK',
+    hash: 'rifle=rpk&stock=cnc&handguard=mlok&grip=cnc&magazine=clear&optic=micro&buis=flip&foregrip=bipod',
+  },
+  {
     id: 'marksman',
     label: 'Marksman',
     hash: 'optic=scope&foregrip=angled&handguard-finish=desert&stock-finish=desert&foregrip-finish=desert&suppressor-finish=fde',
@@ -539,6 +543,52 @@ try {
   Object.assign(st.key.shadow.camera, {left: -1.3, right: 1.3, top: 1.3, bottom: -1.3, near: 0.5, far: 8});
   st.key.shadow.camera.updateProjectionMatrix();
   scene.add(socketMarkers);
+  // The backdrop is the Operator Customiser's warehouse, baked to a 360° panorama from the camera side of the room
+  // (tools/assets/bake-warehouse-pano.mjs): a place that stays put as the camera orbits, softly out of focus. The rifle
+  // keeps the launch lighting (the HDR environment and its key light); the room only shows behind it. Backdrop swaps
+  // in the HDR sky, Warehouse brings the room back.
+  const ambience = warehouseAmbience(); // the room's sound (shared/warehouse-ambience.js)
+  const room = {on: false, texture: null};
+  const loadPano = () =>
+    (room.loading ??= new T.TextureLoader().loadAsync(new URL('../assets/backgrounds/warehouse-pano.jpg', import.meta.url).href).then(t => {
+      t.mapping = T.EquirectangularReflectionMapping;
+      t.colorSpace = T.SRGBColorSpace;
+      return (room.texture = t);
+    }));
+  async function setRoom(on) {
+    room.on = on;
+    scene.userData.fixedBackground = on;
+    document.querySelector('#room')?.setAttribute('aria-pressed', String(on));
+    ambience.set(on);
+    if (!on) return st.setBackdrop(true);
+    const t = await loadPano().catch(() => null);
+    if (!t || !room.on) return;
+    scene.background = t;
+    scene.backgroundBlurriness = 0.025;
+    scene.backgroundIntensity = 1;
+    scene.backgroundRotation.set(0, 0, 0);
+    document.querySelector('#backdrop')?.setAttribute('aria-pressed', 'false');
+    st.wake();
+  }
+  setRoom(true);
+  document.querySelector('#room')?.addEventListener('click', () => setRoom(!room.on));
+  const backdropButton = document.querySelector('#backdrop');
+  if (backdropButton)
+    backdropButton.onclick = () => {
+      if (room.on) setRoom(false);
+      else st.setBackdrop(!scene.background);
+    };
+  const ambienceButton = document.querySelector('#ambience');
+  ambienceButton?.setAttribute('aria-pressed', String(ambience.on));
+  ambienceButton?.addEventListener('click', () => ambienceButton.setAttribute('aria-pressed', String(ambience.toggle())));
+  window.PARP_WORKBENCH = {
+    room,
+    ambience,
+    stage: st,
+    get rifle() {
+      return rifle;
+    },
+  };
 
   await restore(location.hash);
   if (!rifle) throw new Error('No rifle loaded');
@@ -549,14 +599,9 @@ try {
       mech.setDown();
       switchRifle(b.dataset.rifle)?.then(() => mech.charge());
     };
-  // Warm the HTTP cache with the other rifles once the page is idle, so switching is instant.
-  (window.requestIdleCallback || setTimeout)(
-    () => {
-      if (navigator.connection?.saveData) return; // respect Data Saver
-      for (const [id, m] of Object.entries(MODELS)) if (id !== rifle.id) fetch(m.url).catch(() => {});
-    },
-    {timeout: 4000},
-  );
+  // Parse the other rifles in the background, one per idle moment, so switching is instant (shared/model-cache.js).
+  // Then the attachment files, so a first pick shows at once too.
+  prefetchModels([...Object.values(MODELS).map(m => new URL(m.url, new URL('./', import.meta.url)).href), ...ATTACHMENT_FILES]);
   document.querySelector('#photo').onclick = () => savePhoto({renderer, scene, camera, rifle});
   let lastFile = 0;
   document.querySelector('#wear').oninput = e => {

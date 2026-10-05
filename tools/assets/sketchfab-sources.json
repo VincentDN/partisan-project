@@ -502,6 +502,18 @@
       "faces": 12774,
       "length": 4.57,
       "dir": "vehicles"
+    },
+    {
+      "id": "stg44-hd",
+      "for": [
+        "weapon: StG 44 replacement, textured (TAC-J-48)"
+      ],
+      "uid": "fe139cf77b384d3fbf40bef53a6c809c",
+      "name": "STG-44",
+      "author": "Arbuzz747",
+      "faces": 8294,
+      "length": 0.94,
+      "dir": "weapons"
     }
   ]
 }

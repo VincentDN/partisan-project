@@ -19,9 +19,11 @@ const ALLOW = [
   'assets/js',
   'assets/img',
   'assets/audio',
+  'assets/backgrounds',
   'assets/lighting',
   'assets/models',
   'assets/sprites',
+  'assets/textures',
   'assets/register.json',
   'shared',
   'vendor',
@@ -30,13 +32,14 @@ const ALLOW = [
   'viewer',
   'convoy',
   'band',
+  'map',
   'wiki',
   'docs/game-design-master-doc.html',
   'docs/moodboard',
   'inbound',
   'outbound',
 ];
-// Layered PSDs stay in the repository; outbound/flatten-psd.py writes a PNG beside each one and the build ships those.
+// Layered PSDs are not kept in the repository (the owner has them); outbound/flatten-psd.py writes a PNG beside any new one and the build ships those.
 // The Codex workbench study links to repository Markdown, which is not published.
 const SKIP_DIRS = [/^outbound\/tlou2-workbench-study\//];
 const SKIP_FILES = [/\.psd$/i, /\.manifest\.json$/, /\.md$/, /\.test\.m?js$/, /\.DS_Store$/];
@@ -61,22 +64,28 @@ ALLOW.forEach(copy);
 // Machine-readable packets drive the live progress bars on the design doc.
 fs.copyFileSync('docs/agent-ops/packets.json', path.join(out, 'docs/packets.json'));
 
-// Render the master roadmap (Markdown) to HTML inside the same shell as the design doc.
-const md = fs.readFileSync('docs/master-roadmap.md', 'utf8');
-const html = marked
-  .parse(md, {gfm: true})
-  // relative links to repo documents become GitHub links; the roadmap itself and the site stay relative
-  .replace(/href="(?!https?:|#|mailto:)([^"]+?)"/g, (m, href) => {
-    if (/^(\.\/)?master-roadmap\.md$/.test(href)) return 'href="master-roadmap.html"';
-    if (/^(\.\.\/)?(workbench|operator|viewer)\/?$/.test(href)) return `href="../${href.replace(/^\.\.\//, '')}"`;
-    const clean = href.replace(/^\.\//, '');
-    const base = clean.startsWith('../') ? clean.slice(3) : 'docs/' + clean;
-    return `href="${REPO}/blob/main/${base}"`;
-  });
-const page = `<!doctype html>
+// Render Markdown documents to HTML inside the same shell as the design doc: the master roadmap, and the Walking Through
+// podcast episodes (docs/podcast/*.md, with an index). `depth` is how deep the page sits under the site root.
+function renderDoc(mdPath, outPath, {title, kicker, depth = 1, markdown = null}) {
+  const up = '../'.repeat(depth);
+  const dir = path.posix.dirname(mdPath);
+  const html = marked
+    .parse(markdown ?? fs.readFileSync(mdPath, 'utf8'), {gfm: true})
+    // relative links to repo documents become GitHub links; the roadmap and the site's own pages stay relative
+    .replace(/href="(?!https?:|#|mailto:)([^"]+?)"/g, (m, href) => {
+      if (/^(\.\/)?master-roadmap\.md$/.test(href)) return `href="${up}docs/master-roadmap.html"`;
+      if (/^(\.\/)?campaign-roadmap\.md$/.test(href)) return `href="${up}docs/campaign-roadmap.html"`;
+      if (/^(\.\/)?[\w-]+\.html$/.test(href) && path.posix.dirname(outPath) === 'docs') return m; // a sibling page on the site
+      if (/^(\.\/)?walking-through-[\w-]+\.md$/.test(href) && path.posix.dirname(outPath) === 'docs/podcast')
+        return `href="${href.replace(/^\.\//, '').replace(/\.md$/, '.html')}"`;
+      if (/^(\.\.\/)?(workbench|operator|viewer|map|convoy|band)\/?$/.test(href)) return `href="${up}${href.replace(/^\.\.\//, '')}"`;
+      const clean = path.posix.normalize(path.posix.join(dir, href.replace(/^\.\//, '')));
+      return `href="${REPO}/blob/main/${clean}"`;
+    });
+  const page = `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex"><meta name="googlebot" content="noindex, nofollow"><meta name="seo_hidden" content="true"><meta name="version" content="${version}">
-<title>Partisan Project | Master Roadmap</title><link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<title>Partisan Project | ${title}</title><link rel="icon" href="${up}assets/img/favicon.svg" type="image/svg+xml">
 <style>
 :root{color-scheme:dark;--bg:#0d100c;--panel:#161b13;--line:#2c3526;--text:#e6e9dc;--dim:#98a487;--accent:#ef8f39;--olive:#c8d4a8}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}
@@ -88,11 +97,43 @@ table{border-collapse:collapse;width:100%;font-size:.88rem;display:block;overflo
 blockquote{margin:1em 0;padding:.4em 1em;border-left:3px solid var(--accent);background:#161b13;color:var(--dim)}hr{border:0;border-top:1px solid var(--line)}img{max-width:100%}
 @media(max-width:640px){main{padding:18px 16px 60px}h1{font-size:1.6rem}}
 </style></head><body>
-<header><span>Partisan Project master roadmap · v${version}</span><nav><a href="${REPO}">Source</a></nav></header>
+<header><span>${kicker} · v${version}</span><nav><a href="${REPO}">Source</a></nav></header>
 <main>${html}</main>
-<script type="module">import {mountTopBar} from '../shared/topbar.js';mountTopBar({title: 'Master roadmap', scene: 'viewer', sticky: true, replaceHeader: false});</script></body></html>
+<script type="module">import {mountTopBar} from '${up}shared/topbar.js';mountTopBar({title: ${JSON.stringify(title)}, scene: 'viewer', sticky: true, replaceHeader: false});</script></body></html>
 `;
-fs.writeFileSync(path.join(out, 'docs/master-roadmap.html'), page);
+  fs.mkdirSync(path.dirname(path.join(out, outPath)), {recursive: true});
+  fs.writeFileSync(path.join(out, outPath), page);
+}
+renderDoc('docs/master-roadmap.md', 'docs/master-roadmap.html', {title: 'Master Roadmap', kicker: 'Partisan Project master roadmap'});
+renderDoc('docs/campaign-roadmap.md', 'docs/campaign-roadmap.html', {
+  title: 'Campaign Roadmap',
+  kicker: 'Partisan Campaign: the Bannerlord loop',
+});
+// The podcast: every episode, newest first in the index
+const episodes = fs
+  .readdirSync('docs/podcast')
+  .filter(f => /^walking-through-.*\.md$/.test(f))
+  .sort();
+for (const f of episodes) {
+  const first = fs.readFileSync(path.join('docs/podcast', f), 'utf8').split('\n')[0].replace(/^#\s*/, '');
+  renderDoc(`docs/podcast/${f}`, `docs/podcast/${f.replace(/\.md$/, '.html')}`, {
+    title: first,
+    kicker: 'Walking Through, the Partisan Project podcast',
+    depth: 2,
+  });
+}
+const list = episodes
+  .slice()
+  .reverse()
+  .map(f => `- [${fs.readFileSync(path.join('docs/podcast', f), 'utf8').split('\n')[0].replace(/^#\s*/, '')}](${f})`)
+  .join('\n');
+// the index is generated here, not a file in the repository (mdPath only places its relative links)
+renderDoc('docs/podcast/index.md', 'docs/podcast/index.html', {
+  title: 'Walking Through',
+  kicker: 'Walking Through, the Partisan Project podcast',
+  depth: 2,
+  markdown: `# Walking Through\n\nThe Partisan Project podcast: one decision per episode, walked all the way round. Narration scripts; no audio recorded yet.\n\n${list}\n`,
+});
 fs.writeFileSync(path.join(out, '.nojekyll'), '');
 fs.writeFileSync(
   path.join(out, '404.html'),

@@ -13,6 +13,8 @@ export async function checkSquadControl(browser, url, reducedMotion = 'reduce') 
     // choosing a rebel slows time and dithers the world (not with reduced motion)
     if (reducedMotion === 'no-preference') await page.waitForFunction(() => window.PARP_SPRITES.slowmo > 0.3);
     else assert.equal(await page.evaluate(() => window.PARP_SPRITES.slowmo), 0);
+    // the choice window is 2.5 s of wall clock; a software-rendered CI frame can spend that before the click lands
+    await page.evaluate(() => (window.PARP_SPRITES.sim.control.pending.remaining = 30));
     // Buttons track moving world positions during the zoom; interact without waiting for animation to stop.
     await page.locator('[data-rebel="mila"]').hover({force: true});
     await page.locator('[data-rebel="mila"]').click({force: true});

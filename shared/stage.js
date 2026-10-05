@@ -104,7 +104,7 @@ export async function createStage(container, opts = {}) {
     envName = name;
     wake();
     scene.environment = environments[name].texture;
-    if (scene.background) scene.background = scene.environment;
+    if (scene.background && !scene.userData.fixedBackground) scene.background = scene.environment;
     for (const b of document.querySelectorAll('[data-env]')) b.setAttribute('aria-pressed', String(b.dataset.env === name));
   }
 
@@ -128,7 +128,9 @@ export async function createStage(container, opts = {}) {
   const up = new T.Vector3(0, 1, 0);
   function orientLights() {
     const r = controls.getAzimuthalAngle() - heroAzimuth + T.MathUtils.degToRad(lightAngle);
-    scene.environmentRotation.y = scene.backgroundRotation.y = r;
+    scene.environmentRotation.y = r;
+    // a backdrop that is a place (a baked room) stays put while the camera orbits; an HDR sky turns with the lights
+    if (!scene.userData.fixedBackground) scene.backgroundRotation.y = r;
     if (environments[envName]) {
       key.position.copy(environments[envName].sun).applyAxisAngle(up, r).multiplyScalar(4).add(key.target.position);
     }

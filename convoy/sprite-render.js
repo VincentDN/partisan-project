@@ -5,6 +5,7 @@
 import {loadArt, loadGuns, buildPawn, lookFor, savedLook, DEFAULT_GUN, tinted, atlasCell} from './sprite-art.js';
 import {WEAPONS} from './weapons.js';
 import {ditherToMask} from '../assets/js/dither.js';
+import {segmentBox} from './sim.js';
 
 const PPM = 32; // pixels per metre at zoom 1 (art bible: 1 m = 32 px)
 
@@ -53,7 +54,7 @@ export async function createSpriteRenderer(view) {
   const fx = {shotFlash: brighten(art.shotFlash, 255), fireGlow: brighten(art.fireGlow, 210), dustPuff: brighten(art.dustPuff, 170)};
   const ctx = view.getContext('2d');
   const pawns = new Map(); // unit id -> {south, east, north} or a pending promise
-  const camera = {x: 0, z: 0, zoom: 0.85, aimK: 0};
+  const camera = {x: 0, z: 0, zoom: 1.1, aimK: 0}; // close enough that the fight you can see is the fight there is
   let ground = null; // {canvas, scale, minX, minZ}
   let level = null;
   const scorch = []; // explosions already burnt into the ground
@@ -316,6 +317,16 @@ export async function createSpriteRenderer(view) {
       v._puff = now;
       smoke.push({x: v.x + (Math.random() - 0.5) * v.w * 0.5, z: v.z - 0.5, t: now, life: 3.5, r: 1.6});
     }
+    if (v.destroyed && sim.time < (v.burningUntil ?? 0)) {
+      // the wreck burns: flames licking over the hull, brighter early on
+      const k = Math.min(1, (v.burningUntil - sim.time) / 30);
+      ctx.globalCompositeOperation = 'lighter';
+      for (let i = 0; i < 4; i++) {
+        const f = 0.7 + 0.3 * Math.sin(now * (9 + i * 3) + i * 2.1);
+        sprite(fx.fireGlow, v.x + (i - 1.5) * v.w * 0.22, v.z - 0.4, 2.2 * f, 2.6 * f, {oy: -0.6, alpha: 0.55 * k});
+      }
+      ctx.globalCompositeOperation = 'source-over';
+    }
   }
 
   // ---------- pawns ----------
@@ -326,6 +337,18 @@ export async function createSpriteRenderer(view) {
   }
   function drawPawn(u, sim, opts) {
     if (u.escaped || u.state === 'mounted' || u.state === 'turret' || (u.role === 'turret' && !u.alive)) return;
+    if (u.side === 'army' && !inSight.has(u)) return; // fog of war: only what a rebel can see (or a reveal has marked)
+    if (u.side === 'army' && fogOn && (sightFade.get(u) ?? 1) < 0.999) {
+      // fading into or out of sight
+      ctx.save();
+      ctx.globalAlpha *= sightFade.get(u);
+      drawPawnBody(u, sim, opts);
+      ctx.restore();
+      return;
+    }
+    drawPawnBody(u, sim, opts);
+  }
+  function drawPawnBody(u, sim, opts) {
     const p = pawnFor(u);
     const size = 2.4;
     shadow(u.x, u.z + 0.1, 0.45, 0.22, 0.3);
@@ -742,7 +765,7 @@ export async function createSpriteRenderer(view) {
       }
       const max = Math.max(pauseMax.get(u.id) || 0, u.pause);
       pauseMax.set(u.id, max);
-      if (u.state === 'mounted' || u.escaped) continue;
+      if (u.state === 'mounted' || u.escaped || (u.side === 'army' && !inSight.has(u))) continue;
       aimPie(u, 1 - u.pause / max);
     }
   }
@@ -774,6 +797,18 @@ export async function createSpriteRenderer(view) {
     ctx.font = '600 13px ui-monospace, monospace';
     ctx.fillStyle = '#9b988a';
     ctx.fillText(`/ ${W.mag}   ${reserve === Infinity ? '+∞' : '+' + reserve}`, X + 16 + cw, Y + 40);
+    // hand grenades (G) and stamina (Shift sprint)
+    ctx.textAlign = 'right';
+    ctx.fillStyle = p.grenades ? '#c9c6b4' : '#6a675c';
+    ctx.font = '600 11px ui-monospace, monospace';
+    ctx.fillText(`G ×${p.grenades ?? 0}`, X + 160, Y + 16);
+    ctx.textAlign = 'left';
+    if ((p.stamina ?? 1) < 0.999) {
+      ctx.fillStyle = 'rgba(255,255,255,.12)';
+      ctx.fillRect(X, Y + 52, 168, 3);
+      ctx.fillStyle = p.stamina < 0.25 ? '#e0805a' : '#a6d86a';
+      ctx.fillRect(X, Y + 52, 168 * p.stamina, 3);
+    }
     if (reloading) {
       const k = 1 - p.reload / (p.reloadTime || W.reload);
       ctx.fillStyle = 'rgba(255,255,255,.15)';
@@ -868,7 +903,7 @@ export async function createSpriteRenderer(view) {
     ctx.textBaseline = 'middle';
     for (const c of recent.values()) {
       const u = sim.units.find(x => x.id === c.id);
-      if (!u) continue;
+      if (!u || (u.side === 'army' && !inSight.has(u))) continue; // heard, not seen: the comms log still has it
       const x = sx(u.x),
         y = sy(u.z) - 1.6 * ppm;
       const w = ctx.measureText(c.text).width + 14,
@@ -886,6 +921,121 @@ export async function createSpriteRenderer(view) {
       ctx.globalAlpha = 1;
     }
   }
+
+  // ---------- fog of war: what the rebels can see ----------
+  // Sight is cast from every rebel: rays out to the sim's vision range (the soldiers see as far, convoy/sim.js), stopped
+  // by cover, vehicles and smoke. Outside it the map darkens and army soldiers are not drawn (unless a reveal has marked
+  // them); gunfire, vehicles and wrecks still show. Against flicker: each frame's mask is blended into the last one
+  // (shifted with the camera), and a soldier fades in and out of sight rather than popping.
+  const RAYS = 360;
+  let SIGHT = 30;
+  let inSight = new Set(); // army units drawn this frame
+  const sightFade = new Map(); // army unit -> 0..1, how far it has faded into sight
+  const fogNow = document.createElement('canvas'),
+    fn = fogNow.getContext('2d');
+  let fogCanvas = document.createElement('canvas'),
+    fogBack = document.createElement('canvas');
+  let fogCam = null; // the camera the shown mask was drawn with
+  /** The visibility polygon from (ox, oz): [[x, z], ...] round the circle. */
+  function sightFrom(sim, ox, oz, boxes) {
+    const pts = [];
+    for (let i = 0; i < RAYS; i++) {
+      const a = (i / RAYS) * Math.PI * 2,
+        ex = ox + Math.cos(a) * SIGHT,
+        ez = oz + Math.sin(a) * SIGHT;
+      let t = 1;
+      for (const b of boxes) {
+        const h = segmentBox(ox, oz, ex, ez, b, -0.05);
+        if (h < t) t = h;
+      }
+      for (const c of sim.smokes) {
+        if (sim.time > c.until) continue;
+        // smoke stops sight where the ray reaches the cloud
+        const dx = ex - ox,
+          dz = ez - oz,
+          L = dx * dx + dz * dz,
+          k = Math.max(0, Math.min(1, ((c.x - ox) * dx + (c.z - oz) * dz) / L));
+        if (Math.hypot(ox + dx * k - c.x, oz + dz * k - c.z) < c.r) t = Math.min(t, Math.max(0, k - c.r / SIGHT));
+      }
+      pts.push([ox + (ex - ox) * t, oz + (ez - oz) * t]);
+    }
+    return pts;
+  }
+  function updateFog(sim, dt) {
+    SIGHT = sim.vision ?? SIGHT;
+    const eyes = sim.units.filter(u => u.side === 'partisan' && u.alive && !u.escaped);
+    const boxes = sim.boxes();
+    inSight = new Set();
+    const fade = 1 - Math.exp(-dt * 10);
+    for (const u of sim.units) {
+      if (u.side !== 'army' || u.escaped) continue;
+      if (sim.time < (u.revealedUntil ?? -1) || eyes.some(e => Math.hypot(e.x - u.x, e.z - u.z) < SIGHT && sim.los(e.x, e.z, u.x, u.z)))
+        u.seenAt = sim.time;
+      const want = sim.time - (u.seenAt ?? -9) < 0.35 ? 1 : 0; // a moment's grace before a soldier fades out of sight
+      const k = (sightFade.get(u) ?? 0) + (want - (sightFade.get(u) ?? 0)) * fade;
+      sightFade.set(u, k);
+      if (k > 0.03) inSight.add(u);
+    }
+    // this frame's dark, with each rebel's sight cut out of it (soft at the edge of its range)
+    const w = Math.ceil(W / 2),
+      h = Math.ceil(Hh / 2);
+    for (const c of [fogNow, fogCanvas, fogBack]) if (c.width !== w || c.height !== h) [c.width, c.height] = [w, h];
+    fn.setTransform(1, 0, 0, 1, 0, 0);
+    fn.globalCompositeOperation = 'source-over';
+    fn.clearRect(0, 0, w, h);
+    fn.fillStyle = level.night ? 'rgba(4,6,10,.72)' : 'rgba(10,12,9,.58)';
+    fn.fillRect(0, 0, w, h);
+    fn.globalCompositeOperation = 'destination-out';
+    for (const e of eyes) {
+      const poly = sightFrom(
+        sim,
+        e.x,
+        e.z,
+        boxes.filter(b => !inBoxPad(e.x, e.z, b)),
+      );
+      const cx = sx(e.x) / 2,
+        cy = sy(e.z) / 2,
+        R = (SIGHT * ppm) / 2;
+      const g = fn.createRadialGradient(cx, cy, R * 0.55, cx, cy, R);
+      g.addColorStop(0, 'rgba(0,0,0,1)');
+      g.addColorStop(1, 'rgba(0,0,0,0)');
+      fn.fillStyle = g;
+      fn.beginPath();
+      poly.forEach(([x, z], i) => (i ? fn.lineTo(sx(x) / 2, sy(z) / 2) : fn.moveTo(sx(x) / 2, sy(z) / 2)));
+      fn.closePath();
+      fn.fill();
+    }
+    // blend into the mask shown last frame, moved to where the camera is now: shown = last·(1−k) + now·k
+    // ('lighter' adds premultiplied colour and alpha, so with one fog colour this is an exact mix)
+    const cam = {x: camera.x - shake.x / ppm, z: camera.z - shake.y / ppm, ppm};
+    const bg = fogBack.getContext('2d');
+    bg.setTransform(1, 0, 0, 1, 0, 0);
+    bg.globalCompositeOperation = 'source-over';
+    bg.clearRect(0, 0, w, h);
+    const k = fogCam ? 1 - Math.exp(-dt * 14) : 1;
+    if (fogCam && k < 1) {
+      const sc = cam.ppm / fogCam.ppm;
+      bg.globalAlpha = 1 - k;
+      bg.setTransform(
+        sc,
+        0,
+        0,
+        sc,
+        w / 2 - (w / 2) * sc + ((fogCam.x - cam.x) * cam.ppm) / 2,
+        h / 2 - (h / 2) * sc + ((fogCam.z - cam.z) * cam.ppm) / 2,
+      );
+      bg.drawImage(fogCanvas, 0, 0);
+      bg.setTransform(1, 0, 0, 1, 0, 0);
+    }
+    bg.globalCompositeOperation = 'lighter';
+    bg.globalAlpha = k;
+    bg.drawImage(fogNow, 0, 0);
+    bg.globalAlpha = 1;
+    bg.globalCompositeOperation = 'source-over';
+    [fogCanvas, fogBack] = [fogBack, fogCanvas];
+    fogCam = cam;
+  }
+  const inBoxPad = (x, z, b) => Math.abs(x - b.x) <= b.w / 2 && Math.abs(z - b.z) <= b.d / 2;
 
   // ---------- abilities (convoy/abilities.js) ----------
   /** On the ground: mines (a blinking light), the rings of a reveal or suppression. */
@@ -1022,7 +1172,9 @@ export async function createSpriteRenderer(view) {
    * @param {{aim?, selected?, orders?, pointer?, aimZoom?, abilities?: Array, slowmo?: number}} opts
    *   abilities: the ability bar [{key, name, left, cd, ready, usable}]; slowmo 0..1: the rebel switch's slow motion
    */
-  function draw(sim, {aim, selected = [], orders = true, pointer = null, aimZoom = false, abilities = null, slowmo = 0} = {}) {
+  let fogOn = true;
+  function draw(sim, {aim, selected = [], orders = true, pointer = null, aimZoom = false, abilities = null, slowmo = 0, fog = true} = {}) {
+    fogOn = fog;
     if (sim.level !== level) {
       level = sim.level;
       ground = bakeGround(level);
@@ -1087,6 +1239,10 @@ export async function createSpriteRenderer(view) {
         }
       }
     groundFx(sim);
+    // what the player's screen shows, for the sim's "you see them, they see you" (convoy/sim.js onScreen)
+    sim.view = {x0: camera.x - W / 2 / ppm, x1: camera.x + W / 2 / ppm, z0: camera.z - Hh / 2 / ppm, z1: camera.z + Hh / 2 / ppm};
+    if (fogOn) updateFog(sim, rdt);
+    else inSight = new Set(sim.units);
     // everything that stands, sorted by its south edge
     const things = [];
     for (const b of sim.boxes()) if (b.kind !== 'vehicle') things.push({z: b.z + b.d / 2, draw: () => drawCover(b, sim)});
@@ -1104,6 +1260,7 @@ export async function createSpriteRenderer(view) {
     drawProjectiles(sim);
     drawFlashes(sim);
     drawSmoke(now);
+    if (fogOn) ctx.drawImage(fogCanvas, 0, 0, W, Hh);
     pies(sim);
     abilityFx(sim);
     if (level.night) {

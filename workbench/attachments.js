@@ -14,8 +14,7 @@
 // Built attachments are illustrative low-poly shapes, not measured replicas.
 import * as T from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
-import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
-import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
+import {loadModel} from '../shared/model-cache.js';
 
 // Real (downloaded, CC0 / CC BY) attachment parts. Replace a code-built `build` with
 //   build: glb('red-dot.glb', {position:[0,0,0], rotation:[0,0,0], scale:1})
@@ -23,15 +22,14 @@ import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
 // add its budget to assets/register.json). Geometry arrives asynchronously into an empty group,
 // so the slot works immediately and the part pops in when loaded. Units: metres in slot space
 // (+x toward the muzzle, +y up, +z right side, origin at the mount point).
-const partLoader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
-export const glb =
-  (file, {position = [0, 0, 0], rotation = [0, 0, 0], scale = 1} = {}) =>
-  () => {
+/** Every model file an attachment can come from, for prefetching (shared/model-cache.js). */
+export const ATTACHMENT_FILES = new Set();
+export const glb = (file, {position = [0, 0, 0], rotation = [0, 0, 0], scale = 1} = {}) => {
+  ATTACHMENT_FILES.add(new URL(`../assets/models/attachments/${file}`, import.meta.url).href);
+  return () => {
     const group = new T.Group();
-    partLoader.load(
-      new URL(`../assets/models/attachments/${file}`, import.meta.url).href,
-      gltf => {
-        const model = gltf.scene;
+    loadModel(new URL(`../assets/models/attachments/${file}`, import.meta.url).href).then(
+      model => {
         model.position.set(...position);
         model.rotation.set(...rotation);
         model.scale.setScalar(scale);
@@ -42,12 +40,13 @@ export const glb =
           }
         });
         group.add(model);
+        group.dispatchEvent({type: 'loaded'}); // rifle-instance.js repaints late parts (the retro MCX)
       },
-      undefined,
       err => console.error(`attachment ${file} failed to load`, err),
     );
     return group;
   };
+};
 
 // A real part out of one of the downloaded Sketchfab files in assets/models/weapons/ (CC BY 4.0 / CC0, see the register).
 //   file     the GLB; `nodes` picks some nodes out of a set (names as in the file, sanitised like the rifles' parts)
@@ -56,14 +55,12 @@ export const glb =
 //   anchor   which point of the rotated part sits at the slot origin, per axis: 'min', 'max' or 'c' (centre)
 //   offset   metres, added after anchoring
 const nodeId = name => T.PropertyBinding.sanitizeNodeName(name);
-export const real =
-  (file, {nodes, scale = 1, rotation = [0, 0, 0], anchor = ['min', 'c', 'c'], offset = [0, 0, 0]} = {}) =>
-  () => {
+export const real = (file, {nodes, scale = 1, rotation = [0, 0, 0], anchor = ['min', 'c', 'c'], offset = [0, 0, 0]} = {}) => {
+  ATTACHMENT_FILES.add(new URL(`../assets/models/weapons/${file}`, import.meta.url).href);
+  return () => {
     const group = new T.Group();
-    partLoader.load(
-      new URL(`../assets/models/weapons/${file}`, import.meta.url).href,
-      gltf => {
-        const src = gltf.scene;
+    loadModel(new URL(`../assets/models/weapons/${file}`, import.meta.url).href).then(
+      src => {
         src.updateMatrixWorld(true);
         let part = src;
         if (nodes) {
@@ -96,12 +93,13 @@ export const real =
           }
         });
         group.add(wrap);
+        group.dispatchEvent({type: 'loaded'});
       },
-      undefined,
       err => console.error(`attachment ${file} failed to load`, err),
     );
     return group;
   };
+};
 // Forward is +z in most of the downloaded parts and -z in the AK kit; these turn either onto +x.
 export const Z_FWD = [0, Math.PI / 2, 0];
 export const Z_BACK = [0, -Math.PI / 2, 0];
@@ -176,6 +174,159 @@ const smoothstep = (a, b, x) => {
   const t = Math.min(1, Math.max(0, (x - a) / (b - a)));
   return t * t * (3 - 2 * t);
 };
+// The CNC kit (a modernised older rifle, after the owner's RPK reference: a KPOS-style folding stock, an M-LOK
+// handguard, a machined grip, a translucent polymer magazine) is sized from the part it replaces, so one design fits
+// every rifle: `fitted(original)` is that part's box in slot space.
+function fitted(original) {
+  const container = original.parent;
+  container.updateWorldMatrix(true, true);
+  const box = new T.Box3().setFromObject(original);
+  if (box.isEmpty()) return null;
+  const inv = container.matrixWorld.clone().invert();
+  return box.applyMatrix4(inv);
+}
+const anodised = new T.MeshStandardMaterial({name: 'h-190', color: '#1c1e20', roughness: 0.38, metalness: 0.75});
+const slotBlack = new T.MeshStandardMaterial({name: 'slot', color: '#060708', roughness: 0.9, metalness: 0.2});
+const rubber = new T.MeshStandardMaterial({name: 'rubber', color: '#141414', roughness: 0.95});
+// A side profile with holes, extruded to `depth` (centred on z).
+function cutout(points, holes, depth, bevel = 0.002) {
+  const shape = new T.Shape(points.map(p => new T.Vector2(...p)));
+  for (const h of holes) shape.holes.push(new T.Path(h.map(p => new T.Vector2(...p))));
+  return new T.ExtrudeGeometry(shape, {
+    depth: depth - bevel * 2,
+    bevelEnabled: true,
+    bevelThickness: bevel,
+    bevelSize: bevel,
+    bevelSegments: 1,
+  }).translate(0, 0, -depth / 2 + bevel);
+}
+function cncStock({original}) {
+  const b = fitted(original) || new T.Box3(new T.Vector3(-0.26, -0.1, -0.02), new T.Vector3(0, 0.03, 0.02));
+  const front = b.max.x,
+    L = Math.min(0.34, Math.max(0.22, b.max.x - b.min.x)),
+    rear = front - L,
+    bore = b.max.y - 0.022,
+    H = Math.min(0.15, Math.max(0.11, b.max.y - b.min.y)),
+    low = bore + 0.025 - H;
+  // skeleton: a top strut over the tube, a diagonal down to the butt, two lightening windows
+  const body = cutout(
+    [
+      [front - 0.04, bore + 0.022],
+      [rear + 0.015, bore + 0.027],
+      [rear, bore + 0.02],
+      [rear, low],
+      [rear + 0.035, low],
+      [front - 0.075, bore - 0.03],
+      [front - 0.04, bore - 0.02],
+    ],
+    [
+      [
+        [rear + 0.03, bore + 0.008],
+        [rear + 0.03, low + 0.03],
+        [rear + 0.03 + (front - rear) * 0.32, bore + 0.002],
+      ],
+      [
+        [rear + 0.06 + (front - rear) * 0.3, bore + 0.01],
+        [front - 0.085, bore + 0.01],
+        [front - 0.085, bore - 0.012],
+        [rear + 0.07 + (front - rear) * 0.36, bore - 0.006],
+      ],
+    ],
+    0.026,
+  );
+  return group(
+    [[body, box(0.06, 0.012, 0.03, [rear + 0.05, bore + 0.033, 0])], anodised],
+    [
+      [
+        tube(0.0145, rear + 0.04, front - 0.03, [bore, 0], 12),
+        box(0.034, 0.042, 0.036, [front - 0.017, bore, 0]),
+        box(0.012, 0.012, 0.03, [front - 0.06, bore - 0.018, 0]),
+      ],
+      anodised,
+    ],
+    [[box(0.018, bore + 0.03 - low, 0.034, [rear - 0.008, (bore + 0.03 + low) / 2, 0])], rubber],
+  );
+}
+function mlokHandguard({original, slot}) {
+  // a rifle can give the tube's extent in metres on the laid-out rifle (`span` [x0, x1], `axis` [y, z], `radius`)
+  const s = slot?.factory?.[0];
+  let b = fitted(original) || new T.Box3(new T.Vector3(-0.1, -0.02, -0.02), new T.Vector3(0.1, 0.02, 0.02));
+  if (s?.span) {
+    const at = original.parent.position,
+      r = s.radius || 0.024;
+    b = new T.Box3(
+      new T.Vector3(s.span[0] - at.x, s.axis[0] - at.y - r + 0.004, s.axis[1] - at.z - r + 0.004),
+      new T.Vector3(s.span[1] - at.x, s.axis[0] - at.y + r - 0.004, s.axis[1] - at.z + r - 0.004),
+    );
+  }
+  const x0 = b.min.x - 0.005,
+    x1 = b.max.x + 0.02,
+    len = x1 - x0,
+    cy = (b.min.y + b.max.y) / 2,
+    cz = (b.min.z + b.max.z) / 2,
+    r = Math.min(0.034, Math.max(0.02, Math.max(b.max.y - b.min.y, b.max.z - b.min.z) / 2 + 0.004)),
+    ap = r * Math.cos(Math.PI / 8);
+  const shell = new T.CylinderGeometry(r, r, len, 8, 1)
+    .rotateY(Math.PI / 8)
+    .rotateZ(-Math.PI / 2)
+    .translate((x0 + x1) / 2, cy, cz);
+  const slots = [],
+    rail = [box(len, 0.006, 0.022, [(x0 + x1) / 2, cy + ap + 0.003, cz])];
+  for (let x = x0 + 0.025; x < x1 - 0.03; x += 0.042)
+    for (const side of [1, -1]) {
+      slots.push(box(0.03, 0.009, 0.004, [x + 0.015, cy, cz + side * (ap - 0.0012)]));
+      slots.push(box(0.03, 0.004, 0.009, [x + 0.015, cy - ap + 0.0012, cz]).rotateX(0)); // bottom
+    }
+  for (let x = x0 + 0.006; x < x1 - 0.004; x += 0.01) rail.push(box(0.005, 0.004, 0.022, [x, cy + ap + 0.008, cz]));
+  return group([[shell, ...rail, tube(r + 0.002, x1 - 0.008, x1, [cy, cz], 8)], anodised], [slots, slotBlack]);
+}
+function cncGrip({original}) {
+  const b = fitted(original) || new T.Box3(new T.Vector3(-0.06, -0.12, -0.014), new T.Vector3(0.02, 0, 0.014));
+  // a straight-backed machined grip with a finger groove and a beavertail, scaled into the old grip's footprint
+  const unit = [
+    [1, 1],
+    [0.52, 1],
+    [0.0, 0.08],
+    [0.06, 0],
+    [0.46, 0],
+    [0.5, 0.12],
+    [0.6, 0.34],
+    [0.7, 0.44],
+    [0.66, 0.54],
+    [0.8, 0.74],
+    [0.96, 0.86],
+  ];
+  const w = b.max.x - b.min.x,
+    h = b.max.y - b.min.y;
+  const g = profile(
+    unit.map(([u, v]) => [b.min.x + u * w, b.min.y + v * h]),
+    Math.min(0.032, Math.max(0.024, b.max.z - b.min.z)),
+    0.003,
+  ).translate(0, 0, (b.min.z + b.max.z) / 2);
+  return group([g, new T.MeshStandardMaterial({name: 'polymer', color: '#1d1e1f', roughness: 0.6})]);
+}
+function clearMagazine({original}) {
+  const g = new T.Group(),
+    container = original.parent;
+  container.updateWorldMatrix(true, true);
+  const inv = container.matrixWorld.clone().invert(),
+    smoke = new T.MeshPhysicalMaterial({
+      name: 'clear',
+      color: '#c08a4a',
+      roughness: 0.3,
+      transparent: true,
+      opacity: 0.6,
+      depthWrite: false,
+    });
+  original.traverse(m => {
+    if (!m.isMesh) return;
+    const c = new T.Mesh(m.geometry, smoke);
+    c.matrixAutoUpdate = false;
+    c.matrix.copy(inv).multiply(m.matrixWorld);
+    g.add(c);
+  });
+  return g;
+}
 // Illustrative masses in grams; each rifle adds its own base mass. Magazines are empty.
 // Finish colours for the furniture. Original keeps the source colour; only polymer and black-finish
 // surfaces are recoloured, so steel stays steel.
@@ -416,6 +567,13 @@ export const SLOTS = [
     camera: {direction: [0.3, -0.05, 1], distance: 0.55, aim: [0.03, -0.1, 0]},
     label: 'Magazine',
     library: [
+      {
+        id: 'clear',
+        grams: 220,
+        label: 'Translucent polymer',
+        detail: 'The same magazine in smoked translucent polymer: the rounds show through.',
+        build: clearMagazine,
+      },
       // Stretched copies of the source magazine; the part inside the mag well keeps its shape.
       {
         id: '45',
@@ -456,10 +614,25 @@ export const SLOTS = [
     ],
   },
   {
+    id: 'handguard',
+    camera: {direction: [0.2, 0.25, 1], distance: 0.5},
+    label: 'Handguard',
+    library: [
+      {
+        id: 'mlok',
+        grams: 340,
+        label: 'CNC M-LOK',
+        detail: 'Machined octagonal free-float handguard with M-LOK slots and a full-length top rail.',
+        build: mlokHandguard,
+      },
+    ],
+  },
+  {
     id: 'grip',
     camera: {direction: [-0.35, 0.05, 1], distance: 0.42, aim: [-0.02, -0.05, 0]},
     label: 'Pistol grip',
     library: [
+      {id: 'cnc', grams: 85, label: 'Machined grip', detail: 'Straight-backed grip with a finger groove and a beavertail.', build: cncGrip},
       {
         id: 'classic',
         grams: 70,
@@ -489,7 +662,16 @@ export const SLOTS = [
     id: 'stock',
     camera: {direction: [-0.7, 0.25, 0.7], distance: 0.55},
     label: 'Stock',
-    library: [{id: 'none', label: 'Removed', detail: 'Stock removed: bare trunnion.'}],
+    library: [
+      {id: 'none', label: 'Removed', detail: 'Stock removed: bare trunnion.'},
+      {
+        id: 'cnc',
+        grams: 620,
+        label: 'CNC folding stock',
+        detail: 'Machined skeletal folding stock on a buffer-tube adapter, with a rubber pad.',
+        build: cncStock,
+      },
+    ],
   },
   {
     id: 'trigger',
