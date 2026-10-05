@@ -2575,7 +2575,7 @@
     "docs/engineering/recon-modular-audit.md",
     "tools/assets/recon-modular-contract.json"
    ],
-   "acceptance": "npm run test:foundation; complete front/back/shoulder/waist cloth surfaces, no equipment geometry or baked gear marks, canonical skeleton and <=8,000 triangles; committed four-side/pose strip sheet."
+   "acceptance": "npm run test:foundation; hood-free closed masked head, broader chest and neck, complete clothing with no gear remnants, canonical skeleton and <=8,000 triangles; four-side/pose strip sheet."
   },
   {
    "id": "WP-CM3",
@@ -2599,7 +2599,8 @@
     "docs/engineering/recon-clothing-foundation.md",
     "tools/assets/build-recon-foundation.py",
     "tools/assets/recon_foundation_geometry.py",
-    "tools/assets/recon-modular-contract.json"
+    "tools/assets/recon-modular-contract.json",
+    "tools/assets/recon_foundation_head.py"
    ],
    "acceptance": "Head, hood, mask and neck join without gaps; both gloves support relaxed, open and rifle grip shapes; legacy bone names remain compatible and skeleton additions are versioned."
   },

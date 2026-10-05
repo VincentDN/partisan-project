@@ -44,7 +44,8 @@ test('foundation is opt-in, contains no legacy gear and preserves all 26 rest tr
       expected.name,
     );
   }
-  assert.ok(!meshes.some(m => /Harness|Pouch|Radio|ShoulderTab|Holster|Knee_/.test(m.name)));
+  assert.ok(!meshes.some(m => /Hood|Harness|Pouch|Radio|ShoulderTab|Holster|Knee_/.test(m.name)));
+  assert.ok(!meshes.some(m => m.material.name === 'M_GR_hood'));
   assert.equal(createHash('sha256').update(bytes).digest('hex'), report.modelSha256);
   assert.equal(
     meshes.reduce((n, m) => n + m.geometry.index.count / 3, 0),
@@ -53,7 +54,7 @@ test('foundation is opt-in, contains no legacy gear and preserves all 26 rest tr
   assert.ok(report.runtimeTriangles <= 8000);
 });
 test('every clothing volume is closed in the actual compressed export', () => {
-  for (const mesh of meshes.filter(m => /Jacket|Trousers|Waist|Neck|Boot|Cuff/.test(m.name))) {
+  for (const mesh of meshes.filter(m => /Jacket|Trousers|Waist|Neck|Boot|Cuff|SK_CM_Head/.test(m.name))) {
     const ids = new Map(),
       mapped = vertices(mesh).map(p => {
         const key = p
@@ -94,6 +95,16 @@ test('front, rear, waist and shoulders have cloth coverage rather than missing v
   assert.ok(maps.size >= 2 && !maps.has(undefined));
   const face = meshes.find(m => m.material.name === 'M_GR_Face');
   assert.ok(!maps.has(face.material.map));
+});
+
+test('removing the hood leaves a complete crown and back of head above a fuller neck', () => {
+  const head = meshes.find(m => m.name === 'SK_CM_Head'),
+    neck = meshes.find(m => m.name === 'SK_CM_Neck');
+  assert.ok(head);
+  for (const y of [1.63, 1.71, 1.8])
+    for (const side of [-1, 1])
+      assert.ok(new T.Raycaster(new T.Vector3(0, y, side * 0.4), new T.Vector3(0, 0, -side)).intersectObject(head).length);
+  assert.ok(new T.Box3().setFromObject(neck).getSize(new T.Vector3()).x >= 0.175, 'neck width');
 });
 test('all poses and idle samples retain finite normalized deformation without stretching clothing edges excessively', () => {
   const cloth = meshes.filter(m => /Jacket|Trousers|Waist|Cuff|Boot/.test(m.name));

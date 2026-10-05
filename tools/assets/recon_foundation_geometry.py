@@ -44,8 +44,8 @@ def mesh(name,verts,faces,material):
 
 
 PROFILE=[(.909,.183,.126),(.935,.190,.132),(.974,.186,.130),(1.045,.171,.118),
-         (1.115,.169,.119),(1.205,.170,.128),(1.315,.185,.131),(1.415,.226,.121),
-         (1.475,.207,.105),(1.515,.087,.075),(1.555,.076,.064),(1.576,.078,.066)]
+         (1.115,.175,.123),(1.205,.187,.139),(1.315,.210,.155),(1.415,.237,.146),
+         (1.475,.218,.119),(1.515,.108,.088),(1.555,.094,.078),(1.576,.094,.078)]
 
 
 def jacket(material):
@@ -94,7 +94,7 @@ def details(material,stitch):
 
 def neck(material):
     verts=[];faces=[];n=12
-    for z,rx,ry in [(1.50,.070,.058),(1.565,.073,.061),(1.615,.068,.056)]:
+    for z,rx,ry in [(1.50,.088,.075),(1.565,.090,.075),(1.615,.082,.068)]:
         for i in range(n):
             a=i*math.tau/n;verts.append((rx*math.sin(a),-ry*math.cos(a),z))
     for k in range(2):
@@ -126,7 +126,7 @@ def pair(a,b,t):
 
 def weights(name,p):
     side='r' if name.endswith('_R') else 'l';z=p.z/1.85-.5
-    if 'Hood' in name:return {'head':1}
+    if 'Head' in name or 'Face' in name:return {'head':1}
     if 'Glove' in name or 'Cuff' in name:return {'hand_'+side:1}
     if 'Boot' in name:return {'foot_'+side:1}
     if 'Waist' in name:return {'pelvis':1}

@@ -19,7 +19,7 @@ try {
       face: f.meshes.find(m => m.material.name === 'M_GR_Face').material.map.image.width,
     };
   });
-  assert.ok(base.triangles <= 8000 && Math.abs(base.height - 1.85) < 0.01);
+  assert.ok(base.triangles <= 8000 && Math.abs(base.height - 1.827) < 0.01);
   assert.ok(base.cloth);
   assert.equal(base.face, 2048);
   const poses = await page.locator('#pose option').evaluateAll(options => options.map(o => o.value));

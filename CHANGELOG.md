@@ -4,6 +4,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 ## [Unreleased]
 
+### Changed (Recon foundation proportions, WP-CM2)
+- Remove the outer hood from the clean foundation, preserve the textured eyes and rebuild a closed, fitted masked head. Broaden the chest and neck, smooth underarm deformation and retain wrist seam constraints. The foundation now uses 5,263 triangles; the original Recon remains available.
+
 ### Added (Recon clean clothing foundation, WP-CM2)
 - Add an opt-in Recon foundation with a complete jacket, finished waist/neck, repaired clothing surfaces and fresh cloth textures. Remove the vest, harness and bags from this body; preserve the current Recon for comparison. The new foundation is 7,902 triangles on the unchanged 26-bone skeleton.
 - Inspect it unarmed from four sides, switch poses and idles, or customise colours and carry rifles in the Operator Modder. Fit a separate grip and carry profile to the new sleeves; retain temporary headwear and fixed-finger gloves until CM3.

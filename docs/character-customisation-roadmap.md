@@ -162,7 +162,7 @@ Sizes are repository planning units (S = 8 BU, M = 20 BU), not days or delivery 
 | CM20 | Tactical sprite appearance adapter | CM19, V6 | S | Key carrier/pack/headgear silhouettes map to the established 2D paper-doll system |
 | CM21 | Expanded catalogue release gate | CM11–CM18 | M | Coverage matrix, save migrations, catalogue load/memory and representative outfits pass |
 
-**Next modelling session:** CM3. Start from the [7,902-triangle clean clothing foundation](engineering/recon-clothing-foundation.md) and separate headwear and rebuild articulated hands. CM4 can implement the item resolver against the established contract; CM5 then models the first carrier against the finished clothing. The foundation is available as an opt-in operator and an unarmed inspection view.
+**Next modelling session:** CM3. Start from the [5,263-triangle hood-free clothing foundation](engineering/recon-clothing-foundation.md) and separate headwear and rebuild articulated hands. CM4 can implement the item resolver against the established contract; CM5 then models the first carrier against the finished clothing. The foundation is available as an opt-in operator and an unarmed inspection view.
 
 CM19–CM20 are integration follow-ups and do not block the 3D catalogue release. They extend the existing inventory/unlock and sprite-equipment work instead of duplicating it. CM1 should also reuse completed patches, headwear and prop work from the older C packets where it fits the new contracts.
 

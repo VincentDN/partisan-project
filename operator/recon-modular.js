@@ -14,7 +14,7 @@ export function modularRecon(weaponSlot) {
     label: 'Recon · foundation',
     status: 'available',
     description:
-      'Clean clothing foundation with no vest, harness or bags. Head and gloves are temporary; new carriers and attachment choices come in later milestones.',
+      'Hood-free clothing foundation with a broader chest and neck, no vest, harness or bags. The face covering and fixed-finger gloves remain temporary.',
     model: '../assets/models/operators/recon-modular.glb',
     packs: [],
     poseProfile: 'reconFoundation',
@@ -28,7 +28,7 @@ export function modularRecon(weaponSlot) {
     zones: [
       zone('top', 'Clean jacket', ['M_CM_Jacket', 'M_CM_Seams']),
       zone('pants', 'Trousers', ['M_CM_Trousers'], 'legs'),
-      zone('hood', 'Hood', ['M_GR_hood'], 'head'),
+      zone('headcover', 'Head covering', ['M_CM_HeadCover'], 'head'),
       zone('neck', 'Collar', ['M_CM_Neck'], 'head'),
       zone('gloves', 'Gloves', ['M_GR_gloves']),
       zone('boots', 'Boots', ['M_GR_boots'], 'legs'),

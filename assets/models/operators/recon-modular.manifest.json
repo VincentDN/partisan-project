@@ -1,6 +1,6 @@
 {
  "generated": "2026-10-05",
- "triangles": 7902,
+ "triangles": 5263,
  "bones": [
   "root",
   "pelvis",
@@ -52,6 +52,14 @@
    ]
   },
   {
+   "node": "SK_CM_Face",
+   "triangles": 933,
+   "materials": [
+    "M_GR_Face",
+    "M_CM_HeadCover"
+   ]
+  },
+  {
    "node": "SK_CM_Glove_L",
    "triangles": 258,
    "materials": [
@@ -66,11 +74,10 @@
    ]
   },
   {
-   "node": "SK_CM_Hood",
-   "triangles": 4000,
+   "node": "SK_CM_Head",
+   "triangles": 428,
    "materials": [
-    "M_GR_hood",
-    "M_GR_Face"
+    "M_CM_HeadCover"
    ]
   },
   {
@@ -150,25 +157,25 @@
    "textured": true
   },
   {
-   "name": "M_GR_gloves",
-   "baseColor": [
-    1,
-    1,
-    1
-   ],
-   "textured": true
-  },
-  {
-   "name": "M_GR_hood",
-   "baseColor": [
-    1,
-    1,
-    1
-   ],
-   "textured": true
-  },
-  {
    "name": "M_GR_Face",
+   "baseColor": [
+    1,
+    1,
+    1
+   ],
+   "textured": true
+  },
+  {
+   "name": "M_CM_HeadCover",
+   "baseColor": [
+    1,
+    1,
+    1
+   ],
+   "textured": true
+  },
+  {
+   "name": "M_GR_gloves",
    "baseColor": [
     1,
     1,

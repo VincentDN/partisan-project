@@ -4,6 +4,7 @@ import numpy as np
 from mathutils import Matrix
 sys.path.insert(0,os.path.dirname(__file__))
 import recon_foundation_geometry as geo
+import recon_foundation_head as head
 
 bpy.ops.wm.read_factory_settings(use_empty=True)
 bpy.ops.import_scene.gltf(filepath=os.path.abspath('build/recon-baseline.glb'))
@@ -40,6 +41,9 @@ def material(name,color):
 
 cloth=material('M_CM_Jacket','#7b806b');pants=material('M_CM_Trousers','#646a55')
 trim=material('M_CM_Seams','#5b604f');collar=material('M_CM_Neck','#4f5847')
+head_cover=material('M_CM_HeadCover','#292a24')
+source_head=next(o for o in objects if o.name=='SK_CM_Hood')
+objects.remove(source_head);objects.extend(head.unhood(source_head,head_cover))
 for obj in objects:
     if not any(s in obj.name for s in ['Trousers','Sleeve','Cuff']):continue
     # Positional welding removes texture seam duplicates before the low-poly clothing reduction.
@@ -99,7 +103,7 @@ for obj in objects:
     bmesh.ops.recalc_face_normals(bm,faces=list(bm.faces));bm.to_mesh(obj.data);bm.free()
 # Clean per-piece UVs expose only cloth. Source head, glove and boot UVs remain untouched.
 for obj in objects:
-    if any(s in obj.name for s in ['Hood','Glove','Boot']):continue
+    if any(s in obj.name for s in ['Face','Glove','Boot']):continue
     bpy.ops.object.select_all(action='DESELECT');obj.select_set(True);bpy.context.view_layer.objects.active=obj
     bpy.ops.object.mode_set(mode='EDIT');bpy.ops.mesh.select_all(action='SELECT')
     bpy.ops.uv.smart_project(angle_limit=math.radians(66),island_margin=.02);bpy.ops.object.mode_set(mode='OBJECT')
@@ -121,6 +125,25 @@ for bone in arm.data.bones:
 bpy.ops.object.select_all(action='DESELECT');shell.select_set(True);arm.select_set(True)
 bpy.context.view_layer.objects.active=arm;bpy.ops.object.parent_set(type='ARMATURE_AUTO')
 for bone in arm.data.bones:bone.use_deform=True
+bpy.context.view_layer.objects.active=shell;arm.select_set(False)
+# Broader chest topology needs a gradual underarm blend rather than abrupt heat-weight islands.
+adjacent=[set() for vertex in shell.data.vertices]
+for edge in shell.data.edges:
+    a,b=edge.vertices;adjacent[a].add(b);adjacent[b].add(a)
+blend=np.zeros((len(shell.data.vertices),len(shell.vertex_groups)))
+for vertex in shell.data.vertices:
+    for group in vertex.groups:blend[vertex.index,group.group]=group.weight
+for iteration in range(12):
+    previous=blend.copy()
+    for index,neighbors in enumerate(adjacent):
+        if neighbors:blend[index]=previous[index]*.4+previous[list(neighbors)].mean(axis=0)*.6
+for vertex in shell.data.vertices:
+    # Keep the collar on the torso: shoulder diffusion must not pull it up with a raised arm.
+    collar_follow=geo.smooth(1.45,1.50,vertex.co.z)
+    blend[vertex.index]*=1-collar_follow
+    blend[vertex.index,shell.vertex_groups['spine_04'].index]+=collar_follow
+    for index,weight in enumerate(blend[vertex.index]):
+        shell.vertex_groups[index].add([vertex.index],float(weight),'REPLACE')
 # Lock the sleeve rims to their wrist frames, blending into the heat-weighted forearms.
 # Heat weights alone leave the right cuff behind when the pistol-grip hand rolls.
 for vertex in shell.data.vertices:
@@ -138,7 +161,7 @@ bpy.ops.object.vertex_group_limit_total(group_select_mode='ALL',limit=4)
 bpy.ops.object.vertex_group_normalize_all(group_select_mode='ALL',lock_active=False)
 
 # Record position-welded topology and rest-space join spans for automated acceptance.
-report={'version':1,'skeleton':'recon-v1','stage':'CM2 clothing foundation','placeholders':['head/hood/mask','fixed-finger gloves'],
+report={'version':2,'skeleton':'recon-v1','stage':'CM2 clothing foundation refinement','placeholders':['fitted masked head; separable mask deferred','fixed-finger gloves'],
         'clothTexture':'Fresh deterministic woven albedo; no equipped-source projection','meshes':[]}
 for obj in objects:
     bm=bmesh.new();bm.from_mesh(obj.data);bmesh.ops.remove_doubles(bm,verts=list(bm.verts),dist=.00001)

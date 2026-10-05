@@ -3,7 +3,7 @@ export function reconClearance() {
   const o = window.PARP_OPERATOR,
     T = o.stage.T,
     solids = [];
-  for (const mesh of o.meshes.filter(m => m.visible && /Jacket|Hood|Harness|Scarf|UtilityPouch|MagPouches/.test(m.name))) {
+  for (const mesh of o.meshes.filter(m => m.visible && /Jacket|Hood|SK_CM_Head|Harness|Scarf|UtilityPouch|MagPouches/.test(m.name))) {
     mesh.skeleton.update();
     const positions = [];
     for (const i of mesh.geometry.index.array)
