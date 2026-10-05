@@ -12,7 +12,7 @@ import {createStage, reduceMotion} from '../shared/stage.js';
 import {buildWarehouse} from './warehouse.js';
 import {mountStash} from './stash.js';
 import {mountCrew} from './crew.js';
-import {createDof} from './dof.js';
+import {createLens} from './lens.js';
 import {warehouseAmbience} from '../shared/warehouse-ambience.js';
 import {mountTopBar} from '../shared/topbar.js';
 import {camoFor, FABRIC} from '../shared/camo.js';
@@ -106,21 +106,27 @@ async function rifleProp(id = 'ak74m') {
   holder.traverse(o => o.isMesh && (o.castShadow = true));
   return holder;
 }
-// Depth of field in the warehouse: focused where the camera looks (the hero), the room behind softens. Not in the
-// Art Style Lab, which draws its own screen-space passes.
-// The same pass gives the lens its grime and flares when a lamp or the rim light looks into it.
+// The dirty lens in the warehouse: grime and flares when a lamp or the rim light looks into the camera. The scene draws
+// straight to the canvas (its own antialiasing, no blur). Not in the Art Style Lab, which draws its own passes.
 const flareSources = [];
 warehouse.group.traverse(l => {
   if (l.isPointLight)
     flareSources.push({light: l, strength: 0.55}); // the hanging bulbs
   else if (l.isSpotLight) flareSources.push({light: l, strength: l === warehouse.lights.rim ? 1.2 : 0.8});
 });
-const dof = lab ? null : createDof(stage, {focus: cam => cam.position.distanceTo(stage.controls.target), flares: () => flareSources});
+const lens = lab
+  ? null
+  : createLens(stage, {
+      flares: () => flareSources,
+      // who can stand in front of a light: the operator and the crew (operator/crew.js names its group)
+      occluders: () =>
+        [scene.children.find(o => o.name === 'turntable'), warehouse.group.children.find(o => o.name === 'crew')].filter(Boolean),
+    });
 // the room's sound (shared/warehouse-ambience.js): voices, radio calls and weapon handling while the warehouse shows
 const ambience = lab ? null : warehouseAmbience();
 const roomButton = () => {
   $('#room')?.setAttribute('aria-pressed', String(warehouse.enabled));
-  dof?.set(warehouse.enabled);
+  lens?.set(warehouse.enabled);
   ambience?.set(warehouse.enabled);
 };
 $('#ambience')?.setAttribute('aria-pressed', String(!!ambience?.on));
@@ -753,7 +759,7 @@ const crew = lab ? null : mountCrew({scene, warehouse, figure, rifleProp, stage,
 prefetchModels(Object.values(MODELS).map(m => new URL(m.url, new URL('../workbench/', import.meta.url)).href));
 window.PARP_OPERATOR = {
   warehouse,
-  dof,
+  lens,
   ambience,
   get crew() {
     return crew;

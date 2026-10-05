@@ -158,9 +158,9 @@ await check('operator: loads, equipment toggles, zones are independent, hash rou
   // the Bannerlord layout: the stash on the left, the operator in the warehouse, the kit on the right
   await page.waitForFunction(() => document.querySelectorAll('#stash tbody tr').length >= 10, null, {timeout: 20000});
   assert.equal(await page.evaluate(() => window.PARP_OPERATOR.warehouse.enabled), true, 'the warehouse is the default room');
-  // the crew in the background (three insurgents, one with a rifle in hand) and the depth of field on the room
+  // the crew in the background (three insurgents, one with a rifle in hand); the room draws sharp, straight to the canvas
   await page.waitForFunction(() => window.PARP_OPERATOR.crew?.figures.length === 3, null, {timeout: 60000});
-  assert.equal(await page.evaluate(() => window.PARP_OPERATOR.dof.on), true, 'the background is out of focus');
+  assert.equal(await page.evaluate(() => window.PARP_OPERATOR.lens.on), true, 'the lens pass runs in the warehouse');
   // the dirty lens: looking up past the operator toward the rim light, the light is picked up as a flare source
   const flares = await page.evaluate(async () => {
     const o = window.PARP_OPERATOR,
@@ -170,7 +170,7 @@ await check('operator: loads, equipment toggles, zones are independent, hash rou
     controls.update();
     o.stage.wake(2000);
     await new Promise(r => setTimeout(r, 600));
-    return o.dof.uniforms.uFlareCount.value;
+    return o.lens.uniforms.uFlareCount.value;
   });
   assert.ok(flares >= 1, `lens flare sources in view: ${flares}`);
   const crewInfo = await page.evaluate(() => {
@@ -189,7 +189,7 @@ await check('operator: loads, equipment toggles, zones are independent, hash rou
   assert.equal(await page.locator('#stash th[data-sort="value"]').getAttribute('aria-sort'), 'ascending');
   await page.locator('[data-env="studio"]').click();
   assert.equal(await page.evaluate(() => window.PARP_OPERATOR.warehouse.enabled), false, 'an HDR lighting swaps the room out');
-  assert.equal(await page.evaluate(() => window.PARP_OPERATOR.dof.on), false, 'and the depth of field with it');
+  assert.equal(await page.evaluate(() => window.PARP_OPERATOR.lens.on), false, 'and the lens pass with it');
   await page.locator('#room').click();
   assert.equal(await page.evaluate(() => window.PARP_OPERATOR.warehouse.enabled), true);
   assert.ok(firstName.length > 2);

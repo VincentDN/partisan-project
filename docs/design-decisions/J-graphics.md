@@ -471,6 +471,7 @@ The 2.5-D top-down sprite look for the shooter (RimWorld style) and the retro ov
 - Alternatives rejected: Sprites or cut-outs for the crew (they would not catch the room's light); a blurred backdrop image (the camera orbits).
 - Cost / risk: Three more skinned characters and a full-screen pass; heavy on software renderers (the browser tests open one 3D page at a time).
 - Cost to change: Low (`CREW` and `CREW_POSES` in `operator/crew.js`; the blur's uniforms in `operator/dof.js`).
+- Amended by TAC-J-54: the depth of field is removed at the owner's request; the crew and the workbench stay, in focus.
 - Revisit if: The crew should wear the player's band (classes from the Rebel Band), or the camera views need their own focus.
 - Owner feedback: —
 
@@ -521,6 +522,7 @@ The 2.5-D top-down sprite look for the shooter (RimWorld style) and the retro ov
 - Alternatives rejected: FXAA (blurrier than MSAA on thin rifle parts); preloading every attachment up front (the cost we removed).
 - Cost / risk: The parsed files stay in memory for the page's life (a few MB).
 - Cost to change: Low.
+- Amended by TAC-J-54: the 4× MSAA render target is reverted; the Operator Modder now draws straight to the antialiased canvas. The loading half stands.
 - Revisit if: Memory on phones becomes a problem (evict the least used).
 - Owner feedback: —
 
@@ -533,3 +535,13 @@ The 2.5-D top-down sprite look for the shooter (RimWorld style) and the retro ov
 - Cost to change: Low (data in `map/island.js`; each layer its own file).
 - Revisit if: The campaign needs travel, sieges or a real province state; then this becomes the overworld renderer.
 - Owner feedback: —
+
+### TAC-J-54 · The Operator Modder draws straight to the canvas: no depth of field, no MSAA target
+- Status: built  ·  Packet: WP-V
+- Decision: The scene renders directly to the canvas, which has the browser's own antialiasing (`antialias: true` in `shared/stage.js`). The depth-of-field pass and its 4× MSAA half-float render target are gone (`operator/dof.js` removed). The dirty lens (TAC-J-51) stays as a light-only pass on top (`operator/lens.js`): a full-screen quad blended additively after the scene, rolled off softly so it never clips. Without a depth buffer to read, whether a light is hidden is now a ray from the camera to the light against the operator and the crew, every third frame, with the flare easing in and out as a shoulder crosses it.
+- Why: Owner feedback with a screenshot: ugly pixel artefacts round the operator that the antialiasing update did not fix, and a request to revert it and remove the blur. The artefacts came from the depth of field itself: MSAA resolves the colour at an edge but the depth texture keeps one sample, so edge pixels got blur weights from the wrong side and turned into a dotted bright rim. Drawing to the canvas removes both the blur and the mismatch, and the canvas antialiasing is the one the 1080p complaint originally missed.
+- Alternatives rejected: FXAA or SMAA over the depth-of-field target (softens the rifles and keeps the edge mismatch); a multisampled depth resolve (WebGL 2 cannot blit depth with colour averaging); keeping a weaker blur (the owner asked for none).
+- Cost / risk: A ray per visible light every third frame against skinned meshes; a few dozen microseconds at this triangle count. Flares no longer hide behind the room's own props, only behind people.
+- Cost to change: Low.
+- Revisit if: A depth-based effect returns (it would need its own antialiasing strategy, e.g. a resolved depth pre-pass).
+- Owner feedback: 5 October 2026: pixel artefacts, revert the antialiasing, remove the blur.

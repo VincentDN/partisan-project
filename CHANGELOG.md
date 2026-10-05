@@ -4,6 +4,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 ## [Unreleased]
 
+### Fixed (Operator Modder)
+- **No more pixel artefacts round the operator**: the depth-of-field blur and its 4× MSAA buffer are gone; the scene draws straight to the canvas with the browser's antialiasing, and the room behind is sharp. The dirty-lens flares stay, drawn on top, and still hide behind the operator and the crew. TAC-J-54.
+
 ### Added (docs)
 - **Roadmap and design document consolidated** (5 October): the master roadmap's state, milestones, order of work, tracks, risks and decisions now match the code (eleven rifles, three missions, the sprite view, Rebel Band, Equipment Wiki, the map test, the campaign). Packets that shipped in another form are marked done as built (WP-S5, S6, S21 to S24, S26, V2, V3); the V milestone no longer holds the overworld. The design document's dispatches, campaign loop, progression, feature matrix, moodboard notes, open decisions and specs follow suit.
 - **Campaign decisions** (WP-W26, delegated by the owner): barter at friendly villages, auto-resolve only for lopsided fights, an overrun camp is a setback, the 3-D map is the overworld (TAC-K-01 to K-04, `docs/design-decisions/K-campaign.md`); WP-V14 to V16 retired.
