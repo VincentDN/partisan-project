@@ -761,7 +761,7 @@ await check('rebel band: the band idles, the stash, an upgrade that plays a prom
   await page.keyboard.down('KeyW');
   await page.waitForFunction(() => window.PARP_BAND.hands.pose().bob > 0, null, {timeout: 5000});
   await page.keyboard.up('KeyW');
-  assert.equal(await page.evaluate(() => window.PARP_BAND.hands.pose().dir), 'east', 'it faces the mouse');
+  assert.ok(Math.abs(await page.evaluate(() => window.PARP_BAND.hands.pose().aim)) < 0.6, 'the weapon aims at the mouse');
   const full = await page.evaluate(() => window.PARP_BAND.hands.mag);
   await page.mouse.down();
   await page.waitForFunction(m => window.PARP_BAND.hands.mag < m, full, {timeout: 5000});
@@ -772,6 +772,7 @@ await check('rebel band: the band idles, the stash, an upgrade that plays a prom
   await page.waitForFunction(m => window.PARP_BAND.hands.mag === m, full, {timeout: 10000});
   assert.equal(await page.evaluate(() => scrollY), 0, 'the keys never scroll the page');
   await page.mouse.move(2, 2);
+  await page.waitForFunction(() => window.PARP_BAND.hands.pose().rest === 1, null, {timeout: 5000});
   // the class tree: every class as a node, a card with abilities, back to the band
   await page.locator('#tree-btn').click();
   assert.ok((await page.locator('#tree-view .node').count()) >= 40, 'every class in the tree');

@@ -1,5 +1,5 @@
 // Sounds for the hands-on pawn on the Rebel Band screen (band/handling.js events): footsteps with a little gear rattle,
-// cloth when it turns, real recorded shots (assets/audio/shooter) and the reload choreography from the recorded foley
+// real recorded shots (assets/audio/shooter) and the reload choreography from the recorded foley
 // bank (assets/audio/foley). Loaded on the first action, silent when the site's sound preference is off.
 import {audio} from '../shared/sfx.js';
 import {soundLayer} from '../shared/sound-layer.js';
@@ -100,9 +100,6 @@ export function handlingAudio() {
         noise(ctx, out, n, {dur: 0.08, gain: 0.32 * k, freq: 800 * v});
         noise(ctx, out, n, {at: ctx.currentTime + 0.012, dur: 0.05, gain: 0.12 * k, type: 'highpass', freq: 3600 * v});
         if (++steps % 2 === 0) sample(ctx, out, 'handle', {gain: 0.1 * k, rate: 1.1});
-      } else if (type === 'turn') {
-        noise(ctx, out, n, {dur: 0.16, gain: 0.12, type: 'bandpass', freq: 1500 * v, q: 0.8}); // cloth
-        sample(ctx, out, 'handle', {gain: 0.08});
       } else if (type === 'shot') {
         const s = data.profile.shot;
         if (!sample(ctx, out, s.cat, {gain: s.gain, rate: s.rate, len: s.len})) {

@@ -1,48 +1,49 @@
 // The Rebel Band's big character under the player's hands: drawing the handled pose (paintHandled) and wiring the
 // mouse and keyboard to the controller (band/handling.js) and its sounds (band/handling-audio.js).
-import {createHandling} from './handling.js';
+import {createHandling, REST_ANGLE} from './handling.js';
 import {handlingAudio} from './handling-audio.js';
 import {hold} from './fx.js';
 
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /**
- * The pawn under the player's hands (band/handling.js pose): it faces where it aims or walks, as the shooter draws a
- * rebel (east and west from the side, north from behind with the gun behind it), bobs with each stride, kicks back
+ * The pawn under the player's hands (band/handling.js pose). It always faces the viewer; only the weapon turns. At rest
+ * the weapon sits exactly where the idle draws it (across the body, muzzle up); aimed, it swings round the hands as the
+ * shooter holds a rifle, flipped when it points left so it is never upside down. The pawn bobs with each stride, kicks
  * when it fires with a flash at the muzzle, and lowers and tilts the gun to reload.
  */
 export function paintHandled(g, p, gun, {size, cx, cy, pose}) {
   const u = size / 2.4, // pixels per metre: the shooter draws a pawn 2.4 m across
-    a = pose.aim,
-    ca = Math.cos(a),
-    sa = Math.sin(a),
-    left = ca < 0,
     bob = pose.bob * 0.06 * u,
-    recoil = pose.kick * 0.05 * u;
-  const img = pose.dir === 'west' ? p.east : p[pose.dir];
-  const len = gun ? gun.length * 1.4 * u : 0,
-    gh = gun ? (len * gun.img.height) / gun.img.width : 0,
-    off = len * 0.28 * (1 - pose.dip * 0.35) - recoil * 2,
-    gx = cx + ca * off - ca * recoil,
-    gy = cy + 0.42 * u + sa * off - sa * recoil - bob + pose.dip * 0.1 * u;
-  // the reload tilts the muzzle toward the ground on whichever side the gun points
-  const rot = a + (left ? -1 : 1) * pose.dip * 0.75 - (left ? -1 : 1) * pose.kick * 0.12;
-  const drawGun = () => {
-    if (!gun) return;
-    g.save();
-    g.translate(gx, gy);
-    g.rotate(rot);
-    if (left) g.scale(1, -1);
-    g.drawImage(gun.img, -len / 2, -gh / 2, len, gh);
-    g.restore();
-  };
-  if (pose.dir === 'north') drawGun();
+    recoil = pose.kick * 0.05 * u,
+    k = pose.rest,
+    mix = (x, y) => x + (y - x) * k;
   g.save();
-  g.translate(cx - ca * recoil * 0.6, cy - bob - sa * recoil * 0.6);
-  if (pose.dir === 'west') g.scale(-1, 1);
-  g.drawImage(img, -size / 2, -size / 2, size, size);
+  g.translate(cx, cy - bob + recoil * 0.3);
+  g.drawImage(p.south, -size / 2, -size / 2, size, size);
   g.restore();
-  if (pose.dir !== 'north') drawGun();
+  if (!gun) return;
+  const a = pose.aim,
+    ca = Math.cos(a),
+    sa = Math.sin(a);
+  // aimed: held at the hands, pushed out along the barrel; resting: the idle's place and angle (band.js paint)
+  const len = mix(gun.length * 1.4 * u, size * 0.62 * Math.min(1.2, gun.length)),
+    gh = (len * gun.img.height) / gun.img.width,
+    off = len * 0.28 * (1 - pose.dip * 0.35) * (1 - k) - recoil * 2,
+    hx = mix(cx, cx + size * 0.02),
+    hy = mix(cy + 0.42 * u, cy + size * 0.1),
+    gx = hx + Math.cos(a) * off - ca * recoil * (1 - k),
+    gy = hy + Math.sin(a) * off - sa * recoil * (1 - k) - bob + pose.dip * 0.1 * u;
+  const base = a + Math.atan2(Math.sin(REST_ANGLE - a), Math.cos(REST_ANGLE - a)) * k,
+    left = Math.cos(base) < 0;
+  // the reload tilts the muzzle toward the ground on whichever side the gun points; a shot kicks it up
+  const rot = base + (left ? -1 : 1) * (pose.dip * 0.75 - pose.kick * 0.12);
+  g.save();
+  g.translate(gx, gy);
+  g.rotate(rot);
+  if (left) g.scale(1, -1);
+  g.drawImage(gun.img, -len / 2, -gh / 2, len, gh);
+  g.restore();
   if (pose.flash && gun) {
     const mx = gx + Math.cos(rot) * len * 0.55,
       my = gy + Math.sin(rot) * len * 0.55,
@@ -72,7 +73,7 @@ export function paintHandled(g, p, gun, {size, cx, cy, pose}) {
 
 /**
  * Wire the big pawn canvas: with the mouse over it, or it focused, WASD or the arrows walk it in place, the mouse aims
- * it (Q and E turn it from the keyboard), a click, Space or F fires, R reloads. Leaving hands it back to its idle.
+ * its weapon, a click, Space or F fires, R reloads. Leaving eases the weapon back to rest, then hands it to its idle.
  * pawn: the painter's {size, cy}; hint: the element that shows the rounds left; canHandle(): false while a promotion
  * or the class tree has the screen. Returns {hands, setPawn(draw, gunId)}: setPawn after each new selection.
  */
@@ -99,7 +100,7 @@ export function mountHands(pawnCanvas, {pawn, hint, canHandle}) {
     }
     hands.step(dt);
     if (!hands.engaged && !hovered) {
-      // nothing done for a moment and no mouse over it: back to its idle (keys still wake it while it has focus)
+      // nothing going on, the weapon back at rest and no mouse over it: back to its idle (keys still wake it)
       loop = 0;
       hold(pawnCanvas, false);
       hint.textContent = '';

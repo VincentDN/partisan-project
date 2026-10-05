@@ -2,7 +2,7 @@
 // choreography (band/handling.js).
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {createHandling, profileFor, facingDir, PROFILES} from '../band/handling.js';
+import {createHandling, profileFor, PROFILES, REST_ANGLE} from '../band/handling.js';
 import {TROOPS} from '../band/troops.js';
 
 const run = (h, seconds, dt = 1 / 60) => {
@@ -21,23 +21,16 @@ test('every class gun has a handling profile, and the odd ones handle as they sh
   assert.equal(profileFor(undefined), PROFILES.rifle);
 });
 
-test('facings follow the screen angle', () => {
-  assert.equal(facingDir(0), 'east');
-  assert.equal(facingDir(Math.PI), 'west');
-  assert.equal(facingDir(Math.PI / 2), 'south');
-  assert.equal(facingDir(-Math.PI / 2), 'north');
-});
-
-test('the movement keys walk it in place: it bobs, steps with sound, and turns to where it walks', () => {
+test('the movement keys walk it in place: it bobs and steps with sound, and never turns away', () => {
   const r = recorder(),
     h = createHandling({emit: r.emit});
-  assert.equal(h.pose().dir, 'south', 'it starts facing you');
+  assert.equal(h.pose().rest, 1, 'it starts with the weapon at rest');
   assert.equal(h.key('KeyD', true), true);
   run(h, 1);
-  const p = h.pose();
-  assert.equal(p.dir, 'east');
   assert.ok(r.count('step') >= 2, 'footsteps');
-  assert.ok(r.count('turn') >= 1, 'cloth on the turn');
+  assert.equal(h.pose().rest, 1, 'walking does not swing the weapon');
+  assert.equal('dir' in h.pose(), false, 'no facing: the character always faces the viewer');
+  assert.equal(h.key('KeyQ', true), false, 'no turning keys');
   let peak = 0;
   for (let i = 0; i < 30; i++) {
     h.step(1 / 60);
@@ -50,20 +43,20 @@ test('the movement keys walk it in place: it bobs, steps with sound, and turns t
   assert.equal(h.key('KeyX', true), false, 'other keys are left to the page');
 });
 
-test('the mouse aims it, and the gun turns with it', () => {
+test('the mouse aims the weapon; when it leaves, the weapon eases back to rest', () => {
   const h = createHandling();
   h.aimAt(-10, 0);
-  h.step(1 / 60);
-  assert.equal(h.pose().dir, 'west');
-  assert.ok(Math.abs(Math.abs(h.pose().aim) - Math.PI) < 1e-9);
-  h.aimAt(0, -10);
-  h.step(1 / 60);
-  assert.equal(h.pose().dir, 'north');
-  h.aimAt(null);
-  h.key('KeyQ', true);
-  const a = h.pose().aim;
   run(h, 0.5);
-  assert.ok(h.pose().aim < a, 'Q turns it from the keyboard');
+  assert.ok(Math.abs(Math.abs(h.pose().aim) - Math.PI) < 1e-9, 'aimed left');
+  assert.equal(h.pose().rest, 0, 'fully aimed');
+  h.aimAt(null);
+  h.step(1 / 60);
+  assert.ok(h.pose().rest > 0 && h.pose().rest < 1, 'easing back, not snapping');
+  assert.equal(h.engaged, true, 'still drawn by hand while it swings back');
+  run(h, 1);
+  assert.equal(h.pose().rest, 1, 'back at its resting angle');
+  assert.equal(h.engaged, false, 'and handed back to the idle');
+  assert.ok(Math.abs(REST_ANGLE + 0.6) < 1e-9, 'the idle draws the gun at -0.6 rad (band.js paint)');
 });
 
 test('automatic weapons fire at their cadence while held; semi-automatics once per press', () => {
@@ -138,7 +131,6 @@ test('reduced motion keeps the pawn still while every action still happens and s
   h.trigger(true);
   run(h, 0.5);
   const p = h.pose();
-  assert.equal(p.dir, 'west', 'it turns at once');
   assert.equal(p.bob, 0);
   assert.equal(p.kick, 0);
   assert.ok(r.count('step') >= 1 && r.count('shot') >= 1);
@@ -154,6 +146,6 @@ test('a new gun brings its own magazine; release lets go of every key', () => {
   run(h, 0.2);
   assert.equal(h.pose().bob, 0);
   assert.equal(h.mag, 100);
-  run(h, 2);
-  assert.equal(h.engaged, false, 'idle again after a moment');
+  run(h, 0.2);
+  assert.equal(h.engaged, false, 'idle again once nothing is going on');
 });

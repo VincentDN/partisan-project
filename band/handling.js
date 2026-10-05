@@ -1,6 +1,7 @@
 // Hands-on pawn for the Rebel Band screen: with the mouse over the big character (or the character focused), the
-// movement keys walk it in place (it bobs and faces where it walks), the mouse turns it and its weapon to aim, a click
-// or Space fires (recoil and a muzzle flash) and R reloads. Pure state, no DOM: band.js feeds input and draws pose(),
+// movement keys walk it in place (it bobs), the mouse swings its weapon to aim while the character keeps facing you,
+// a click or Space fires (recoil and a muzzle flash) and R reloads. When the mouse leaves, the weapon eases back to
+// the angle it rests at. Pure state, no DOM: band.js feeds input and draws pose(),
 // and every audible moment is an event for band/handling-audio.js (`emit(type, data)`).
 import {RELOADS} from '../convoy/soundscape.js';
 
@@ -86,19 +87,13 @@ const MOVE = {
   KeyD: [1, 0],
   ArrowRight: [1, 0],
 };
-const TURN = {KeyQ: -1, KeyE: 1};
-const SOUTH = Math.PI / 2; // screen angles: x right, y down; facing the viewer is "south"
+/** The angle the weapon rests at, held across the body muzzle up (screen angles: x right, y down). */
+export const REST_ANGLE = -0.6;
 const wrap = a => Math.atan2(Math.sin(a), Math.cos(a));
 
-/** The sprite facing for a screen angle: east and west from the side, north and south from the back and front. */
-export function facingDir(a) {
-  const cx = Math.cos(a),
-    cz = Math.sin(a);
-  return Math.abs(cx) > Math.abs(cz) ? (cx > 0 ? 'east' : 'west') : cz > 0 ? 'south' : 'north';
-}
-
 /**
- * A controller for one pawn. `emit(type, data)` receives 'step' {sprint}, 'turn', 'shot' {profile}, 'dry', 'reload'
+ * A controller for one pawn. The character always faces the viewer; only its weapon turns. `emit(type, data)` receives
+ * 'step' {sprint}, 'shot' {profile}, 'dry', 'reload'
  * {profile} and 'reload-move' {bank, gain}. `reduceMotion` keeps the pawn still (no bob, no recoil travel, no dip
  * animation) while every action still happens and still sounds.
  */
@@ -106,8 +101,9 @@ export function createHandling({gun = null, emit = () => {}, reduceMotion = fals
   const keys = new Set();
   let profile = profileFor(gun),
     mag = profile.mag,
-    facing = SOUTH,
     aim = null, // the mouse's screen angle while it is over the pawn
+    gunAngle = REST_ANGLE, // where the weapon points while aimed
+    rest = 1, // 1: the weapon in its resting pose; 0: aimed at gunAngle
     walk = 0, // stride phase (radians); a footfall each half turn
     moving = false,
     sprint = false,
@@ -116,9 +112,8 @@ export function createHandling({gun = null, emit = () => {}, reduceMotion = fals
     cooldown = 0,
     kick = 0, // recoil, 1 at the shot, easing back
     flash = 0, // seconds of muzzle flash left
-    reload = null, // {t, seen} while reloading
-    lastDir = facingDir(facing),
-    idleFor = 0; // seconds since the last input, for handing the pawn back to its idle pose
+    reload = null; // {t, seen} while reloading
+  const muzzleAngle = () => wrap(gunAngle + wrap(REST_ANGLE - gunAngle) * rest);
 
   function startReload() {
     if (reload || mag === profile.mag) return false;
@@ -141,7 +136,7 @@ export function createHandling({gun = null, emit = () => {}, reduceMotion = fals
     cooldown = profile.cadence;
     kick = 1;
     flash = 0.06;
-    emit('shot', {profile, angle: facing});
+    emit('shot', {profile, angle: muzzleAngle()});
     return true;
   }
 
@@ -149,10 +144,9 @@ export function createHandling({gun = null, emit = () => {}, reduceMotion = fals
     /** A key went down or up; returns true when the pawn uses it (the page then stops it scrolling). */
     key(code, down, {shift = false} = {}) {
       sprint = shift;
-      if (MOVE[code] || TURN[code]) {
+      if (MOVE[code]) {
         if (down) keys.add(code);
         else keys.delete(code);
-        idleFor = 0;
         return true;
       }
       if (!down) {
@@ -161,7 +155,6 @@ export function createHandling({gun = null, emit = () => {}, reduceMotion = fals
       }
       if (code === 'KeyR') {
         startReload();
-        idleFor = 0;
         return true;
       }
       if (code === 'Space' || code === 'KeyF') {
@@ -173,12 +166,10 @@ export function createHandling({gun = null, emit = () => {}, reduceMotion = fals
     /** Aim toward a point dx, dy pixels from the pawn's centre (screen axes); null when the mouse leaves. */
     aimAt(dx, dy) {
       aim = dx === null ? null : Math.atan2(dy, dx);
-      if (aim !== null) idleFor = 0;
     },
     trigger(down) {
       if (down && !trigger) pressed = true;
       trigger = down;
-      idleFor = 0;
     },
     /** Let go of everything (the mouse left, the page lost focus, a promotion started). */
     release() {
@@ -197,25 +188,17 @@ export function createHandling({gun = null, emit = () => {}, reduceMotion = fals
     step(dt) {
       dt = Math.min(dt, 0.1);
       let mx = 0,
-        mz = 0,
-        turn = 0;
+        mz = 0;
       for (const k of keys) {
-        if (MOVE[k]) {
-          mx += MOVE[k][0];
-          mz += MOVE[k][1];
-        }
-        if (TURN[k]) turn += TURN[k];
+        mx += MOVE[k][0];
+        mz += MOVE[k][1];
       }
       moving = mx !== 0 || mz !== 0;
-      // facing: the mouse if it is over the pawn, else Q/E, else the way it walks
-      const want = aim ?? (turn ? facing + turn * 3 * dt : moving ? Math.atan2(mz, mx) : facing);
-      const d = wrap(want - facing);
-      facing = wrap(aim !== null || turn || reduceMotion ? want : facing + d * Math.min(1, dt * 12));
-      const dir = facingDir(facing);
-      if (dir !== lastDir) {
-        lastDir = dir;
-        emit('turn', {dir});
-      }
+      // the weapon follows the mouse; without it, it eases back to where it rests
+      const k = reduceMotion ? 1 : Math.min(1, dt * 14);
+      if (aim !== null) gunAngle = wrap(gunAngle + wrap(aim - gunAngle) * (rest > 0.5 ? 1 : k));
+      rest += ((aim === null ? 1 : 0) - rest) * k;
+      if (Math.abs(rest - Math.round(rest)) < 0.002) rest = Math.round(rest);
       if (moving) {
         const before = Math.floor(walk / Math.PI);
         walk += dt * (sprint ? 13 : 9);
@@ -236,27 +219,26 @@ export function createHandling({gun = null, emit = () => {}, reduceMotion = fals
           mag = profile.mag;
         }
       }
-      if (moving || trigger || reload || aim !== null || flash > 0) idleFor = 0;
-      else idleFor += dt;
     },
     /**
-     * What to draw: dir (south, east, north, west), aim (the gun's screen angle), bob (0..1 of a stride's lift), kick
-     * (recoil 0..1), dip (0..1, the gun lowered and tilted for the reload), flash (true while the muzzle flashes).
+     * What to draw: aim (the weapon's screen angle when aimed), rest (0..1, how far it is back in its resting pose),
+     * bob (0..1 of a stride's lift), kick (recoil 0..1), dip (0..1, the gun lowered and tilted for the reload), flash
+     * (true while the muzzle flashes). The character itself always faces the viewer.
      */
     pose() {
       const p = reload ? reload.t / profile.reload : 0;
       return {
-        dir: facingDir(facing),
-        aim: facing,
+        aim: gunAngle,
+        rest,
         bob: reduceMotion || !moving ? 0 : Math.abs(Math.sin(walk)),
         kick: reduceMotion ? 0 : kick * profile.kick,
         dip: reload ? (reduceMotion ? 1 : Math.sin(Math.PI * Math.min(1, p * 1.15))) : 0,
         flash: flash > 0,
       };
     },
-    /** True while the player is doing something with the pawn (or did within the last second and a half). */
+    /** True while the player is doing something with the pawn, or its weapon is still on its way back to rest. */
     get engaged() {
-      return idleFor < 1.5;
+      return moving || trigger || !!reload || aim !== null || rest < 1 || flash > 0 || kick > 0;
     },
     get mag() {
       return mag;
