@@ -3,7 +3,8 @@
 // room, rain on the tin roof, men talking in the next bay, a lamp's hum); on top, every few seconds, something happens
 // somewhere in the room: a radio call between squelches, a rifle charged or a magazine seated at the crate, a bolt
 // worked, brass tipped on the bench, an ammo box, tools, a laugh, a cough, steps, a lighter, cards, a chair, the door.
-// Each event is placed left or right and further off (quieter, duller, wetter in the room's reverb).
+// Each event is placed left or right and further off (quieter, duller, wetter in the room's reverb). Behind them a
+// fainter far layer replays the same sounds more often, so the warehouse sounds bigger and busier than the bay you see.
 //
 //   const amb = warehouseAmbience();   amb.set(true|false)   // follows the warehouse being shown
 //   amb.trigger('radio')               // play one event now (tests)
@@ -16,7 +17,7 @@ const PREF = 'parp-ambience';
 
 // level, pan (-1 left .. 1 right; null = random), distance 0..1, weight (how often), filter for radio
 const EVENTS = {
-  radio: {cats: ['radio-chatter'], level: 0.5, pan: 0.45, dist: 0.35, weight: 3, radio: true},
+  radio: {cats: ['radio-chatter'], level: 0.3, pan: 0.45, dist: 0.35, weight: 3, radio: true}, // radio sits low, across the room
   handling: {cats: ['gun-handling'], level: 0.75, pan: -0.55, dist: 0.3, weight: 4},
   bolt: {cats: ['bolt'], level: 0.6, pan: -0.5, dist: 0.35, weight: 2},
   shells: {cats: ['shells-table'], level: 0.55, pan: 0.05, dist: 0.5, weight: 2},
@@ -30,6 +31,10 @@ const EVENTS = {
   creak: {cats: ['creak'], level: 0.45, pan: 0.45, dist: 0.25, weight: 1},
   door: {cats: ['metal-door'], level: 0.35, pan: null, dist: 0.9, weight: 0.4},
 };
+// The events sit back in the room: all a quarter quieter and a step further off than their levels above say.
+const NEAR = {level: 0.75, dist: 0.1};
+// Behind them, a second, fainter layer of the same sounds, more often: the rest of the building going about its day.
+const FAR = {level: 0.3, dist: 0.45, every: [0.9, 2.6]};
 const BEDS = [
   {cat: 'amb-room', level: 0.5},
   {cat: 'amb-rain', level: 0.22},
@@ -43,7 +48,7 @@ export function warehouseAmbience() {
 }
 
 function create() {
-  const stats = {beds: 0, played: {}, loaded: 0};
+  const stats = {beds: 0, played: {}, loaded: 0, far: 0};
   let enabled = false,
     on = true,
     graph = null,
@@ -147,38 +152,55 @@ function create() {
     next();
   }
 
-  async function trigger(id) {
+  async function trigger(id, layer = NEAR) {
     const e = EVENTS[id];
     if (!e || !graph) return;
     const cats = (await loadManifest()).categories;
     const files = e.cats.flatMap(c => cats[c]?.files || []);
     if (!files.length) return;
-    const pan = e.pan ?? Math.random() * 1.6 - 0.8;
-    const dist = Math.min(1, e.dist + Math.random() * 0.15);
+    const far = layer === FAR;
+    const pan = far ? Math.random() * 2 - 1 : (e.pan ?? Math.random() * 1.6 - 0.8);
+    const dist = Math.min(1, e.dist + layer.dist + Math.random() * 0.15);
+    const level = e.level * (far ? NEAR.level * FAR.level : NEAR.level);
     stats.played[id] = (stats.played[id] || 0) + 1;
+    if (far) stats.far++;
     if (e.radio) {
       // squelch, the call, squelch
       const sq = cats['radio-squelch']?.files || [];
       const call = await buffer(pick(files).file);
-      if (sq.length) voice(await buffer(pick(sq).file), {level: e.level * 0.8, pan, dist, radio: true});
-      voice(call, {level: e.level, pan, dist, radio: true, when: 0.25});
-      if (sq.length) voice(await buffer(pick(sq).file), {level: e.level * 0.8, pan, dist, radio: true, when: 0.35 + call.duration});
+      if (sq.length) voice(await buffer(pick(sq).file), {level: level * 0.8, pan, dist, radio: true});
+      voice(call, {level, pan, dist, radio: true, when: 0.25});
+      if (sq.length) voice(await buffer(pick(sq).file), {level: level * 0.8, pan, dist, radio: true, when: 0.35 + call.duration});
       return;
     }
-    voice(await buffer(pick(files).file), {level: e.level, pan, dist});
+    voice(await buffer(pick(files).file), {level, pan, dist});
+  }
+  const pickEvent = () => {
+    const all = Object.entries(EVENTS),
+      total = all.reduce((s, [, e]) => s + e.weight, 0);
+    let r = Math.random() * total;
+    return (all.find(([, e]) => (r -= e.weight) < 0) || all[0])[0];
+  };
+  // the far layer: the same sounds, fainter and more often, shuffled independently of the near one
+  let farTimer = 0;
+  function scheduleFar() {
+    clearTimeout(farTimer);
+    if (!enabled || !on) return;
+    const [a, b] = FAR.every;
+    farTimer = setTimeout(
+      () => {
+        if (!document.hidden) trigger(pickEvent(), FAR).catch(() => {});
+        scheduleFar();
+      },
+      (a + Math.random() * (b - a)) * 1000,
+    );
   }
   function schedule() {
     clearTimeout(timer);
     if (!enabled || !on) return;
     timer = setTimeout(
       () => {
-        if (!document.hidden) {
-          const all = Object.entries(EVENTS),
-            total = all.reduce((s, [, e]) => s + e.weight, 0);
-          let r = Math.random() * total;
-          const [id] = all.find(([, e]) => (r -= e.weight) < 0) || all[0];
-          trigger(id).catch(() => {});
-        }
+        if (!document.hidden) trigger(pickEvent()).catch(() => {});
         schedule();
       },
       2500 + Math.random() * 5500,
@@ -192,7 +214,11 @@ function create() {
     if (enabled && on) {
       for (const b of BEDS) if (!b.playing) bed(b).catch(() => {});
       schedule();
-    } else clearTimeout(timer);
+      scheduleFar();
+    } else {
+      clearTimeout(timer);
+      clearTimeout(farTimer);
+    }
   }
   // sound may only start after the first gesture on the page
   let started = false;
@@ -229,6 +255,6 @@ function create() {
       apply();
       return on;
     },
-    trigger: id => (start(), trigger(id)),
+    trigger: (id, far = false) => (start(), trigger(id, far ? FAR : NEAR)),
   };
 }
