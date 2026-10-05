@@ -4,6 +4,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 ## [Unreleased]
 
+### Added (campaign)
+- **Campaign save v1** (`shared/campaign/state.js`, WP-W1): one versioned save for the world, the band, the stash and the encounter log. It migrates the Partisan Tactical squad and the Rebel Band saves on first load (both stay in place for the standalone modules), keeps an unreadable save aside instead of overwriting it, and never throws when storage is blocked. Nothing uses it yet; the mission bridge (W2) and the band on the map (W3) are next.
+
 ### Fixed (Operator Modder)
 - **No more pixel artefacts round the operator**: the depth-of-field blur and its 4× MSAA buffer are gone; the scene draws straight to the canvas with the browser's antialiasing, and the room behind is sharp. The dirty-lens flares stay, drawn on top, and still hide behind the operator and the crew. TAC-J-54.
 

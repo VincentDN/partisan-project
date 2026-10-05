@@ -35,14 +35,14 @@ loop of world map, three missions, loot and upgrades.
 | Module | State |
 |---|---|
 | **Weapon Modder** (`workbench/`) | **Live.** Eleven rifles from cleared sources: AK-74M, AK-15K, G3, M16A1, Mk 14 EBR, modernised RPK, SIG MCX Spear (plus a retro-textured variant), StG 44, PPSh-41, Bren, Chauchat. Real attachment parts, every rifle takes every attachment, a CNC furniture kit for the older rifles, rails that cannot overlap, stats and hover deltas, presets, finishes, camo, wear. Studio light over a baked warehouse panorama, warehouse ambience, handling sounds |
-| **Operator Modder** (`operator/`) | **Live.** Generated Recon by default plus Base, Insurgent and Enforcer; modular kit, colour zones, patches; three poses (Hero rifle-up, Relaxed, Low ready) with idles and hands solved onto any of the eleven rifles; the Workbench build carried onto the character; a warehouse with an idle crew, depth of field, dirty-lens flares and room sound; share card, P1 loadout codes |
+| **Operator Modder** (`operator/`) | **Live.** Generated Recon by default plus Base, Insurgent and Enforcer; modular kit, colour zones, patches; three poses (Hero rifle-up, Relaxed, Low ready) with idles and hands solved onto any of the eleven rifles; the Workbench build carried onto the character; a warehouse with an idle crew, dirty-lens flares and room sound, drawn sharp at native antialiasing (TAC-J-54); share card, P1 loadout codes |
 | **Partisan Tactical** (`convoy/`) | **Playable prototype.** Three missions: Convoy ambush, Compound assault, Cave hideout defence. RimWorld-style 2.5-D sprite view (the 3-D view is retired), rounds in flight, fog of war with the same 30 m sight for both sides, squad orders and tactical pause, play every rebel with a slow-motion swap, class abilities, grenades, sprint, difficulty, recorded sound. After a mission: XP, loot rolled from the Equipment Wiki catalogue, a stash, a trader and equipment-gated promotions (camp screen) |
 | **Rebel Band** (`band/`) | **Playable demo.** Bannerlord-style party screen: 44 classes in 7 tiers (heavy, medium, light), each promotion costs experience and the kit the new class carries; class tree view |
 | **Overworld Map** (`map/`) | **Test.** Bannerlord-style 3-D map of the island: provinces, nine settlements, roads, the Recon as your party, Invader patrols and convoys with nameplates, time controls. Not yet wired to anything; it becomes the campaign screen (§5.8) |
 | **Equipment Wiki** (`wiki/`) | **Live.** 4,227 lootable items (placeholder data) in a searchable catalogue; the loot tables roll from it |
 | **Shell** | Opening scene and boot, Nokia index on the table, shared top bar and music, Art Style Lab, Bench Lab, Asset Viewer, design document, this roadmap, the *Walking Through* podcast scripts |
-| **Engineering** | Buildless ES modules, vendored three.js, allowlist site build, GitHub Pages; 253 unit tests, Playwright smoke and axe-core accessibility runs in CI; models parsed once per page and cloned, prefetched after load; MSAA at 1080p |
-| **Not done** | The campaign itself (map, missions and upgrades as one loop, one save); durable item inventory and extraction rules; owner art sign-off on the roster; device performance acceptance; setting canon |
+| **Engineering** | Buildless ES modules, vendored three.js, allowlist site build, GitHub Pages; 274 unit tests, Playwright smoke, Recon acceptance and axe-core accessibility runs in CI; models parsed once per page and cloned, prefetched after load; one campaign save (`shared/campaign/state.js`, WP-W1) |
+| **Not done** | The campaign itself (map, missions and upgrades as one loop; the save exists, nothing uses it yet); durable item inventory and extraction rules; owner art sign-off on the roster; device performance acceptance; setting canon |
 
 ## 3. Owner direction since 1 October (what changed the plan)
 
@@ -70,7 +70,7 @@ milestone is in §6.
 | **M4 Roster 2** v0.7.0 | Oct 2026 | Eight more rifles | Real geometry for each | Done |
 | **S Partisan Tactical** v0.8.0 | Q4 2026 | Missions, squad play, progression; then durable inventory and extraction | Convoy extraction gate (WP-S35) | Missions, squad play and progression built; inventory and extraction next |
 | **V Graphics** v0.9.0 | Q1 2027 | The 2.5-D look with real art (art bible, paper-doll people, terrain, structures, lighting) | Parity checklist (WP-V18) | Sprite view runs on placeholder art |
-| **W Campaign** v0.10.0 | Q1 2027 | The Bannerlord loop over map, missions, band and modders | Gate W-A: the first full loop in one save | Planned; decisions made; WP-W1 ready |
+| **W Campaign** v0.10.0 | Q1 2027 | The Bannerlord loop over map, missions, band and modders | Gate W-A: the first full loop in one save | Campaign save (W1) done; W2 and W3 ready |
 | **M5 Production** v1.0.0 | Q2 2027 | Performance, manual accessibility pass, release | `engineering/standards.md` checklist | Audit and release checklist done; device acceptance remains |
 | **2027 horizon** | after v1.0 | Checkpoint diorama, belief-model visualiser | Own packets (WP-E*) | Planned |
 
@@ -173,7 +173,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | **H27** 2027 horizon | — | 0/3 | 48 BU | 0% |
 | **S** Partisan Tactical: extraction PvE, campaign and gated online research | v0.8.0 | 13/42 | 645 BU | 31% |
 | **V** Graphics: 2.5D top-down sprites for the shooter (the overworld moved to W) | v0.9.0 | 2/20 | 251 BU | 11% |
-| **W** World campaign: the Bannerlord loop (map, missions, loot, upgrades) | v0.10.0 | 1/26 | 359 BU | 1% |
+| **W** World campaign: the Bannerlord loop (map, missions, loot, upgrades) | v0.10.0 | 2/26 | 359 BU | 3% |
 
 ### M0 · Foundation
 
@@ -355,9 +355,9 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 
 | ID | Packet | Size | Status | Needs | Depends on |
 |---|---|---|---|---|---|
-| `WP-W1` | Campaign save v1: one versioned state for world, band, stash and log; migrate the tactical squad and Rebel Band saves; storage adapter | S (8) | ready | — | — |
-| `WP-W2` | Mission bridge: deployment and result payloads, kit reserved on launch, result settled exactly once, refresh mid-mission counts as withdrawn | M (20) | planned | — | `WP-W1` |
-| `WP-W3` | The band on the map: navigation grid from the heightfield and roads, click to move, route preview, terrain speeds, follow camera | M (20) | planned | browser | `WP-W1` |
+| `WP-W1` | Campaign save v1: one versioned state for world, band, stash and log; migrate the tactical squad and Rebel Band saves; storage adapter | S (8) | done | — | — |
+| `WP-W2` | Mission bridge: deployment and result payloads, kit reserved on launch, result settled exactly once, refresh mid-mission counts as withdrawn | M (20) | ready | — | `WP-W1` |
+| `WP-W3` | The band on the map: navigation grid from the heightfield and roads, click to move, route preview, terrain speeds, follow camera | M (20) | ready | browser | `WP-W1` |
 | `WP-W4` | Campaign clock: pause and three speeds, day and night tint and sight, pause on encounters and menus | S (8) | planned | — | `WP-W3` |
 | `WP-W5` | World simulation core: seeded headless parties with goals, speeds and sight; save and restore; determinism tests | M (20) | planned | — | `WP-W1`, `WP-W4` |
 | `WP-W6` | Convoys on the map: spawn at Invader seats, road routes, cargo manifest and escort on the nameplate, resupply on arrival | S (8) | planned | — | `WP-W5` |

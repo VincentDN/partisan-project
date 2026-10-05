@@ -3015,7 +3015,7 @@
    "milestone": "W",
    "size": "S",
    "bu": 8,
-   "status": "ready",
+   "status": "done",
    "deps": [],
    "agent": "any",
    "needs": [],
@@ -3031,7 +3031,7 @@
    "milestone": "W",
    "size": "M",
    "bu": 20,
-   "status": "planned",
+   "status": "ready",
    "deps": [
     "WP-W1"
    ],
@@ -3049,7 +3049,7 @@
    "milestone": "W",
    "size": "M",
    "bu": 20,
-   "status": "planned",
+   "status": "ready",
    "deps": [
     "WP-W1"
    ],
