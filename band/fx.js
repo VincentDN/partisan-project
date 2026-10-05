@@ -39,6 +39,11 @@ export function idle(canvas, draw) {
   draw(canvas.getContext('2d'), reduceMotion ? 0 : performance.now() / 1000);
   if (!reduceMotion) idlers.set(canvas, {draw, busy: false});
 }
+/** Hand `canvas` to someone else's drawing (the hands-on pawn, band/handling.js) or give it back to the idle loop. */
+export function hold(canvas, on) {
+  const it = idlers.get(canvas);
+  if (it) it.busy = on;
+}
 /**
  * The idle motion for a pawn at time t (seconds), with a per-pawn phase: a slow breath (a little lift and squash), a
  * weight shift from foot to foot, and the gun swaying with it.

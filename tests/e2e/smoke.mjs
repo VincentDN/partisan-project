@@ -725,7 +725,7 @@ await check('design doc: sections and live progress render', async () => {
   await page.close();
 });
 
-await check('rebel band: the band idles, the stash, and an upgrade under the character that plays a promotion', async () => {
+await check('rebel band: the band idles, the stash, an upgrade that plays a promotion, and the character under your hands', async () => {
   const page = await open(browser, server.url + 'band/', {reducedMotion: 'no-preference'});
   await page.evaluate(() => localStorage.removeItem('parp-band-v2'));
   await page.reload();
@@ -755,6 +755,23 @@ await check('rebel band: the band idles, the stash, and an upgrade under the cha
   await up();
   assert.equal(await page.evaluate(() => window.PARP_BAND.state.band.fighter.count), before + 3, 'both quick upgrades count');
   await page.waitForFunction(() => !window.PARP_BAND.promoting, null, {timeout: 10000});
+  // the character under your hands: hover it, walk, aim, fire and reload (band/handling.js)
+  const pawn = await page.locator('#pawn').boundingBox();
+  await page.mouse.move(pawn.x + pawn.width * 0.95, pawn.y + pawn.height * 0.62);
+  await page.keyboard.down('KeyW');
+  await page.waitForFunction(() => window.PARP_BAND.hands.pose().bob > 0, null, {timeout: 5000});
+  await page.keyboard.up('KeyW');
+  assert.equal(await page.evaluate(() => window.PARP_BAND.hands.pose().dir), 'east', 'it faces the mouse');
+  const full = await page.evaluate(() => window.PARP_BAND.hands.mag);
+  await page.mouse.down();
+  await page.waitForFunction(m => window.PARP_BAND.hands.mag < m, full, {timeout: 5000});
+  await page.mouse.up();
+  assert.match(await page.locator('#hands').innerText(), /\d+ \/ \d+/, 'rounds left shown');
+  await page.keyboard.press('KeyR');
+  assert.equal(await page.evaluate(() => window.PARP_BAND.hands.reloading), true, 'R reloads');
+  await page.waitForFunction(m => window.PARP_BAND.hands.mag === m, full, {timeout: 10000});
+  assert.equal(await page.evaluate(() => scrollY), 0, 'the keys never scroll the page');
+  await page.mouse.move(2, 2);
   // the class tree: every class as a node, a card with abilities, back to the band
   await page.locator('#tree-btn').click();
   assert.ok((await page.locator('#tree-view .node').count()) >= 40, 'every class in the tree');

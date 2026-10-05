@@ -168,6 +168,26 @@ button {
   height: auto;
   aspect-ratio: 1;
   margin: -6px 0 -18px;
+  cursor: crosshair;
+  touch-action: none;
+  border-radius: 8px;
+}
+#pawn:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+/* rounds left while the character is under your hands: laid over the top of the pawn, taking no space */
+.hands {
+  position: relative;
+  z-index: 1;
+  height: 0;
+  margin: 0;
+  transform: translateY(14px);
+  pointer-events: none;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--dim);
+  font-variant-numeric: tabular-nums;
 }
 .detail {
   width: 100%;

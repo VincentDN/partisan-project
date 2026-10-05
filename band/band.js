@@ -23,6 +23,7 @@ import {createTreeView} from './tree.js';
 import * as mech from '../workbench/mech.js';
 import * as ui from '../shared/ui-sounds.js';
 import {idle, idlePose, promote, endPromotion} from './fx.js';
+import {mountHands, paintHandled} from './hands-view.js';
 
 mountTopBar({title: 'Rebel Band', scene: 'viewer'});
 const $ = s => document.querySelector(s);
@@ -66,11 +67,12 @@ function pawnOf(id) {
   if (!pawns.has(id)) pawns.set(id, buildPawn(lookOf(id)));
   return pawns.get(id);
 }
+const gunIdOf = id => (id === 'leader' ? S.leader.gun : TROOPS[id].gun);
 const gunOf = id => guns[id === 'leader' ? S.leader.gun : TROOPS[id].gun] || Object.values(guns)[0];
 const phaseOf = id => ([...id].reduce((h, c) => h + c.charCodeAt(0), 0) % 97) / 23; // each class breathes on its own beat
 /** Paint pawn p (and its gun) into g at time t: RimWorld's look, front on, breathing and shifting its weight. */
-function paint(g, p, gun, id, {size, cx, cy, ground = false, t = 0}) {
-  const m = idlePose(t, phaseOf(id));
+function paint(g, p, gun, id, {size, cx, cy, ground = false, t = 0, pose = null}) {
+  const m = pose ? {lift: pose.bob * 0.025, squash: 1, shift: 0, gun: 0} : idlePose(t, phaseOf(id));
   if (ground) {
     // a patch of RimWorld ground under the pawn, with its soft shadow
     const r = g.createRadialGradient(cx, cy + size * 0.3, 0, cx, cy + size * 0.3, size * 0.55);
@@ -84,6 +86,7 @@ function paint(g, p, gun, id, {size, cx, cy, ground = false, t = 0}) {
   g.ellipse(cx + m.shift * size * 0.5, cy + size * 0.27, size * 0.2 * (1 - m.lift * 2), size * 0.07, 0, 0, Math.PI * 2);
   g.fill();
   g.imageSmoothingEnabled = true;
+  if (pose) return paintHandled(g, p, gun, {size, cx, cy, pose});
   // breathing: the body lifts and stretches a touch from the feet up; the weight shifts from foot to foot
   const h = size * m.squash,
     x = cx - size / 2 + m.shift * size,
@@ -100,15 +103,15 @@ function paint(g, p, gun, id, {size, cx, cy, ground = false, t = 0}) {
     g.restore();
   }
 }
-/** A painter for class `id` on a canvas of this size: (g, t) => void. */
+/** A painter for class `id` on a canvas of this size: (g, t, pose?) => void; a pose draws it under the player's hands. */
 async function painter(id, canvas, {size = canvas.width, cy = canvas.height / 2, ground = false} = {}) {
   const p = await pawnOf(id),
     gun = gunOf(id),
     W = canvas.width,
     H = canvas.height;
-  return (g, t) => {
+  return (g, t, pose = null) => {
     g.clearRect(0, 0, W, H);
-    paint(g, p, gun, id, {size, cx: W / 2, cy, ground, t});
+    paint(g, p, gun, id, {size, cx: W / 2, cy, ground, t, pose});
   };
 }
 /** A pawn from the front, the gun held across it, drawn into a canvas and kept idling. size: the pawn in pixels. */
@@ -308,7 +311,13 @@ async function renderCentre() {
     );
   }
   if (selected === 'leader') $('#ups').replaceChildren();
-  if (!promoting) await drawPawn($('#pawn'), selected, PAWN);
+  if (!promoting) {
+    const id = selected;
+    const draw = await painter(id, $('#pawn'), PAWN);
+    if (id !== selected) return; // a newer selection took over while this one loaded
+    idle($('#pawn'), draw);
+    handsView.setPawn(draw, gunIdOf(id));
+  }
 }
 /** A class's abilities: its own first, then those carried from the classes it came through. */
 function abilityList(id) {
@@ -358,6 +367,7 @@ async function doUpgrade(from, to, n) {
   // the big pawn turns from the old class into the new one, to a fanfare; then the screen shows the new class
   const run = ++promotions;
   promoting = true;
+  hands.release();
   render();
   const canvas = $('#pawn');
   try {
@@ -450,6 +460,10 @@ $('#reset').onclick = () => {
   render();
 };
 
+// ---------- the character under your hands (band/hands-view.js) ----------
+const handsView = mountHands($('#pawn'), {pawn: PAWN, hint: $('#hands'), canHandle: () => !promoting && $('#tree-view').hidden});
+const hands = handsView.hands;
+
 render();
 $('#loading').hidden = true;
 // Test hook.
@@ -463,5 +477,6 @@ window.PARP_BAND = {
     return promoting;
   },
   showTree,
+  hands,
   ready: true,
 };

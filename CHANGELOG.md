@@ -4,6 +4,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 ## [Unreleased]
 
+### Added (Rebel Band)
+- **The character under your hands**: point at the big character (or focus it) and WASD or the arrows walk it in place with a stride bob, the mouse turns it and its weapon to aim (Q and E from the keyboard), a click, Space or F fires with recoil and a muzzle flash, and R reloads with the gun lowered and tilted. Each weapon handles as its type (automatic or one round per press, magazine, reload time) and sounds with the shooter's recordings: footsteps with a gear rattle, cloth on a turn, real shots, an empty click, the reload choreography from the foley bank. Rounds left show over the character. Reduced motion keeps it still while every action still sounds.
+
 ### Added (campaign)
 - **Campaign save v1** (`shared/campaign/state.js`, WP-W1): one versioned save for the world, the band, the stash and the encounter log. It migrates the Partisan Tactical squad and the Rebel Band saves on first load (both stay in place for the standalone modules), keeps an unreadable save aside instead of overwriting it, and never throws when storage is blocked. Nothing uses it yet; the mission bridge (W2) and the band on the map (W3) are next.
 
