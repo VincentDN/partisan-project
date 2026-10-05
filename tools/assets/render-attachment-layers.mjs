@@ -66,7 +66,7 @@ const layers = await page.evaluate(
     r.model.traverse(o => o.isMesh && o.visible && shown.push(o));
     for (const m of shown) m.visible = false;
     let i = 1;
-    for (const [slot, s] of Object.entries(r.slots))
+    for (const s of Object.values(r.slots))
       for (const o of s.options) {
         if (!o.object || o === factory.get(s)) continue;
         for (const x of s.options) if (x.object) x.object.visible = x === o;

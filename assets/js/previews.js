@@ -21,6 +21,7 @@ export function sceneFor(item) {
   if (h.includes('operator/')) return 'operator';
   if (h.includes('convoy/')) return 'tactical';
   if (h.includes('band/')) return 'band';
+  if (h.includes('map/')) return 'map';
   if (h.includes('wiki/')) return 'wiki';
   if (h.includes('viewer/')) return 'viewer';
   if (h.includes('moodboard')) return 'moodboard';
@@ -161,6 +162,44 @@ const SCENES = {
       g.fillStyle = r;
       g.fillRect(0, 0, W, H);
     }
+  },
+  map(g, t) {
+    // the island from above: a coast, a mountain, borders, towns; the party marker bobs and a convoy runs its road
+    g.fillStyle = '#e6e6e6';
+    g.fillRect(0, 0, W, H);
+    g.fillStyle = '#9a9a9a';
+    g.beginPath();
+    g.ellipse(48, 23, 38, 18, -0.15, 0, Math.PI * 2);
+    g.fill();
+    g.fillStyle = '#f4f4f4';
+    g.beginPath();
+    g.moveTo(34, 18);
+    g.lineTo(40, 9);
+    g.lineTo(47, 17);
+    g.fill(); // the snowy peak
+    g.strokeStyle = '#555';
+    g.setLineDash([2, 2]);
+    g.beginPath();
+    g.moveTo(52, 6);
+    g.lineTo(58, 40); // a border
+    g.stroke();
+    g.setLineDash([]);
+    g.fillStyle = '#000';
+    for (const [x, y] of [
+      [22, 26],
+      [70, 30],
+      [62, 14],
+    ])
+      g.fillRect(x - 2, y - 2, 4, 4); // towns
+    g.strokeStyle = '#333';
+    g.beginPath();
+    g.moveTo(22, 26);
+    g.lineTo(70, 30);
+    g.stroke(); // the road
+    const k = (Math.sin(t * 0.9) + 1) / 2;
+    g.fillStyle = '#222';
+    g.fillRect(22 + 48 * k - 2, 26 + 4 * k - 1.5, 4, 3); // the convoy
+    pawn(g, 40, 30 - Math.abs(Math.sin(t * 3)) * 2, 0.55, '#000'); // your party
   },
   band(g, t) {
     // three soldiers; one at a time levels up: an arrow rises, its bar fills
@@ -425,6 +464,14 @@ const SOUNDS = {
   band: {
     every: 1.2,
     play: (L, t) => (tone(L, t, {freq: 523, dur: 0.1}), tone(L, t + 0.1, {freq: 659, dur: 0.1}), tone(L, t + 0.2, {freq: 1047, dur: 0.2})),
+  },
+  map: {
+    every: 2.2,
+    play: (L, t) => (
+      burst(L, t, {dur: 0.9, freq: 500, q: 0.4, gain: 0.35, type: 'lowpass'}),
+      tone(L, t + 0.4, {freq: 392, dur: 0.25, type: 'triangle', gain: 0.2}),
+      tone(L, t + 0.7, {freq: 523, dur: 0.4, type: 'triangle', gain: 0.2})
+    ),
   },
   advanced: {every: 1.5, play: (L, t) => (clank(L, t + 0.2), clank(L, t + 1.0))},
   viewer: {every: 2, play: (L, t) => tone(L, t, {freq: 200, end: 400, dur: 0.6, type: 'sawtooth', gain: 0.15})},

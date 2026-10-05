@@ -48,12 +48,13 @@ await check('index: the Nokia screen lies on the table and opens straight on the
   await page.reload();
   await page.waitForFunction(() => window.PARP_INDEX?.ready && window.PARP_MENU?.ready);
   const rows = await page.locator('.menu a').allInnerTexts();
-  assert.equal(rows.length, 8, 'four demos, the locked dev tools, sound, about, projects');
+  assert.equal(rows.length, 9, 'five demos, the locked dev tools, sound, about, projects');
   assert.match(rows[0], /Weapon Modder/i);
   assert.match(rows[1], /Operator Modder/i);
   assert.match(rows[2], /Top-down Shooter Tests/i);
   assert.match(rows[3], /Rebel Band/i);
-  assert.match(rows[4], /Dev tools - tap to unlock/i);
+  assert.match(rows[4], /Overworld Map/i);
+  assert.match(rows[5], /Dev tools - tap to unlock/i);
   await page.keyboard.press('ArrowDown');
   assert.equal(await page.evaluate(() => window.PARP_INDEX.index), 1);
   // the first press folds open the explainer with a dithered preview and a big LAUNCH button
@@ -80,22 +81,53 @@ await check('index: the Nokia screen lies on the table and opens straight on the
   await page.keyboard.press('Escape');
   assert.equal(await page.evaluate(() => window.PARP_INDEX.open), -1, 'Escape folds it shut');
   // dev tools: seven taps unlock the folder, which then shows its tools
-  for (let i = 0; i < 6; i++) await page.locator('.menu a[data-i="4"]').click();
-  assert.match(await page.locator('.menu a[data-i="4"]').innerText(), /tap to unlock/i, 'no countdown on screen: the pings climb');
+  for (let i = 0; i < 6; i++) await page.locator('.menu a[data-i="5"]').click();
+  assert.match(await page.locator('.menu a[data-i="5"]').innerText(), /tap to unlock/i, 'no countdown on screen: the pings climb');
   assert.doesNotMatch(await page.locator('#help').innerText(), /\d+ more tap/i);
   assert.equal(await page.evaluate(() => window.PARP_INDEX.devUnlocked), false);
-  await page.locator('.menu a[data-i="4"]').click();
+  await page.locator('.menu a[data-i="5"]').click();
   assert.equal(await page.evaluate(() => window.PARP_INDEX.devUnlocked), true);
   const dev = await page.evaluate(() => window.PARP_INDEX.rows);
   for (const name of ['Equipment Wiki', 'Asset Viewer', 'Game Design Doc', 'Moodboard', 'Advanced animations'])
     assert.ok(dev.includes(name), name);
   assert.equal(await page.evaluate(() => localStorage.getItem('parp-devtools')), 'unlocked');
-  await page.locator('.menu a[data-i="4"]').click();
-  assert.equal(await page.locator('.menu a').count(), 8, 'a tap folds the tools away again');
+  await page.locator('.menu a[data-i="5"]').click();
+  assert.equal(await page.locator('.menu a').count(), 9, 'a tap folds the tools away again');
   // LAUNCH opens the demo
   await page.locator('.menu a[data-i="1"]').click();
   await Promise.all([page.waitForURL(/operator\/?$/), page.locator('#fold-1 .launch').click()]);
   await page.evaluate(() => localStorage.removeItem('parp-devtools'));
+  noProblems(page);
+  await page.close();
+});
+
+await check('overworld map: the island, the parties with nameplates, convoys moving, the province card', async () => {
+  const page = await open(browser, server.url + 'map/', {viewport: {width: 1280, height: 800}});
+  await page.waitForFunction(() => window.PARP_MAP?.ready, null, {timeout: 120000});
+  const r = await page.evaluate(async () => {
+    const m = window.PARP_MAP;
+    const convoy = m.parties.parties.find(p => p.kind === 'convoy');
+    const at = convoy.root.position.clone();
+    await new Promise(res => setTimeout(res, 3000));
+    return {
+      kinds: m.parties.parties.map(p => p.kind),
+      moved: convoy.root.position.distanceTo(at),
+      plates: document.querySelectorAll('.plate-party').length,
+      towns: document.querySelectorAll('.plate-town').length,
+    };
+  });
+  assert.equal(r.kinds[0], 'player');
+  assert.ok(r.kinds.filter(k => k === 'enemy').length >= 3, 'Invader patrols');
+  assert.ok(r.kinds.filter(k => k === 'convoy').length >= 2, 'convoys');
+  assert.ok(r.moved > 0.2, `a convoy drives (${r.moved.toFixed(1)})`);
+  assert.equal(r.plates, r.kinds.length, 'a nameplate per party');
+  assert.ok(r.towns >= 8, 'towns named on the map');
+  await page.mouse.move(640, 420);
+  await page.mouse.move(660, 430);
+  await page.waitForSelector('#province:not([hidden])', {timeout: 5000});
+  assert.match(await page.locator('#prov-name').innerText(), /province/);
+  await page.locator('[data-speed="0"]').click();
+  assert.equal(await page.locator('[data-speed="0"]').getAttribute('aria-pressed'), 'true');
   noProblems(page);
   await page.close();
 });

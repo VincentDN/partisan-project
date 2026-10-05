@@ -1,0 +1,128 @@
+/* Overworld map: Bannerlord's campaign HUD (dark tooled leather, bronze frames, parchment text) in the Operator
+   Customiser's skin, with the Nokia LCD plates for headings. */
+:root {
+  --leather: #16130f;
+  --leather-2: #241e17;
+  --bronze: #8a6a3a;
+  --bronze-hi: #c9a25e;
+  --ink: #16200f;
+  --lcd: #9fb184;
+  --lcd-hi: #b9cc9a;
+  --parch: #e2d4b0;
+  --grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: #b9cfe2; color: var(--parch); font: 13px/1.35 ui-sans-serif, system-ui, sans-serif; overflow: hidden; }
+main { position: fixed; inset: 0; }
+#stage { position: absolute; inset: 0; outline: none; cursor: grab; }
+#stage:active { cursor: grabbing; }
+#stage:focus-visible { box-shadow: inset 0 0 0 3px var(--bronze-hi); }
+#stage canvas { display: block; width: 100%; height: 100%; }
+#labels { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+/* panels */
+.hud {
+  position: absolute;
+  background: var(--grain), linear-gradient(#241e17ee, #16130fee);
+  border: 2px solid var(--bronze);
+  box-shadow: inset 0 0 0 1px #000a, 0 0 0 1px #000c, 0 6px 18px #0007;
+  border-radius: 3px;
+  color: var(--parch);
+}
+.plate {
+  font: 700 11px/1 ui-monospace, Menlo, Consolas, monospace;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: repeating-linear-gradient(0deg, #0000 0 2px, #16200f10 2px 3px), linear-gradient(var(--lcd-hi), var(--lcd));
+  padding: 6px 8px;
+  margin: 0 0 8px;
+  border: 1px solid #000;
+  box-shadow: inset 0 0 0 1px #ffffff30;
+}
+.note { margin: 6px 0 0; font-size: 11px; color: #bba984; font-style: italic; }
+dl { display: grid; grid-template-columns: auto auto; gap: 2px 14px; margin: 0; }
+dt { color: #bba984; }
+dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; }
+dd small { color: #9a8a68; }
+
+.timebar { top: 44px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 12px; padding: 6px 10px 6px 14px; }
+.date { font: 600 13px/1 Georgia, 'Times New Roman', serif; letter-spacing: 0.02em; white-space: nowrap; }
+.speeds { display: flex; gap: 4px; }
+button {
+  font: 600 12px/1 ui-sans-serif, system-ui, sans-serif;
+  color: var(--parch);
+  background: linear-gradient(#3a2f22, #241d15);
+  border: 1px solid var(--bronze);
+  border-radius: 2px;
+  padding: 7px 10px;
+  min-width: 34px;
+  min-height: 28px;
+  cursor: pointer;
+}
+button:hover { border-color: var(--bronze-hi); color: #fff3d6; }
+button[aria-pressed='true'] { background: linear-gradient(var(--bronze-hi), var(--bronze)); color: var(--leather); }
+button:focus-visible { outline: 2px solid var(--lcd-hi); outline-offset: 2px; }
+
+.legend { top: 44px; left: 12px; padding: 10px 12px; width: 210px; }
+.legend ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.legend i { display: inline-block; width: 12px; height: 12px; margin-right: 8px; background: var(--c); border: 1px solid #000; vertical-align: -2px; }
+
+.party-card { left: 12px; bottom: 12px; display: flex; gap: 10px; padding: 10px; width: 300px; }
+.portrait { flex: none; width: 58px; height: 72px; display: grid; place-items: center; font: 700 30px/1 Georgia, serif; color: var(--lcd-hi); background: radial-gradient(#2f4a2a, #121a10); border: 2px solid var(--bronze); }
+.party-card > div:last-child { flex: 1; }
+
+.province-card { right: 12px; top: 44px; width: 240px; padding: 10px 12px; border-left: 6px solid var(--c, var(--bronze)); }
+.province-card .owner { margin: 0 0 6px; color: var(--c); font-weight: 700; }
+
+.menu-bar { left: 50%; bottom: 12px; transform: translateX(-50%); display: flex; gap: 4px; padding: 6px; }
+.toast { position: absolute; left: 50%; bottom: 70px; transform: translateX(-50%); background: #16130fee; border: 1px solid var(--bronze); padding: 8px 12px; border-radius: 3px; }
+.hint { right: 12px; bottom: 12px; margin: 0; padding: 6px 8px; font: 10px/1.2 ui-monospace, monospace; letter-spacing: 0.08em; color: #bba984; max-width: 240px; }
+.loading { position: absolute; inset: 0; display: grid; place-items: center; background: #b9cfe2; color: var(--leather); font: 600 16px Georgia, serif; }
+.loading[hidden] { display: none; }
+
+/* nameplates over parties and towns */
+.plate-party, .plate-town {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  padding: 2px 6px 2px 2px;
+  background: #16130fd9;
+  border: 1px solid #000;
+  box-shadow: 0 0 0 1px #8a6a3a99, 0 2px 6px #0006;
+  font: 600 12px/1.1 Georgia, 'Times New Roman', serif;
+  color: #f1e6c8;
+  text-shadow: 0 1px 0 #000;
+  will-change: transform;
+}
+.shield {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 21px;
+  background: var(--c);
+  color: #f6ecd2;
+  font: 700 11px/1 ui-sans-serif, system-ui, sans-serif;
+  clip-path: polygon(0 0, 100% 0, 100% 62%, 50% 100%, 0 62%);
+}
+.pcount { margin-left: 4px; padding-left: 6px; border-left: 1px solid #8a6a3a; font-variant-numeric: tabular-nums; color: #e8d29a; }
+.plate-party.invader { box-shadow: 0 0 0 1px #c2402fcc, 0 2px 6px #0006; }
+.plate-party.invader .pname { color: #ffc9bd; }
+.plate-party.player { box-shadow: 0 0 0 1px #9fd08c, 0 2px 6px #0006; }
+.plate-party.player .pname { color: #d9f5c8; }
+.plate-town { padding: 3px 8px 3px 3px; font-size: 13px; background: #0f0d0ad0; }
+.plate-town.town .tname { font-size: 15px; letter-spacing: 0.03em; }
+.plate-town.camp, .plate-town.base { font-style: italic; }
+
+@media (max-width: 760px) {
+  .legend, .hint { display: none; }
+  .party-card { width: auto; right: 12px; bottom: 64px; }
+  .menu-bar { flex-wrap: wrap; width: calc(100% - 24px); justify-content: center; }
+  .timebar { top: 40px; }
+  .province-card { top: auto; bottom: 170px; }
+}

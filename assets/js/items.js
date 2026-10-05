@@ -2,7 +2,7 @@
 // 5x5 1-bit icons as inline SVG data (no image files).
 const px = bits =>
   `<svg viewBox="0 0 5 5" width="12" height="12" shape-rendering="crispEdges" fill="currentColor">${[...bits].map((c, i) => (c === '1' ? `<rect x="${i % 5}" y="${Math.floor(i / 5)}" width="1" height="1"/>` : '')).join('')}</svg>`;
-// The index: the four demos, a Dev tools folder (locked until tapped seven times; then it folds open to its tools), then
+// The index: the five demos, a Dev tools folder (locked until tapped seven times; then it folds open to its tools), then
 // the phone's own items. A folder has `children`; the rest are links (`href`) or actions.
 export const DEV_TAPS = 7;
 export const ITEMS = [
@@ -29,6 +29,12 @@ export const ITEMS = [
     href: '../band/',
     icon: px('0111001110001001111101010'),
     help: 'Test. Level your band from Village Infantry to 44 classes in heavy, medium and light builds, each with abilities. Every step needs stolen gear. Class tree included.',
+  },
+  {
+    label: 'Overworld Map',
+    href: '../map/',
+    icon: px('0110011110111110111000100'),
+    help: 'Test. A Bannerlord-style campaign map of the island: provinces, towns, your party on a hill, Invader patrols and convoys on the roads.',
   },
   {
     label: 'Dev tools',

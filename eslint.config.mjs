@@ -25,6 +25,7 @@ export default [
       'viewer/**',
       'convoy/**',
       'band/**',
+      'map/**',
       'wiki/**',
       'shared/**',
       'assets/js/**',

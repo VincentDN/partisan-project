@@ -4,6 +4,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 ## [Unreleased]
 
+### Added (Overworld Map, test)
+- **A Bannerlord-style campaign map** of the island, on the index as Overworld Map: rocky Mediterranean terrain with a snowy massif and an azure coast, nine provinces in their owners' colours, towns, villages, the Invader's fort and the Resistance camp, roads, forests, gulls, boats and drifting clouds. Your party (the hooded Recon, rifle raised) stands on a hill; Invader patrols stand in the distance; convoys drive the roads. Nameplates on every party and town, time controls, party panel and menu bar (placeholders). TAC-J-53.
+
 ### Changed (Partisan Tactical)
 - **You see them, they see you**: soldiers see as far as you do (30 m) and cannot spot or shoot you from off the screen. The camera starts closer. TAC-B-17.
 - **Fog of war** no longer flickers; soldiers fade in and out of sight. TAC-B-17.
