@@ -74,6 +74,7 @@ function renderDoc(mdPath, outPath, {title, kicker, depth = 1, markdown = null})
     // relative links to repo documents become GitHub links; the roadmap and the site's own pages stay relative
     .replace(/href="(?!https?:|#|mailto:)([^"]+?)"/g, (m, href) => {
       if (/^(\.\/)?master-roadmap\.md$/.test(href)) return `href="${up}docs/master-roadmap.html"`;
+      if (/^(\.\/)?campaign-roadmap\.md$/.test(href)) return `href="${up}docs/campaign-roadmap.html"`;
       if (/^(\.\/)?walking-through-[\w-]+\.md$/.test(href) && path.posix.dirname(outPath) === 'docs/podcast')
         return `href="${href.replace(/^\.\//, '').replace(/\.md$/, '.html')}"`;
       if (/^(\.\.\/)?(workbench|operator|viewer|map|convoy|band)\/?$/.test(href)) return `href="${up}${href.replace(/^\.\.\//, '')}"`;
@@ -103,6 +104,10 @@ blockquote{margin:1em 0;padding:.4em 1em;border-left:3px solid var(--accent);bac
   fs.writeFileSync(path.join(out, outPath), page);
 }
 renderDoc('docs/master-roadmap.md', 'docs/master-roadmap.html', {title: 'Master Roadmap', kicker: 'Partisan Project master roadmap'});
+renderDoc('docs/campaign-roadmap.md', 'docs/campaign-roadmap.html', {
+  title: 'Campaign Roadmap',
+  kicker: 'Partisan Campaign: the Bannerlord loop',
+});
 // The podcast: every episode, newest first in the index
 const episodes = fs
   .readdirSync('docs/podcast')

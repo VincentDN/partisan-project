@@ -143,6 +143,13 @@ The shooter's world becomes RimWorld-style 2.5-D top-down sprites (thick outline
 campaign map a retro handheld-RPG island map. The simulation is untouched, so it runs in parallel with the gameplay work.
 Plan: [graphics-roadmap.md](graphics-roadmap.md) (milestone V, WP-V1 to V20). Reasoning: [design-decisions/J-graphics.md](design-decisions/I-graphics.md).
 
+### 5.8 The campaign: the Bannerlord loop
+
+All the modules become one game: the band moves on the [world map](../map/), convoys launch the Convoy Ambush,
+settlements the Compound Assault, and hunting armies that catch you the Rebel Base Defence. Every mission ends in loot
+that promotes fighters on the band screen, fits guns in the Weapon Modder and changes looks in the Operator Customiser.
+Plan: [campaign-roadmap.md](campaign-roadmap.md) (milestone W, WP-W1 to W26; first playable loop at gate W-A).
+
 ### 5.5 Design documentation
 
 Setting reconciliation (`WP-D1`) comes first: the earlier premise (Yantis, 2012, a *WW2044* prologue) and the
@@ -168,6 +175,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | **H27** 2027 horizon | — | 0/3 | 48 BU | 0% |
 | **S** Partisan Tactical: extraction PvE, campaign and gated online research | v0.8.0 | 6/42 | 645 BU | 13% |
 | **V** Graphics: 2.5D top-down sprites and the retro overworld | v0.9.0 | 0/20 | 251 BU | 0% |
+| **W** World campaign: the Bannerlord loop (map, missions, loot, upgrades) | v0.10.0 | 0/26 | 359 BU | 0% |
 
 ### M0 · Foundation
 
@@ -344,6 +352,37 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-V18` | Parity and switch: parity checklist, per-level contact sheets, 2-D default, 3-D behind ?view=3d for one release then removed | S (8) | planned | — | `WP-V5`, `WP-V9`, `WP-V10`, `WP-V11`, `WP-V12`, `WP-V13` |
 | `WP-V19` | Performance and phones: sprite and draw-call budget, caches, particle caps, 30 fps floor on a mid phone, non-colour cues | S (8) | planned | — | `WP-V12` |
 | `WP-V20` | Docs: Game Design Doc visuals section, changelog, moodboard, decision log | XS (3) | planned | — | `WP-V18` |
+
+### W · World campaign: the Bannerlord loop (map, missions, loot, upgrades)
+
+| ID | Packet | Size | Status | Needs | Depends on |
+|---|---|---|---|---|---|
+| `WP-W1` | Campaign save v1: one versioned state for world, band, stash and log; migrate the tactical squad and Rebel Band saves; storage adapter | S (8) | ready | — | — |
+| `WP-W2` | Mission bridge: deployment and result payloads, kit reserved on launch, result settled exactly once, refresh mid-mission counts as withdrawn | M (20) | planned | — | `WP-W1` |
+| `WP-W3` | The band on the map: navigation grid from the heightfield and roads, click to move, route preview, terrain speeds, follow camera | M (20) | planned | browser | `WP-W1` |
+| `WP-W4` | Campaign clock: pause and three speeds, day and night tint and sight, pause on encounters and menus | S (8) | planned | — | `WP-W3` |
+| `WP-W5` | World simulation core: seeded headless parties with goals, speeds and sight; save and restore; determinism tests | M (20) | planned | — | `WP-W1`, `WP-W4` |
+| `WP-W6` | Convoys on the map: spawn at Invader seats, road routes, cargo manifest and escort on the nameplate, resupply on arrival | S (8) | planned | — | `WP-W5` |
+| `WP-W7` | Hunters and heat: patrols, hunter columns spawned by heat, map sight (night, forest, band size), last-seen tracking, losing them | M (20) | planned | — | `WP-W5` |
+| `WP-W8` | Encounters: contact rules and the encounter panel (Attack, Prepare ambush, Withdraw with a rearguard, Leave) | S (8) | planned | — | `WP-W2`, `WP-W6`, `WP-W7` |
+| `WP-W9` | Convoy encounter launches the Convoy Ambush, set up from the convoy party (vehicles, escort, cargo, time, ambush start); result back to the map | M (20) | planned | browser | `WP-W8` |
+| `WP-W10` | Settlement encounter launches the Compound Assault: defenders from garrison and militia, variants per settlement kind, night infiltration | M (20) | planned | browser | `WP-W8`, `WP-W13` |
+| `WP-W11` | Caught by an army launches the Rebel Base Defence: cave level at camp, new hasty-defence variant in the open | M (20) | planned | browser | `WP-W8` |
+| `WP-W12` | Deploy screen: pick up to four fighters from the band; one squad model shared by the band and the missions | S (8) | planned | — | `WP-W1`, `WP-W2` |
+| `WP-W13` | Return to the map: settle casualties, wounds, experience, kills and aftermath (wreck, smoke); autosave and result toast | S (8) | planned | — | `WP-W9`, `WP-W11`, `WP-W12` |
+| `WP-W14` | Loot into the band: cargo manifest and level loot into the campaign stash, with its source | S (8) | planned | — | `WP-W13` |
+| `WP-W15` | The band screen on the campaign save, opened from the map (P); promotions with experience and stolen kit | M (20) | planned | browser | `WP-W14` |
+| `WP-W16` | Owned guns in the Weapon Modder: only owned attachments selectable, locked ones say where they drop; assign a build to a fighter | M (20) | planned | browser | `WP-W15` |
+| `WP-W17` | Looks from kit: a fighter's class and owned wearables set the Operator Customiser look and the map figure | S (8) | planned | browser | `WP-W15` |
+| `WP-W18` | Recruits and barter at friendly villages | S (8) | planned | — | `WP-W15` |
+| `WP-W19` | Territory: capture settlements, what they give (recruits, food, rest), Invader counter-attacks to retake them | M (20) | planned | — | `WP-W10`, `WP-W13` |
+| `WP-W20` | Escalation director: Invader response tiers drive hunters, mission difficulty and enemy kit | M (20) | planned | — | `WP-W19`, `WP-W7` |
+| `WP-W21` | Endgame and defeat: the Fort Orion assault, the camp-overrun defeat, campaign summary | M (20) | planned | browser | `WP-W20` |
+| `WP-W22` | Auto-resolve for small, lopsided fights, with the odds shown first | S (8) | planned | — | `WP-W8` |
+| `WP-W23` | Campaign harness: fifty seeded headless campaigns with auto-resolve, pacing report and a tuning pass | S (8) | planned | — | `WP-W20`, `WP-W22` |
+| `WP-W24` | Campaign end-to-end tests and performance: map to mission to map, two tabs and refresh safety, map at 30 fps on a mid phone | M (20) | planned | browser | `WP-W13`, `WP-W15` |
+| `WP-W25` | First-campaign prompts, design doc campaign section, changelog and index entry | S (8) | planned | — | `WP-W21`, `WP-W24` |
+| `WP-W26` | Owner decisions: barter or no trade, auto-resolve or every fight played, camp-overrun severity, the 3-D map replacing retro overworld packets V14 to V16 | XS (3) | ready | owner | — |
 
 ### TD · Tech debt (fill windows)
 

@@ -5,6 +5,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 ## [Unreleased]
 
 ### Added (docs)
+- **Campaign roadmap** (`docs/campaign-roadmap.md`, on the site as `docs/campaign-roadmap.html`): how every module becomes one Bannerlord-style game. The band moves on the world map; convoys launch the Convoy Ambush, settlements the Compound Assault, armies that catch you the Rebel Base Defence; loot promotes fighters, fits guns and changes looks. New milestone W (WP-W1 to W26, first playable loop at gate W-A).
 - **Walking Through, episode two**: two weeks of vibe-coded games, GPT-6 Astra and Claude Opus 5.5, and what they change for the project (engine choice, cost, assets, disclosure; three experiments). The podcast is now on the site: `docs/podcast/`, rendered with an episode index.
 
 ### Added (Overworld Map, test)
