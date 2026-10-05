@@ -75,6 +75,7 @@ function renderDoc(mdPath, outPath, {title, kicker, depth = 1, markdown = null})
     .replace(/href="(?!https?:|#|mailto:)([^"]+?)"/g, (m, href) => {
       if (/^(\.\/)?master-roadmap\.md$/.test(href)) return `href="${up}docs/master-roadmap.html"`;
       if (/^(\.\/)?campaign-roadmap\.md$/.test(href)) return `href="${up}docs/campaign-roadmap.html"`;
+      if (/^(\.\/)?[\w-]+\.html$/.test(href) && path.posix.dirname(outPath) === 'docs') return m; // a sibling page on the site
       if (/^(\.\/)?walking-through-[\w-]+\.md$/.test(href) && path.posix.dirname(outPath) === 'docs/podcast')
         return `href="${href.replace(/^\.\//, '').replace(/\.md$/, '.html')}"`;
       if (/^(\.\.\/)?(workbench|operator|viewer|map|convoy|band)\/?$/.test(href)) return `href="${up}${href.replace(/^\.\.\//, '')}"`;

@@ -51,7 +51,7 @@
    "version": "0.8.0"
   },
   "V": {
-   "name": "Graphics: 2.5D top-down sprites and the retro overworld",
+   "name": "Graphics: 2.5D top-down sprites for the shooter (the overworld moved to W)",
    "version": "0.9.0"
   },
   "W": {
@@ -558,7 +558,7 @@
   },
   {
    "id": "WP-C8",
-   "title": "Pose library expansion: crouch, kneel, sit, salute, sling carry, rifle-on-shoulder",
+   "title": "Pose library expansion: crouch, kneel, sit, salute, sling carry, rifle-on-shoulder (pose set later cut to three by the owner: Hero, Relaxed, Low ready)",
    "track": "Characters",
    "milestone": "M2",
    "size": "M",
@@ -844,7 +844,7 @@
   },
   {
    "id": "WP-Q4",
-   "title": "Short guided first run across demos (preset > part > stat; look > pose)",
+   "title": "Short guided first run across demos (preset > part > stat; look > pose) (tours since deprecated, 4 October)",
    "track": "Quality",
    "milestone": "M5",
    "size": "S",
@@ -1232,10 +1232,8 @@
    "milestone": "S",
    "size": "M",
    "bu": 20,
-   "status": "planned",
+   "status": "done",
    "deps": [
-    "WP-S35",
-    "WP-S32",
     "WP-S4"
    ],
    "agent": "any",
@@ -1248,7 +1246,7 @@
     "convoy/objectives.js",
     "convoy/ai.js"
    ],
-   "acceptance": "Compound supports stealth and loud routes with owned kit, physical cache, reachable exits and radio-dependent QRF; destructible static mast has a typed target rule; headless and browser smoke pass. Vehicle QRF presentation is separately refined if it exceeds M."
+   "acceptance": "Compound supports stealth and loud routes with owned kit, physical cache, reachable exits and radio-dependent QRF; destructible static mast has a typed target rule; headless and browser smoke pass. Vehicle QRF presentation is separately refined if it exceeds M. Built 3 October ahead of the extraction gate (level data in convoy/levels/compound.js); its extraction-mode rework rides WP-S30 and WP-S35."
   },
   {
    "id": "WP-S6",
@@ -1257,11 +1255,8 @@
    "milestone": "S",
    "size": "M",
    "bu": 20,
-   "status": "planned",
+   "status": "done",
    "deps": [
-    "WP-S35",
-    "WP-S31",
-    "WP-S32",
     "WP-S3",
     "WP-S4"
    ],
@@ -1274,7 +1269,7 @@
     "convoy/ai.js",
     "convoy/objectives.js"
    ],
-   "acceptance": "Cave wave scheduler is data-driven; sensible owned loadout can defend or withdraw with carried supplies; off-map stash survives defeat; pathing, timer and browser smoke tests pass."
+   "acceptance": "Cave wave scheduler is data-driven; sensible owned loadout can defend or withdraw with carried supplies; off-map stash survives defeat; pathing, timer and browser smoke tests pass. Built 3 October ahead of the extraction gate (convoy/levels/cave.js); the campaign uses it as the Rebel Base Defence (WP-W11)."
   },
   {
    "id": "WP-S7",
@@ -1603,7 +1598,7 @@
    "milestone": "S",
    "size": "S",
    "bu": 8,
-   "status": "ready",
+   "status": "done",
    "deps": [
     "WP-S20"
    ],
@@ -1617,14 +1612,13 @@
   },
   {
    "id": "WP-S22",
-   "title": "Progression core: XP from kills, objectives and looting; levels 1-10 per rebel; perk points; persistent in the campaign save",
+   "title": "Progression core (as built): XP per rebel from kills, objectives, survival and victory, kept in the squad save; promotions replace levels and perk points",
    "track": "Tactical",
    "milestone": "S",
    "size": "M",
    "bu": 20,
-   "status": "planned",
+   "status": "done",
    "deps": [
-    "WP-S12",
     "WP-S20"
    ],
    "agent": "any",
@@ -1633,18 +1627,17 @@
     "docs/tactical-roadmap.md",
     "docs/design-decisions/H-progression.md"
    ],
-   "acceptance": "Unit tests: XP awards, level thresholds, save/load; XP is only banked for rebels that took part."
+   "acceptance": "convoy/progression.js awards XP after each mission (XP_PAY) and stores it per rebel; unit-tested. The campaign-wide save moves to WP-W1."
   },
   {
    "id": "WP-S23",
-   "title": "Upgrade trees: Bannerlord-style tiers per rebel with two branches, gated by the equipment carried",
+   "title": "Upgrade trees (as built): promotions along the Rebel Band class tree (44 classes, 7 tiers), costing XP and the equipment the new class carries",
    "track": "Tactical",
    "milestone": "S",
    "size": "M",
    "bu": 20,
-   "status": "planned",
+   "status": "done",
    "deps": [
-    "WP-S8",
     "WP-S22"
    ],
    "agent": "any",
@@ -1653,16 +1646,16 @@
     "docs/tactical-roadmap.md",
     "docs/design-decisions/H-progression.md"
    ],
-   "acceptance": "A rebel with an SVD can take the Marksman branch and one without cannot (unit test); the tree is data."
+   "acceptance": "A rebel is promoted only with the XP of its class and the new class's kit in the stash (band/troops.js, convoy/progression.js); unit-tested."
   },
   {
    "id": "WP-S24",
-   "title": "Perks and abilities: passive perks per level, active abilities with cooldowns unlocked by branch",
+   "title": "Perks and abilities (as built): passive class modifiers and active abilities with cooldowns, inherited along the path",
    "track": "Tactical",
    "milestone": "S",
    "size": "M",
    "bu": 20,
-   "status": "planned",
+   "status": "done",
    "deps": [
     "WP-S23"
    ],
@@ -1672,7 +1665,7 @@
     "docs/tactical-roadmap.md",
     "docs/design-decisions/H-progression.md"
    ],
-   "acceptance": "Each ability and perk has a unit test of its effect; none changes enemy health or aim."
+   "acceptance": "convoy/abilities.js: PASSIVES, ACTIVES, cooldowns, keyboard activation; every class has abilities; smoke covers use in a mission."
   },
   {
    "id": "WP-S25",
@@ -1696,15 +1689,14 @@
   },
   {
    "id": "WP-S26",
-   "title": "Rebel sheet UI: level, XP, tree with locked branches and the gear they need, perk picks",
+   "title": "Rebel sheet UI (as built): the camp screen shows each rebel's XP, abilities and what each promotion costs in XP and equipment",
    "track": "Tactical",
    "milestone": "S",
    "size": "S",
    "bu": 8,
-   "status": "planned",
+   "status": "done",
    "deps": [
-    "WP-S23",
-    "WP-S10"
+    "WP-S23"
    ],
    "agent": "any",
    "needs": [],
@@ -1712,7 +1704,7 @@
     "docs/tactical-roadmap.md",
     "docs/design-decisions/H-progression.md"
    ],
-   "acceptance": "Keyboard operable; axe passes; smoke test picks a perk."
+   "acceptance": "convoy/camp.js lists rebels, progress, abilities and missing kit per promotion; the Rebel Band tree view shows every path."
   },
   {
    "id": "WP-S27",
@@ -2094,15 +2086,13 @@
   },
   {
    "id": "WP-V2",
-   "title": "Renderer interface: extract the draw calls from convoy/game.js; the three.js code becomes renderer-3d behind ?view=3d",
+   "title": "Renderer split (as built): the sprite renderer reads the same simulation; the 3-D shooter page was retired instead of kept behind ?view=3d",
    "track": "Graphics",
    "milestone": "V",
    "size": "S",
    "bu": 8,
-   "status": "planned",
-   "deps": [
-    "WP-V1"
-   ],
+   "status": "done",
+   "deps": [],
    "agent": "any",
    "needs": [],
    "inputs": [
@@ -2110,7 +2100,7 @@
     "docs/design-decisions/J-graphics.md",
     "convoy/game.js"
    ],
-   "acceptance": "The game plays identically through the interface; the seeded fingerprint is unchanged."
+   "acceptance": "convoy/ runs sprite-game.js and sprite-render.js over convoy/sim.js; the old 3-D page is gone (TAC-J-36)."
   },
   {
    "id": "WP-V3",
@@ -2119,7 +2109,7 @@
    "milestone": "V",
    "size": "M",
    "bu": 20,
-   "status": "planned",
+   "status": "done",
    "deps": [
     "WP-V2"
    ],
@@ -2130,7 +2120,7 @@
     "docs/design-decisions/J-graphics.md",
     "convoy/game.js"
    ],
-   "acceptance": "The convoy plays in ?view=2d with orders, pause and AI view; smoke test."
+   "acceptance": "The convoy plays in ?view=2d with orders, pause and AI view; smoke test. Built with the placeholder art set (convoy/sprite-render.js, Canvas 2-D)."
   },
   {
    "id": "WP-V4",
@@ -2410,7 +2400,7 @@
   },
   {
    "id": "WP-V18",
-   "title": "Parity and switch: parity checklist, per-level contact sheets, 2-D default, 3-D behind ?view=3d for one release then removed",
+   "title": "Parity checklist and per-level contact sheets for the 2-D view (the 3-D view was already removed)",
    "track": "Graphics",
    "milestone": "V",
    "size": "S",

@@ -5,6 +5,8 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 ## [Unreleased]
 
 ### Added (docs)
+- **Roadmap and design document consolidated** (5 October): the master roadmap's state, milestones, order of work, tracks, risks and decisions now match the code (eleven rifles, three missions, the sprite view, Rebel Band, Equipment Wiki, the map test, the campaign). Packets that shipped in another form are marked done as built (WP-S5, S6, S21 to S24, S26, V2, V3); the V milestone no longer holds the overworld. The design document's dispatches, campaign loop, progression, feature matrix, moodboard notes, open decisions and specs follow suit.
+- **Campaign decisions** (WP-W26, delegated by the owner): barter at friendly villages, auto-resolve only for lopsided fights, an overrun camp is a setback, the 3-D map is the overworld (TAC-K-01 to K-04, `docs/design-decisions/K-campaign.md`); WP-V14 to V16 retired.
 - **Campaign roadmap** (`docs/campaign-roadmap.md`, on the site as `docs/campaign-roadmap.html`): how every module becomes one Bannerlord-style game. The band moves on the world map; convoys launch the Convoy Ambush, settlements the Compound Assault, armies that catch you the Rebel Base Defence; loot promotes fighters, fits guns and changes looks. New milestone W (WP-W1 to W26, first playable loop at gate W-A).
 - **Walking Through, episode two**: two weeks of vibe-coded games, GPT-6 Astra and Claude Opus 5.5, and what they change for the project (engine choice, cost, assets, disclosure; three experiments). The podcast is now on the site: `docs/podcast/`, rendered with an episode index.
 
