@@ -4,6 +4,10 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 ## [Unreleased]
 
+### Added (Recon clean clothing foundation, WP-CM2)
+- Add an opt-in Recon foundation with a complete jacket, finished waist/neck, repaired clothing surfaces and fresh cloth textures. Remove the vest, harness and bags from this body; preserve the current Recon for comparison. The new foundation is 7,902 triangles on the unchanged 26-bone skeleton.
+- Inspect it unarmed from four sides, switch poses and idles, or customise colours and carry rifles in the Operator Modder. Fit a separate grip and carry profile to the new sleeves; retain temporary headwear and fixed-finger gloves until CM3.
+
 ### Added (Recon source teardown, WP-CM1)
 - Inspect all 27 original split pieces in assembled, exploded and body-candidate views; select, isolate, frame and inspect measured repair decisions. The stripped view exposes the fused vest, open torso, missing neck and right hand that need rebuilding.
 - Record the canonical textured source, corrected skeleton and modular mount contract, with measured geometry allocations and a repeatable source audit. New carriers and the clean body remain subsequent modelling work.

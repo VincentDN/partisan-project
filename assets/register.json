@@ -1192,6 +1192,17 @@
     "triangles": 200000
    },
    "notes": "Byte-identical split source for numbered inspection: 27 pieces, 195765 triangles. Diagnostic reference only; excluded from the gameplay operator budget."
+  },
+  {
+   "id": "recon-modular",
+   "label": "Recon clothing foundation",
+   "path": "assets/models/operators/recon-modular.glb",
+   "kind": "character",
+   "notes": "CM2 clean clothing foundation: 7,902 triangles, canonical 26-bone Recon skeleton. Complete jacket, waist and neck with fresh cloth textures; no vest, harness or bags. Source head/hood and fixed-finger gloves are temporary until CM3. Rebuild with assets:recon-foundation.",
+   "status": "real",
+   "budget": {
+    "triangles": 8000
+   }
   }
  ],
  "pipeline": [

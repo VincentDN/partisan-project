@@ -139,8 +139,8 @@ await check('operator: loads, equipment toggles, zones are independent, hash rou
   assert.equal(await page.evaluate(() => window.PARP_OPERATOR.state.head), 'nvg');
   assert.equal(
     await page.locator('#roster button').count(),
-    4,
-    'Recon, Base, Insurgent and Enforcer in the roster (the old Recon is deprecated)',
+    5,
+    'Recon, clothing foundation, Base, Insurgent and Enforcer in the roster (the old Recon is deprecated)',
   );
   // pose + weapon prop
   await page.evaluate(() => {

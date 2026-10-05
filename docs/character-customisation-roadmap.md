@@ -1,6 +1,6 @@
 # Deep character customisation: Recon modular equipment system
 
-Roadmap dated 4 October 2026. Planning and the [source teardown/authoring contract](engineering/recon-modular-audit.md) are complete. The clean body, new equipment and assembly editor below remain planned work. Work packets use the `WP-CM` prefix in [packets.json](agent-ops/packets.json).
+Roadmap updated 5 October 2026. Planning, the [source teardown/authoring contract](engineering/recon-modular-audit.md) and the [clean clothing foundation](engineering/recon-clothing-foundation.md) are complete. Head/hand reconstruction, new equipment and the assembly editor remain planned work. Work packets use the `WP-CM` prefix in [packets.json](agent-ops/packets.json).
 
 Build a character that can be stripped to complete clothing, then dressed with genuinely different carriers, chest rigs, belts, pouches and bags. Keep the Recon's hooded silhouette, compact proportions, layered fabric and readable gear shapes. The result should support assembling individual pieces, inspecting their fit in motion, saving outfits and eventually equipping the same items on rebels.
 
@@ -135,7 +135,7 @@ Record triangles, draw calls, decoded texture memory, compressed outfit bytes an
 
 ## 8. Sequence and work packets
 
-Sizes are repository planning units (S = 8 BU, M = 20 BU), not days or delivery promises. Each packet is bounded to its listed deliverable; split it further if the modelling or fitting work will exceed M. CM0 and CM1 are complete. CM2 and CM4 are ready; later dependent packets remain planned until their gates pass.
+Sizes are repository planning units (S = 8 BU, M = 20 BU), not days or delivery promises. Each packet is bounded to its listed deliverable; split it further if the modelling or fitting work will exceed M. CM0 through CM2 are complete. CM3 and CM4 are ready; later dependent packets remain planned until their gates pass.
 
 | Packet | Deliverable | Depends on | Size | Done when |
 |---|---|---|---|---|
@@ -162,7 +162,7 @@ Sizes are repository planning units (S = 8 BU, M = 20 BU), not days or delivery 
 | CM20 | Tactical sprite appearance adapter | CM19, V6 | S | Key carrier/pack/headgear silhouettes map to the established 2D paper-doll system |
 | CM21 | Expanded catalogue release gate | CM11–CM18 | M | Coverage matrix, save migrations, catalogue load/memory and representative outfits pass |
 
-**Next modelling session:** CM2. Follow the [measured teardown and contract](engineering/recon-modular-audit.md) to rebuild the underlying torso before CM5 models the first new carrier. CM4 can implement the item resolver against the established conventions. Do not begin by multiplying pouches on the existing nearly-full-budget model.
+**Next modelling session:** CM3. Start from the [7,902-triangle clean clothing foundation](engineering/recon-clothing-foundation.md) and separate headwear and rebuild articulated hands. CM4 can implement the item resolver against the established contract; CM5 then models the first carrier against the finished clothing. The foundation is available as an opt-in operator and an unarmed inspection view.
 
 CM19–CM20 are integration follow-ups and do not block the 3D catalogue release. They extend the existing inventory/unlock and sprite-equipment work instead of duplicating it. CM1 should also reuse completed patches, headwear and prop work from the older C packets where it fits the new contracts.
 

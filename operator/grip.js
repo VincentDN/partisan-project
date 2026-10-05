@@ -53,6 +53,7 @@ export class Grip {
   /** @param {Map<string, T.Bone>} bones  @param {Map<string, {world: T.Quaternion}>} rest */
   constructor(bones, rest, profile = {}) {
     this.bones = bones;
+    this.grips = {...GRIPS, ...profile.grips};
     this.palms = Object.fromEntries(
       ['r', 'l'].map(side => [side, profile.palms?.[side] ? new T.Vector3(...profile.palms[side]) : PALM.clone()]),
     );
@@ -102,7 +103,7 @@ export class Grip {
    */
   solve(side, gripId, rifleWorld, pole, weight = 1) {
     const arm = this.arms[side],
-      g = typeof gripId === 'string' ? GRIPS[gripId] : gripId;
+      g = typeof gripId === 'string' ? this.grips[gripId] : gripId;
     if (!arm || !g || weight <= 0) return;
     const {U, L, H} = arm;
     const fk = weight < 1 ? [U.quaternion.clone(), L.quaternion.clone(), H.quaternion.clone()] : null;

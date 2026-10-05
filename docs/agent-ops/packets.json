@@ -2560,7 +2560,7 @@
    "milestone": "M2",
    "size": "M",
    "bu": 20,
-   "status": "ready",
+   "status": "done",
    "deps": [
     "WP-CM1"
    ],
@@ -2575,7 +2575,7 @@
     "docs/engineering/recon-modular-audit.md",
     "tools/assets/recon-modular-contract.json"
    ],
-   "acceptance": "Carrier/harness removal exposes complete front, back, shoulder and waist surfaces; clean cloth textures have no baked gear remnants; 360-degree strip contact sheet passes."
+   "acceptance": "npm run test:foundation; complete front/back/shoulder/waist cloth surfaces, no equipment geometry or baked gear marks, canonical skeleton and <=8,000 triangles; committed four-side/pose strip sheet."
   },
   {
    "id": "WP-CM3",
@@ -2584,7 +2584,7 @@
    "milestone": "M2",
    "size": "M",
    "bu": 20,
-   "status": "planned",
+   "status": "ready",
    "deps": [
     "WP-CM2"
    ],
@@ -2595,7 +2595,11 @@
    ],
    "inputs": [
     "docs/character-customisation-roadmap.md",
-    "docs/engineering/generated-recon.md"
+    "docs/engineering/generated-recon.md",
+    "docs/engineering/recon-clothing-foundation.md",
+    "tools/assets/build-recon-foundation.py",
+    "tools/assets/recon_foundation_geometry.py",
+    "tools/assets/recon-modular-contract.json"
    ],
    "acceptance": "Head, hood, mask and neck join without gaps; both gloves support relaxed, open and rifle grip shapes; legacy bone names remain compatible and skeleton additions are versioned."
   },
