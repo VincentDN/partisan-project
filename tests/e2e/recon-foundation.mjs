@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import {createRequire} from 'node:module';
 import sharp from 'sharp';
 import {launch, open, startServer} from './browser.mjs';
-import {reconClearance, reconPalmDistances} from './recon-clearance.mjs';
+import {reconClearance, reconPalmDistances, settlePose} from './recon-clearance.mjs';
 const server = await startServer(8191),
   browser = await launch();
 try {
@@ -35,8 +35,8 @@ try {
     ['rest', 'back'],
     ['rest', 'left'],
     ['rest', 'right'],
-    ['salute', 'front'],
-    ['crouch', 'front'],
+    ['hero', 'front'], // the owner cut the pose set to Hero, Relaxed and Low ready (salute and crouch are gone)
+    ['ready', 'front'],
   ]) {
     await page.locator('#pose').selectOption(pose);
     await page.getByRole('button', {name: view[0].toUpperCase() + view.slice(1), exact: true}).click();
@@ -103,9 +103,9 @@ try {
   for (const weapon of ['ak74m', 'g3', 'ak15k']) {
     await modder.evaluate(id => window.PARP_OPERATOR.set('weapon', id), weapon);
     await modder.waitForFunction(id => window.PARP_OPERATOR.weapon?.rifle.id === id, weapon);
-    for (const pose of ['hero', 'ready', 'crouch', 'kneel', 'highready', 'port', 'gunner', 'herotwo']) {
+    for (const pose of ['hero', 'relaxed', 'ready']) {
       await modder.evaluate(p => window.PARP_OPERATOR.set('pose', p), pose);
-      await modder.waitForTimeout(300);
+      await settlePose(modder);
       assert.ok(
         (await modder.evaluate(reconPalmDistances)).every(d => d < 0.025),
         `${weapon}/${pose} palm reach`,

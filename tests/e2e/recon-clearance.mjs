@@ -50,3 +50,21 @@ export function reconPalmDistances() {
     return palm.distanceTo(o.pivot.localToWorld(new V(...at)));
   });
 }
+
+/**
+ * Wait until a pose change has fully landed: the body blend finished and the hand IK blended in. Both advance per
+ * rendered frame, and a software-rendered warehouse runs at about one frame a second in CI, so a fixed wait is not
+ * enough. Wakes the stage and counts a dozen animation frames after the blend completes.
+ */
+export async function settlePose(page, op = 'PARP_OPERATOR') {
+  await page.waitForFunction(op => (window[op].stage.wake(4000), window[op].rig.blend >= 1), op, {timeout: 90000, polling: 250});
+  await page.evaluate(
+    op =>
+      new Promise(resolve => {
+        let n = 0;
+        const tick = () => (window[op].stage.wake(4000), ++n >= 12 ? resolve() : requestAnimationFrame(tick));
+        requestAnimationFrame(tick);
+      }),
+    op,
+  );
+}

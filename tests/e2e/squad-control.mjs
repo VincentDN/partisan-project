@@ -37,6 +37,8 @@ export async function checkSquadControl(browser, url, reducedMotion = 'reduce') 
       s.checkOutcome();
     });
     await page.locator('#squad-picker:not([hidden])').waitFor();
+    // the forced choice also runs on wall clock (3 s); hold it open on a slow software-rendered runner
+    await page.evaluate(() => window.PARP_SPRITES.sim.control.pending && (window.PARP_SPRITES.sim.control.pending.remaining = 30));
     assert.equal(await page.evaluate(() => window.PARP_SPRITES.sim.outcome), null, 'active death does not fail mission');
     assert.equal(await page.locator('[data-swap-cancel]').isVisible(), false, 'cannot cancel death choice');
     await page.keyboard.press('Escape');
