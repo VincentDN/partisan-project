@@ -4,6 +4,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 ## [Unreleased]
 
+### Added (docs)
+- **Walking Through, episode two**: two weeks of vibe-coded games, GPT-6 Astra and Claude Opus 5.5, and what they change for the project (engine choice, cost, assets, disclosure; three experiments). The podcast is now on the site: `docs/podcast/`, rendered with an episode index.
+
 ### Added (Overworld Map, test)
 - **A Bannerlord-style campaign map** of the island, on the index as Overworld Map: rocky Mediterranean terrain with a snowy massif and an azure coast, nine provinces in their owners' colours, towns, villages, the Invader's fort and the Resistance camp, roads, forests, gulls, boats and drifting clouds. Your party (the hooded Recon, rifle raised) stands on a hill; Invader patrols stand in the distance; convoys drive the roads. Nameplates on every party and town, time controls, party panel and menu bar (placeholders). TAC-J-53.
 
