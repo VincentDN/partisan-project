@@ -215,7 +215,7 @@ await check('operator: loads, equipment toggles, zones are independent, hash rou
   assert.match(await page.evaluate(() => location.hash), /head=bare/);
   assert.match(await page.evaluate(() => location.hash), /z\.top=navy/);
   // reload restores
-  await page.reload();
+  await page.reload({waitUntil: 'domcontentloaded'}); // ready is awaited below; the load event can trail on a slow runner
   await page.waitForFunction(() => window.PARP_OPERATOR?.ready, null, {timeout: 60000});
   assert.equal(await page.evaluate(() => window.PARP_OPERATOR.state.head), 'bare');
   // roster switching keeps working (reload the same base) and resets looks to the base defaults

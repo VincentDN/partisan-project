@@ -37,7 +37,9 @@ export function prefetchModels(urls) {
           .then(next),
       {timeout: 5000},
     );
-  next();
+  // only after the page has loaded: requests in flight before then hold the load event back
+  if (document.readyState === 'complete') next();
+  else addEventListener('load', next, {once: true});
 }
 /** Free what a clone owns: its materials, and geometry made for it (not the shared, parsed geometry). */
 export function disposeModel(root) {

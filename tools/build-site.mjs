@@ -66,11 +66,11 @@ fs.copyFileSync('docs/agent-ops/packets.json', path.join(out, 'docs/packets.json
 
 // Render Markdown documents to HTML inside the same shell as the design doc: the master roadmap, and the Walking Through
 // podcast episodes (docs/podcast/*.md, with an index). `depth` is how deep the page sits under the site root.
-function renderDoc(mdPath, outPath, {title, kicker, depth = 1}) {
+function renderDoc(mdPath, outPath, {title, kicker, depth = 1, markdown = null}) {
   const up = '../'.repeat(depth);
   const dir = path.posix.dirname(mdPath);
   const html = marked
-    .parse(fs.readFileSync(mdPath, 'utf8'), {gfm: true})
+    .parse(markdown ?? fs.readFileSync(mdPath, 'utf8'), {gfm: true})
     // relative links to repo documents become GitHub links; the roadmap and the site's own pages stay relative
     .replace(/href="(?!https?:|#|mailto:)([^"]+?)"/g, (m, href) => {
       if (/^(\.\/)?master-roadmap\.md$/.test(href)) return `href="${up}docs/master-roadmap.html"`;
@@ -121,14 +121,12 @@ const list = episodes
   .reverse()
   .map(f => `- [${fs.readFileSync(path.join('docs/podcast', f), 'utf8').split('\n')[0].replace(/^#\s*/, '')}](${f})`)
   .join('\n');
-fs.writeFileSync(
-  'build/.podcast-index.md',
-  `# Walking Through\n\nThe Partisan Project podcast: one decision per episode, walked all the way round. Narration scripts; no audio recorded yet.\n\n${list}\n`,
-);
-renderDoc('build/.podcast-index.md', 'docs/podcast/index.html', {
+// the index is generated here, not a file in the repository (mdPath only places its relative links)
+renderDoc('docs/podcast/index.md', 'docs/podcast/index.html', {
   title: 'Walking Through',
   kicker: 'Walking Through, the Partisan Project podcast',
   depth: 2,
+  markdown: `# Walking Through\n\nThe Partisan Project podcast: one decision per episode, walked all the way round. Narration scripts; no audio recorded yet.\n\n${list}\n`,
 });
 fs.writeFileSync(path.join(out, '.nojekyll'), '');
 fs.writeFileSync(
