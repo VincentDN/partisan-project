@@ -5,12 +5,12 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json); full plan: [ta
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-05 10:30 UTC · codex · WP-CM2 · done**
+**2026-10-05 17:42 UTC · claude · WP-W1 · done**
 
-- Branch `codex/generated-operator-equipment` at `5bfc454`; working tree clean.
-- Last commits: 5bfc454 fix(WP-CM2): remove foundation hood and strengthen chest and neck · 3e4d278 docs(WP-CM2): record completed foundation handoff · 51c4edb feat(WP-CM2): rebuild clean Recon clothing foundation
-- What happened: Completed and pushed 5bfc454: remove the outer hood, rebuild a closed fitted masked head around the preserved eyes, broaden chest and neck, smooth underarm weights and anchor the collar to the torso. Foundation now 5,263 triangles with the unchanged skeleton. Geometry/pose tests and 24 rifle carries pass; refreshed sheet, build/check, lint, typecheck, formatting and plan sync pass. Full units 221/223 with two unchanged downloader failures. Local preview updated.
-- Next step: CM3: separate the remaining face covering and rebuild articulated gloves using the foundation authoring scripts, including recon_foundation_head.py. CM4 item resolver is also ready. Keep collar/wrist constraints and original models; no main merge or push.
+- Branch `claude/friendly-dijkstra-4ky9w6` at `071e729`; working tree clean.
+- Last commits: 071e729 feat(WP-W1): campaign save v1 with migrations from the squad and Rebel Band saves · 19c3ee5 Move the unshipped foley cuts archive to outbound/ for download · 90979da Browser tests: wait for pose blends and hand IK to settle instead of fixed sleeps; hold the timed squad pickers open; Recon foundation checks use the three current poses
+- What happened: Built shared/campaign/state.js (versioned campaign save, migrations from parp-squad-v1 and parp-band-v2, storage adapter) with tests/campaign-state.test.mjs; nothing reads it yet.
+- Next step: WP-W2 mission bridge: add shared/campaign/encounter.js (deployment and result payloads, reserve kit on launch, settle once by encounter id, refresh = withdrawn) on top of state.js deployment/settled fields; then convoy/?campaign= reads it.
 <!-- handoff:end -->
 
 ## Resume here
