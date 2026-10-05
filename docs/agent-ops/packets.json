@@ -2332,12 +2332,12 @@
   },
   {
    "id": "WP-V14",
-   "title": "Overworld island renderer: low-res height grid in banded greens, coast outline, flat sea, nearest-neighbour scaling",
+   "title": "(retired by TAC-K-04: the 3-D world map is the overworld; work moved to WP-W3, W4, W8) Overworld island renderer: low-res height grid in banded greens, coast outline, flat sea, nearest-neighbour scaling",
    "track": "Graphics",
    "milestone": "V",
    "size": "M",
    "bu": 20,
-   "status": "planned",
+   "status": "blocked",
    "deps": [
     "WP-V4",
     "WP-V17"
@@ -2353,12 +2353,12 @@
   },
   {
    "id": "WP-V15",
-   "title": "Overworld icons and routes: red-roofed towns, yellow land routes, blue sea routes, territory tint with non-colour cue, squad marker",
+   "title": "(retired by TAC-K-04: the 3-D world map is the overworld; work moved to WP-W3, W4, W8) Overworld icons and routes: red-roofed towns, yellow land routes, blue sea routes, territory tint with non-colour cue, squad marker",
    "track": "Graphics",
    "milestone": "V",
    "size": "S",
    "bu": 8,
-   "status": "planned",
+   "status": "blocked",
    "deps": [
     "WP-V14"
    ],
@@ -2372,12 +2372,12 @@
   },
   {
    "id": "WP-V16",
-   "title": "Overworld UI and transitions: integer pan/zoom, node panel, travel, clock, zoom into the tactical map",
+   "title": "(retired by TAC-K-04: the 3-D world map is the overworld; work moved to WP-W3, W4, W8) Overworld UI and transitions: integer pan/zoom, node panel, travel, clock, zoom into the tactical map",
    "track": "Graphics",
    "milestone": "V",
    "size": "M",
    "bu": 20,
-   "status": "planned",
+   "status": "blocked",
    "deps": [
     "WP-V15"
    ],
@@ -2391,7 +2391,7 @@
   },
   {
    "id": "WP-V17",
-   "title": "Overworld data: island.js format (nodes, routes, regions, starting control), reachability test, first island",
+   "title": "Overworld data: map/island.js format (nodes, routes, regions, starting control), reachability test, first island",
    "track": "Graphics",
    "milestone": "V",
    "size": "S",
@@ -3215,7 +3215,7 @@
    "inputs": [
     "docs/campaign-roadmap.md"
    ],
-   "acceptance": "A hunter touching the band at Oros Camp opens the cave defence with waves from its strength; in the open, a field defence level; overrun and victory both change the map."
+   "acceptance": "A hunter touching the band at Oros Camp opens the cave defence with waves from its strength; in the open, a field defence level; overrun and victory both change the map. An overrun follows TAC-K-03: half of each camp stack lost (rounded down), fallen fighters wounded, fall back to the nearest friendly settlement, heat halved."
   },
   {
    "id": "WP-W12",
@@ -3350,7 +3350,7 @@
    "inputs": [
     "docs/campaign-roadmap.md"
    ],
-   "acceptance": "Friendly and liberated villages offer tier-1 recruits and barter (per decision W26); hostile ones do not."
+   "acceptance": "Neutral and liberated villages barter item for item from a seeded weekly stock (TAC-K-01); liberated villages offer tier-1 recruits; no trader at camp in a campaign."
   },
   {
    "id": "WP-W19",
@@ -3426,7 +3426,7 @@
    "inputs": [
     "docs/campaign-roadmap.md"
    ],
-   "acceptance": "Auto-resolve uses strength and tiers, shows odds before choosing, and is used by the campaign harness."
+   "acceptance": "Offered only at 2.5x strength or against a lone patrol, never for camp defence, captures or the finale; odds and expected wounds shown first; results slightly worse than played (TAC-K-02); used by the harness."
   },
   {
    "id": "WP-W23",
@@ -3489,21 +3489,20 @@
   },
   {
    "id": "WP-W26",
-   "title": "Owner decisions: barter or no trade, auto-resolve or every fight played, camp-overrun severity, the 3-D map replacing retro overworld packets V14 to V16",
+   "title": "Campaign decisions (delegated by the owner): barter at villages, auto-resolve for lopsided fights, camp overrun as a setback, the 3-D map replaces the retro overworld",
    "track": "Campaign",
    "milestone": "W",
    "size": "XS",
    "bu": 3,
-   "status": "ready",
+   "status": "done",
    "deps": [],
-   "agent": "human",
-   "needs": [
-    "human"
-   ],
+   "agent": "any",
+   "needs": [],
    "inputs": [
-    "docs/campaign-roadmap.md"
+    "docs/campaign-roadmap.md",
+    "docs/design-decisions/K-campaign.md"
    ],
-   "acceptance": "Decisions recorded in docs/design-decisions and the campaign roadmap updated."
+   "acceptance": "TAC-K-01 to K-04 in docs/design-decisions/K-campaign.md; campaign roadmap updated; WP-V14 to V16 retired."
   }
  ]
 }

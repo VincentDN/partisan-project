@@ -193,7 +193,7 @@ The 2.5-D top-down sprite look for the shooter (RimWorld style) and the retro ov
 - Owner feedback: —
 
 ### TAC-J-20 · The overworld looks like a retro handheld region map: banded greens, flat blue sea, yellow routes, red-roofed towns
-- Status: planned  ·  Packet: WP-V14, WP-V15
+- Status: superseded (TAC-K-04: the 3-D world map is the overworld)  ·  Packet: WP-V14, WP-V15
 - Decision: A low-resolution height grid drawn in green bands (light highland to dark coast) with a thick coast outline on flat blue sea, scaled with nearest-neighbour. Routes are yellow on land and blue on the sea; towns and bases are small red-roofed icons.
 - Why: That is the fourth reference and the owner's brief. It reads instantly as 'a map you travel on', it is very cheap to render, and it contrasts with the tactical view so you always know which layer you are in.
 - Alternatives rejected: A painted map (art volume); a satellite or realistic terrain map (does not match the retro direction); reusing the tactical renderer for it (wrong scale and no overview).
@@ -213,7 +213,7 @@ The 2.5-D top-down sprite look for the shooter (RimWorld style) and the retro ov
 - Owner feedback: —
 
 ### TAC-J-22 · The whole island fits one screen at an integer zoom; entering a node zooms into its tactical map
-- Status: planned  ·  Packet: WP-V16
+- Status: superseded (TAC-K-04: the 3-D world map is the overworld)  ·  Packet: WP-V16
 - Decision: The overview shows everything at 1x or 2x with optional pan; selecting a node and entering a mission is a zoom transition into the tactical view.
 - Why: A small island is readable in one glance, which suits a demo and phones. The zoom transition shows how the two layers relate (the tactical map is a close-up of a place on the overworld).
 - Alternatives rejected: A scrolling world map (more art and UI); a menu list of missions (loses the overworld).
@@ -249,6 +249,7 @@ The 2.5-D top-down sprite look for the shooter (RimWorld style) and the retro ov
 - Alternatives rejected: Moving everything to 2-D (loses the Workbench's strengths); everything 3-D (loses the shooter's readability).
 - Cost / risk: Two renderers to maintain.
 - Cost to change: Low.
+- Amended by TAC-K-04: the overworld became the 3-D Bannerlord-style map, so it sits with the 3-D pages; the shooter stays 2-D.
 - Revisit if: The mismatch bothers players.
 - Owner feedback: —
 

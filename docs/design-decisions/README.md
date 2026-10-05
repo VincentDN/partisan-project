@@ -53,5 +53,6 @@ Entries marked `planned` can be changed for free; `built` ones cost a code chang
 | [J-graphics.md](J-graphics.md) | WP-V1 to V20: 2.5-D top-down sprites (RimWorld style), retro overworld map | planned |
 
 | [I-extraction.md](I-extraction.md) | WP-S27–S42: persistent extraction, survival, browser resilience and optional online gates | planned |
+| [K-campaign.md](K-campaign.md) | WP-W1 to W26: the campaign loop; trade, auto-resolve, camp overrun, the 3-D overworld | planned |
 
 Decision count: see `grep -c "^### TAC-" docs/design-decisions/*.md`.

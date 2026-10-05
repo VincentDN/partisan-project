@@ -66,8 +66,8 @@ Two existing plans touch this one:
   extraction rules (`WP-S30`). The campaign's first playable slice does **not wait** for them. It uses today's
   stash-of-counts and scrip and adopts those packets when they land, so the two milestones meet rather than block.
 - The **graphics roadmap** planned a retro, handheld-RPG style flat overworld (`WP-V14` to `V16`). The owner has since
-  asked for the Bannerlord-style 3-D map that now exists in `map/`. Recommendation: the 3-D map **is** the overworld,
-  and V14 to V16 retire (decision W26). V17's island data format is already `map/island.js`.
+  asked for the Bannerlord-style 3-D map that now exists in `map/`. Decided (TAC-K-04): the 3-D map **is** the
+  overworld, and V14 to V16 are retired into W3, W4 and W8. V17's island data format is already `map/island.js`.
 
 ## 4. The world map, in detail
 
@@ -108,7 +108,7 @@ UI): both sides' strength and troop tiers, the ground, the time of day, and the 
 | You reached a convoy | **Attack** (the convoy is moving: ambush on the road), **Prepare ambush** (spend an hour: you start in cover, they drive in) when you are ahead of it on its route, **Let it pass** |
 | You marched on a settlement | **Assault** (loud), **Infiltrate** at night (the stealth start of the compound level), **Leave** |
 | An army touched you | **Defend** (mission), **Withdraw** (leave a rearguard of fighters you choose, or drop supplies, and break contact), **Surrender** is not offered |
-| Any small, lopsided fight | **Auto-resolve** (if W26 keeps it): a quick result from strength and tiers, with honest odds shown first |
+| A lopsided fight (you are 2.5 times stronger, or it is a lone patrol) | **Auto-resolve** (TAC-K-02): odds and expected wounds shown first; a little worse than playing it (more wounds, a quarter less loot); never for the camp, a capture or the finale |
 
 ## 5. The three missions, launched from the map
 
@@ -118,7 +118,7 @@ The levels exist; what is new is that the map **sets them up** and **receives th
 |---|---|---|---|
 | Convoy | `convoy` | Vehicles and escort from the convoy party; cargo manifest = the loot table; time of day; ambush preparation = start positions | Convoy destroyed (wreck on the road) or escaped with losses; cargo captured; garrison not resupplied |
 | Settlement | `compound` | Defenders from garrison and militia; layout variant per settlement kind (village, town, the base); alarm state from heat; night if infiltrating | Settlement raided (armoury loot, garrison reduced) or **captured** (province turns green); survivors flee as a party |
-| Caught at camp | `cave` | Wave sizes from the hunter column; your camp's defenders and stash are present | Hunters broken: they retreat and heat drops. Camp overrun: the stash at camp is lost in part, the band scatters to a fallback village |
+| Caught at camp | `cave` | Wave sizes from the hunter column; your camp's defenders and stash are present | Hunters broken: they retreat and heat drops. Camp overrun (TAC-K-03): half of every camp stack is lost (rounded down), the fallen are wounded, the band falls back to the nearest friendly settlement and heat halves |
 | Caught in the open | `defence` (new variant) | A hasty defence on the local ground type (forest, hill, coast) with the hunter's strength | As above, without the camp stakes |
 
 **Deployment.** Before every mission a **deploy screen** picks up to four fighters from the band (you play them all,
@@ -151,9 +151,9 @@ loadable and testable on its own). The save is the source of truth:
    on the map.
 5. **Recruits** come from villages that like you: Village Infantry, tier 1 of the class tree. Liberated villages give
    more, and better.
-6. **Trade.** Today's camp has a trader (scrip from trade goods). The tactical roadmap argued for no shop. The
-   recommendation (decision W26): **barter at neutral and liberated villages only**, so trade is a reason to move and to
-   free villages, never a menu at home.
+6. **Trade** (TAC-K-01): **no shop at home.** Trade goods are bartered item for item at neutral and liberated villages,
+   from a small seeded stock that refreshes weekly (liberated villages stock more and give better rates). Trade is a
+   reason to move and to free villages, never a menu at camp. The camp trader stays in practice mode.
 
 ## 7. Territory and escalation
 
@@ -163,7 +163,8 @@ loadable and testable on its own). The save is the source of truth:
   response in tiers: patrols → hunter columns → armoured columns with an MRAP → air reconnaissance that finds the camp.
   Mission difficulty and enemy kit follow the tier, so stolen gear stays relevant.
 - **The end.** When Fort Orion is the last Invader seat, the final mission is its assault: a multi-stage compound
-  level. **Defeat** is the band wiped out with the camp overrun; until then every loss is a setback, not a game over.
+  level. **Defeat** comes only when the band is wiped out in a defence and no friendly settlement is left to fall back
+  to; until then every loss, an overrun camp included, is a setback, not a game over (TAC-K-03).
 
 ## 8. How the code fits together
 
@@ -244,13 +245,20 @@ with it, get caught by a hunter column, survive the cave defence, all in one sav
 
 | Packet | What | Size |
 |---|---|---|
-| `WP-W22` | Auto-resolve for small fights (if kept), with the odds shown first | S |
+| `WP-W22` | Auto-resolve for lopsided fights, odds shown first, never better than playing (TAC-K-02) | S |
 | `WP-W23` | Campaign harness: fifty seeded headless campaigns, pacing report, tuning pass | S |
 | `WP-W24` | Campaign end-to-end tests (map → mission → map), two-tab and refresh safety, map performance on a phone | M |
 | `WP-W25` | First-campaign prompts, design doc campaign section, changelog, index entry | S |
 
-**Owner decisions** (`WP-W26`, XS): barter or no trade; auto-resolve or every fight played; how hard a camp-overrun
-hurts; the 3-D map replacing the retro overworld packets V14 to V16.
+**Decisions** (`WP-W26`, done 5 October 2026, delegated by the owner; reasoning in
+[design-decisions/K-campaign.md](design-decisions/K-campaign.md)):
+
+| Question | Decision |
+|---|---|
+| Trade | No shop at home; barter at neutral and liberated villages only (TAC-K-01) |
+| Auto-resolve | Only for lopsided fights, never for the camp, a capture or the finale, and always a little worse than playing (TAC-K-02) |
+| Camp overrun | Half of each camp stack lost, the fallen wounded, fall back to a friendly settlement, heat halved; game over only with no settlement left (TAC-K-03) |
+| Overworld | The 3-D map in `map/` is the overworld; retro packets WP-V14 to V16 retired (TAC-K-04) |
 
 ## 10. Pacing targets
 
