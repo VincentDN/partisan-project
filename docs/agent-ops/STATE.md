@@ -5,12 +5,12 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json); full plan: [ta
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-04 17:46 UTC · codex · WP-CM1 · done**
+**2026-10-05 10:14 UTC · codex · WP-CM2 · done**
 
-- Branch `codex/generated-operator-equipment` at `855c47b`; working tree clean.
-- Last commits: 855c47b feat(WP-CM1): add Recon source teardown and modular authoring contract · 7fc1334 docs(WP-CM0): plan deep Recon character customisation · 964b7d8 docs(WP-CG2): note concurrent upstream model changes
-- What happened: Completed the 27-part source teardown, committed front/back/exploded sheet, measured topology and runtime skeleton audit, and versioned modular authoring contract. Built-site teardown/comparison and accessibility pass; audit/plan tests, build/check, lint, configured typecheck and formatting pass. Full suite: 212/214 with two unchanged downloader failures. Feature milestone 855c47b pushed; original and current operator assets unchanged.
-- Next step: CM2: rebuild complete clean torso/clothing under the fused vest using docs/engineering/recon-modular-audit.md and tools/assets/recon-modular-contract.json. Create an opt-in recon-modular authoring output; validate stripped front/back/side coverage and clean cloth textures before carriers. CM4 is also ready. No merge to main.
+- Branch `codex/generated-operator-equipment` at `51c4edb`; working tree clean.
+- Last commits: 51c4edb feat(WP-CM2): rebuild clean Recon clothing foundation · f1b03ae docs(WP-CM1): record teardown verification and clean-body handoff · 855c47b feat(WP-CM1): add Recon source teardown and modular authoring contract
+- What happened: Completed and pushed 51c4edb: opt-in 7,902-triangle clean clothing foundation, fresh cloth maps, continuous jacket and wrist seams, unchanged canonical skeleton, separate carry fit and inspection sheet. Foundation source/built browser checks, 24 carries, 88 existing Recon carries, built smoke, build/check, lint, typecheck, formatting and plan sync pass. Full units 220/222 with two unchanged downloader failures. Preview serves the verified model on localhost:8132.
+- Next step: CM3: separate head/hood/mask and rebuild articulated gloves using docs/engineering/recon-clothing-foundation.md, tools/assets/build-recon-foundation.py and recon_foundation_geometry.py. CM4 item resolver is also ready. Preserve foundation wrist constraints and original models; reconcile origin/main 17eb192 deliberately, with no main merge or push.
 <!-- handoff:end -->
 
 ## Resume here
