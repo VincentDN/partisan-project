@@ -5,12 +5,12 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json); full plan: [ta
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-05 10:30 UTC · codex · WP-CM2 · done**
+**2026-10-05 16:22 UTC · codex · WP-CM3 · done**
 
-- Branch `codex/generated-operator-equipment` at `5bfc454`; working tree clean.
-- Last commits: 5bfc454 fix(WP-CM2): remove foundation hood and strengthen chest and neck · 3e4d278 docs(WP-CM2): record completed foundation handoff · 51c4edb feat(WP-CM2): rebuild clean Recon clothing foundation
-- What happened: Completed and pushed 5bfc454: remove the outer hood, rebuild a closed fitted masked head around the preserved eyes, broaden chest and neck, smooth underarm weights and anchor the collar to the torso. Foundation now 5,263 triangles with the unchanged skeleton. Geometry/pose tests and 24 rifle carries pass; refreshed sheet, build/check, lint, typecheck, formatting and plan sync pass. Full units 221/223 with two unchanged downloader failures. Local preview updated.
-- Next step: CM3: separate the remaining face covering and rebuild articulated gloves using the foundation authoring scripts, including recon_foundation_head.py. CM4 item resolver is also ready. Keep collar/wrist constraints and original models; no main merge or push.
+- Branch `codex/generated-operator-equipment` at `3bc89c3`; working tree clean.
+- Last commits: 3bc89c3 feat(WP-CM3): add removable headwear and articulated Recon hands · e158c28 docs(WP-CM2): hand off hood-free foundation refinement · 5bfc454 fix(WP-CM2): remove foundation hood and strengthen chest and neck
+- What happened: Completed and pushed 3bc89c3: complete stylized head, removable mask/cap, articulated gloves and four data-driven hand shapes. The 5,568-triangle foundation preserves 26 canonical joints and adds 30 finger joints. Foundation geometry/browser checks and 24 rifle carries pass; original Recon passes 88 carries. Built smoke, build/check, lint, typecheck, formatting and plan tests pass. Full units 222/224 with two unchanged downloader failures. Review sheets committed and preview current.
+- Next step: CM4: implement pure item-instance/compatibility resolver from the modular contract and roadmap; refine its acceptance first. CM5 then authors the first carrier. Preserve body rest frames, local finger rotations and CM2 collar/wrist constraints. No main merge or push.
 <!-- handoff:end -->
 
 ## Resume here
