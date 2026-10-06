@@ -925,21 +925,39 @@ export async function createSpriteRenderer(view) {
     }
     if (smoke.length > 120) smoke.splice(0, smoke.length - 120);
   }
-  /** Speech bubbles: white, rounded, over the speaker for two seconds (the comms log keeps the rest). */
+  /**
+   * Speech bubbles over the speaker: barks short and white for two seconds; conversation lines (with `dur`) CRPG-style,
+   * the speaker's name on top and the line wrapped, for as long as it takes to read (the comms log keeps the rest).
+   */
+  function wrap(text, max) {
+    const out = [];
+    let line = '';
+    for (const w of text.split(' ')) {
+      const t = line ? line + ' ' + w : w;
+      if (line && ctx.measureText(t).width > max) {
+        out.push(line);
+        line = w;
+      } else line = t;
+    }
+    return line ? [...out, line] : out;
+  }
   function bubbles(sim) {
     const recent = new Map();
-    for (const c of sim.callouts) if (sim.time - c.t < 2.2) recent.set(c.id, c);
-    ctx.font = '12px ui-sans-serif, system-ui, sans-serif';
+    for (const c of sim.callouts) if (sim.time - c.t < (c.dur ?? 2.2)) recent.set(c.id, c);
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     for (const c of recent.values()) {
       const u = sim.units.find(x => x.id === c.id);
       if (!u || (u.side === 'army' && !inSight.has(u))) continue; // heard, not seen: the comms log still has it
-      const x = sx(u.x),
+      const life = c.dur ?? 2.2,
+        x = sx(u.x),
         y = sy(u.z) - 1.6 * ppm;
-      const w = ctx.measureText(c.text).width + 14,
-        h = 20;
-      ctx.globalAlpha = Math.min(1, (2.2 - (sim.time - c.t)) * 2);
+      ctx.font = '12px ui-sans-serif, system-ui, sans-serif';
+      const lines = c.dur ? wrap(c.text, 230) : [c.text],
+        name = c.dur ? c.name || '' : '';
+      const w = Math.max(...lines.map(l => ctx.measureText(l).width), name ? ctx.measureText(name).width : 0) + 16,
+        h = lines.length * 15 + (name ? 15 : 0) + 6;
+      ctx.globalAlpha = Math.min(1, (life - (sim.time - c.t)) * 2, (sim.time - c.t) * 6 + 0.2);
       ctx.fillStyle = c.side === 'army' ? '#fff3e6' : '#f6f8ee';
       ctx.strokeStyle = '#2a2a24';
       ctx.lineWidth = 1.5;
@@ -947,8 +965,28 @@ export async function createSpriteRenderer(view) {
       ctx.roundRect(x - w / 2, y - h, w, h, 6);
       ctx.fill();
       ctx.stroke();
+      if (c.dur) {
+        // the tail, pointing at the speaker
+        ctx.beginPath();
+        ctx.moveTo(x - 5, y - 0.75);
+        ctx.lineTo(x, y + 6);
+        ctx.lineTo(x + 5, y - 0.75);
+        ctx.fill();
+        ctx.stroke();
+      }
+      let ty = y - h + 10;
+      if (name) {
+        ctx.font = 'bold 11px ui-sans-serif, system-ui, sans-serif';
+        ctx.fillStyle = c.side === 'army' ? '#8a3b1e' : '#3d5a1e';
+        ctx.fillText(name, x, ty);
+        ty += 15;
+        ctx.font = '12px ui-sans-serif, system-ui, sans-serif';
+      }
       ctx.fillStyle = '#1e1e1a';
-      ctx.fillText(c.text, x, y - h / 2 + 1);
+      for (const l of lines) {
+        ctx.fillText(l, x, ty + 1);
+        ty += 15;
+      }
       ctx.globalAlpha = 1;
     }
   }

@@ -18,6 +18,7 @@ import {createSquadPicker} from './squad-picker.js';
 import {createSoundscape} from './soundscape.js';
 import {createSpriteRenderer} from './sprite-render.js';
 import {createFieldSearch} from './field-search.js';
+import {createBanter} from './banter.js';
 import {createCatalogue} from '../shared/inventory/catalogue.js';
 import {COSMETICS, buildPawn, lookFor, saveLook, resetLook, savedLook} from './sprite-art.js';
 
@@ -68,6 +69,7 @@ let squad = loadSquad(store.get(SQUAD_KEY)),
 const saveSquad = () => store.set(SQUAD_KEY, JSON.stringify(squad));
 
 let sim,
+  banter,
   started = false,
   paused = false,
   selected = [];
@@ -82,6 +84,7 @@ function newGame() {
     difficulty: diffId,
   });
   search?.attach(sim, {seed});
+  banter = createBanter(sim, seed);
   awarded = false;
   lastLoot = lastEarned = null;
   R.snap(sim);
@@ -687,6 +690,7 @@ function frame() {
     }
   else acc = 0;
   search?.update(live ? elapsed : 0, live && keys.has('e'));
+  if (live) banter.update();
   if (sim.outcome && $('#card').hidden) {
     showDebrief(sim.debrief());
     $('#card').hidden = false;
@@ -727,6 +731,9 @@ window.PARP_SPRITES = {
   },
   campaign: cm,
   search,
+  get banter() {
+    return banter;
+  },
   get slowmo() {
     return slowmo;
   },

@@ -7,6 +7,7 @@ import {difficulty as difficultyOf} from './difficulty.js';
 import {initObjectives, evaluate} from './objectives.js';
 import {requestControl, selectControl, cancelControl, ensureControl, advanceControl} from './squad-control.js';
 import {bestBelief, compass, perceive, hear, decay, armyThink, armyAct, partisanThink, partisanAct, squadThink, receive} from './ai.js';
+import {BARKS} from './banter-lines.js';
 
 /** mulberry32: small seeded PRNG so a run can be replayed exactly. */
 export function rng(seed) {
@@ -120,6 +121,7 @@ export class Sim {
     if (!this.level) throw new Error(`unknown level ${level}`);
     if (difficulty) this.level = thinLevel(this.level, difficultyOf(difficulty).force);
     this.rand = rng(seed);
+    this.voice = rng(seed * 31 + 7); // which words a bark uses: its own stream, so the fight stays the same
     this.awareness = awareness;
     // Everyone sees as far as the rebels' fog of war shows (convoy/sprite-render.js), and while a screen is watching,
     // `view` is the part of the map on it: a soldier off the screen can neither spot nor shoot a rebel. You see them,
@@ -324,16 +326,23 @@ export class Sim {
     return this.units.filter(o => o.alive && !o.escaped && o.side !== u.side && o.state !== 'mounted');
   }
 
-  say(u, text, key = text, every = 4) {
+  say(u, text, key = text, every = 4, dur = 0) {
     if (!u.alive) return false;
     if (this.time - (u.said[key] ?? -Infinity) < every) return false;
     // One voice per line: a squadmate who just shouted the same thing covers it (beliefs are still shared).
     if (this.callouts.some(c => c.side === u.side && c.text === text && this.time - c.t < 2.5)) return false;
     u.said[key] = this.time;
-    this.callouts.push({id: u.id, name: u.name, side: u.side, text, t: this.time});
+    this.callouts.push({id: u.id, name: u.name, side: u.side, text, t: this.time, ...(dur ? {dur} : {})}); // dur: a longer bubble
     this.sound({type: 'say', x: u.x, z: u.z, side: u.side, key, radio: u.role === 'rto', unit: u.id});
     if (this.callouts.length > 60) this.callouts.shift();
     return true;
+  }
+
+  /** One of the barks for `kind` on u's side (convoy/banter-lines.js), {name} filled in; `fallback` if there are none. */
+  bark(u, kind, fallback, name = '') {
+    const list = BARKS[u.side === 'army' ? 'army' : 'militia'][kind];
+    if (!list?.length) return fallback;
+    return list[Math.floor(this.voice() * list.length)].replace('{name}', name);
   }
 
   /** Queue a sound event (shot, impact, explode, reload, death, ...); capped so a headless run never grows it. */
@@ -475,7 +484,7 @@ export class Sim {
     u.reloading = wid;
     if (!real && u.reserve[wid] !== Infinity) u.reserve[wid]--;
     this.sound({type: 'reload', x: u.x, z: u.z, weapon: wid, seconds: u.reload, unit: u.id, side: u.side});
-    if (u !== this.player) this.say(u, 'Reloading!', 'reload', 6);
+    if (u !== this.player) this.say(u, this.bark(u, 'reload', 'Reloading!'), 'reload', 6);
     return true;
   }
 
@@ -702,7 +711,8 @@ export class Sim {
     for (const it of this.items)
       if (it.taken && it.takenBy === o.id) Object.assign(it, {taken: false, takenBy: null, progress: 0, x: o.x, z: o.z});
     if (by.side === 'partisan') this.kills[by.id] = (this.kills[by.id] || 0) + 1;
-    if (by.side === 'partisan' && by !== this.player) this.say(by, 'Target down!', 'kill', 3);
+    if (by.side === 'partisan' && by !== this.player) this.say(by, this.bark(by, 'kill', 'Target down!'), 'kill', 3);
+    else if (by.side === 'army' && o.side === 'partisan') this.say(by, this.bark(by, 'kill', 'Got one!'), 'kill', 3);
     if (o.role === 'rto') {
       const m = this.units.find(x => x.alive && x.side === 'army');
       if (m) this.say(m, "Radio's down!", 'radio', 99);
@@ -710,7 +720,12 @@ export class Sim {
     // The nearest comrade who can see the body calls it.
     const mates = this.units.filter(m => m.alive && m.side === o.side && m !== o).sort((a, b) => dist(a, o) - dist(b, o));
     if (mates[0] && dist(mates[0], o) < 25)
-      this.say(mates[0], o.side === 'army' ? 'Man down!' : o === this.player ? "You're hit!" : `${o.name} is down!`, 'mandown', 2);
+      this.say(
+        mates[0],
+        o === this.player ? "You're hit!" : this.bark(mates[0], 'mateDown', o.side === 'army' ? 'Man down!' : `${o.name} is down!`, o.name),
+        'mandown',
+        2,
+      );
   }
 
   /** Move u toward u.moveTo with sliding collision; returns true on arrival. */
