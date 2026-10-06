@@ -318,7 +318,10 @@ test('variations: the enemy scales with the party met', async () => {
     assert.ok(enemyCount(vary(LEVELS[id], {strength: 0.6})) < base, `${id}: weaker`);
   }
   const strong = vary(LEVELS.compound, {strength: 1.5, seed: 4});
-  assert.ok(strong.units.every(u => strong.bounds.minX <= u.x && u.x <= strong.bounds.maxX), 'added soldiers stand on the map');
+  assert.ok(
+    strong.units.every(u => strong.bounds.minX <= u.x && u.x <= strong.bounds.maxX),
+    'added soldiers stand on the map',
+  );
 });
 
 test('variations: every level runs for twenty seconds at night in the rain, stronger, without errors', () => {
