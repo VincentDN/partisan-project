@@ -242,6 +242,7 @@ addEventListener('keydown', e => {
   const point = aimPoint();
   if (selected.length && point) {
     if (k === 'f') sim.order(selected, {type: 'follow'});
+    if (k === 'l' && !search?.ammo?.orderLoot(selected, point.x, point.z)) sim.say(sim.player, 'Nothing to loot there.', 'noloot', 2);
     if (k === 'h') sim.order(selected, {type: 'hold'});
     if (k === 't') {
       const t = enemyNear(point);

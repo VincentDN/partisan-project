@@ -10,6 +10,7 @@ import {createCatalogue} from '../shared/inventory/catalogue.js';
 import {roundsCarried} from '../shared/inventory/ammo.js';
 import {add, contents} from '../shared/inventory/grid.js';
 import {everything} from '../shared/inventory/kit.js';
+import {ARMS} from '../shared/inventory/arms.js';
 
 const cat = createCatalogue(JSON.parse(fs.readFileSync('wiki/data/items.json', 'utf8')));
 /** Fire until dry; a reload completes at once (the sim's clock stops once the fight is won). */
@@ -147,5 +148,31 @@ test("the level's crates are supply caches to search", () => {
   assert.ok(
     everything(c.container).some(i => cat.def(i.slug).kind === 'ammo'),
     'ammunition in it',
+  );
+});
+
+test('L: a rebel ordered to loot walks to the body and takes what fits their weapon', () => {
+  const sim = new Sim({seed: 3});
+  const A = attachAmmo(sim, cat, {seed: 3, army: true});
+  const mate = sim.units.find(u => u.side === 'partisan' && u !== sim.player && A.kitOf(u));
+  const w = A.kitOf(mate).armsId,
+    a = ARMS[w];
+  const foe = sim.units.find(u => u.side === 'army');
+  Object.assign(foe, {alive: false, state: 'down', x: mate.x + 6, z: mate.z});
+  sim.units.filter(u => u.side === 'army').forEach(u => (u.alive = false)); // a quiet field
+  const body = A.scan().get(foe.id).container;
+  add(cat, body, a.mag ? A.factory.magazine(a.mag, a.round, 5) : A.factory.make(a.round)); // something for their weapon
+  const before = mate.reserve[w];
+  assert.ok(A.orderLoot([mate.id], foe.x, foe.z), 'a body near the cursor');
+  for (let i = 0; i < 60 * 15 && A.looting.size; i++) {
+    sim.outcome = null; // keep the clock running in this empty field
+    sim.step(1 / 60, {});
+    A.scavenge(1 / 60);
+  }
+  assert.equal(A.looting.size, 0, 'done');
+  assert.ok(mate.reserve[w] > before, `more rounds: ${before} -> ${mate.reserve[w]}`);
+  assert.ok(
+    sim.callouts.some(c => c.id === mate.id && /^Took /.test(c.text)),
+    'says what they took',
   );
 });

@@ -157,6 +157,7 @@ export function attachAmmo(sim, cat, {kits = {}, seed = 1, army = false} = {}) {
   /** Call once a frame: AI fighters who are dry take what fits from a body within a few metres. */
   function scavenge(dt) {
     scan();
+    lootTick(dt);
     for (const u of sim.units) {
       const k = kitOf(u);
       if (!u.alive || u === sim.player || !k?.primary || u.mags[k.armsId] > 0 || u.reload > 0 || sim.ammo.canReload(u, k.armsId)) {
@@ -194,10 +195,51 @@ export function attachAmmo(sim, cat, {kits = {}, seed = 1, army = false} = {}) {
       sim.say(u, u.side === 'army' ? 'Taking his magazines!' : 'Grabbing his ammo!', 'scavenge', 6);
     }
   }
+  // ---------- ordered looting: L sends the selected rebels to the body, crate or wreck nearest the cursor ----------
+  const looting = new Map(); // unit id -> {target, t}
+  /** Order rebels `ids` to loot the searchable nearest (x, z). Returns the target, or null with none near. */
+  function orderLoot(ids, x, z) {
+    const target = near(x, z, 10);
+    if (!target) return null;
+    sim.order(ids, {type: 'move', x: target.x, z: target.z + (target.r || 0) + 0.8});
+    for (const id of ids) if (sim.units.find(u => u.id === id && u !== sim.player)) looting.set(id, {target, t: 0});
+    return target;
+  }
+  /** Take what fits their weapon (magazines with rounds, loose rounds) and medicine, while they have room. */
+  function lootInto(u, target) {
+    const k = kitOf(u),
+      cal = calibreOf(k);
+    let mags = 0,
+      rounds = 0;
+    for (const it of everything(target.container)) {
+      const d = cat.def(it.slug);
+      const wanted = (d.calibre === cal && ((d.kind === 'magazine' && roundsIn(it)) || d.kind === 'ammo')) || d.kind === 'meds';
+      if (!wanted || !reachable(k).some(c => add(cat, c, it))) continue;
+      takeOut(target.container, it);
+      if (d.kind === 'magazine') mags++;
+      if (d.kind === 'ammo') rounds += it.count;
+    }
+    sync(u);
+    const got = [mags && `${mags} magazine${mags > 1 ? 's' : ''}`, rounds && `${rounds} rounds`].filter(Boolean).join(' and ');
+    sim.say(u, got ? `Took ${got}.` : 'Nothing here for me.', 'looted', 0);
+  }
+  function lootTick(dt) {
+    for (const [id, L] of looting) {
+      const u = sim.units.find(x => x.id === id);
+      if (!u?.alive || !kitOf(u) || !['move', 'hold'].includes(u.order?.type)) {
+        looting.delete(id);
+        continue;
+      }
+      if (Math.hypot(L.target.x - u.x, L.target.z - u.z) - (L.target.r || 0) > SEARCH_RANGE + 0.6) continue;
+      if ((L.t += dt) < SEARCH_TIME * 1.5) continue;
+      looting.delete(id);
+      lootInto(u, L.target);
+    }
+  }
   /** Take an item out of a container, or out of a weapon in it (a magazine still in a rifle on the ground). */
   function takeOut(container, it) {
     if (remove(container, it.uid)) return;
     for (const w of everything(container)) if (w.mag === it) w.mag = null;
   }
-  return {kits, kitOf, sync, scan, near, searched, drops, factory, scavenge};
+  return {kits, kitOf, sync, scan, near, searched, drops, factory, scavenge, orderLoot, looting};
 }
