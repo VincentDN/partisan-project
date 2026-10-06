@@ -7,6 +7,9 @@ import {GEAR} from '../../band/troops.js';
 import {logEvent} from './state.js';
 
 export const OUTCOMES = ['won', 'lost', 'withdrawn'];
+/** Campaign hours a fighter needs to heal: hurt, or carried off after going down. */
+export const HEAL_WOUNDED = 24,
+  HEAL_DOWN = 48;
 const isObj = o => !!o && typeof o === 'object' && !Array.isArray(o);
 const count = n => (Number.isFinite(n) && n >= 1 ? Math.floor(n) : 0);
 
@@ -109,7 +112,10 @@ export function settle(c, encounterId = c.deployment?.id) {
     const fighter = c.band.fighters[f];
     if (!fighter) continue;
     fighter.xp += x.xp;
-    if (x.state !== 'fit') fighter.wounded = true;
+    if (x.state !== 'fit') {
+      fighter.wounded = true;
+      fighter.healIn = Math.max(fighter.healIn || 0, x.state === 'down' ? HEAL_DOWN : HEAL_WOUNDED); // campaign hours
+    }
   }
   for (const bag of [d.kit, r.loot]) for (const [g, n] of Object.entries(bag)) c.stash[g] = (c.stash[g] || 0) + n;
   c.goods.push(...r.goods);
@@ -122,6 +128,7 @@ export function settle(c, encounterId = c.deployment?.id) {
   logEvent(c, {
     kind: 'result',
     encounter: d.id,
+    source: d.source,
     level: d.level,
     outcome: r.outcome,
     kills: r.kills,

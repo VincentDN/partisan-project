@@ -126,3 +126,30 @@ button:focus-visible { outline: 2px solid var(--lcd-hi); outline-offset: 2px; }
   .timebar { top: 40px; }
   .province-card { top: auto; bottom: 170px; }
 }
+
+/* the campaign (map/campaign-ui.js): the encounter panel and the band */
+.encounter, .band-panel { left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 20; padding: 12px 16px 14px; width: min(420px, 92vw); }
+.band-panel { width: min(820px, 94vw); max-height: 86vh; overflow: auto; }
+.encounter h3, .band-panel h3 { margin: 12px 0 6px; font: 700 11px/1 ui-monospace, Menlo, Consolas, monospace; letter-spacing: 0.14em; text-transform: uppercase; color: var(--bronze-hi); }
+.enc-mission { margin: 0; font: 600 14px/1.4 Georgia, serif; }
+.enc-fighters, .stash-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 3px; }
+.stash-list { grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); font-size: 12px; }
+.enc-fighters li { padding: 4px 8px; background: #ffffff0a; border-left: 3px solid var(--lcd); }
+.enc-fighters li.hurt, .band-panel .hurt { color: #e0a98a; border-color: #b0473c; }
+.enc-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 14px; }
+.enc-actions button { padding: 7px 14px; }
+.enc-actions .primary { background: linear-gradient(var(--bronze-hi), var(--bronze)); color: var(--leather); font-weight: 700; }
+.enc-actions .primary:disabled { opacity: 0.45; cursor: not-allowed; }
+.encounter .note, .band-panel .note { color: #c8b994; font-size: 12px; }
+/* the camp's rebel cards (convoy/camp.js) in the map's leather */
+.band-panel .squad-cards { display: grid; gap: 8px; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); margin: 6px 0; }
+.band-panel .squad-cards > * { padding: 8px 10px; background: #ffffff08; border: 1px solid #8a6a3a66; border-radius: 3px; }
+.band-panel .xpbar { height: 5px; margin: 5px 0 3px; background: #ffffff18; border-radius: 3px; overflow: hidden; }
+.band-panel .xpbar i { display: block; height: 100%; background: var(--lcd-hi); }
+.band-panel .paths { display: grid; gap: 5px; margin-top: 6px; }
+.band-panel .path button { font-size: 11px; padding: 3px 7px; }
+.band-panel .path.ready button { color: var(--ink); background: var(--lcd-hi); border-color: var(--lcd-hi); }
+.band-panel .path button:disabled { opacity: 0.7; cursor: not-allowed; }
+.band-panel .needs .ok { color: var(--lcd-hi); }
+.band-panel .needs .no { color: #e0a98a; }
+.band-panel ul { padding-left: 16px; }

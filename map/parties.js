@@ -143,6 +143,7 @@ export async function buildParties(field, roads, layer) {
   // Invader patrols in the distance, in a slate-grey uniform
   const PATROLS = [
     {
+      id: 'orion-patrol',
       name: 'Orion garrison patrol',
       count: 24,
       at: PARTY_SPOTS.orion,
@@ -154,6 +155,7 @@ export async function buildParties(field, roads, layer) {
       ],
     },
     {
+      id: 'korfos-checkpoint',
       name: 'Checkpoint Korfos',
       count: 12,
       at: PARTY_SPOTS.korfos,
@@ -164,6 +166,7 @@ export async function buildParties(field, roads, layer) {
       ],
     },
     {
+      id: 'raiders',
       name: 'Raiding party',
       count: 31,
       at: PARTY_SPOTS.raiders,
@@ -189,8 +192,10 @@ export async function buildParties(field, roads, layer) {
       men.push(f);
     }
     parties.push({
+      id: p.id,
       root: men[0].root,
       update: (dt, t) => men.forEach((m, i) => m.update(dt, t + i * 1.3)),
+      hide: () => men.forEach(m => (m.root.visible = false)),
       kind: 'enemy',
       head: 2.2,
       plate: nameplate(layer, {name: p.name, count: String(p.count), faction: 'invader'}),
@@ -199,9 +204,9 @@ export async function buildParties(field, roads, layer) {
 
   // convoys: a column of vehicles that drives a road to its end, waits, turns round and drives back
   const COLUMNS = [
-    {road: 'fort-orion>agia-marina', name: 'Supply convoy', count: 14, vehicles: ['matv', 'truck', 'truck']},
-    {road: 'kastro>fort-orion', name: 'Armoured column', count: 18, vehicles: ['humvee', 'matv', 'truck', 'humvee']},
-    {road: 'fort-orion>myrtia', name: 'Fuel convoy', count: 9, vehicles: ['matv', 'truck']},
+    {id: 'supply-convoy', road: 'fort-orion>agia-marina', name: 'Supply convoy', count: 14, vehicles: ['matv', 'truck', 'truck']},
+    {id: 'armoured-column', road: 'kastro>fort-orion', name: 'Armoured column', count: 18, vehicles: ['humvee', 'matv', 'truck', 'humvee']},
+    {id: 'fuel-convoy', road: 'fort-orion>myrtia', name: 'Fuel convoy', count: 9, vehicles: ['matv', 'truck']},
   ];
   for (const c of COLUMNS) {
     const [a, b] = c.road.split('>');
@@ -255,8 +260,10 @@ export async function buildParties(field, roads, layer) {
     };
     update(0);
     parties.push({
+      id: c.id,
       root: cars[0],
       update,
+      hide: () => cars.forEach(v => (v.visible = false)),
       kind: 'convoy',
       head: 3.2,
       plate: nameplate(layer, {name: c.name, count: String(c.count), faction: 'invader', kind: 'convoy'}),
@@ -266,6 +273,10 @@ export async function buildParties(field, roads, layer) {
   const v = new T.Vector3();
   function update(dt, t, camera, w, h) {
     for (const p of parties) {
+      if (p.root.visible === false) {
+        p.plate.style.display = 'none'; // gone from the map (destroyed in the campaign)
+        continue;
+      }
       p.update(dt, t);
       // the nameplate rides above the party's head, smaller as the camera climbs
       v.copy(p.root.position);

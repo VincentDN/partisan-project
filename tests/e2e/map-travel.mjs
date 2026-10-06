@@ -30,6 +30,7 @@ try {
   const box = await page.locator('#stage canvas').boundingBox();
   await page.mouse.click(box.x + box.width * 0.62, box.y + box.height * 0.55);
   await page.waitForFunction(() => !!window.PARP_MAP.travel.party.route, null, {timeout: 10000});
+  await page.waitForFunction(() => window.PARP_MAP.scene.getObjectByName('route').count > 3, null, {timeout: 10000}); // drawn on the next frame
   assert.match(await page.locator('#toast').innerText(), /Marching to .+ province .+ about \d/);
   assert.ok(
     await page.evaluate(

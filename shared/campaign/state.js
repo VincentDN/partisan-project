@@ -37,12 +37,15 @@ function cleanFighters(o, fallback) {
   const out = {};
   if (isObj(o))
     for (const [id, f] of Object.entries(o))
-      if (isObj(f) && TROOPS[f.class]) out[id] = {class: f.class, xp: num(f.xp, 0, 0), wounded: !!f.wounded};
+      if (isObj(f) && TROOPS[f.class])
+        out[id] = {class: f.class, xp: num(f.xp, 0, 0), wounded: !!f.wounded, healIn: f.wounded ? num(f.healIn, 24, 0) : 0};
   return Object.keys(out).length ? out : fallback;
 }
 
 const fightersFromSquad = squad =>
-  Object.fromEntries(Object.keys(squad.classes).map(id => [id, {class: squad.classes[id], xp: squad.xp[id] || 0, wounded: false}]));
+  Object.fromEntries(
+    Object.keys(squad.classes).map(id => [id, {class: squad.classes[id], xp: squad.xp[id] || 0, wounded: false, healIn: 0}]),
+  );
 
 /**
  * A fresh campaign. `id` names it (deployments and results are keyed on it later, WP-W2); `seed` drives the world
@@ -62,6 +65,7 @@ export function newCampaign({id = 'c1', seed = 1, now = 0} = {}) {
       parties: [], // Invader patrols, convoys, hunter columns (WP-W5 onward)
       settlements: {}, // per-settlement state by id: owner, garrison, heat (WP-W19)
       heat: 0,
+      seen: 0, // log entries the map has already shown (it reports mission results once)
     },
     band: {
       leader: structuredClone(LEADER),
@@ -100,6 +104,7 @@ export function normalize(raw) {
   if (Array.isArray(w.parties)) c.world.parties = w.parties.filter(isObj);
   if (isObj(w.settlements)) c.world.settlements = w.settlements;
   c.world.heat = num(w.heat, 0, 0);
+  c.world.seen = num(w.seen, 0, 0);
   const b = isObj(o.band) ? o.band : {};
   if (isObj(b.leader)) c.band.leader = {...c.band.leader, ...b.leader};
   c.band.fighters = cleanFighters(b.fighters, c.band.fighters);

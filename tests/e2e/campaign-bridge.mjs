@@ -58,7 +58,7 @@ try {
   await ready(page);
   assert.equal(await page.evaluate(() => window.PARP_SPRITES.campaign.action), 'debrief');
   assert.match(await page.locator('#card-text').innerText(), /Accomplished/);
-  await Promise.all([page.waitForURL(/\/map\/$/), page.locator('#start').click()]);
+  await Promise.all([page.waitForURL(/\/map\/\?campaign=c1$/), page.locator('#start').click()]);
   let c = await save(page);
   assert.deepEqual(c.settled, ['e1']);
   assert.equal(c.deployment, null);

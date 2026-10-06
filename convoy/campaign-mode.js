@@ -65,7 +65,7 @@ export function openCampaign(params, storage) {
     returnToMap() {
       settle(campaign, encounter);
       store.save(campaign);
-      location.href = MAP;
+      location.href = `${MAP}?campaign=${encodeURIComponent(campaign.id)}`;
     },
   };
 }

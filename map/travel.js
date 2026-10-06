@@ -176,6 +176,8 @@ export function mountTravel({scene, camera, field, terrain, stageEl, hero, cam, 
     party,
     moveTo,
     update,
+    save,
+    drawRoute,
     get campaign() {
       return campaign;
     },

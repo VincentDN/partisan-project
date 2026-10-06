@@ -11,6 +11,7 @@ import {buildWater} from './water.js';
 import {buildProps} from './props.js';
 import {buildParties} from './parties.js';
 import {mountTravel} from './travel.js';
+import {mountCampaign} from './campaign-ui.js';
 
 mountTopBar({title: 'Overworld map', scene: 'viewer', overlay: true});
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -211,6 +212,7 @@ const travel = mountTravel({
   reduceMotion,
   params: new URLSearchParams(location.search),
 });
+const campaignUi = mountCampaign({travel, parties, townLabels, setSpeed, toast});
 $('#loading').hidden = true;
 
 const clock = new T.Clock();
@@ -227,6 +229,7 @@ renderer.setAnimationLoop(() => {
   water.uniforms.uTime.value = worldT;
   props.update(dt, worldT, camera);
   travel.update(dt);
+  campaignUi?.update(dt);
   const w = stageEl.clientWidth,
     h = stageEl.clientHeight;
   parties.update(dt, worldT, camera, w, h);
@@ -242,9 +245,24 @@ renderer.setAnimationLoop(() => {
     day.hours -= 24;
     day.n++;
   }
-  $('#date').textContent =
-    `${day.season} ${day.n}, Year ${day.year} of the Occupation · ${String(Math.floor(day.hours)).padStart(2, '0')}:00`;
+  $('#date').textContent = campaignUi
+    ? campaignUi.clockText()
+    : `${day.season} ${day.n}, Year ${day.year} of the Occupation · ${String(Math.floor(day.hours)).padStart(2, '0')}:00`;
   renderer.render(scene, camera);
 });
 
-window.PARP_MAP = {scene, camera, cam, parties, props, terrain, field, townLabels, renderer, setSpeed, travel, ready: true};
+window.PARP_MAP = {
+  scene,
+  camera,
+  cam,
+  parties,
+  props,
+  terrain,
+  field,
+  townLabels,
+  renderer,
+  setSpeed,
+  travel,
+  campaign: campaignUi,
+  ready: true,
+};
