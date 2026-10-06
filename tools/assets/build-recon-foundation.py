@@ -1,14 +1,15 @@
-"""Build the CM2 clean Recon clothing on the fixed v1 skeleton; head and gloves remain CM3 placeholders."""
+"""Build clean Recon clothing, removable headwear and articulated gloves on the compatible v2 skeleton."""
 import bpy,bmesh,os,sys,json,math
 import numpy as np
 from mathutils import Matrix
 sys.path.insert(0,os.path.dirname(__file__))
 import recon_foundation_geometry as geo
 import recon_foundation_head as head
+import recon_foundation_hands as hands
 
 bpy.ops.wm.read_factory_settings(use_empty=True)
 bpy.ops.import_scene.gltf(filepath=os.path.abspath('build/recon-baseline.glb'))
-retained=['Hood','Glove_L','Glove_R','Boot_L','Boot_R','Trousers_L','Trousers_R','Sleeve_L','Sleeve_R','Cuff_R']
+retained=['Hood','Boot_L','Boot_R','Trousers_L','Trousers_R','Sleeve_L','Sleeve_R']
 objects=[]
 for obj in list(bpy.context.scene.objects):
     if obj.type!='MESH' or obj.name.removeprefix('SK_GR_') not in retained:continue
@@ -27,14 +28,16 @@ fabric=bpy.data.images.new('CM_CleanFabric',width=n,height=n,alpha=False)
 fabric.pixels.foreach_set(pixels.ravel());fabric.filepath_raw=os.path.abspath('build/recon-clean-fabric.png')
 fabric.file_format='PNG';fabric.save();fabric.pack()
 
-def material(name,color):
+def material(name,color,woven=True):
     m=bpy.data.materials.new(name);m.use_nodes=True
     rgb=tuple((int(color[i:i+2],16)/255)**2.2 for i in (1,3,5))+(1,)
     shader=m.node_tree.nodes['Principled BSDF'];shader.inputs['Roughness'].default_value=.94
     tex=m.node_tree.nodes.new('ShaderNodeTexImage');tex.image=fabric
     # Bake colour into separate image pixels so the exporter can emit standard glTF textures.
     tint=fabric.copy();tint.name=name+'_Albedo'
-    data=pixels.copy();data[:,:,:3]*=np.array([int(color[i:i+2],16)/255 for i in (1,3,5)])
+    data=pixels.copy()
+    if not woven:data[:,:,:3]=1
+    data[:,:,:3]*=np.array([int(color[i:i+2],16)/255 for i in (1,3,5)])
     tint.pixels.foreach_set(data.ravel());tint.filepath_raw=os.path.abspath('build/'+name+'.png');tint.file_format='PNG';tint.save();tint.pack()
     tex.image=tint;m.node_tree.links.new(tex.outputs['Color'],shader.inputs['Base Color'])
     m.diffuse_color=rgb;return m
@@ -42,8 +45,11 @@ def material(name,color):
 cloth=material('M_CM_Jacket','#7b806b');pants=material('M_CM_Trousers','#646a55')
 trim=material('M_CM_Seams','#5b604f');collar=material('M_CM_Neck','#4f5847')
 head_cover=material('M_CM_HeadCover','#292a24')
+gloves=material('M_CM_Gloves','#505548')
+skin=material('M_CM_Skin','#bc9a72',False);lips=material('M_CM_Lips','#74554a',False)
+white=material('M_CM_Eyes','#e6dfcc',False);iris=material('M_CM_Iris','#534730',False);pupil=material('M_CM_Pupil','#141613',False)
 source_head=next(o for o in objects if o.name=='SK_CM_Hood')
-objects.remove(source_head);objects.extend(head.unhood(source_head,head_cover))
+objects.remove(source_head);objects.extend(head.unhood(source_head,head_cover,skin,lips,white,iris,pupil))
 for obj in objects:
     if not any(s in obj.name for s in ['Trousers','Sleeve','Cuff']):continue
     # Positional welding removes texture seam duplicates before the low-poly clothing reduction.
@@ -159,9 +165,10 @@ for vertex in shell.data.vertices:
 bpy.context.view_layer.objects.active=shell;arm.select_set(False)
 bpy.ops.object.vertex_group_limit_total(group_select_mode='ALL',limit=4)
 bpy.ops.object.vertex_group_normalize_all(group_select_mode='ALL',lock_active=False)
+objects.extend(hands.build(arm,gloves))
 
 # Record position-welded topology and rest-space join spans for automated acceptance.
-report={'version':2,'skeleton':'recon-v1','stage':'CM2 clothing foundation refinement','placeholders':['fitted masked head; separable mask deferred','fixed-finger gloves'],
+report={'version':3,'skeleton':'recon-v2','stage':'CM3 head and articulated hands','placeholders':[],
         'clothTexture':'Fresh deterministic woven albedo; no equipped-source projection','meshes':[]}
 for obj in objects:
     bm=bmesh.new();bm.from_mesh(obj.data);bmesh.ops.remove_doubles(bm,verts=list(bm.verts),dist=.00001)

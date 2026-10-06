@@ -1,6 +1,6 @@
 # Recon clean clothing foundation
 
-WP-CM2 completed and refined 5 October 2026. The [foundation inspector](../../operator/foundation.html) shows the body without equipment from four sides and through the pose/idle library. Select **Recon · foundation** in the [Operator Modder](../../operator/index.html#base=recon-modular) to change clothing colours and test carried rifles. This is the underlying clothing milestone; new carriers, bags and the assembly editor remain later packets.
+WP-CM2 completed and refined 5 October 2026. This document records the CM2 snapshot at `5bfc454`; the current asset adds [CM3 removable headwear and articulated hands](recon-head-hands.md). The [foundation inspector](../../operator/foundation.html) shows the body without equipment from four sides and through the pose/idle library. Select **Recon · foundation** in the [Operator Modder](../../operator/index.html#base=recon-modular) to change clothing colours and test carried rifles. This is the underlying clothing milestone; new carriers, bags and the assembly editor remain later packets.
 
 ![Clean clothing from front, back and both sides, with salute and crouch deformation](recon-foundation-sheet.png)
 
@@ -46,6 +46,6 @@ The trouser rebuild removes disconnected remesh debris before decimation so tiny
 
 `tests/e2e/recon-foundation.mjs` checks decoded cloth and face textures, four inspection directions, pose/rest reset, idles and reduced motion, keyboard orbit, wireframe, mobile overflow and serious/critical accessibility violations. It tests AK-74M, G3 and AK-15K in eight held poses (24 combinations), using actual deformed jacket/hood geometry for clearance and a 25 mm palm-target tolerance. Colours and the shared URL survive reload, and switching back to the current Recon restores its equipment. Set `FOUNDATION_SHOT` to save the six-panel inspection sheet.
 
-These checks cover sampled weapon vertices in held poses; they do not certify every attachment, every transition frame or future equipment fit. The face covering remains part of the temporary head, fingers cannot articulate, and the source-derived limb silhouettes remain coarse. CM3 separates headwear and rebuilds the hands; CM4 supplies the item resolver before CM5 introduces the first removable carrier.
+These checks cover sampled weapon vertices in held poses; they do not certify every attachment, every transition frame or future equipment fit. At the CM2 snapshot the face covering and fingers were fixed; CM3 has since replaced them with a complete head, removable coverings and articulated gloves. CM4 supplies the item resolver before CM5 introduces the first removable carrier.
 
 The latest fetched `origin/main` is `17eb192`, with concurrent operator and game changes. This milestone stays isolated on `codex/generated-operator-equipment`; integration must reconcile those changes deliberately. The inherited site-size and downloader-test failures are tracked in the handoff rather than folded into this geometry packet.

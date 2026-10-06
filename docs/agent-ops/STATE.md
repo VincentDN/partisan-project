@@ -11,15 +11,22 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json); full plan: [ta
 - Last commits: 8074ce0 feat(WP-W2): mission bridge between the campaign save and Partisan Tactical · 8bfe7cf cleanup of outbound · 6c65e36 fix(band): the character always faces the viewer; only the weapon aims, easing back to rest when the mouse leaves
 - What happened: Built shared/campaign/encounter.js (deploy with kit reservation, enter, one result, settle once, withdrawn on reload, settleAbandoned) and convoy/campaign-mode.js (?campaign&encounter plays the deployment). Unit and browser tests (tests/e2e/campaign-bridge.mjs) pass; practice mode unchanged.
 - Next step: WP-W3: the band on the map. Add shared/campaign/nav.js (grid from map/island.js heights and roads, A* path, terrain speeds; never through sea) with unit tests, then click-to-move in map/ with route preview and follow camera, reading and saving world.party through shared/campaign/state.js.
+
+**2026-10-06 08:39 UTC · codex · WP-CM4 · done**
+
+- Branch `codex/generated-operator-equipment` at `89baad3`; working tree clean.
+- Last commits: 89baad3 feat(WP-CM4): resolve modular equipment assemblies and compatibility · 41efb77 docs(WP-CM3): record completed head and hands handoff · 3bc89c3 feat(WP-CM3): add removable headwear and articulated Recon hands
+- What happened: Completed locally in 89baad3: pure-data equipment resolver, schema validation, recoverable subtree removal, coverage and budget accounting, tests and integration contract. Eleven focused tests, configured typecheck, lint, formatting, plan tests and build/check pass. Full units 233/235 with the same two unrelated downloader failures. Automatic approval review rejected the GitHub push for lack of explicit authorization to export code/documentation to this remote. No workaround attempted; ask the owner to authorize pushing the feature branch. Main remains protected.
+- Next step: After explicit push authorization, push CM4 and this handoff to origin/codex/generated-operator-equipment. Then CM5: author the lightweight carrier and measured catalogue/mount definitions against the CM3 foundation. Read docs/engineering/operator-assembly.md and WP-CM5 inputs; preserve canonical rig frames and pose fits.
 <!-- handoff:end -->
 
 ## Resume here
 
-1. CM2 is complete. Read docs/engineering/recon-clothing-foundation.md and its four-side/pose sheet. The opt-in recon-modular asset is now 5,263 triangles: hood removed, fitted masked crown/back, broader chest and neck, continuous jacket, repaired clothing, fresh cloth maps and the canonical 26-bone rest frames.
-2. Next modelling task is CM3: separate the remaining face covering and rebuild articulated gloves. Start from tools/assets/build-recon-foundation.py, recon_foundation_geometry.py, recon_foundation_head.py and the modular contract. CM4 (pure item resolver) is also ready; new carriers still wait for CM5.
-3. Use http://localhost:8132/operator/foundation.html for unarmed inspection or operator/#base=recon-modular for colours and rifle carries. The current Recon, original comparison and source teardown remain available. Rebuild using assets:recon-foundation with BLENDER set to Blender 4.4; generated .blend stays in ignored build/.
-4. Latest fetched origin/main is 17eb192, with separate operator and game changes. This branch's corrected hand frames and protected face bake remain canonical. Reconcile concurrent changes deliberately; no main merge/push under the latest protection rule.
-5. Run test:foundation for geometry and browser acceptance. Keep the foundation-only grip/pose profile, smoothed shoulder weights, torso-anchored collar and wrist-rim constraints: unconstrained heat weights left a cuff gap when the pistol-grip hand rotated.
+1. CM4 is complete. Read docs/engineering/operator-assembly.md, operator/assembly.js and operator/assembly-schema.js. Pure-data resolution validates ownership, repeated copies, mounted footprints, fit/skeleton versions, exclusions, coverage and full geometry cost. Detachment returns a recoverable subtree draft. The current Modder interface is unchanged.
+2. Next packet is CM5: model the lightweight plate carrier against the CM3 foundation. Author separate front/rear plate bags, shoulders, cummerbund and placard, then measured asset-backed definitions/mounts. Test empty/loaded poses and clean removal. Synthetic tests/fixtures/operator-assembly.mjs dimensions are examples, not production fits.
+3. The opt-in foundation stays 5,568 triangles: hood-free, broader chest/neck, complete stylized head, removable mask/cap and articulated gloves. Inspect http://localhost:8132/operator/foundation.html or operator/#base=recon-modular. The original/current comparison remains available.
+4. Preserve recon-v2's 26 canonical body frames plus 30 finger joints, local finger rotations, measured palm targets and CM2 collar/wrist constraints. Rebuild with assets:recon-foundation and BLENDER set; generated .blend stays ignored.
+5. Keep CM5 definitions compatible with the version 1 assembly contract. CM8 will connect the renderer/editor, undo and URL/save migration; do not replace existing saves prematurely. Work remains on codex/generated-operator-equipment; no main merge/push under the protection rule.
 
 Earlier tactical handoff (still open):
 
@@ -39,7 +46,8 @@ Earlier tactical handoff (still open):
 
 ## Known limits
 
-- The outer hood is removed from the foundation; its fitted head still includes the face covering, and gloves have fixed fingers until CM3. Foundation clearance sampling covers three rifles in eight held poses; the existing Recon still passes eleven rifles/eight poses. This does not certify every attachment or transition frame.
-- Full unit suite: 221/223 passing; the same two baseline downloader failures (standalone generated-file mismatch and missing python3 on Windows PATH). Foundation geometry, source/built browser tests, existing Recon regression, built smoke, build/check, lint, configured typecheck, plan sync and changed JS formatting pass.
-- Built site is 245.7 MB, above the inherited 90 MB target. High-resolution source models are inspection references, never gameplay character assets.
+- CM4 has no asset-backed equipment catalogue or visible new carrier. It validates authored data; it cannot prove animation clearance, repair missing clothing, apply material finishes or perform gameplay inventory transactions. Unknown items remain in the caller's draft for recovery.
+- CM3 face/eyes are stylized flat materials without facial animation. Prior geometry/browser checks cover 24 foundation and 88 existing-Recon rifle carries, not all attachments or transition frames. CM4 changes no geometry or pose code.
+- Full-suite and build results are recorded in the latest handoff. Two prior downloader failures are unrelated to CM4: standalone generated-file mismatch and missing python3 on Windows PATH.
+- Built site remains above the inherited 90 MB target (approximately 245.8 MB). Inspection reference models contribute to this total.
 - No usage-meter values were available; no budget calibration was invented.

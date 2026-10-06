@@ -126,7 +126,7 @@ def pair(a,b,t):
 
 def weights(name,p):
     side='r' if name.endswith('_R') else 'l';z=p.z/1.85-.5
-    if 'Head' in name or 'Face' in name:return {'head':1}
+    if any(part in name for part in ['Head','Face','Mask','Nose','Ear','Lips','Eye']):return {'head':1}
     if 'Glove' in name or 'Cuff' in name:return {'hand_'+side:1}
     if 'Boot' in name:return {'foot_'+side:1}
     if 'Waist' in name:return {'pelvis':1}

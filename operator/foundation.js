@@ -28,6 +28,24 @@ try {
   stage.controls.enableDamping = false;
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   let pose = 'rest';
+  function handShape() {
+    const shape = data.handShapes[$('#hands').value];
+    if (!shape) return;
+    for (const side of ['r', 'l'])
+      for (const [finger, angles] of Object.entries(shape))
+        angles.forEach((angle, i) => {
+          const name = `${finger}_0${i + 1}_${side}`,
+            bone = rig.bones.get(name);
+          const radians = angle.map((v, axis) => ((v * Math.PI) / 180) * (axis === 2 && side === 'l' ? -1 : 1));
+          bone.quaternion.copy(rig.rest.get(name).local).multiply(new T.Quaternion().setFromEuler(new T.Euler(...radians)));
+        });
+  }
+  function headwear() {
+    const value = $('#headwear').value;
+    meshes.filter(m => m.name === 'SK_CM_Mask').forEach(m => (m.visible = value === 'mask' || value === 'both'));
+    meshes.filter(m => m.name === 'SK_CM_HeadCap').forEach(m => (m.visible = value === 'cap' || value === 'both'));
+    stage.wake();
+  }
   function setPose(id) {
     pose = id;
     $('#pose').value = id;
@@ -40,6 +58,7 @@ try {
       rig.update(0, 0, null, 0);
     }
     if (id !== 'rest') gltf.scene.position.y = -rig.lower;
+    handShape();
     gltf.scene.updateMatrixWorld(true);
     stage.wake();
   }
@@ -58,6 +77,8 @@ try {
   }
   document.querySelectorAll('[data-camera]').forEach(b => (b.onclick = () => frame(b.dataset.camera)));
   $('#pose').onchange = e => setPose(e.target.value);
+  $('#hands').onchange = () => setPose(pose);
+  $('#headwear').onchange = headwear;
   $('#idle').onchange = () => stage.wake();
   $('#wire').onclick = () => {
     const wire = $('#wire').getAttribute('aria-pressed') !== 'true';
@@ -68,9 +89,11 @@ try {
   stage.setAnimated(() => pose !== 'rest' && $('#idle').value !== 'off' && !reduced.matches);
   stage.onFrame((dt, t) => {
     if (pose !== 'rest') rig.update(dt, t, $('#idle').value === 'off' ? null : $('#idle').value, reduced.matches ? 0 : 1);
+    handShape();
   });
   const triangles = meshes.reduce((n, m) => n + m.geometry.index.count / 3, 0);
-  $('#stats').textContent = `${triangles.toLocaleString()} triangles · 26-bone Recon skeleton · no equipment geometry`;
+  $('#stats').textContent = `${triangles.toLocaleString()} triangles · 56 bones · removable mask and cap`;
+  headwear();
   setPose('rest');
   frame('front');
   $('#status').textContent = '';

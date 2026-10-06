@@ -103,6 +103,14 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 - **Opening scene**: the Nokia is at real size, and its LCD loops a dithered lambda and a console log. The scene now loads in with a Nokia-green ordered dither. TAC-J-42.
 - **Recon** now wears its generated colours: the textured model's look is baked onto the runtime model (`tools/assets/bake-generated-recon.mjs`). TAC-J-43.
 
+### Added (Equipment assembly rules, WP-CM4)
+- Add a renderer-independent equipment resolver with repeated item instances, parent-owned attachments, recoverable subtree removal, socket/grid footprints and explicit compatibility reasons. Coverage restores on removal and budgets include every loaded copy.
+- Document the versioned contract for the first carrier and future editor; the existing Modder remains on its current interface.
+
+### Added (Recon headwear and articulated hands, WP-CM3)
+- Add a complete stylized head beneath independently removable mask and cap, and cuffed gloves with thirty finger joints. The original Recon remains available; the foundation keeps its hood-free silhouette and stronger chest/neck.
+- Compare open, relaxed, rifle and support grips in the inspector. Headwear choices round-trip with saved outfits; poses select hand shapes automatically. The 5,568-triangle model preserves all 26 original body bones and records the recon-v2 extension.
+
 ### Changed (Recon foundation proportions, WP-CM2)
 - Remove the outer hood from the clean foundation, preserve the textured eyes and rebuild a closed, fitted masked head. Broaden the chest and neck, smooth underarm deformation and retain wrist seam constraints. The foundation now uses 5,263 triangles; the original Recon remains available.
 

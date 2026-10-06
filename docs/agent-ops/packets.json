@@ -2578,7 +2578,7 @@
    "milestone": "M2",
    "size": "M",
    "bu": 20,
-   "status": "ready",
+   "status": "done",
    "deps": [
     "WP-CM2"
    ],
@@ -2596,7 +2596,7 @@
     "tools/assets/recon-modular-contract.json",
     "tools/assets/recon_foundation_head.py"
    ],
-   "acceptance": "Head, hood, mask and neck join without gaps; both gloves support relaxed, open and rifle grip shapes; legacy bone names remain compatible and skeleton additions are versioned."
+   "acceptance": "npm run test:foundation; complete bare head under removable mask/cap, hood remains removed per owner request; gloves support open/relaxed/rifle/support shapes; recon-v2 preserves all v1 frames and versions thirty finger joints; head/hand and four-side contact sheets pass."
   },
   {
    "id": "WP-CM4",
@@ -2605,7 +2605,7 @@
    "milestone": "M2",
    "size": "S",
    "bu": 8,
-   "status": "ready",
+   "status": "done",
    "deps": [
     "WP-CM1"
    ],
@@ -2615,9 +2615,11 @@
     "docs/character-customisation-roadmap.md",
     "docs/engineering/generated-recon.md",
     "docs/engineering/recon-modular-audit.md",
-    "tools/assets/recon-modular-contract.json"
+    "tools/assets/recon-modular-contract.json",
+    "docs/engineering/recon-head-hands.md",
+    "assets/models/operators/recon-modular.rig.json"
    ],
-   "acceptance": "Pure-data tests cover parent dependencies, repeated item instances, mount footprints, conflicts, coverage masks and full-outfit triangle accounting."
+   "acceptance": "node --test tests/operator-assembly.test.mjs; immutable deterministic parent-first instances, recoverable subtree removal, socket/grid footprints, explicit compatibility reasons, coverage restoration, repeated/hidden geometry budgets and malformed-data rejection pass without renderer dependencies."
   },
   {
    "id": "WP-CM5",
@@ -2626,7 +2628,7 @@
    "milestone": "M2",
    "size": "M",
    "bu": 20,
-   "status": "planned",
+   "status": "ready",
    "deps": [
     "WP-CM2",
     "WP-CM4"
@@ -2638,7 +2640,11 @@
    ],
    "inputs": [
     "docs/character-customisation-roadmap.md",
-    "docs/engineering/generated-recon.md"
+    "docs/engineering/generated-recon.md",
+    "docs/engineering/operator-assembly.md",
+    "operator/assembly.js",
+    "tools/assets/recon-modular-contract.json",
+    "docs/engineering/recon-head-hands.md"
    ],
    "acceptance": "Front/rear bags, straps, cummerbund and placard are independently authored; empty/loaded fits pass torso poses and complete removal restores the clean jacket."
   },

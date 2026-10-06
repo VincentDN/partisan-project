@@ -240,7 +240,8 @@ export class Rig {
         continue;
       }
       this._r.setFromEuler(this._e.set(x * DEG, y * DEG, z * DEG, 'XYZ'));
-      bone.quaternion.copy(rest.local).multiply(rest.worldInv).multiply(this._r).multiply(rest.world);
+      if (this.data.localBones?.includes(name)) bone.quaternion.copy(rest.local).multiply(this._r);
+      else bone.quaternion.copy(rest.local).multiply(rest.worldInv).multiply(this._r).multiply(rest.world);
     }
   }
 }

@@ -13,6 +13,7 @@ const read = p => JSON.parse(fs.readFileSync(p));
 const bytes = fs.readFileSync('assets/models/operators/recon-modular.glb');
 const report = read('assets/models/operators/recon-modular.foundation.json');
 const audit = read('assets/models/operators/recon-source-audit.json');
+const extension = read('assets/models/operators/recon-modular.rig.json');
 const {scene} = await new GLTFLoader()
   .register(() => ({name: 'NodeTexture', loadTexture: () => Promise.resolve(new T.Texture())}))
   .setMeshoptDecoder(MeshoptDecoder)
@@ -33,8 +34,8 @@ function vertices(mesh) {
 test('foundation is opt-in, contains no legacy gear and preserves all 26 rest transforms', () => {
   assert.equal(DEFAULT_BASE, 'generated-recon');
   assert.equal(BASES['recon-modular'].poseProfile, 'reconFoundation');
-  assert.deepEqual(BASES['recon-modular'].parts, {});
-  assert.equal(rig.bones.size, 26);
+  assert.deepEqual(Object.keys(BASES['recon-modular'].parts), ['mask', 'cap']);
+  assert.equal(rig.bones.size, 56);
   for (const expected of audit.current.bones) {
     const bone = rig.bones.get(expected.name);
     assert.ok(bone);
@@ -52,9 +53,15 @@ test('foundation is opt-in, contains no legacy gear and preserves all 26 rest tr
     report.runtimeTriangles,
   );
   assert.ok(report.runtimeTriangles <= 8000);
+  assert.equal(extension.addedBones.length, 30);
+  for (const joint of extension.addedBones) {
+    const bone = rig.bones.get(joint.name);
+    assert.equal(bone.parent.name, joint.parent);
+    assert.ok(bone.matrix.elements.every((v, i) => Math.abs(v - joint.localMatrix[i]) < 1e-5));
+  }
 });
 test('every clothing volume is closed in the actual compressed export', () => {
-  for (const mesh of meshes.filter(m => /Jacket|Trousers|Waist|Neck|Boot|Cuff|SK_CM_Head/.test(m.name))) {
+  for (const mesh of meshes.filter(m => /Jacket|Trousers|Waist|Neck|Boot|Cuff/.test(m.name) || m.name === 'SK_CM_Head')) {
     const ids = new Map(),
       mapped = vertices(mesh).map(p => {
         const key = p
@@ -93,7 +100,7 @@ test('front, rear, waist and shoulders have cloth coverage rather than missing v
       assert.ok(new T.Raycaster(new T.Vector3(0, y, s * 0.5), new T.Vector3(0, 0, -s)).intersectObject(waist).length, `waist ${y}/${s}`);
   const maps = new Set(meshes.filter(m => /Jacket|Trousers|Waist|Cuff/.test(m.name)).map(m => m.material.map));
   assert.ok(maps.size >= 2 && !maps.has(undefined));
-  const face = meshes.find(m => m.material.name === 'M_GR_Face');
+  const face = meshes.find(m => m.material.name === 'M_CM_Skin');
   assert.ok(!maps.has(face.material.map));
 });
 
@@ -145,4 +152,33 @@ test('all poses and idle samples retain finite normalized deformation without st
           }
       }
     }
+});
+
+test('the articulated thumbs close across the palm and every finger joint deforms glove vertices', () => {
+  for (const side of ['r', 'l']) {
+    const glove = meshes.find(m => m.name === 'SK_CM_Glove_' + side.toUpperCase());
+    const used = new Set();
+    const indices = glove.geometry.attributes.skinIndex,
+      weights = glove.geometry.attributes.skinWeight;
+    for (let i = 0; i < indices.count; i++)
+      for (let c = 0; c < 4; c++) if (weights.getComponent(i, c) > 0.01) used.add(glove.skeleton.bones[indices.getComponent(i, c)].name);
+    for (const finger of ['thumb', 'index', 'middle', 'ring', 'pinky'])
+      for (let i = 1; i <= 3; i++) assert.ok(used.has(`${finger}_0${i}_${side}`));
+    const tips = {};
+    for (const shape of ['open', 'grip']) {
+      for (const [finger, angles] of Object.entries(data.handShapes[shape]))
+        angles.forEach((angle, i) => {
+          const name = `${finger}_0${i + 1}_${side}`,
+            v = angle.map((n, axis) => ((n * Math.PI) / 180) * (axis === 2 && side === 'l' ? -1 : 1));
+          rig.bones
+            .get(name)
+            .quaternion.copy(rig.rest.get(name).local)
+            .multiply(new T.Quaternion().setFromEuler(new T.Euler(...v)));
+        });
+      scene.updateMatrixWorld(true);
+      tips[shape] = rig.bones.get('hand_' + side).worldToLocal(rig.bones.get('thumb_03_' + side).localToWorld(new T.Vector3(0, 0.021, 0)));
+    }
+    assert.ok(Math.abs(tips.grip.x) < Math.abs(tips.open.x) * 0.65, 'thumb must oppose across palm');
+    assert.ok(tips.grip.y > 0.055, 'thumb closes toward knuckles, not wrist');
+  }
 });

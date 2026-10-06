@@ -19,7 +19,8 @@
   "fingerNaming": "{thumb,index,middle,ring,pinky}_{01,02,03}_{l,r}",
   "handFrames": "Bone local +Y follows wrist to knuckles; +Z points into the palm. Use the measured rest matrices, not inferred world Euler rotations.",
   "legacyPalmOffsets": {"r": [-0.015,0.145,0.04], "l": [0.015,0.145,0.04]},
-  "newPalmOffsets": "Measure after rebuilding hands; legacy offsets are not a fit guarantee."
+  "newPalmOffsets": {"r": [0,0.078,0.024], "l": [0,0.078,0.024]},
+  "extensionManifest": "assets/models/operators/recon-modular.rig.json"
  },
  "mounts": {
   "version": 1,
@@ -40,7 +41,7 @@
   {"id":"clothing.jacket","sourceParts":[3,4,5,21],"work":"Rebuild clean torso and shoulder joins; sleeve/cuff silhouettes may be retained.","ownerBone":"spine_03","binding":"skin"},
   {"id":"clothing.trousers","sourceParts":[0,2],"work":"Repair waist and leg seams; complete surfaces beneath holster and knee kit.","ownerBone":"pelvis","binding":"skin"},
   {"id":"clothing.boots","sourceParts":[11,17],"work":"Repair ankle joins and soles.","ownerBone":"pelvis","binding":"skin"},
-  {"id":"body.head-hands","sourceParts":[1,8,12,25],"work":"Complete textured head reference; rebuild neck, mask, hood and both articulated gloves as distinct meshes.","ownerBone":"root","binding":"skin"},
+  {"id":"body.head-hands","sourceParts":[1,8,12,25],"work":"Complete head and neck; separate mask/cap and articulated gloves. Outer hood removed at owner request.","ownerBone":"root","binding":"skin"},
   {"id":"carrier.light","sourceParts":[4,14],"work":"New closed front/rear bags, shoulders, placard and cummerbund; independent of clothing.","ownerBone":"spine_03","binding":"skin"},
   {"id":"pouch.rifle","sourceParts":[19],"work":"Repeatable single pouch with separate contents and a closed back.","ownerBone":"spine_03","binding":"mount"},
   {"id":"pouch.utility","sourceParts":[9,13,18],"work":"Closed detachable pouch family and separate belt/carrier fit definitions.","ownerBone":"spine_03","binding":"mount"},
