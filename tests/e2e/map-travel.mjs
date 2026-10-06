@@ -30,11 +30,11 @@ try {
   const box = await page.locator('#stage canvas').boundingBox();
   await page.mouse.click(box.x + box.width * 0.62, box.y + box.height * 0.55);
   await page.waitForFunction(() => !!window.PARP_MAP.travel.party.route, null, {timeout: 30000}); // slow software frames
-  await page.waitForFunction(() => window.PARP_MAP.scene.getObjectByName('route').count > 3, null, {timeout: 10000}); // drawn on the next frame
+  await page.waitForFunction(() => window.PARP_MAP.scene.getObjectByName('route').count > 0, null, {timeout: 10000}); // drawn on the next frame (a dot every 3 units)
   assert.match(await page.locator('#toast').innerText(), /Marching to .+ province .+ about \d/);
   assert.ok(
     await page.evaluate(
-      () => window.PARP_MAP.scene.getObjectByName('route').count > 3 && window.PARP_MAP.scene.getObjectByName('route-end').visible,
+      () => window.PARP_MAP.scene.getObjectByName('route').count > 0 && window.PARP_MAP.scene.getObjectByName('route-end').visible,
     ),
     'the route on the ground, with its end marked',
   );

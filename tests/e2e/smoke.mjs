@@ -48,13 +48,14 @@ await check('index: the Nokia screen lies on the table and opens straight on the
   await page.reload();
   await page.waitForFunction(() => window.PARP_INDEX?.ready && window.PARP_MENU?.ready);
   const rows = await page.locator('.menu a').allInnerTexts();
-  assert.equal(rows.length, 9, 'five demos, the locked dev tools, sound, about, projects');
+  assert.equal(rows.length, 10, 'six demos, the locked dev tools, sound, about, projects');
   assert.match(rows[0], /Weapon Modder/i);
   assert.match(rows[1], /Operator Modder/i);
   assert.match(rows[2], /Top-down Shooter Tests/i);
   assert.match(rows[3], /Rebel Band/i);
   assert.match(rows[4], /Overworld Map/i);
-  assert.match(rows[5], /Dev tools - tap to unlock/i);
+  assert.match(rows[5], /Overworld 2.5-D/i);
+  assert.match(rows[6], /Dev tools - tap to unlock/i);
   await page.keyboard.press('ArrowDown');
   assert.equal(await page.evaluate(() => window.PARP_INDEX.index), 1);
   // the first press folds open the explainer with a dithered preview and a big LAUNCH button
@@ -81,18 +82,18 @@ await check('index: the Nokia screen lies on the table and opens straight on the
   await page.keyboard.press('Escape');
   assert.equal(await page.evaluate(() => window.PARP_INDEX.open), -1, 'Escape folds it shut');
   // dev tools: seven taps unlock the folder, which then shows its tools
-  for (let i = 0; i < 6; i++) await page.locator('.menu a[data-i="5"]').click();
-  assert.match(await page.locator('.menu a[data-i="5"]').innerText(), /tap to unlock/i, 'no countdown on screen: the pings climb');
+  for (let i = 0; i < 6; i++) await page.locator('.menu a[data-i="6"]').click();
+  assert.match(await page.locator('.menu a[data-i="6"]').innerText(), /tap to unlock/i, 'no countdown on screen: the pings climb');
   assert.doesNotMatch(await page.locator('#help').innerText(), /\d+ more tap/i);
   assert.equal(await page.evaluate(() => window.PARP_INDEX.devUnlocked), false);
-  await page.locator('.menu a[data-i="5"]').click();
+  await page.locator('.menu a[data-i="6"]').click();
   assert.equal(await page.evaluate(() => window.PARP_INDEX.devUnlocked), true);
   const dev = await page.evaluate(() => window.PARP_INDEX.rows);
   for (const name of ['Equipment Wiki', 'Asset Viewer', 'Game Design Doc', 'Moodboard', 'Advanced animations'])
     assert.ok(dev.includes(name), name);
   assert.equal(await page.evaluate(() => localStorage.getItem('parp-devtools')), 'unlocked');
-  await page.locator('.menu a[data-i="5"]').click();
-  assert.equal(await page.locator('.menu a').count(), 9, 'a tap folds the tools away again');
+  await page.locator('.menu a[data-i="6"]').click();
+  assert.equal(await page.locator('.menu a').count(), 10, 'a tap folds the tools away again');
   // LAUNCH opens the demo
   await page.locator('.menu a[data-i="1"]').click();
   await Promise.all([page.waitForURL(/operator\/?$/), page.locator('#fold-1 .launch').click()]);
@@ -132,7 +133,7 @@ await check(
       // the fade advances per rendered frame, and the software-rendered bench draws about one a second here
       await page.waitForFunction(t => getComputedStyle(t).opacity === '1', await tip.elementHandle(), {timeout: 20000});
     }
-    await page.locator('#guided').click();
+    await page.locator('#guided').click({force: true}); // aria-disabled: it takes the click and does nothing
     assert.equal(await page.evaluate(() => document.body.classList.contains('leaving')), false, 'the guided demo does nothing yet');
     assert.equal(await page.locator('.pbar a[href$="menu/"]').count(), 1, 'top bar has INDEX');
     assert.equal(await page.locator('.pbar a[href$="game-design-master-doc.html"]').count(), 1, 'top bar has GAME DESIGN DOC');
@@ -828,7 +829,8 @@ await check('overworld 2.5-D: every party a sprite on the 3-D island, the HD-2D 
           const card = m.sprites.cards[0].members[0].mesh,
             q = card.getWorldQuaternion(new m.camera.quaternion.constructor()),
             n = new m.camera.position.constructor(0, 0, 1).applyQuaternion(q);
-          r(n.x * -v.x + n.z * -v.z);
+          const h = Math.hypot(v.x, v.z);
+          r((n.x * -v.x + n.z * -v.z) / h); // against the view's horizontal direction: the cards stand upright
         }),
       ),
   );

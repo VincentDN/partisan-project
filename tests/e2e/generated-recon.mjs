@@ -128,7 +128,7 @@ try {
     return o.rig.blend;
   });
   assert.ok(blend < 1, 'pose changes animate');
-  await page.waitForFunction(() => window.PARP_OPERATOR.rig.blend === 1);
+  await settlePose(page); // the blend advances per rendered frame (slow software frames under a full suite)
   // Reloading can abort optional in-flight resources; actual load/HTTP/JS errors still fail.
   assert.deepEqual(
     page.problems.filter(p => !/ERR_ABORTED|Failed to fetch|Couldn't load texture blob/.test(p)), // downloads (and their texture blobs) cut off by the test's own reloads
