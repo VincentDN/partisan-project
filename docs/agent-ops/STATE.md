@@ -5,12 +5,12 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json); full plan: [ta
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-05 17:42 UTC · claude · WP-W1 · done**
+**2026-10-06 12:58 UTC · claude · WP-W2 · done**
 
-- Branch `claude/friendly-dijkstra-4ky9w6` at `071e729`; working tree clean.
-- Last commits: 071e729 feat(WP-W1): campaign save v1 with migrations from the squad and Rebel Band saves · 19c3ee5 Move the unshipped foley cuts archive to outbound/ for download · 90979da Browser tests: wait for pose blends and hand IK to settle instead of fixed sleeps; hold the timed squad pickers open; Recon foundation checks use the three current poses
-- What happened: Built shared/campaign/state.js (versioned campaign save, migrations from parp-squad-v1 and parp-band-v2, storage adapter) with tests/campaign-state.test.mjs; nothing reads it yet.
-- Next step: WP-W2 mission bridge: add shared/campaign/encounter.js (deployment and result payloads, reserve kit on launch, settle once by encounter id, refresh = withdrawn) on top of state.js deployment/settled fields; then convoy/?campaign= reads it.
+- Branch `claude/friendly-dijkstra-4ky9w6` at `8074ce0`; working tree clean.
+- Last commits: 8074ce0 feat(WP-W2): mission bridge between the campaign save and Partisan Tactical · 8bfe7cf cleanup of outbound · 6c65e36 fix(band): the character always faces the viewer; only the weapon aims, easing back to rest when the mouse leaves
+- What happened: Built shared/campaign/encounter.js (deploy with kit reservation, enter, one result, settle once, withdrawn on reload, settleAbandoned) and convoy/campaign-mode.js (?campaign&encounter plays the deployment). Unit and browser tests (tests/e2e/campaign-bridge.mjs) pass; practice mode unchanged.
+- Next step: WP-W3: the band on the map. Add shared/campaign/nav.js (grid from map/island.js heights and roads, A* path, terrain speeds; never through sea) with unit tests, then click-to-move in map/ with route preview and follow camera, reading and saving world.party through shared/campaign/state.js.
 <!-- handoff:end -->
 
 ## Resume here
