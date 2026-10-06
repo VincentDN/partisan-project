@@ -9,6 +9,7 @@ import {attachAmmo} from '../convoy/kit-ammo.js';
 import {createCatalogue} from '../shared/inventory/catalogue.js';
 import {roundsCarried} from '../shared/inventory/ammo.js';
 import {add, contents} from '../shared/inventory/grid.js';
+import {everything} from '../shared/inventory/kit.js';
 
 const cat = createCatalogue(JSON.parse(fs.readFileSync('wiki/data/items.json', 'utf8')));
 /** Fire until dry; a reload completes at once (the sim's clock stops once the fight is won). */
@@ -81,4 +82,57 @@ test('the dead and the wrecks become searchable, near where they fell', () => {
   assert.ok(A.near(v.x, v.z), 'the wreck');
   const again = JSON.stringify(attachAmmo(new Sim({seed: 5}), cat, {seed: 5}).kits);
   assert.equal(again, JSON.stringify(attachAmmo(new Sim({seed: 5}), cat, {seed: 5}).kits), 'deterministic');
+});
+
+test('soldiers carry real kits: a body holds exactly what its soldier had left', () => {
+  const sim = new Sim({seed: 6});
+  const A = attachAmmo(sim, cat, {seed: 6, army: true});
+  const foe = sim.units.find(u => u.side === 'army' && A.kitOf(u) && u.state !== 'turret');
+  assert.ok(foe, 'a soldier with a kit');
+  const w = foe.weapon;
+  assert.ok(Number.isFinite(foe.reserve[w]), 'finite ammunition');
+  for (let i = 0; i < 7; i++) sim.ammo.fired(foe, w);
+  const cal = cat.def(A.kitOf(foe).primary.slug).calibre;
+  const left = roundsCarried(cat, A.kitOf(foe), cal);
+  foe.alive = false;
+  foe.state = 'down';
+  const body = A.scan().get(foe.id).container;
+  const onBody = everything(body).reduce(
+    (n, i) =>
+      n +
+      (cat.def(i.slug).calibre !== cal
+        ? 0
+        : cat.def(i.slug).kind === 'magazine'
+          ? i.rounds.reduce((a, [, k]) => a + k, 0)
+          : cat.def(i.slug).kind === 'ammo'
+            ? i.count
+            : i.chamber
+              ? 1
+              : 0),
+    0,
+  );
+  assert.equal(onBody, left, 'what he had left, no more');
+  assert.equal(A.kitOf(foe), null, 'it is all on the ground');
+});
+
+test('a fighter out of rounds takes a magazine off a body close by', () => {
+  const sim = new Sim({seed: 6});
+  const A = attachAmmo(sim, cat, {seed: 6, army: true});
+  const [a, b] = sim.units.filter(u => u.side === 'army' && A.kitOf(u) && u.weapon === 'ak' && u.state !== 'turret');
+  assert.ok(a && b, 'two riflemen');
+  b.alive = false;
+  b.state = 'down';
+  Object.assign(b, {x: a.x + 2, z: a.z});
+  const k = A.kitOf(a);
+  k.primary.mag.rounds = [];
+  k.primary.chamber = null;
+  for (const c of [k.rig, k.pockets]) for (const g of c.grids) g.items = g.items.filter(e => cat.def(e.item.slug).kind !== 'magazine');
+  A.sync(a);
+  assert.equal(a.mags.ak + a.reserve.ak, 0, 'dry');
+  for (let i = 0; i < 4 * 60; i++) A.scavenge(1 / 60);
+  assert.ok(a.reserve.ak + a.mags.ak > 0, 'rounds again');
+  assert.ok(
+    sim.callouts.some(c => c.id === a.id && /magazines/.test(c.text)),
+    'and says so',
+  );
 });

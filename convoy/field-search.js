@@ -42,16 +42,17 @@ export function createFieldSearch(cat, {onOpen = () => {}, onClose = () => {}} =
   box.append(head, root);
   document.body.append(hint, box);
 
-  /** A new mission: kits for the rebels (or the ones they bring, by unit id), and nothing searched yet. */
+  /** A new mission: kits for the rebels (or the ones they bring, by unit id) and the soldiers; nothing searched yet. */
   function attach(s, {seed = 1, kits} = {}) {
     sim = s;
-    A = attachAmmo(s, cat, {seed, kits});
+    A = attachAmmo(s, cat, {seed, kits, army: true});
     target = null;
     progress = 0;
     if (isOpen) shut();
   }
   /** Each frame: the hint by a body or a wreck, and the search when E has been held long enough. */
   function update(dt, holding) {
+    if (A && dt > 0) A.scavenge(dt); // fighters out of rounds take magazines off the dead
     const p = sim?.player;
     if (!A || isOpen || !p?.alive || p.searching || !A.kitOf(p)) {
       progress = 0;

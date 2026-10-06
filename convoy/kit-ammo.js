@@ -3,21 +3,25 @@
 // issue round's; a reload swaps a real magazine from the rig, and a rebel with no magazine left is dry until they
 // loot. The army keeps its own counters. The dead and the wrecks become searchable: a body with what that soldier
 // carried, a wreck with its cargo, rolled once from the mission's seed. Pure apart from the sim it is given.
-import {createKit} from '../shared/inventory/kit.js';
-import {roundsIn, fire, reload, loadedRounds, roundsCarried, reachable} from '../shared/inventory/ammo.js';
-import {contents} from '../shared/inventory/grid.js';
+import {createKit, everything} from '../shared/inventory/kit.js';
+import {roundsIn, fire, reload, loadedRounds, roundsCarried, reachable, loadMag, chamber} from '../shared/inventory/ammo.js';
+import {contents, add, remove} from '../shared/inventory/grid.js';
 import {ARMS} from '../shared/inventory/arms.js';
 
 export const SEARCH_RANGE = 2.2; // metres from a body or a wreck
 export const SEARCH_TIME = 1.2; // seconds of holding E
 
-/** Give the rebels kits (or the ones they carry already, by unit id) and install the sim's real-ammunition hooks. */
-export function attachAmmo(sim, cat, {kits = {}, seed = 1} = {}) {
+/**
+ * Give the rebels kits (or the ones they carry already, by unit id) and install the sim's real-ammunition hooks.
+ * army: the soldiers carry real kits too (the 60-round issue): they spend real rounds, and a body holds exactly what
+ * its soldier had left. Without it they keep their own counters and a body's contents are rolled.
+ */
+export function attachAmmo(sim, cat, {kits = {}, seed = 1, army = false} = {}) {
   // ids unique across missions: kits carried in from earlier missions keep theirs
   const factory = createKit(cat, {prefix: `m${seed}-`});
   for (const u of sim.units) {
     const w = u.weapons?.[0];
-    if (u.side !== 'partisan' || !ARMS[w]) continue;
+    if (!ARMS[w] || (u.side !== 'partisan' && !(army && u.side === 'army'))) continue;
     // a kit for another weapon (the fighter was promoted into a new class) stays home; a new one is issued
     if (!kits[u.id] || (kits[u.id].armsId && kits[u.id].armsId !== w)) kits[u.id] = factory.issue(w);
     kits[u.id].armsId = w;
@@ -81,11 +85,26 @@ export function attachAmmo(sim, cat, {kits = {}, seed = 1} = {}) {
   // ---------- things to search ----------
   const searched = new Map(); // a unit id or vehicle id -> {x, z, container, label}
   let n = 0;
+  /** A body holding what its fighter carried: the weapon (magazine in it), then everything from rig and pockets. */
+  function bodyOf(u) {
+    const k = kitOf(u),
+      c = factory.place('body', u.name || 'Fallen soldier');
+    for (const it of [k.primary, k.secondary].filter(Boolean)) add(cat, c, it);
+    for (const box of reachable(k)) for (const it of contents(box)) add(cat, c, it);
+    kits[u.id] = null; // it is all on the ground now
+    return c;
+  }
   /** New bodies and wrecks since the last call (call it every frame or so). */
   function scan() {
     for (const u of sim.units)
+      // a rebel who goes down is carried off with their kit (it comes home with them); a soldier's stays on him
       if (u.side === 'army' && !u.alive && !searched.has(u.id) && u.state !== 'mounted')
-        searched.set(u.id, {x: u.x, z: u.z, label: u.name || 'Fallen soldier', container: factory.body(u.role, seed * 97 + ++n, u.name)});
+        searched.set(u.id, {
+          x: u.x,
+          z: u.z,
+          label: u.name || 'Fallen soldier',
+          container: kitOf(u) ? bodyOf(u) : factory.body(u.role, seed * 97 + ++n, u.name),
+        });
     for (const v of sim.vehicles || [])
       if (v.destroyed && !searched.has(v.id))
         searched.set(v.id, {
@@ -108,5 +127,65 @@ export function attachAmmo(sim, cat, {kits = {}, seed = 1} = {}) {
     }
     return out;
   }
-  return {kits, kitOf, sync, scan, near, searched, drops, factory};
+  // ---------- scavenging: a fighter out of rounds takes a magazine off a body close by ----------
+  const SCAVENGE_RANGE = 6,
+    SCAVENGE_TIME = 2;
+  /** Something of the calibre in a body: the fullest magazine, else a stack of rounds (a launcher, or to load later). */
+  function takeable(container, cal, usesMag) {
+    let bestIt = null,
+      score = 0;
+    for (const it of everything(container)) {
+      const d = cat.def(it.slug);
+      if (d.calibre !== cal) continue;
+      const v = d.kind === 'magazine' ? roundsIn(it) : d.kind === 'ammo' ? (usesMag ? it.count / 4 : it.count) : 0;
+      if (v > score) [bestIt, score] = [it, v];
+    }
+    return bestIt;
+  }
+  /** Call once a frame: AI fighters who are dry take what fits from a body within a few metres. */
+  function scavenge(dt) {
+    scan();
+    for (const u of sim.units) {
+      const k = kitOf(u);
+      if (!u.alive || u === sim.player || !k?.primary || u.mags[k.armsId] > 0 || u.reload > 0 || sim.ammo.canReload(u, k.armsId)) {
+        if (u.scavenge) u.scavenge = 0;
+        continue;
+      }
+      const cal = calibreOf(k);
+      const body = [...searched.values()].find(
+        s => Math.hypot(s.x - u.x, s.z - u.z) < SCAVENGE_RANGE && takeable(s.container, cal, k.primary.usesMag),
+      );
+      if (!body) {
+        if (u.side === 'army' || u.side === 'partisan')
+          sim.say(u, u.side === 'army' ? "I'm out! Who has rounds?" : 'I am out of rounds!', 'dry', 20);
+        continue;
+      }
+      u.scavenge = (u.scavenge || 0) + dt;
+      if (u.scavenge < SCAVENGE_TIME) continue;
+      u.scavenge = 0;
+      const it = takeable(body.container, cal, k.primary.usesMag);
+      takeOut(body.container, it);
+      const own = k.primary.mag;
+      if (cat.def(it.slug).kind === 'ammo' && own) {
+        // loose rounds: thumbed into their own empty magazine; what does not fit stays on the body
+        loadMag(cat, own, it);
+        chamber(k.primary);
+        if (it.count > 0) add(cat, body.container, it);
+      } else if (!reachable(k).some(c => add(cat, c, it))) {
+        // no room on them: straight into the weapon
+        if (cat.def(it.slug).kind === 'magazine') {
+          if (k.primary.mag) add(cat, body.container, k.primary.mag);
+          k.primary.mag = it;
+        } else if (!k.primary.chamber) k.primary.chamber = it.slug;
+      }
+      sync(u);
+      sim.say(u, u.side === 'army' ? 'Taking his magazines!' : 'Grabbing his ammo!', 'scavenge', 6);
+    }
+  }
+  /** Take an item out of a container, or out of a weapon in it (a magazine still in a rifle on the ground). */
+  function takeOut(container, it) {
+    if (remove(container, it.uid)) return;
+    for (const w of everything(container)) if (w.mag === it) w.mag = null;
+  }
+  return {kits, kitOf, sync, scan, near, searched, drops, factory, scavenge};
 }
