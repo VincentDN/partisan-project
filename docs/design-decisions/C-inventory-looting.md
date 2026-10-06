@@ -128,3 +128,13 @@ You steal from vehicles and soldiers, then use what you stole to equip your rebe
 - Cost to change: Low (tables in `convoy/loot.js`; the pool rebuilds from the wiki).
 - Revisit if: Loot should lie on the map, rebels should carry what they loot, or the Rebel Band and the shooter share one stash.
 - Owner feedback: —
+
+### TAC-C-11 · A Tarkov-style grid inventory, scarce ammunition, rounds and magazines apart
+- Status: planned  ·  Packet: WP-S8 (with S9, S10, S11, S43)
+- Decision: Inventory is a **grid**, as in Escape from Tarkov: every item has a footprint in cells (from the Equipment Wiki's `w`, `h`), can be rotated, and lives in exactly one place: an equipment slot, a pocket, a rig's or backpack's grid, a magazine, a body, a cache or the stash. **Rounds and magazines are separate items**: a magazine holds an ordered stack of real cartridges (5.45x39mm PS, BP, 7N40, ...) up to its capacity and only of its calibre; loose rounds stack up to the cartridge's stack size; loading and unloading move real rounds; a reload swaps the actual magazine and the one that comes out keeps what was left in it. Damage and penetration come from the round in the chamber. **Ammunition is scarce**: a rebel deploys with **60 rounds** (two full 30-round magazines for an assault rifle; the same weight of ammunition for other weapons) and nothing loose; everything else is looted from the dead, their vehicles and caches, each searched by hand on a grid panel. Medical kit and grenades follow the same rule. This supersedes the list-first inventory and the deferral of the grid in the tactical roadmap (inventory rules, S8/S9/S11).
+- Why: Owner direction: "Hardcore Tarkov style, with bullets and mags separate and real ammunition types"; 60 rounds on each fighter and loot for the rest.
+- Alternatives rejected: A list inventory with a capacity number (the roadmap's first step; the owner wants the grid now); counting ammunition as a number per weapon (no round types, no partial magazines).
+- Cost / risk: A real inventory UI to build (drag, rotate, split stacks, load magazines) that must work by keyboard too; the AI must carry and spend finite kit; balance (60 rounds is little against 30-soldier patrols: loot has to be reachable mid-fight).
+- Cost to change: Medium.
+- Revisit if: Playtests show fights stalling for ammunition (tune loot, not the 60-round start).
+- Owner feedback: 6 October 2026: asked for this.

@@ -171,7 +171,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | **TD** Tech debt (fill windows) | — | 4/4 | 44 BU | 100% |
 | **D** Design docs | — | 3/5 | 59 BU | 61% |
 | **H27** 2027 horizon | — | 0/3 | 48 BU | 0% |
-| **S** Partisan Tactical: extraction PvE, campaign and gated online research | v0.8.0 | 13/42 | 645 BU | 31% |
+| **S** Partisan Tactical: extraction PvE, campaign and gated online research | v0.8.0 | 15/43 | 653 BU | 35% |
 | **V** Graphics: 2.5D top-down sprites for the shooter (the overworld moved to W) | v0.9.0 | 2/20 | 251 BU | 11% |
 | **W** World campaign: the Bannerlord loop (map, missions, loot, upgrades) | v0.10.0 | 4/26 | 359 BU | 14% |
 
@@ -290,10 +290,10 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-S5` | Level 2 Compound assault: walled compound, towers, armoury cache, radio mast, stealth then alarm, extract | M (20) | done | — | `WP-S4` |
 | `WP-S6` | Level 3 Cave hideout defence: cave, tunnels, fallback chamber, night, three attack waves, hold until dawn | M (20) | done | — | `WP-S3`, `WP-S4` |
 | `WP-S7` | Level visuals (retired: delivered by WP-V9 structures and WP-V12 lighting in the 2-D renderer) | S (8) | blocked | — | — |
-| `WP-S8` | Inventory domain: unique items, ownership, loadout slots, compatible magazines, capacity and schema | M (20) | planned | — | `WP-S28` |
-| `WP-S9` | Looting in levels: soldiers drop kit, vehicle cargo, hold E to search (exposed), carry limits, order a teammate to loot | M (20) | planned | — | `WP-S8`, `WP-S2` |
-| `WP-S10` | Inventory UI: field loot panel, between-mission squad screen, attachment install with compatibility reasons, stat deltas | M (20) | planned | — | `WP-S8`, `WP-S9`, `WP-S29` |
-| `WP-S11` | Finite combat loadouts: player and AI use owned weapons, attachments, partial magazines and consumable ammunition | M (20) | planned | — | `WP-S8`, `WP-S3` |
+| `WP-S8` | Inventory domain: grid containers with rotation, unique items, equipment slots, magazines holding real rounds, loose ammo stacks, calibres from the catalogue | M (20) | done | — | — |
+| `WP-S9` | Looting in levels: the dead, vehicle cargo and caches as searchable grid containers; hold E to search (exposed); order a teammate to loot | M (20) | ready | — | `WP-S8`, `WP-S2` |
+| `WP-S10` | Grid inventory UI: drag, rotate, split stacks, load and unload magazines, field loot panel beside your rig and backpack, between-mission squad and stash screens | M (20) | planned | — | `WP-S8`, `WP-S9`, `WP-S29` |
+| `WP-S11` | Finite combat: 60 rounds per rebel, reloads swap real magazines, damage from the chambered round, AI spends and loots ammunition | M (20) | ready | — | `WP-S8`, `WP-S3` |
 | `WP-S12` | Campaign controller: briefing, durable deployment, debrief settlement, squad availability, recruit and reset | M (20) | planned | — | `WP-S29`, `WP-S30`, `WP-S10`, `WP-S11` |
 | `WP-S13` | Unlocks into the Weapon Modder: first extraction unlocks; locked parts greyed with where to steal them; ?unlock=all | M (20) | planned | — | `WP-S12`, `WP-S33` |
 | `WP-S14` | Unlocks into the Operator Customiser: looted helmets, vests, NVGs, patches | S (8) | planned | — | `WP-S13` |
@@ -325,6 +325,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-S40` | Conditional online operational gate: abuse tests, hidden-state filtering, restore and load costs | M (20) | planned | net | `WP-S39` |
 | `WP-S41` | Owner decision: approve a PvPvE experiment after co-op retention, fairness and cost review | XS (3) | blocked | owner | `WP-S40` |
 | `WP-S42` | Conditional PvPvE experiment: small closed raid population and fairness evaluation | M (20) | planned | browser, net | `WP-S41` |
+| `WP-S43` | Ammunition catalogue: real calibres and round types for every tactical weapon, tactical weapons and band gear mapped to catalogue items | S (8) | done | — | — |
 
 ### V · Graphics: 2.5D top-down sprites for the shooter (the overworld moved to W)
 

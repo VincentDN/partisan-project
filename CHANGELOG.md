@@ -4,6 +4,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 ## [Unreleased]
 
+### Added (inventory core, TAC-C-11)
+- **A Tarkov-style grid inventory, underneath** (`shared/inventory/`, WP-S8 and S43): items with their real footprints from the Equipment Wiki on grids, turned on their side, never overlapping, each in exactly one place; a rig of magazine pouches, pockets, backpacks, the dead, caches and the stash as containers. **Rounds and magazines are separate**: a magazine holds an ordered stack of real cartridges (5.45x39mm PS, BP, 7N40, ...; 7.62x54R LPS; 12-gauge buckshot; VOG-25; PG-7V) of its calibre only, up to its capacity; loose rounds stack; the chambered round sets damage and penetration; a reload swaps the actual magazine and the old one keeps what it held. **Ammunition is scarce**: a rebel deploys with 60 rounds (two full 30-round magazines for an AK) and nothing loose; the dead carry a part-spent magazine and a little more. Every weapon in the game maps to a real firearm. Not yet on screen: the grid UI (S10), looting in missions (S9) and finite ammunition in the fights (S11) come next.
+
 ### Added (overworld)
 - **Overworld 2.5-D test** (`map25/`, on the Nokia index): the same 3-D island in an HD-2D style like Octopath Traveler. Every soldier, rebel and vehicle is a pixel sprite from Partisan Tactical's art (paper-doll people with their rifles, vehicles repainted Invader drab), standing upright on the 3-D world, always turned to the camera, showing front, side or back by where it heads, with real pixel shadows; the band walks with a bob. The frame is a tilt-shift miniature (the top and bottom of the screen blur), with a little bloom, a warm grade and a vignette, through a longer, lower lens. Click to march works here too.
 

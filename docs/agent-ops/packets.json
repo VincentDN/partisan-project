@@ -1290,15 +1290,13 @@
   },
   {
    "id": "WP-S8",
-   "title": "Inventory domain: unique items, ownership, loadout slots, compatible magazines, capacity and schema",
+   "title": "Inventory domain: grid containers with rotation, unique items, equipment slots, magazines holding real rounds, loose ammo stacks, calibres from the catalogue",
    "track": "Tactical",
    "milestone": "S",
    "size": "M",
    "bu": 20,
-   "status": "planned",
-   "deps": [
-    "WP-S28"
-   ],
+   "status": "done",
+   "deps": [],
    "agent": "any",
    "needs": [],
    "inputs": [
@@ -1310,16 +1308,16 @@
     "workbench/rails.js",
     "workbench/attachments.js"
    ],
-   "acceptance": "Pure unit tests preserve single ownership and rounds across equip/transfer/attachment changes; explicit tactical-to-catalogue ID map; capacity and invalid definition checks; serialization round trip. Transactional storage is S29."
+   "acceptance": "Pure unit tests: items occupy grid cells with rotation and never overlap; single ownership survives move/equip/transfer; magazines accept only their calibre up to capacity and keep round order; loose rounds stack to the cartridge stack size; the 60-round starting kit; explicit tactical-to-catalogue ID map; serialization round trip. Transactional storage is S29."
   },
   {
    "id": "WP-S9",
-   "title": "Looting in levels: soldiers drop kit, vehicle cargo, hold E to search (exposed), carry limits, order a teammate to loot",
+   "title": "Looting in levels: the dead, vehicle cargo and caches as searchable grid containers; hold E to search (exposed); order a teammate to loot",
    "track": "Tactical",
    "milestone": "S",
    "size": "M",
    "bu": 20,
-   "status": "planned",
+   "status": "ready",
    "deps": [
     "WP-S8",
     "WP-S2"
@@ -1332,11 +1330,11 @@
     "convoy/sim.js",
     "convoy/levels/convoy.js"
    ],
-   "acceptance": "Body and cargo contents roll once per seed; exposed hold-E search interrupts on movement/release/death; player and teammate transfers validate range, line of sight, capacity and ownership; no duplicated corpse kit."
+   "acceptance": "Body, cargo and cache contents roll once per seed from what the soldier carried (partial magazines, few loose rounds); exposed hold-E search reveals items as it goes and interrupts on movement, release or death; transfers validate range, line of sight, space and ownership; no duplicated corpse kit."
   },
   {
    "id": "WP-S10",
-   "title": "Inventory UI: field loot panel, between-mission squad screen, attachment install with compatibility reasons, stat deltas",
+   "title": "Grid inventory UI: drag, rotate, split stacks, load and unload magazines, field loot panel beside your rig and backpack, between-mission squad and stash screens",
    "track": "Tactical",
    "milestone": "S",
    "size": "M",
@@ -1356,16 +1354,16 @@
     "convoy/index.html",
     "convoy/convoy.css"
    ],
-   "acceptance": "I opens keyboard/click-operable inventory while Tab keeps squad selection; owned kit only; field search and stash/loadout screens show rounds, capacity and compatibility reasons; axe plus browser equip journey pass."
+   "acceptance": "I opens the grid inventory; drag and drop with rotation (R), stack split, load/unload magazines with real round types shown; every action also works by keyboard; field loot shows the searched container beside the rebel; axe plus a browser journey pass."
   },
   {
    "id": "WP-S11",
-   "title": "Finite combat loadouts: player and AI use owned weapons, attachments, partial magazines and consumable ammunition",
+   "title": "Finite combat: 60 rounds per rebel, reloads swap real magazines, damage from the chambered round, AI spends and loots ammunition",
    "track": "Tactical",
    "milestone": "S",
    "size": "M",
    "bu": 20,
-   "status": "planned",
+   "status": "ready",
    "deps": [
     "WP-S8",
     "WP-S3"
@@ -1379,7 +1377,7 @@
     "convoy/ai.js",
     "convoy/weapons.js"
    ],
-   "acceptance": "Both player and AI use chosen kit; suppressors affect hearing; reload/swap/cancel preserve remaining rounds; no infinite reserves in campaign; incompatible ammo is rejected and empty units retreat or switch to an owned usable weapon."
+   "acceptance": "Each rebel deploys with 60 rounds and nothing loose; reload swaps an actual magazine and keeps the rounds left in the old one; the chambered round sets damage and penetration; empty units retreat, scavenge or switch weapons; incompatible ammunition is refused; no infinite reserves anywhere in the campaign."
   },
   {
    "id": "WP-S12",
@@ -3508,6 +3506,25 @@
     "docs/design-decisions/K-campaign.md"
    ],
    "acceptance": "TAC-K-01 to K-04 in docs/design-decisions/K-campaign.md; campaign roadmap updated; WP-V14 to V16 retired."
+  },
+  {
+   "id": "WP-S43",
+   "title": "Ammunition catalogue: real calibres and round types for every tactical weapon, tactical weapons and band gear mapped to catalogue items",
+   "track": "Tactical",
+   "milestone": "S",
+   "size": "S",
+   "bu": 8,
+   "status": "done",
+   "deps": [],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "wiki/data/items.json",
+    "convoy/weapons.js",
+    "band/troops.js",
+    "docs/design-decisions/C-inventory-looting.md"
+   ],
+   "acceptance": "Every tactical weapon and band weapon resolves to a catalogue weapon, its calibre, its magazines and at least two round types; a test fails on any unmapped id."
   }
  ]
 }
