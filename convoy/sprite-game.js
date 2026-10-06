@@ -13,6 +13,7 @@ import {openCampaign, describe} from './campaign-mode.js';
 import {rollLoot, bank} from './loot.js';
 import {createCamp, el} from './camp.js';
 import {LEVELS, MISSIONS, DEFAULT_LEVEL} from './levels/index.js';
+import {vary, TIMES, WEATHERS} from './levels/variants.js';
 import {createSquadPicker} from './squad-picker.js';
 import {createSoundscape} from './soundscape.js';
 import {createSpriteRenderer} from './sprite-render.js';
@@ -71,7 +72,7 @@ let sim,
 function newGame() {
   const awareness = Number($('#aware').value) / 100;
   sim = new Sim({
-    level: LEVELS[levelId],
+    level: vary(LEVELS[levelId], conditions()),
     seed: cm?.action === 'play' ? cm.deployment.seed : Number(params.get('seed')) || Math.floor(Math.random() * 1e6),
     awareness,
     squad: cm ? {...squad.classes, ...cm.classes()} : squad.classes,
@@ -109,6 +110,16 @@ function campaignCard() {
     cm.action === 'none' ? 'This mission has been fought already, or the link is out of date.' : describe(cm.result);
   $('#start').textContent = 'Return to the map';
 }
+/**
+ * The conditions this fight is in (convoy/levels/variants.js): a campaign deployment brings its own (time, weather,
+ * the ground where it was met, the enemy's strength); in practice they come from the pickers (or ?time=&weather=).
+ */
+function conditions() {
+  if (cm?.action === 'play') return {...cm.deployment.variant, seed: cm.deployment.seed};
+  const time = TIMES.includes(params.get('time')) ? params.get('time') : null,
+    weather = WEATHERS.includes(params.get('weather')) ? params.get('weather') : 'clear';
+  return {time, weather};
+}
 function renderMissions() {
   if (cm) {
     $('#missions').hidden = true;
@@ -130,7 +141,26 @@ function renderMissions() {
       };
       return b;
     }),
+    conditionPicker('time', ['', ...TIMES], v => (v ? v[0].toUpperCase() + v.slice(1) : 'Level default')),
+    conditionPicker('weather', WEATHERS, v => v[0].toUpperCase() + v.slice(1)),
   );
+}
+/** A practice picker for one condition: it writes the address and sets the mission up again. */
+function conditionPicker(key, values, label) {
+  const sel = document.createElement('select');
+  sel.id = 'cond-' + key;
+  sel.setAttribute('aria-label', key === 'time' ? 'Time of day' : 'Weather');
+  for (const v of values) sel.append(new Option(label(v), v));
+  sel.value = params.get(key) || values[0];
+  sel.onchange = () => {
+    if (sel.value) params.set(key, sel.value);
+    else params.delete(key);
+    const url = new URL(location.href);
+    url.search = params.toString();
+    history.replaceState(null, '', url);
+    newGame();
+  };
+  return sel;
 }
 // Sound: opened by the first key or click (browsers keep audio shut until then); M or the button mutes it.
 const sound = createSoundscape();

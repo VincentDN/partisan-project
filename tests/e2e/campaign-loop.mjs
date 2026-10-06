@@ -43,7 +43,7 @@ try {
   await standAt(page, convoy.x + 4, convoy.z);
   await page.locator('.encounter:not([hidden])').waitFor({timeout: 10000});
   assert.equal(await page.locator('#enc-title').innerText(), 'SUPPLY CONVOY');
-  assert.match(await page.locator('.enc-mission').innerText(), /Convoy ambush · 14 enemy/);
+  assert.match(await page.locator('.enc-mission').innerText(), /(Convoy|Forest road) ambush · 14 enemy/);
   assert.equal(await page.locator('.enc-fighters li').count(), 3, 'three fighters going in');
   assert.equal(await page.evaluate(() => document.activeElement.id), 'enc-attack', 'Attack has the focus');
 
@@ -51,7 +51,8 @@ try {
   await Promise.all([page.waitForURL(/convoy\/\?campaign=c1&encounter=supply-convoy-1-d1/), page.locator('#enc-attack').click()]);
   await page.waitForFunction(() => window.PARP_SPRITES?.ready, null, {timeout: 60000});
   assert.equal(await page.evaluate(() => window.PARP_SPRITES.campaign.action), 'play');
-  assert.equal(await page.evaluate(() => window.PARP_SPRITES.sim.level.id), 'convoy');
+  const fought = await page.evaluate(() => window.PARP_SPRITES.sim.level.id);
+  assert.ok(['convoy', 'forest-road'].includes(fought), 'a convoy map');
   await page.locator('#start').click();
   await page.evaluate(() => {
     window.PARP_SPRITES.sim.outcome = 'won';
@@ -66,7 +67,7 @@ try {
   assert.match(await page.locator('#toast').innerText(), /Supply convoy: destroyed/);
   assert.equal(await page.evaluate(() => window.PARP_MAP.parties.parties.find(p => p.id === 'supply-convoy').root.visible), false);
   let c = await saved(page);
-  assert.deepEqual(c.record.convoy, {played: 1, won: 1});
+  assert.deepEqual(c.record[fought], {played: 1, won: 1});
   const xp = c.band.fighters.player.xp;
   assert.ok(xp > before.band.fighters.player.xp, 'experience earned');
   const loot = Object.values(result.loot).reduce((a, b) => a + b, 0);
@@ -119,7 +120,7 @@ try {
   await standAt(page, 320, -18);
   await page.locator('.encounter:not([hidden])').waitFor({timeout: 10000});
   assert.equal(await page.locator('#enc-title').innerText(), 'MYRTIA');
-  assert.match(await page.locator('.enc-mission').innerText(), /Compound assault/);
+  assert.match(await page.locator('.enc-mission').innerText(), /Village raid/, 'a village is raided street by street');
   assert.equal(await page.locator('#enc-attack').innerText(), 'Raid the settlement');
   await page.keyboard.press('Escape');
   await standAt(page, 322, -20);
