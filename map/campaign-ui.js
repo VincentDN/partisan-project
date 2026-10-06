@@ -116,9 +116,6 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, toast}) {
     url.searchParams.set('encounter', e.id);
     location.href = url.href;
   }
-  panel.addEventListener('keydown', e => {
-    if (e.key === 'Escape') leave();
-  });
 
   // ---------- contacts: enemy parties near the band, Invader settlements it marches into ----------
   const near = (a, b, r) => Math.hypot(a.x - b.x, a.z - b.z) < r;
@@ -169,6 +166,7 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, toast}) {
       save();
       if (why) toast(why);
       renderBand();
+      bandPanel.querySelector('.path.ready button, button')?.focus();
     },
   });
   function renderBand() {
@@ -202,8 +200,13 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, toast}) {
       bandPanel.querySelector('button')?.focus();
     }
   }
-  bandPanel.addEventListener('keydown', e => e.key === 'Escape' && toggleBand(false));
+  // Escape closes whichever panel is open (focus may have left it: a promotion redraws the band panel)
   addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      if (!bandPanel.hidden) toggleBand(false);
+      else if (!panel.hidden) leave();
+      return;
+    }
     if (e.target.closest?.('input, select, textarea')) return;
     if (e.key.toLowerCase() === 'p' && panel.hidden) toggleBand();
   });

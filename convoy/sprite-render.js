@@ -689,6 +689,37 @@ export async function createSpriteRenderer(view) {
       }
     }
   }
+  /** Dusk, fog and rain (convoy/levels/variants.js): a warm dim, a pale veil, slanting streaks. */
+  const drops = Array.from({length: 140}, (_, i) => ({x: (i * 97.3) % 1, y: (i * 61.7) % 1, s: 0.6 + ((i * 37) % 10) / 20}));
+  function weatherOverlay(now) {
+    if (level.dusk && !level.night) {
+      ctx.fillStyle = 'rgba(120,60,30,.18)';
+      ctx.fillRect(0, 0, W, Hh);
+      ctx.fillStyle = 'rgba(20,16,30,.18)';
+      ctx.fillRect(0, 0, W, Hh);
+    }
+    if (level.weather === 'fog') {
+      const g = ctx.createRadialGradient(W / 2, Hh / 2, Math.min(W, Hh) * 0.15, W / 2, Hh / 2, Math.max(W, Hh) * 0.7);
+      g.addColorStop(0, 'rgba(200,206,210,.12)');
+      g.addColorStop(1, 'rgba(200,206,210,.5)');
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, W, Hh);
+    } else if (level.weather === 'rain') {
+      ctx.fillStyle = 'rgba(30,40,55,.16)';
+      ctx.fillRect(0, 0, W, Hh);
+      ctx.strokeStyle = 'rgba(200,215,230,.35)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      const t = reduceMotion ? 0 : now; // seconds
+      for (const d of drops) {
+        const x = ((d.x + t * 0.15 * d.s) % 1) * W,
+          y = ((d.y + t * 1.1 * d.s) % 1) * Hh;
+        ctx.moveTo(x, y);
+        ctx.lineTo(x - 4, y + 14);
+      }
+      ctx.stroke();
+    }
+  }
   function drawFlashes(sim) {
     ctx.globalCompositeOperation = 'lighter';
     for (let i = flashes.length - 1; i >= 0; i--) {
@@ -1277,6 +1308,7 @@ export async function createSpriteRenderer(view) {
       }
       ctx.globalCompositeOperation = 'source-over';
     }
+    weatherOverlay(now);
     bubbles(sim);
     if (screen.a > 0.01) {
       ctx.fillStyle = `rgba(${screen.color},${screen.a})`;
