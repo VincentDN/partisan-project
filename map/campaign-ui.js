@@ -6,6 +6,7 @@
 import {
   fitFighters,
   encounterFor,
+  missionName,
   settlementSource,
   readResults,
   isGone,
@@ -18,6 +19,7 @@ import {deploy} from '../shared/campaign/encounter.js';
 import {TROOPS, GEAR} from '../band/troops.js';
 import {createCamp, NAMES} from '../convoy/camp.js';
 import {SETTLEMENTS, byId} from './island.js';
+import {groundAt} from '../shared/campaign/nav.js';
 
 const CONTACT = 12, // map units: close enough to fight
   RAID = 22, // around a settlement's centre
@@ -74,10 +76,19 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, toast}) {
       act = ACTIONS[src.kind],
       fit = fitFighters(campaign),
       hurt = Object.entries(campaign.band.fighters).filter(([, f]) => f.wounded);
-    const e = encounterFor(campaign, c.id, src);
+    // where it happens sets the map and the conditions: the ground under the band, and whether its camp is near
+    const camp = byId('oros-camp');
+    const e = encounterFor(campaign, c.id, src, {
+      ground: groundAt(travel.nav, travel.party.x, travel.party.z),
+      nearCamp: Math.hypot(travel.party.x - camp.x, travel.party.z - camp.z) < 90,
+    });
+    const v = e.variant,
+      cond = [v.time === 'day' ? 'by day' : v.time, v.weather === 'clear' ? '' : v.weather, v.ground === 'plain' ? '' : v.ground]
+        .filter(Boolean)
+        .join(', ');
     panel.replaceChildren(
       el('h2', {id: 'enc-title', class: 'plate'}, src.name),
-      el('p', {class: 'enc-mission'}, `${act.mission} · ${src.strength} enemy · ${e.time === 'night' ? 'night' : 'by day'}`),
+      el('p', {class: 'enc-mission'}, `${missionName(e.level)} · ${src.strength} enemy · ${cond}`),
       el('h3', {}, fit.length ? 'Going in' : 'Nobody can go'),
       el(
         'ul',

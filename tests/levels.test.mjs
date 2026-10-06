@@ -41,15 +41,15 @@ function reachable(level, a, b, r = 0.6) {
   return false;
 }
 
-test('levels: all three missions are built and listed in order', () => {
+test('levels: every mission is built and listed in order', () => {
   assert.deepEqual(
     MISSIONS.map(m => m.id),
-    ['convoy', 'compound', 'cave'],
+    ['convoy', 'compound', 'cave', 'forest-road', 'checkpoint', 'village', 'hilltop'],
   );
   for (const m of MISSIONS) assert.ok(LEVELS[m.id] && !m.soon, m.id);
 });
 
-for (const id of ['compound', 'cave']) {
+for (const id of ['compound', 'cave', 'forest-road', 'checkpoint', 'village', 'hilltop']) {
   const L = LEVELS[id];
   test(`[${id}] complete data: bounds, objectives with known types, everything placed inside the map and clear of cover`, () => {
     for (const k of ['title', 'summary', 'brief', 'bounds', 'ground', 'cover', 'partisans', 'objectives']) assert.ok(L[k], k);
@@ -265,4 +265,68 @@ test('[cave] night: the army sees less in the dark', () => {
   assert.equal(LEVELS.cave.night, true);
   assert.ok(LEVELS.cave.sight < 1);
   assert.equal(LEVELS.compound.sight, undefined);
+});
+
+test('[new maps] reachable: every objective can be walked to from the spawn, and back out', () => {
+  const near = (p, dz = 1.4) => ({x: p.x, z: p.z + dz});
+  const V = LEVELS.village;
+  assert.ok(reachable(V, V.partisans[0], near(V.items[0])), 'village: the supplies in the school');
+  const exit = V.objectives.find(o => o.id === 'exit').zone;
+  assert.ok(reachable(V, near(V.items[0]), {x: exit.x, z: exit.z}), 'village: back to the vineyards');
+  const C = LEVELS.checkpoint;
+  assert.ok(reachable(C, C.partisans[0], {x: -4, z: 4}), 'checkpoint: the barrier');
+  assert.ok(reachable(C, C.partisans[0], {x: 22, z: -2}), 'checkpoint: the mast');
+  const F = LEVELS['forest-road'];
+  assert.ok(reachable(F, F.partisans[0], {x: 10, z: -4}), 'forest road: down to the road');
+  const H = LEVELS.hilltop;
+  assert.ok(reachable(H, {x: -70, z: 0}, H.partisans[0]), 'hilltop: the first wave can climb to you');
+  assert.ok(reachable(H, {x: 0, z: 55}, {x: 0, z: 22}), 'hilltop: the south gun can come up');
+});
+
+test('[new maps] each plays to an outcome: killing every soldier wins it', () => {
+  for (const id of ['forest-road', 'checkpoint', 'hilltop']) {
+    const s = new Sim({level: id, seed: 5});
+    steps(s, 1);
+    for (let t = 0; t < 400 && !s.outcome; t++) {
+      for (const u of s.units) if (u.side === 'army' && u.alive) s.damage(u, s.player, 999);
+      s.step(1 / 2, {});
+    }
+    assert.equal(s.outcome, 'won', id);
+  }
+});
+
+test('variations: night, fog and ground change the fight, the original level is untouched', async () => {
+  const {vary} = await import('../convoy/levels/variants.js');
+  const before = JSON.stringify(LEVELS.compound);
+  const night = vary(LEVELS.compound, {time: 'night', weather: 'fog', ground: 'snow', seed: 2});
+  assert.equal(JSON.stringify(LEVELS.compound), before, 'the level itself is not changed');
+  assert.equal(night.night, true);
+  assert.ok(night.sight < 0.5, `sight ${night.sight}`);
+  assert.notEqual(night.ground.color, LEVELS.compound.ground.color, 'snow recolours the ground');
+  assert.match(night.title, /night, fog/);
+  assert.deepEqual(vary(LEVELS.compound, {time: 'night', weather: 'fog', ground: 'snow', seed: 2}), night, 'deterministic');
+  const day = vary(LEVELS.cave, {time: 'day'});
+  assert.equal(day.night, false, 'even the cave can be fought by day');
+});
+
+test('variations: the enemy scales with the party met', async () => {
+  const {vary, enemyCount} = await import('../convoy/levels/variants.js');
+  for (const id of Object.keys(LEVELS)) {
+    const base = enemyCount(LEVELS[id]);
+    assert.ok(base > 0, `${id} has an enemy`);
+    assert.ok(enemyCount(vary(LEVELS[id], {strength: 1.5})) > base, `${id}: stronger`);
+    assert.ok(enemyCount(vary(LEVELS[id], {strength: 0.6})) < base, `${id}: weaker`);
+  }
+  const strong = vary(LEVELS.compound, {strength: 1.5, seed: 4});
+  assert.ok(strong.units.every(u => strong.bounds.minX <= u.x && u.x <= strong.bounds.maxX), 'added soldiers stand on the map');
+});
+
+test('variations: every level runs for twenty seconds at night in the rain, stronger, without errors', () => {
+  return import('../convoy/levels/variants.js').then(({vary}) => {
+    for (const id of Object.keys(LEVELS)) {
+      const s = new Sim({level: vary(LEVELS[id], {time: 'night', weather: 'rain', strength: 1.4, seed: 3}), seed: 3});
+      steps(s, 20);
+      assert.ok(s.units.length > 0, id);
+    }
+  });
 });

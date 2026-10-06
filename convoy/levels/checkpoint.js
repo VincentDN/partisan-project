@@ -68,7 +68,7 @@ export default {
   units: [
     {name: 'Pvt. Hribar', role: 'rifleman', x: -2, z: 0, facing: Math.PI, group: 'barrier'},
     {name: 'Pvt. Petek', role: 'rifleman', x: -2, z: 8, facing: Math.PI, group: 'barrier'},
-    {name: 'Cpl. Zorman', role: 'marksman', x: -12, z: -10, facing: Math.PI * 1.15, group: 'tower'},
+    {name: 'Cpl. Zorman', role: 'marksman', x: -12, z: -6.5, facing: Math.PI * 1.15, group: 'tower'},
     {name: 'Pvt. Vidmar', role: 'mg', x: -6, z: -5, facing: Math.PI * 1.25, group: 'sandbags'},
     {name: 'Sgt. Golob', role: 'leader', x: 14, z: -4.5, facing: Math.PI, group: 'hut'},
     {name: 'Pvt. Kovacic', role: 'rto', x: 20, z: -2.5, facing: Math.PI, group: 'hut'},

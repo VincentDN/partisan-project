@@ -1,25 +1,43 @@
 // Contacts on the campaign map (the first cut of WP-W8 to W14): which mission each enemy leads to, who can go, what a
-// fight changed, and healing over time. The map meets an Invader convoy (the Convoy Ambush), a garrison post or an
-// Invader settlement (the Compound Assault) or the hunters (the Rebel Base Defence in the cave); the deployment
-// carries the enemy's strength and the ground so the mission can be set up from it. Pure, no DOM.
+// fight changed, and healing over time. The map meets an Invader convoy, a garrison post, an Invader settlement or the
+// hunters; levelFor picks the map from the contact and where it happens, and the deployment carries the conditions
+// (time, weather, ground, the enemy's strength: convoy/levels/variants.js) so the fight is set up from them. Pure.
 import {logEvent} from './state.js';
+import {LEVELS} from '../../convoy/levels/index.js';
+import {enemyCount} from '../../convoy/levels/variants.js';
 
 /** The enemies on the map: id -> what they are, and the mission meeting them starts. */
 export const SOURCES = {
   'supply-convoy': {name: 'Supply convoy', kind: 'convoy', level: 'convoy', strength: 14},
   'armoured-column': {name: 'Armoured column', kind: 'convoy', level: 'convoy', strength: 18},
   'fuel-convoy': {name: 'Fuel convoy', kind: 'convoy', level: 'convoy', strength: 9},
-  'orion-patrol': {name: 'Orion garrison patrol', kind: 'post', level: 'compound', strength: 24},
-  'korfos-checkpoint': {name: 'Checkpoint Korfos', kind: 'post', level: 'compound', strength: 12},
+  'orion-patrol': {name: 'Orion garrison patrol', kind: 'post', level: 'checkpoint', strength: 24},
+  'korfos-checkpoint': {name: 'Checkpoint Korfos', kind: 'post', level: 'checkpoint', strength: 12},
   raiders: {name: 'Raiding party', kind: 'hunters', level: 'cave', strength: 31},
 };
 /** What each kind of contact is called on the encounter panel, and what the band does there. */
 export const ACTIONS = {
   convoy: {mission: 'Convoy ambush', verb: 'Ambush the convoy'},
-  post: {mission: 'Compound assault', verb: 'Attack the post'},
-  hunters: {mission: 'Cave hideout defence', verb: 'Stand and fight'},
-  settlement: {mission: 'Compound assault', verb: 'Raid the settlement'},
+  post: {mission: 'Checkpoint assault', verb: 'Attack the post'},
+  hunters: {mission: 'Defence', verb: 'Stand and fight'},
+  settlement: {mission: 'Raid', verb: 'Raid the settlement'},
 };
+/** The mission's own name, for the encounter panel. */
+export const missionName = level => LEVELS[level]?.title || level;
+
+/**
+ * Which map a meeting is fought on: a convoy in forest or mountains on the forest road, otherwise in the valley; a
+ * post at its checkpoint; a village raided street by street, a town or the base by its walled compound; hunters at
+ * the cave when they catch the band near its camp, on a bare hilltop anywhere else.
+ */
+export function levelFor(source, {ground = 'plain', nearCamp = false} = {}) {
+  if (source.kind === 'convoy') return ground === 'forest' || ground === 'mountain' || ground === 'steep' ? 'forest-road' : 'convoy';
+  if (source.kind === 'hunters') return nearCamp ? 'cave' : 'hilltop';
+  if (source.kind === 'settlement') return source.settlementKind === 'village' ? 'village' : 'compound';
+  return source.level;
+}
+/** The ground of the fight from the map's ground under the band (shared/campaign/nav.js names). */
+const GROUND_LOOK = {plain: 'plain', road: 'plain', forest: 'forest', mountain: 'mountain', steep: 'mountain', snow: 'snow', sea: 'coast'};
 /** The most fighters a mission takes (the levels have three rebel slots). */
 export const SQUAD_MAX = 3;
 
@@ -30,6 +48,7 @@ export const settlementSource = s => ({
   level: 'compound',
   strength: s.garrison + s.militia,
   settlement: s.id,
+  settlementKind: s.kind,
 });
 
 /** Is this enemy gone from the map (destroyed, or its settlement taken)? */
@@ -48,21 +67,29 @@ export const fitFighters = c =>
  * The deployment for meeting `sourceId` (an id of SOURCES, or a settlement id with its source given): pass it to
  * encounter.deploy(). The id is unique per meeting, the seed varies with it, and the enemy and ground travel along.
  */
-export function encounterFor(c, sourceId, source = SOURCES[sourceId], {ground = null} = {}) {
+export function encounterFor(c, sourceId, source = SOURCES[sourceId], {ground = null, nearCamp = false} = {}) {
   const n = c.settled.length + 1;
   const id = `${sourceId}-${n}-d${c.world.clock.day}`;
   let seed = c.seed * 7919 + n * 104729;
   for (const ch of sourceId) seed = (seed * 31 + ch.charCodeAt(0)) % 2147483647;
-  const night = c.world.clock.hour < 6 || c.world.clock.hour >= 20;
+  const level = levelFor(source, {ground: ground || 'plain', nearCamp});
+  const h = c.world.clock.hour;
+  const time = h < 5 || h >= 21 ? 'night' : h < 7 || h >= 18 ? 'dusk' : 'day';
+  const w = ((seed >>> 3) % 100) / 100; // the weather of the day, from the meeting's seed
+  const weather = w < 0.14 ? 'fog' : w < 0.28 ? 'rain' : 'clear';
+  // the enemy the level fields, scaled to the party actually met
+  const base = enemyCount(LEVELS[level]) || source.strength;
+  const strength = Math.round(Math.min(1.6, Math.max(0.6, source.strength / base)) * 100) / 100;
   return {
     id,
-    level: source.level,
+    level,
     seed,
     fighters: fitFighters(c),
     source: sourceId,
     enemy: {name: source.name, kind: source.kind, strength: source.strength, settlement: source.settlement || null},
     ground,
-    time: night ? 'night' : 'day',
+    time,
+    variant: {time, weather, ground: GROUND_LOOK[ground] || 'plain', strength},
   };
 }
 

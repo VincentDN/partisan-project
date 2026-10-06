@@ -18,7 +18,10 @@ const count = n => (Number.isFinite(n) && n >= 1 ? Math.floor(n) : 0);
  * opts: {id, level, seed, fighters: [fighter ids], kit: {gear id: n}, enemy?, ground?, time?, source?}.
  * Throws when a mission is already under way, a fighter is unknown or wounded, or the stash lacks the kit.
  */
-export function deploy(c, {id, level, seed = 1, fighters, kit = {}, enemy = null, ground = null, time = null, source = null}) {
+export function deploy(
+  c,
+  {id, level, seed = 1, fighters, kit = {}, enemy = null, ground = null, time = null, source = null, variant = null},
+) {
   if (c.deployment) throw new Error(`a mission is already under way (${c.deployment.id})`);
   if (typeof id !== 'string' || !id) throw new Error('an encounter needs an id');
   if (c.settled.includes(id)) throw new Error(`encounter ${id} was already fought`);
@@ -37,7 +40,20 @@ export function deploy(c, {id, level, seed = 1, fighters, kit = {}, enemy = null
     c.stash[g] -= n;
     if (!c.stash[g]) delete c.stash[g];
   }
-  c.deployment = {id, level, seed, fighters: [...fighters], kit: reserved, enemy, ground, time, source, entered: false, result: null};
+  c.deployment = {
+    id,
+    level,
+    seed,
+    fighters: [...fighters],
+    kit: reserved,
+    enemy,
+    ground,
+    time,
+    source,
+    variant,
+    entered: false,
+    result: null,
+  };
   logEvent(c, {kind: 'deploy', encounter: id, level, fighters: [...fighters], source});
   return c;
 }

@@ -15,12 +15,20 @@
 import convoy from './convoy.js';
 import compound from './compound.js';
 import cave from './cave.js';
+import forestRoad from './forest-road.js';
+import checkpoint from './checkpoint.js';
+import village from './village.js';
+import hilltop from './hilltop.js';
 
-export const LEVELS = {convoy, compound, cave};
+export const LEVELS = {convoy, compound, cave, 'forest-road': forestRoad, checkpoint, village, hilltop};
 // Mission order in the campaign; levels not built yet are listed so the select can show what is coming.
 export const MISSIONS = [
   {id: 'convoy', title: 'Convoy ambush'},
   {id: 'compound', title: 'Compound assault'},
   {id: 'cave', title: 'Cave hideout defence'},
+  {id: 'forest-road', title: 'Forest road ambush'},
+  {id: 'checkpoint', title: 'Checkpoint assault'},
+  {id: 'village', title: 'Village raid'},
+  {id: 'hilltop', title: 'Hilltop defence'},
 ];
 export const DEFAULT_LEVEL = 'convoy';
