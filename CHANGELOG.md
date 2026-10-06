@@ -4,6 +4,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 ## [Unreleased]
 
+### Added (campaign)
+- **Mission bridge** (WP-W2): `convoy/?campaign=<id>&encounter=<id>` plays the deployment the campaign save holds (its level, seed and fighters, the kit taken out of the stash), with no mission select, restart or practice camp; the debrief writes one result and **Return to the map** settles it once (experience, wounds, kit back, loot in, the record). A reload on the debrief shows it again; a reload mid-mission counts as withdrawn (the fighters come back wounded, nothing taken); an old link plays nothing. Practice mode is unchanged. Rules in `shared/campaign/encounter.js`; the map starts sending deployments in W8/W9.
+
 ### Added (Rebel Band)
 - **The character under your hands**: point at the big character (or focus it) and WASD or the arrows walk it in place with a stride bob, the mouse swings its weapon to aim while the character keeps facing you (it never turns its back), and when the mouse leaves the weapon eases back to the angle it rests at; a click, Space or F fires with recoil and a muzzle flash, and R reloads with the gun lowered and tilted. Each weapon handles as its type (automatic or one round per press, magazine, reload time) and sounds with the shooter's recordings: footsteps with a gear rattle, real shots, an empty click, the reload choreography from the foley bank. Rounds left show over the character. Reduced motion keeps it still while every action still sounds.
 

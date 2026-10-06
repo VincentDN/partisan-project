@@ -9,6 +9,7 @@ import {WEAPONS} from './weapons.js';
 import {activesFor, useAbility, cooldownLeft} from './abilities.js';
 import {DIFFICULTY, DEFAULT_DIFFICULTY} from './difficulty.js';
 import {SQUAD_KEY, loadSquad, newSquad, missionXp, award} from './progression.js';
+import {openCampaign, describe} from './campaign-mode.js';
 import {rollLoot, bank} from './loot.js';
 import {createCamp, el} from './camp.js';
 import {LEVELS, MISSIONS, DEFAULT_LEVEL} from './levels/index.js';
@@ -24,6 +25,18 @@ const stageEl = $('#stage'),
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const params = new URLSearchParams(location.search);
 let levelId = LEVELS[params.get('mission')] ? params.get('mission') : DEFAULT_LEVEL;
+// In a campaign (?campaign&encounter) the map's deployment sets the level, the seed and the squad (convoy/campaign-mode.js).
+const cm = openCampaign(
+  params,
+  (() => {
+    try {
+      return localStorage;
+    } catch {
+      return null;
+    }
+  })(),
+);
+if (cm?.action === 'play' && LEVELS[cm.deployment.level]) levelId = cm.deployment.level;
 
 $('#status').textContent = 'Loading the sprites…';
 const R = await createSpriteRenderer(view);
@@ -59,9 +72,9 @@ function newGame() {
   const awareness = Number($('#aware').value) / 100;
   sim = new Sim({
     level: LEVELS[levelId],
-    seed: Number(params.get('seed')) || Math.floor(Math.random() * 1e6),
+    seed: cm?.action === 'play' ? cm.deployment.seed : Number(params.get('seed')) || Math.floor(Math.random() * 1e6),
     awareness,
-    squad: squad.classes,
+    squad: cm ? {...squad.classes, ...cm.classes()} : squad.classes,
     difficulty: diffId,
   });
   awarded = false;
@@ -82,8 +95,25 @@ function newGame() {
   renderLook();
   renderSquad();
   renderCamp();
+  if (cm) campaignCard();
+}
+/** In a campaign: no mission select or restart; a mission that cannot be played says why and leads back to the map. */
+function campaignCard() {
+  $('#restart').hidden = true;
+  if (cm.action === 'play') {
+    $('#start').textContent = 'Start mission';
+    return;
+  }
+  $('#card-title').textContent = cm.action === 'none' ? 'No mission here' : sim.level.title;
+  $('#card-text').textContent =
+    cm.action === 'none' ? 'This mission has been fought already, or the link is out of date.' : describe(cm.result);
+  $('#start').textContent = 'Return to the map';
 }
 function renderMissions() {
+  if (cm) {
+    $('#missions').hidden = true;
+    return;
+  }
   $('#missions').replaceChildren(
     ...MISSIONS.map((m, i) => {
       const b = document.createElement('button');
@@ -280,7 +310,7 @@ function input() {
 }
 
 // ---------- panel ----------
-$('#start').onclick = () => (sim.outcome ? newGame() : start());
+$('#start').onclick = () => (cm && (cm.action !== 'play' || sim.outcome) ? cm.returnToMap() : sim.outcome ? newGame() : start());
 $('#restart').onclick = () => newGame();
 $('#switch-rebel').onclick = () => picker.open();
 $('#aware').oninput = e => ($('#aware-out').textContent = `${e.target.value}%`);
@@ -340,6 +370,17 @@ function showDebrief(d) {
   const text = $('#card-text');
   text.textContent = `${Math.floor(d.time / 60)}:${String(Math.floor(d.time % 60)).padStart(2, '0')} · ${d.armyDown} soldiers down, ${d.escaped} fled, ${d.vehiclesDestroyed} vehicles destroyed. ${d.byPartisan.map(u => `${u.name}: ${u.state}, ${u.kills} down`).join(' · ')}`;
   // experience and loot: paid once per mission, scaled by difficulty; promotions and the trader are right below
+  if (cm && !awarded) {
+    // a campaign mission: its one result goes into the campaign save; the practice squad is not touched
+    awarded = true;
+    lastEarned = missionXp(d, diffId);
+    lastLoot = rollLoot(POOL, {levelId, debrief: d, difficulty: DIFFICULTY[diffId], seed: cm.deployment.seed});
+    cm.finish(d, diffId, lastLoot);
+    text.textContent += ' ' + describe(cm.result);
+    $('#start').textContent = 'Return to the map';
+    renderSquad();
+    return;
+  }
   if (!awarded) {
     awarded = true;
     lastEarned = missionXp(d, diffId);
@@ -383,6 +424,8 @@ const camp = createCamp({
 function renderCamp() {
   const box = $('#camp');
   if (!box) return;
+  box.hidden = !!cm; // the practice camp (trader, promotions) is not part of a campaign mission
+  if (cm) return;
   const debrief = !!sim?.outcome;
   box.replaceChildren(
     ...[
@@ -639,6 +682,7 @@ window.PARP_SPRITES = {
   get squad() {
     return squad;
   },
+  campaign: cm,
   get slowmo() {
     return slowmo;
   },

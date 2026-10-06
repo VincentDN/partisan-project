@@ -70,7 +70,7 @@ milestone is in §6.
 | **M4 Roster 2** v0.7.0 | Oct 2026 | Eight more rifles | Real geometry for each | Done |
 | **S Partisan Tactical** v0.8.0 | Q4 2026 | Missions, squad play, progression; then durable inventory and extraction | Convoy extraction gate (WP-S35) | Missions, squad play and progression built; inventory and extraction next |
 | **V Graphics** v0.9.0 | Q1 2027 | The 2.5-D look with real art (art bible, paper-doll people, terrain, structures, lighting) | Parity checklist (WP-V18) | Sprite view runs on placeholder art |
-| **W Campaign** v0.10.0 | Q1 2027 | The Bannerlord loop over map, missions, band and modders | Gate W-A: the first full loop in one save | Campaign save (W1) done; W2 and W3 ready |
+| **W Campaign** v0.10.0 | Q1 2027 | The Bannerlord loop over map, missions, band and modders | Gate W-A: the first full loop in one save | Save (W1) and mission bridge (W2) done; W3 and W12 ready |
 | **M5 Production** v1.0.0 | Q2 2027 | Performance, manual accessibility pass, release | `engineering/standards.md` checklist | Audit and release checklist done; device acceptance remains |
 | **2027 horizon** | after v1.0 | Checkpoint diorama, belief-model visualiser | Own packets (WP-E*) | Planned |
 
@@ -173,7 +173,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | **H27** 2027 horizon | — | 0/3 | 48 BU | 0% |
 | **S** Partisan Tactical: extraction PvE, campaign and gated online research | v0.8.0 | 13/42 | 645 BU | 31% |
 | **V** Graphics: 2.5D top-down sprites for the shooter (the overworld moved to W) | v0.9.0 | 2/20 | 251 BU | 11% |
-| **W** World campaign: the Bannerlord loop (map, missions, loot, upgrades) | v0.10.0 | 2/26 | 359 BU | 3% |
+| **W** World campaign: the Bannerlord loop (map, missions, loot, upgrades) | v0.10.0 | 3/26 | 359 BU | 9% |
 
 ### M0 · Foundation
 
@@ -356,7 +356,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | ID | Packet | Size | Status | Needs | Depends on |
 |---|---|---|---|---|---|
 | `WP-W1` | Campaign save v1: one versioned state for world, band, stash and log; migrate the tactical squad and Rebel Band saves; storage adapter | S (8) | done | — | — |
-| `WP-W2` | Mission bridge: deployment and result payloads, kit reserved on launch, result settled exactly once, refresh mid-mission counts as withdrawn | M (20) | ready | — | `WP-W1` |
+| `WP-W2` | Mission bridge: deployment and result payloads, kit reserved on launch, result settled exactly once, refresh mid-mission counts as withdrawn | M (20) | done | — | `WP-W1` |
 | `WP-W3` | The band on the map: navigation grid from the heightfield and roads, click to move, route preview, terrain speeds, follow camera | M (20) | ready | browser | `WP-W1` |
 | `WP-W4` | Campaign clock: pause and three speeds, day and night tint and sight, pause on encounters and menus | S (8) | planned | — | `WP-W3` |
 | `WP-W5` | World simulation core: seeded headless parties with goals, speeds and sight; save and restore; determinism tests | M (20) | planned | — | `WP-W1`, `WP-W4` |
@@ -366,7 +366,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-W9` | Convoy encounter launches the Convoy Ambush, set up from the convoy party (vehicles, escort, cargo, time, ambush start); result back to the map | M (20) | planned | browser | `WP-W8` |
 | `WP-W10` | Settlement encounter launches the Compound Assault: defenders from garrison and militia, variants per settlement kind, night infiltration | M (20) | planned | browser | `WP-W8`, `WP-W13` |
 | `WP-W11` | Caught by an army launches the Rebel Base Defence: cave level at camp, new hasty-defence variant in the open | M (20) | planned | browser | `WP-W8` |
-| `WP-W12` | Deploy screen: pick up to four fighters from the band; one squad model shared by the band and the missions | S (8) | planned | — | `WP-W1`, `WP-W2` |
+| `WP-W12` | Deploy screen: pick up to four fighters from the band; one squad model shared by the band and the missions | S (8) | ready | — | `WP-W1`, `WP-W2` |
 | `WP-W13` | Return to the map: settle casualties, wounds, experience, kills and aftermath (wreck, smoke); autosave and result toast | S (8) | planned | — | `WP-W9`, `WP-W11`, `WP-W12` |
 | `WP-W14` | Loot into the band: cargo manifest and level loot into the campaign stash, with its source | S (8) | planned | — | `WP-W13` |
 | `WP-W15` | The band screen on the campaign save, opened from the map (P); promotions with experience and stolen kit | M (20) | planned | browser | `WP-W14` |
