@@ -166,6 +166,67 @@ export const ROADS = [
   ['oros-camp', 'lithia'],
   ['korfos', 'fort-orion'],
 ];
+/**
+ * A road's line over the ground: a wandering curve between two settlements (midpoints pushed sideways by noise, then a
+ * centripetal Catmull-Rom spline through them, as three.js draws one), as points about `spacing` map units apart.
+ * Pure, so the road ribbon (map/props.js) and travel (shared/campaign/nav.js) follow exactly the same line.
+ */
+export function roadLine(a, b, spacing = 2.5) {
+  const A = byId(a),
+    B = byId(b);
+  const len = Math.hypot(B.x - A.x, B.z - A.z),
+    nx = -(B.z - A.z) / len,
+    nz = (B.x - A.x) / len;
+  const ctrl = [];
+  for (let i = 0; i <= 6; i++) {
+    const t = i / 6,
+      off = i === 0 || i === 6 ? 0 : (noise(t * 3 + A.x * 0.01, A.z * 0.01, 5) - 0.5) * len * 0.25;
+    ctrl.push({x: A.x + (B.x - A.x) * t + nx * off, z: A.z + (B.z - A.z) * t + nz * off});
+  }
+  // dense samples of the spline, then resampled evenly by arc length
+  const dense = [];
+  for (let k = 0; k < ctrl.length - 1; k++) {
+    const p0 = ctrl[k - 1] || {x: 2 * ctrl[0].x - ctrl[1].x, z: 2 * ctrl[0].z - ctrl[1].z},
+      p3 = ctrl[k + 2] || {x: 2 * ctrl.at(-1).x - ctrl.at(-2).x, z: 2 * ctrl.at(-1).z - ctrl.at(-2).z};
+    const seg = centripetal(p0, ctrl[k], ctrl[k + 1], p3);
+    for (let i = 0; i < 40; i++) dense.push(seg(i / 40));
+  }
+  dense.push(ctrl.at(-1));
+  const acc = [0];
+  for (let i = 1; i < dense.length; i++) acc.push(acc[i - 1] + Math.hypot(dense[i].x - dense[i - 1].x, dense[i].z - dense[i - 1].z));
+  const n = Math.ceil(len / spacing),
+    total = acc.at(-1),
+    out = [];
+  for (let i = 0, j = 1; i <= n; i++) {
+    const want = (total * i) / n;
+    while (j < acc.length - 1 && acc[j] < want) j++;
+    const u = (want - acc[j - 1]) / (acc[j] - acc[j - 1] || 1);
+    out.push({x: dense[j - 1].x + (dense[j].x - dense[j - 1].x) * u, z: dense[j - 1].z + (dense[j].z - dense[j - 1].z) * u});
+  }
+  return out;
+}
+/** One centripetal Catmull-Rom segment from p1 to p2: t in 0..1 -> {x, z}. */
+function centripetal(p0, p1, p2, p3) {
+  let d01 = Math.sqrt(Math.hypot(p1.x - p0.x, p1.z - p0.z)),
+    d12 = Math.sqrt(Math.hypot(p2.x - p1.x, p2.z - p1.z)),
+    d23 = Math.sqrt(Math.hypot(p3.x - p2.x, p3.z - p2.z));
+  if (d12 < 1e-4) d12 = 1;
+  if (d01 < 1e-4) d01 = d12;
+  if (d23 < 1e-4) d23 = d12;
+  const axis = k => {
+    const [x0, x1, x2, x3] = [p0[k], p1[k], p2[k], p3[k]];
+    const t1 = ((x1 - x0) / d01 - (x2 - x0) / (d01 + d12) + (x2 - x1) / d12) * d12,
+      t2 = ((x2 - x1) / d12 - (x3 - x1) / (d12 + d23) + (x3 - x2) / d23) * d12;
+    return t => {
+      const t2_ = t * t,
+        t3 = t2_ * t;
+      return x1 + t1 * t + (-3 * x1 + 3 * x2 - 2 * t1 - t2) * t2_ + (2 * x1 - 2 * x2 + t1 + t2) * t3;
+    };
+  };
+  const fx = axis('x'),
+    fz = axis('z');
+  return t => ({x: fx(t), z: fz(t)});
+}
 /** Where the parties stand (map/parties.js): kept clear of trees. The player first. */
 export const PARTY_SPOTS = {
   player: [-160, 40],

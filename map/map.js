@@ -1,7 +1,8 @@
 // Overworld map test: a Bannerlord-style campaign map of the island. A 3-D world map (map/terrain.js, water.js,
 // props.js) with the player's party, Invader patrols and convoys (parties.js), towns named on the map, the provinces in
 // their owners' colours, and the campaign HUD: time controls, the party panel, the menu bar and a province card.
-// Placeholder throughout: nothing here is wired to the campaign yet.
+// Click land to march the band there (map/travel.js, WP-W3); with ?campaign its position is kept in the campaign save.
+// The other parties, the menus and the clock are still placeholders.
 import * as T from 'three';
 import {mountTopBar} from '../shared/topbar.js';
 import {bakeHeights, sample, SETTLEMENTS, FACTIONS, provinceAt} from './island.js';
@@ -9,6 +10,7 @@ import {buildTerrain} from './terrain.js';
 import {buildWater} from './water.js';
 import {buildProps} from './props.js';
 import {buildParties} from './parties.js';
+import {mountTravel} from './travel.js';
 
 mountTopBar({title: 'Overworld map', scene: 'viewer', overlay: true});
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -174,14 +176,15 @@ function setSpeed(s) {
 }
 for (const b of document.querySelectorAll('[data-speed]')) b.onclick = () => setSpeed(Number(b.dataset.speed));
 setSpeed(1);
+function toast(text, ms = 3200) {
+  const t = $('#toast');
+  t.textContent = text;
+  t.hidden = false;
+  clearTimeout(t._h);
+  t._h = setTimeout(() => (t.hidden = true), ms);
+}
 for (const b of document.querySelectorAll('.menu-bar button'))
-  b.onclick = () => {
-    const t = $('#toast');
-    t.textContent = `${b.dataset.label}: placeholder, not built yet.`;
-    t.hidden = false;
-    clearTimeout(t._h);
-    t._h = setTimeout(() => (t.hidden = true), 1800);
-  };
+  b.onclick = () => toast(`${b.dataset.label}: placeholder, not built yet.`, 1800);
 
 // ---------- loop ----------
 const resize = () => {
@@ -196,6 +199,18 @@ resize();
 
 const parties = await buildParties(field, props.roads, labels);
 scene.add(parties.group);
+const travel = mountTravel({
+  scene,
+  camera,
+  field,
+  terrain,
+  stageEl,
+  hero: parties.hero,
+  cam,
+  toast,
+  reduceMotion,
+  params: new URLSearchParams(location.search),
+});
 $('#loading').hidden = true;
 
 const clock = new T.Clock();
@@ -211,6 +226,7 @@ renderer.setAnimationLoop(() => {
   terrain.uniforms.uTime.value = worldT;
   water.uniforms.uTime.value = worldT;
   props.update(dt, worldT, camera);
+  travel.update(dt);
   const w = stageEl.clientWidth,
     h = stageEl.clientHeight;
   parties.update(dt, worldT, camera, w, h);
@@ -231,4 +247,4 @@ renderer.setAnimationLoop(() => {
   renderer.render(scene, camera);
 });
 
-window.PARP_MAP = {scene, camera, cam, parties, props, terrain, field, townLabels, renderer, setSpeed, ready: true};
+window.PARP_MAP = {scene, camera, cam, parties, props, terrain, field, townLabels, renderer, setSpeed, travel, ready: true};

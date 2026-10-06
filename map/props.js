@@ -4,7 +4,7 @@
 // boats. Everything repeated is instanced; the small animations run in update(dt, t, camera).
 import * as T from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
-import {SETTLEMENTS, ROADS, FACTIONS, PARTY_SPOTS, byId, sample, fbm, noise, SNOWLINE} from './island.js';
+import {SETTLEMENTS, ROADS, FACTIONS, PARTY_SPOTS, byId, sample, fbm, noise, SNOWLINE, roadLine} from './island.js';
 
 const tint = (geo, hex) => {
   const c = new T.Color(hex),
@@ -264,21 +264,9 @@ function buildRoads(field) {
   const group = new T.Group();
   group.name = 'roads';
   for (const [a, b] of ROADS) {
-    const A = byId(a),
-      B = byId(b);
-    // a wandering line: midpoints pushed sideways by noise, then smoothed
-    const ctrl = [];
-    const len = Math.hypot(B.x - A.x, B.z - A.z),
-      nx = -(B.z - A.z) / len,
-      nz = (B.x - A.x) / len;
-    for (let i = 0; i <= 6; i++) {
-      const t = i / 6,
-        off = i === 0 || i === 6 ? 0 : (noise(t * 3 + A.x * 0.01, A.z * 0.01, 5) - 0.5) * len * 0.25;
-      ctrl.push(new T.Vector3(A.x + (B.x - A.x) * t + nx * off, 0, A.z + (B.z - A.z) * t + nz * off));
-    }
-    const curve = new T.CatmullRomCurve3(ctrl);
-    const n = Math.ceil(len / 2.5);
-    const points = curve.getSpacedPoints(n).map(p => new T.Vector3(p.x, Math.max(0.3, sample(field, p.x, p.z)) + 0.12, p.z));
+    // the same wandering line travel uses (map/island.js roadLine), laid on the ground
+    const points = roadLine(a, b).map(p => new T.Vector3(p.x, Math.max(0.3, sample(field, p.x, p.z)) + 0.12, p.z));
+    const len = Math.hypot(byId(b).x - byId(a).x, byId(b).z - byId(a).z);
     // a ribbon laid on the ground
     const pos = [],
       idx = [];
