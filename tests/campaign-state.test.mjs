@@ -57,7 +57,7 @@ test('a new campaign is versioned and holds world, band, stash and log', () => {
 test('migration brings the squad rebels, scrip, goods, record and log, and the band troops and leader', () => {
   const c = migrate({squad: squadSave(), band: bandSave()}, {now: 5});
   assert.deepEqual(c.migratedFrom, [SQUAD_KEY, BAND_KEY]);
-  assert.deepEqual(c.band.fighters.player, {class: 'guerrilla', xp: 120, wounded: false, healIn: 0});
+  assert.deepEqual(c.band.fighters.player, {class: 'guerrilla', xp: 120, wounded: false, healIn: 0, kit: null});
   assert.equal(c.band.fighters.mila.xp, 45);
   assert.equal(c.scrip, 75);
   assert.deepEqual(c.goods, [{name: 'Cigarettes', price: 12}]);

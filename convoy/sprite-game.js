@@ -83,7 +83,7 @@ function newGame() {
     squad: cm ? {...squad.classes, ...cm.classes()} : squad.classes,
     difficulty: diffId,
   });
-  search?.attach(sim, {seed});
+  search?.attach(sim, {seed, kits: cm?.action === 'play' ? cm.kits() : undefined});
   banter = createBanter(sim, seed);
   awarded = false;
   lastLoot = lastEarned = null;
@@ -413,7 +413,7 @@ function showDebrief(d) {
     awarded = true;
     lastEarned = missionXp(d, diffId);
     lastLoot = rollLoot(POOL, {levelId, debrief: d, difficulty: DIFFICULTY[diffId], seed: cm.deployment.seed});
-    cm.finish(d, diffId, lastLoot);
+    cm.finish(d, diffId, lastLoot, search?.ammo?.kits);
     text.textContent += ' ' + describe(cm.result);
     $('#start').textContent = 'Return to the map';
     renderSquad();

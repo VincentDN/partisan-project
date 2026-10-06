@@ -35,8 +35,13 @@ export function openCampaign(params, storage) {
     settled,
     /** {rebel id: class id} for the fighters deployed (the sim's squad option). */
     classes: () => Object.fromEntries((deployment?.fighters || []).map(f => [f, campaign.band.fighters[f].class])),
-    /** Write the debrief as the mission's result (once). loot: the rolled entries ({gear} or trade goods). */
-    finish(d, diffId, loot = []) {
+    /** The fighters' grid kits by id (copies: the mission changes them; the result carries them home). */
+    kits: () => structuredClone(Object.fromEntries(Object.entries(deployment?.kits || {}).filter(([, k]) => k))),
+    /**
+     * Write the debrief as the mission's result (once). loot: the rolled entries ({gear} or trade goods); kits: the
+     * fighters' grid kits as they are now (convoy/kit-ammo.js).
+     */
+    finish(d, diffId, loot = [], kits = {}) {
       const earned = missionXp(d, diffId);
       const fighters = {};
       for (const u of d.byPartisan)
@@ -54,6 +59,7 @@ export function openCampaign(params, storage) {
         kills: d.kills,
         time: d.time,
         destroyed: d.vehiclesDestroyed,
+        kits: Object.fromEntries(deployment.fighters.filter(f => kits[f]).map(f => [f, structuredClone(kits[f])])),
       });
       store.save(campaign);
       return wrote;

@@ -38,14 +38,25 @@ function cleanFighters(o, fallback) {
   if (isObj(o))
     for (const [id, f] of Object.entries(o))
       if (isObj(f) && TROOPS[f.class])
-        out[id] = {class: f.class, xp: num(f.xp, 0, 0), wounded: !!f.wounded, healIn: f.wounded ? num(f.healIn, 24, 0) : 0};
+        out[id] = {
+          class: f.class,
+          xp: num(f.xp, 0, 0),
+          wounded: !!f.wounded,
+          healIn: f.wounded ? num(f.healIn, 24, 0) : 0,
+          kit: isKit(f.kit) ? f.kit : null,
+        };
   return Object.keys(out).length ? out : fallback;
 }
 
 const fightersFromSquad = squad =>
   Object.fromEntries(
-    Object.keys(squad.classes).map(id => [id, {class: squad.classes[id], xp: squad.xp[id] || 0, wounded: false, healIn: 0}]),
+    Object.keys(squad.classes).map(id => [id, {class: squad.classes[id], xp: squad.xp[id] || 0, wounded: false, healIn: 0, kit: null}]),
   );
+/** A fighter's grid kit (shared/inventory/kit.js, TAC-C-11): kept as it came back from the last mission. */
+const isKit = k => isObj(k) && isObj(k.primary) && isObj(k.pockets);
+/** The band's armoury: a grid container of loose kit (placed by a page with the catalogue), and items not placed yet. */
+export const newArmoury = () => ({uid: 'armoury', slug: 'stash', label: 'Armoury', grids: [{w: 10, h: 30, items: []}], inbox: []});
+const isGrid = a => isObj(a) && Array.isArray(a.grids) && a.grids.every(g => isObj(g) && Array.isArray(g.items));
 
 /**
  * A fresh campaign. `id` names it (deployments and results are keyed on it later, WP-W2); `seed` drives the world
@@ -73,6 +84,7 @@ export function newCampaign({id = 'c1', seed = 1, now = 0} = {}) {
       troops: structuredClone(START_BAND),
     },
     stash: addCounts({...START_STASH}, squad.stash), // the band depot plus the squad's starting kit
+    armoury: newArmoury(), // loose grid kit: magazines, rounds, weapons set aside (TAC-C-11)
     goods: [],
     scrip: squad.scrip,
     record: squad.record,
@@ -110,6 +122,8 @@ export function normalize(raw) {
   c.band.fighters = cleanFighters(b.fighters, c.band.fighters);
   if (isObj(b.troops)) c.band.troops = cleanTroops(b.troops);
   if (isObj(o.stash)) c.stash = cleanStash(o.stash);
+  if (isGrid(o.armoury))
+    c.armoury = {...newArmoury(), ...o.armoury, inbox: Array.isArray(o.armoury.inbox) ? o.armoury.inbox.filter(isObj) : []};
   if (Array.isArray(o.goods)) c.goods = o.goods.filter(g => isObj(g) && typeof g.name === 'string' && Number.isFinite(g.price));
   c.scrip = num(o.scrip, c.scrip, 0);
   if (isObj(o.record))

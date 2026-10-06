@@ -13,11 +13,13 @@ export const SEARCH_TIME = 1.2; // seconds of holding E
 
 /** Give the rebels kits (or the ones they carry already, by unit id) and install the sim's real-ammunition hooks. */
 export function attachAmmo(sim, cat, {kits = {}, seed = 1} = {}) {
-  const factory = createKit(cat, {prefix: 'm'});
+  // ids unique across missions: kits carried in from earlier missions keep theirs
+  const factory = createKit(cat, {prefix: `m${seed}-`});
   for (const u of sim.units) {
     const w = u.weapons?.[0];
     if (u.side !== 'partisan' || !ARMS[w]) continue;
-    if (!kits[u.id]) kits[u.id] = factory.issue(w);
+    // a kit for another weapon (the fighter was promoted into a new class) stays home; a new one is issued
+    if (!kits[u.id] || (kits[u.id].armsId && kits[u.id].armsId !== w)) kits[u.id] = factory.issue(w);
     kits[u.id].armsId = w;
   }
   const kitOf = u => kits[u.id];

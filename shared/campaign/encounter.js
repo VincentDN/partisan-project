@@ -11,6 +11,7 @@ export const OUTCOMES = ['won', 'lost', 'withdrawn'];
 export const HEAL_WOUNDED = 24,
   HEAL_DOWN = 48;
 const isObj = o => !!o && typeof o === 'object' && !Array.isArray(o);
+const isKit = k => isObj(k) && isObj(k.primary) && isObj(k.pockets);
 const count = n => (Number.isFinite(n) && n >= 1 ? Math.floor(n) : 0);
 
 /**
@@ -40,8 +41,15 @@ export function deploy(
     c.stash[g] -= n;
     if (!c.stash[g]) delete c.stash[g];
   }
+  // each fighter's grid kit travels with them (null: one is issued in the mission); it is theirs again at settling
+  const kits = {};
+  for (const f of fighters) {
+    kits[f] = c.band.fighters[f].kit || null;
+    c.band.fighters[f].kit = null;
+  }
   c.deployment = {
     id,
+    kits,
     level,
     seed,
     fighters: [...fighters],
@@ -99,6 +107,11 @@ export function cleanResult(d, raw) {
     time: Number.isFinite(r.time) ? r.time : 0,
     destroyed: count(r.destroyed),
     captured: !!r.captured && outcome === 'won',
+    // the kits the fighters carried home, as they are after the fight (withdrawn: the ones they left with)
+    kits:
+      outcome === 'withdrawn' || !isObj(r.kits)
+        ? {}
+        : Object.fromEntries(d.fighters.filter(f => isKit(r.kits[f])).map(f => [f, r.kits[f]])),
   };
 }
 
@@ -134,6 +147,15 @@ export function settle(c, encounterId = c.deployment?.id) {
     }
   }
   for (const bag of [d.kit, r.loot]) for (const [g, n] of Object.entries(bag)) c.stash[g] = (c.stash[g] || 0) + n;
+  // grid kits: each fighter keeps what they came home with; a kit they set off with and did not bring back (the
+  // mission issued another, for a new weapon) goes to the armoury's inbox, with everything in it
+  for (const f of d.fighters) {
+    const fighter = c.band.fighters[f],
+      left = d.kits?.[f] || null,
+      back = r.kits?.[f] || left;
+    if (fighter) fighter.kit = back;
+    if (left && back !== left && back?.primary?.uid !== left.primary?.uid) (c.armoury.inbox ||= []).push(...kitItems(left));
+  }
   c.goods.push(...r.goods);
   if (c.record[d.level] && r.outcome !== 'withdrawn') {
     c.record[d.level].played++;
@@ -152,6 +174,16 @@ export function settle(c, encounterId = c.deployment?.id) {
     loot: Object.values(r.loot).reduce((a, b) => a + b, 0) + r.goods.length,
   });
   return r;
+}
+
+/** Everything in a kit as loose items: the weapons (magazines in them), then the containers' contents. */
+export function kitItems(k) {
+  const out = [k.primary, k.secondary].filter(Boolean);
+  for (const c of [k.rig, k.pockets, k.backpack].filter(Boolean)) {
+    if (c.slug !== 'pockets') out.push(c);
+    else for (const g of c.grids) out.push(...g.items.map(e => e.item));
+  }
+  return out;
 }
 
 /** The map, on opening: a deployment entered and never finished is withdrawn and settled. Returns that result or null. */

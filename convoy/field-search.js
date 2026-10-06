@@ -24,7 +24,7 @@ export function createFieldSearch(cat, {onOpen = () => {}, onClose = () => {}} =
   const hintText = el('span'),
     bar = el('i');
   hint.append(hintText, el('b', '', ''), bar);
-  const box = el('div', 'field-search');
+  const box = el('div', 'field-search inv-overlay');
   box.hidden = true;
   box.setAttribute('role', 'dialog');
   box.setAttribute('aria-modal', 'true');

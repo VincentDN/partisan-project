@@ -106,3 +106,48 @@ test('results are cleaned: unknown outcomes lose, missing fighters default, numb
   assert.equal(r.captured, true);
   assert.equal(cleanResult(d, {outcome: 'lost', captured: true}).captured, false);
 });
+
+// TAC-C-11: grid kits travel with the fighters and come home as they are; what they spent stays spent
+const kit = (uid, rounds) => ({
+  armsId: 'ak',
+  primary: {uid, slug: 'rifle', rounds},
+  pockets: {slug: 'pockets', grids: [{w: 1, h: 1, items: []}]},
+});
+
+test('grid kits travel with the fighters and come home as they are after the fight', () => {
+  const c = fresh();
+  c.band.fighters.player.kit = kit('a1', 60);
+  launch(c);
+  assert.equal(c.band.fighters.player.kit, null, 'the kit is on the fighter in the field');
+  assert.equal(c.deployment.kits.player.primary.rounds, 60);
+  assert.equal(c.deployment.kits.mila, null, 'none yet: the mission issues one');
+  enter(c, 'e1');
+  writeResult(c, 'e1', {outcome: 'won', kits: {player: kit('a1', 12), mila: kit('m5-1', 47), ghost: kit('x', 1)}});
+  settle(c, 'e1');
+  assert.equal(c.band.fighters.player.kit.primary.rounds, 12, 'spent stays spent');
+  assert.equal(c.band.fighters.mila.kit.primary.rounds, 47, 'the issued kit is hers now, loot included');
+  assert.equal(c.armoury.inbox.length, 0);
+  const again = normalize(JSON.parse(JSON.stringify(c)));
+  assert.equal(again.band.fighters.mila.kit.primary.rounds, 47, 'kits survive the save');
+});
+
+test('withdrawn: the kits come back as they left; a kit replaced in the field goes to the armoury', () => {
+  const c = fresh();
+  c.band.fighters.player.kit = kit('a1', 60);
+  launch(c);
+  enter(c, 'e1');
+  withdraw(c, 'e1');
+  settle(c, 'e1');
+  assert.equal(c.band.fighters.player.kit.primary.rounds, 60);
+  for (const f of Object.values(c.band.fighters)) f.wounded = false; // healed
+  launch(c, {id: 'e2'});
+  enter(c, 'e2');
+  writeResult(c, 'e2', {outcome: 'lost', kits: {player: kit('b9', 30)}}); // promoted: a new weapon, a new kit
+  settle(c, 'e2');
+  assert.equal(c.band.fighters.player.kit.primary.uid, 'b9');
+  assert.deepEqual(
+    c.armoury.inbox.map(i => i.uid),
+    ['a1'],
+    'the old rifle is set aside, not lost',
+  );
+});

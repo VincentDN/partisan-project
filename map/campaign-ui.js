@@ -20,6 +20,7 @@ import {TROOPS, GEAR} from '../band/troops.js';
 import {createCamp, NAMES} from '../convoy/camp.js';
 import {SETTLEMENTS, byId} from './island.js';
 import {groundAt} from '../shared/campaign/nav.js';
+import {createKitScreen} from './kit-screen.js';
 
 const CONTACT = 12, // map units: close enough to fight
   RAID = 22, // around a settlement's centre
@@ -157,6 +158,7 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, toast}) {
     hidden: true,
   });
   document.body.append(bandPanel);
+  const kitScreen = createKitScreen({campaign, save, names: NAMES, onClose: () => bandPanel.querySelector('.kit-buttons button')?.focus()});
   // the camp's cards (convoy/camp.js) work on a squad: the campaign's fighters and stash seen as one
   const asSquad = () => ({
     classes: Object.fromEntries(Object.entries(campaign.band.fighters).map(([id, f]) => [id, f.class])),
@@ -194,6 +196,14 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, toast}) {
         ? el('p', {class: 'hurt'}, hurt.map(([id, f]) => `${NAMES[id] || id} is wounded (${Math.ceil(f.healIn)}h)`).join(' · '))
         : null,
       camp.squadCards({}),
+      el('h3', {}, 'Kit: magazines and rounds'),
+      el(
+        'div',
+        {class: 'kit-buttons'},
+        Object.keys(campaign.band.fighters).map(id =>
+          el('button', {class: 'kit-open', onclick: () => kitScreen.open(id)}, `${NAMES[id] || id}'s kit`),
+        ),
+      ),
       el('h3', {}, `Stash · ${gear.reduce((a, [, n]) => a + n, 0)} items`),
       el(
         'ul',
@@ -213,6 +223,10 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, toast}) {
   }
   // Escape closes whichever panel is open (focus may have left it: a promotion redraws the band panel)
   addEventListener('keydown', e => {
+    if (kitScreen.isOpen) {
+      if (e.key === 'Escape') kitScreen.close();
+      return; // the kit screen's keys are its own
+    }
     if (e.key === 'Escape') {
       if (!bandPanel.hidden) toggleBand(false);
       else if (!panel.hidden) leave();

@@ -1,7 +1,7 @@
 // The grid inventory screen in the browser (WP-S10, TAC-C-11): the rebel's 60 rounds, the weapon's magazine out by
 // keyboard, loot dragged from the cache into the backpack, a magazine emptied, loaded from loose rounds by dropping
 // them on it, and swapped back into the rifle; nothing created or lost on the way. Then in a mission: sixty rounds,
-// hold E by a body to search it, Escape back to the fight (WP-S9).
+// hold E by a body to search it, Escape back to the fight (WP-S9). Then the campaign map's kit screen.
 import assert from 'node:assert/strict';
 import {launch, open, startServer} from './browser.mjs';
 
@@ -97,6 +97,24 @@ try {
   assert.equal(await m.evaluate(() => window.PARP_SPRITES.search.open), false, 'Escape closes it');
   await m.waitForFunction(t => window.PARP_SPRITES.sim.time > t, t0, {timeout: 30000});
   await m.close();
+
+  // on the campaign map: the band panel opens each fighter's kit beside the armoury; it is issued once and saved
+  const w = await open(browser, server.url + 'map/?campaign=kit-test');
+  await w.evaluate(() => localStorage.removeItem('parp-campaign-v1'));
+  await w.reload();
+  await w.waitForFunction(() => window.PARP_MAP?.ready, null, {timeout: 180000});
+  await w.evaluate(() => window.PARP_MAP.setSpeed(0));
+  await w.keyboard.press('p');
+  await w.locator('.kit-open').first().click();
+  await w.waitForSelector('.kit-screen:not([hidden]) .inv-panel', {timeout: 60000});
+  assert.match(await w.locator('.kit-screen .search-status').textContent(), /^60 rounds/);
+  assert.equal(await w.locator('.kit-screen .inv-panel').count(), 2, 'the kit beside the armoury');
+  await w.keyboard.press('Escape');
+  assert.equal(await w.locator('.kit-screen').isHidden(), true);
+  assert.equal(await w.locator('.band-panel').isHidden(), false, 'Escape closes the kit screen first');
+  const saved = await w.evaluate(() => JSON.parse(localStorage.getItem('parp-campaign-v1')));
+  assert.ok(saved.band.fighters.player.kit?.primary, 'the issued kit is in the save');
+  await w.close();
   console.log('inventory: ok');
 } finally {
   await browser.close();
