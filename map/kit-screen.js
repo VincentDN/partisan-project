@@ -7,6 +7,7 @@ import {createKit} from '../shared/inventory/kit.js';
 import {add} from '../shared/inventory/grid.js';
 import {roundsCarried} from '../shared/inventory/ammo.js';
 import {mountInventory} from '../shared/inventory/grid-ui.js';
+import {useMed} from '../shared/inventory/meds.js';
 import {newArmoury} from '../shared/campaign/state.js';
 import {kitFor} from '../convoy/abilities.js';
 
@@ -72,6 +73,13 @@ export function createKitScreen({campaign, save, names = {}, onClose = () => {}}
         {title: 'Armoury', container: campaign.armoury},
       ],
       make: (slug, n) => factory.make(slug, n),
+      // medicine shortens a wound: two points of healing an hour off the time to heal
+      onUse: item => {
+        const r = useMed(cat, item, f.wounded ? f.healIn * 2 : 0);
+        f.healIn = Math.max(0, f.healIn - r.healed / 2);
+        if (f.wounded && !f.healIn) f.wounded = false;
+        return r.healed ? `${r.why} ${f.wounded ? `${Math.ceil(f.healIn)}h to heal.` : `${name} is fit.`}` : r.why;
+      },
       onChange: why => {
         save();
         status.textContent = `${why ? why + ' ' : ''}${count()}.`;

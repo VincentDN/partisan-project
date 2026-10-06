@@ -107,6 +107,8 @@ export function createCatalogue(data, extra = EXTRA) {
     const st = it.stats || {};
     let kind = st.kind || KIND_BY_CATEGORY[catName[it.cat]] || 'item';
     if (kind === 'part') kind = 'item';
+    const med = kind === 'medical' || kind === 'medkit'; // shared/inventory/meds.js
+    if (med) kind = 'meds';
     const d = {slug: it.slug, name: it.name, short: it.short || it.name, kind, w: it.w || 1, h: it.h || 1, kg: it.kg || 0};
     if (kind === 'weapon' || kind === 'ammo') d.calibre = calibreKey(st.caliber);
     if (kind === 'magazine') {
@@ -115,6 +117,7 @@ export function createCatalogue(data, extra = EXTRA) {
     }
     if (kind === 'ammo')
       Object.assign(d, {stack: st.stackMaxSize || 60, damage: st.damage || 0, pen: st.penetrationPower || 0, tracer: !!st.tracer});
+    if (med) Object.assign(d, {heal: st.maxHealPerUse || 15, charges: st.hitpoints || (st.uses || 1) * 15});
     if (kind === 'rig' || kind === 'backpack') d.grids = gridsFor(kind, st.capacity || 4);
     if (kind === 'armor' || kind === 'rig') d.armourClass = st.class || 0;
     defs.set(it.slug, d);

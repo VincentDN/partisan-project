@@ -84,6 +84,7 @@ try {
       p = sim.player,
       u = sim.units.find(o => o.side === 'army');
     Object.assign(u, {state: 'idle', alive: false, x: p.x + 1, z: p.z});
+    p.hp -= 30; // hurt: the medicine in the pockets has work to do
   });
   await m.locator('canvas').first().focus();
   await m.keyboard.down('e');
@@ -91,6 +92,11 @@ try {
   await m.keyboard.up('e');
   assert.equal(await m.locator('.field-search .inv-panel').count(), 2, 'your kit beside the body');
   assert.ok((await m.locator('.field-search .inv-panel:last-child .k-weapon').count()) >= 1, 'his weapon on him');
+  const hp0 = await m.evaluate(() => window.PARP_SPRITES.sim.player.hp);
+  await m.locator('.field-search .inv-panel:first-child .k-meds').first().focus();
+  await m.keyboard.press('h');
+  assert.ok((await m.evaluate(() => window.PARP_SPRITES.sim.player.hp)) > hp0, 'H on medicine heals');
+  assert.match(await m.locator('.field-search .search-status').textContent(), /healed/);
   if (process.env.SHOT2) await m.screenshot({path: process.env.SHOT2});
   const t0 = await m.evaluate(() => window.PARP_SPRITES.sim.time);
   await m.keyboard.press('Escape');

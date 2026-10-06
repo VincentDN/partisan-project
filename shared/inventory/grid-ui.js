@@ -1,11 +1,8 @@
-// The grid inventory screen (WP-S10, TAC-C-11), Tarkov-style: your fighter's kit (the weapon with its magazine, the
-// rig's pouches, pockets, backpack) beside whatever is being searched (a body, a cache, the stash). Drag an item to
-// move it; R turns it while it is carried; drop rounds on a magazine to load it; drop a magazine on the weapon to
-// insert it (the old one comes out to where the new one was); Shift-drop splits a stack; U unloads a magazine, E
-// ejects the weapon's magazine. Everything also works from the keyboard: Tab to an item, Enter to pick it up, arrows
-// to choose the cell, [ and ] to change grid, R to turn, Enter to drop, Escape to put it back.
+// The grid inventory screen (WP-S10, TAC-C-11), Tarkov-style: a fighter's kit beside what is searched (a body, a cache,
+// the armoury). Drag to move, R turns, rounds dropped on a magazine load it, a magazine dropped on the weapon goes in,
+// Shift-drop splits, U unloads, E ejects, H uses medicine. Keyboard: Enter picks up, arrows and [ ] move, Enter drops.
 import {footprint, fits, remove, placeAt, add, findSpot, contents} from './grid.js';
-import {loadMag, unloadMag, roundsIn, loadedRounds, chamber} from './ammo.js';
+import {loadMag, roundsIn, loadedRounds, chamber, unloadInto, ejectMag} from './ammo.js';
 
 const CELL = 46;
 const el = (tag, cls, text) => {
@@ -16,7 +13,7 @@ const el = (tag, cls, text) => {
 };
 
 /** panels: [{title, kit}] or [{title, container}]; make(slug, count) builds items (for splits and unloads). */
-export function mountInventory(root, {cat, panels, make, onChange = () => {}, icon = () => null}) {
+export function mountInventory(root, {cat, panels, make, onChange = () => {}, onUse = null, icon = () => null}) {
   let carry = null; // {item, from, was: {g, x, y, rot}, rot, target: {container, g, x, y} | {weapon}, ghost}
   const grids = []; // {container, g, el} in screen order, for the keyboard's [ and ]
 
@@ -31,7 +28,16 @@ export function mountInventory(root, {cat, panels, make, onChange = () => {}, ic
       const top = item.chamber || item.mag?.rounds?.at(-1)?.[0];
       return [d.short, item.mag || item.chamber ? `${loadedRounds(item)}${top ? ' ' + cat.def(top).short : ''}` : 'empty'];
     }
+    if (d.kind === 'meds' && d.charges) return [d.short, `${item.left ?? d.charges}/${d.charges}`];
     return [d.short, item.count > 1 ? String(item.count) : ''];
+  }
+  /** H or a double click: medicine is used on the kit's owner (onUse(item) -> a note, or undefined: not usable). */
+  function use(item, from) {
+    const why = onUse?.(item);
+    if (why === undefined) return;
+    if (item.left <= 0 && from) remove(from, item.uid);
+    render();
+    onChange(why);
   }
   const describe = (item, where) => {
     const d = cat.def(item.slug),
@@ -62,6 +68,7 @@ export function mountInventory(root, {cat, panels, make, onChange = () => {}, ic
     t.title = d.name;
     t.onpointerdown = e => startDrag(e, item, container);
     t.onkeydown = e => keyOnItem(e, item, container);
+    t.ondblclick = () => use(item, container);
     return t;
   }
   function drawGrid(container, g, where) {
@@ -235,21 +242,18 @@ export function mountInventory(root, {cat, panels, make, onChange = () => {}, ic
   function keyOnItem(e, item, from) {
     const d = cat.def(item.slug),
       k = e.key.toLowerCase();
+    if (k === 'h') return use(item, from);
+    const kit = kitOf(),
+      places = [from, kit?.pockets, kit?.rig, kit?.backpack].filter(Boolean);
     if (k === 'u' && d.kind === 'magazine') {
-      const kit = kitOf(),
-        places = [from, kit?.pockets, kit?.rig, kit?.backpack].filter(Boolean);
-      let kept = 0;
-      for (const s of unloadMag(cat, item, make)) if (!places.some(c => add(cat, c, s))) kept += loadMag(cat, item, s).loaded; // no room: they stay in
+      const kept = unloadInto(cat, item, places, make);
       render();
       return onChange(kept ? `No room for ${kept} rounds; they stay in the magazine.` : 'Unloaded.');
     }
     if (k === 'e' && d.kind === 'weapon' && item.mag) {
-      const kit = kitOf(),
-        m = item.mag;
-      item.mag = null;
-      if (![kit.rig, kit.pockets, kit.backpack].filter(Boolean).some(c => add(cat, c, m))) item.mag = m;
+      const out = ejectMag(cat, item, places.slice(1));
       render();
-      return onChange(item.mag ? 'No room to put the magazine.' : 'Magazine out.');
+      return onChange(out ? 'Magazine out.' : 'No room to put the magazine.');
     }
     if ((k === 'enter' || k === ' ') && from && !carry) {
       e.preventDefault();

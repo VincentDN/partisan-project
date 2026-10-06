@@ -136,3 +136,16 @@ test('a fighter out of rounds takes a magazine off a body close by', () => {
     'and says so',
   );
 });
+
+test("the level's crates are supply caches to search", () => {
+  const sim = new Sim({level: 'checkpoint', seed: 2});
+  const A = attachAmmo(sim, cat, {seed: 2});
+  const crates = sim.level.cover.filter(c => c.kind === 'crate');
+  assert.ok(crates.length >= 1);
+  const c = A.near(crates[0].x + crates[0].w / 2 + 1, crates[0].z);
+  assert.ok(c && /crate/i.test(c.label), 'a crate within reach');
+  assert.ok(
+    everything(c.container).some(i => cat.def(i.slug).kind === 'ammo'),
+    'ammunition in it',
+  );
+});

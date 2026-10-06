@@ -31,7 +31,7 @@ export function createKit(cat, {prefix = 'i'} = {}) {
   function make(slug, count = 1) {
     const d = cat.def(slug);
     const it = {uid: `${prefix}${++n}`, slug, rot: 0};
-    if (d.kind === 'ammo' || d.kind === 'meds' || d.kind === 'grenade') it.count = Math.max(1, Math.min(count, d.stack || 99));
+    if (d.kind === 'ammo' || d.kind === 'grenade') it.count = Math.max(1, Math.min(count, d.stack || 99));
     if (d.kind === 'magazine') it.rounds = [];
     if (d.kind === 'weapon') {
       it.mag = null;

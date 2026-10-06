@@ -9,6 +9,7 @@ import {fits, placeAt, add, remove, move, contents, footprint} from '../shared/i
 import {loadMag, unloadMag, popRound, fire, reload, roundsIn, roundsCarried, loadedRounds} from '../shared/inventory/ammo.js';
 import {ARMS, ISSUE} from '../shared/inventory/arms.js';
 import {createKit, everything} from '../shared/inventory/kit.js';
+import {useMed} from '../shared/inventory/meds.js';
 import {WEAPONS} from '../convoy/weapons.js';
 import {GEAR} from '../band/troops.js';
 
@@ -149,4 +150,18 @@ test('the dead and the caches: rolled once from a seed, scarce, everything in it
   );
   const round = JSON.parse(JSON.stringify(c));
   assert.deepEqual(round, c, 'containers serialise as they are');
+});
+
+test('medicine heals from a pool of points and is used up', () => {
+  const kit = createKit(cat),
+    medkit = kit.make('ai-2-medkit'),
+    bandage = kit.make('army-bandage');
+  assert.equal(cat.def('ai-2-medkit').kind, 'meds');
+  assert.deepEqual(useMed(cat, medkit, 80), {healed: 50, gone: false, why: 'AI-2: 50 healed.'}, 'at most 50 a use');
+  assert.equal(useMed(cat, medkit, 80).healed, 50);
+  assert.equal(medkit.left, 0);
+  assert.equal(useMed(cat, bandage, 0).healed, 0, 'not hurt: nothing used');
+  assert.equal(useMed(cat, bandage, 40).healed, 15);
+  assert.equal(useMed(cat, bandage, 40).gone, true, 'two uses');
+  assert.equal(useMed(cat, kit.make(PS, 3), 10).healed, 0, 'rounds are not medicine');
 });

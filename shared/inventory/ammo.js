@@ -115,3 +115,18 @@ export function reload(cat, kit, weapon) {
   if (back || reachable(kit).some(c => add(cat, c, old))) return {ok: true};
   return {ok: true, dropped: old};
 }
+
+/** Unload a magazine's rounds into the first of `places` with room; what finds none goes back in. Returns that count. */
+export function unloadInto(cat, mag, places, make) {
+  let kept = 0;
+  for (const s of unloadMag(cat, mag, make)) if (!places.some(c => add(cat, c, s))) kept += loadMag(cat, mag, s).loaded;
+  return kept;
+}
+
+/** Take a weapon's magazine out into the first of `places` with room (it stays in with none). Returns whether it came out. */
+export function ejectMag(cat, weapon, places) {
+  const m = weapon.mag;
+  if (!m || !places.some(c => add(cat, c, m))) return false;
+  weapon.mag = null;
+  return true;
+}

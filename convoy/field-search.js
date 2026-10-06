@@ -4,6 +4,7 @@
 // The rebels fire what is in their kits (convoy/kit-ammo.js), so ammunition taken here is ammunition you have.
 import {attachAmmo, SEARCH_TIME} from './kit-ammo.js';
 import {mountInventory} from '../shared/inventory/grid-ui.js';
+import {useMed} from '../shared/inventory/meds.js';
 
 const el = (tag, cls, text) => {
   const e = document.createElement(tag);
@@ -83,6 +84,12 @@ export function createFieldSearch(cat, {onOpen = () => {}, onClose = () => {}} =
         {title: t.label, container: t.container},
       ],
       make: (slug, n) => A.factory.make(slug, n),
+      // H on a bandage or a medkit: patch the rebel up here, mid-mission
+      onUse: item => {
+        const r = useMed(cat, item, (p.maxHp ?? 100) - p.hp);
+        p.hp += r.healed;
+        return r.why;
+      },
       onChange: why => {
         status.textContent = why || '';
         A.sync(p);

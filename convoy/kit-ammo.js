@@ -83,8 +83,20 @@ export function attachAmmo(sim, cat, {kits = {}, seed = 1, army = false} = {}) {
   });
 
   // ---------- things to search ----------
-  const searched = new Map(); // a unit id or vehicle id -> {x, z, container, label}
+  const searched = new Map(); // a unit id, vehicle id or crate -> {x, z, r?, container, label}
   let n = 0;
+  // the level's crates are supply caches: a little ammunition, sometimes a medkit, a grenade or a rifle
+  (sim.level.cover || []).forEach((c, i) => {
+    if (c.kind !== 'crate') return;
+    const label = 'Supply crate';
+    searched.set(`crate-${i}`, {
+      x: c.x,
+      z: c.z,
+      r: Math.max(c.w, c.d) / 2,
+      label,
+      container: factory.cache(seed * 71 + i, {label, calibres: ['ak']}),
+    });
+  });
   /** A body holding what its fighter carried: the weapon (magazine in it), then everything from rig and pockets. */
   function bodyOf(u) {
     const k = kitOf(u),
