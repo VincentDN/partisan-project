@@ -5,19 +5,12 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json); full plan: [ta
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-06 12:58 UTC · claude · WP-W2 · done**
+**2026-10-06 18:26 UTC · claude · WP-S10 · partial**
 
-- Branch `claude/friendly-dijkstra-4ky9w6` at `8074ce0`; working tree clean.
-- Last commits: 8074ce0 feat(WP-W2): mission bridge between the campaign save and Partisan Tactical · 8bfe7cf cleanup of outbound · 6c65e36 fix(band): the character always faces the viewer; only the weapon aims, easing back to rest when the mouse leaves
-- What happened: Built shared/campaign/encounter.js (deploy with kit reservation, enter, one result, settle once, withdrawn on reload, settleAbandoned) and convoy/campaign-mode.js (?campaign&encounter plays the deployment). Unit and browser tests (tests/e2e/campaign-bridge.mjs) pass; practice mode unchanged.
-- Next step: WP-W3: the band on the map. Add shared/campaign/nav.js (grid from map/island.js heights and roads, A* path, terrain speeds; never through sea) with unit tests, then click-to-move in map/ with route preview and follow camera, reading and saving world.party through shared/campaign/state.js.
-
-**2026-10-06 08:39 UTC · codex · WP-CM4 · done**
-
-- Branch `codex/generated-operator-equipment` at `89baad3`; working tree clean.
-- Last commits: 89baad3 feat(WP-CM4): resolve modular equipment assemblies and compatibility · 41efb77 docs(WP-CM3): record completed head and hands handoff · 3bc89c3 feat(WP-CM3): add removable headwear and articulated Recon hands
-- What happened: Completed locally in 89baad3: pure-data equipment resolver, schema validation, recoverable subtree removal, coverage and budget accounting, tests and integration contract. Eleven focused tests, configured typecheck, lint, formatting, plan tests and build/check pass. Full units 233/235 with the same two unrelated downloader failures. Automatic approval review rejected the GitHub push for lack of explicit authorization to export code/documentation to this remote. No workaround attempted; ask the owner to authorize pushing the feature branch. Main remains protected.
-- Next step: After explicit push authorization, push CM4 and this handoff to origin/codex/generated-operator-equipment. Then CM5: author the lightweight carrier and measured catalogue/mount definitions against the CM3 foundation. Read docs/engineering/operator-assembly.md and WP-CM5 inputs; preserve canonical rig frames and pose fits.
+- Branch `claude/friendly-dijkstra-4ky9w6` at `bfe9b34`; working tree clean.
+- Last commits: bfe9b34 style: format the inventory preview scene · 1b9a64e feat(WP-S9, S11): search the dead in missions; rebels fire the real rounds in their kits · 47ee0a0 feat(WP-S10): grid inventory screen: drag, turn, load rounds into magazines, swap magazines, loot a body and a cache
+- What happened: Grid inventory: shared/inventory/ core (S8, S43), test page inventory/ (S10 first cut), searching bodies and wrecks in missions with hold E (convoy/field-search.js, S9 first cut), rebels fire the real rounds in their kits (convoy/kit-ammo.js, sim.ammo hooks, S11 first cut). Unit tests (kit-ammo, inventory) and tests/e2e/inventory.mjs pass.
+- Next step: Carry the mission kits home: debrief writes each fighter's kit to the campaign save and the stash (S10 stash screen, S12). Then the army spends and loots ammunition (S11), level caches and convoy cargo as searchable objects, order a teammate to loot (S9).
 <!-- handoff:end -->
 
 ## Resume here
