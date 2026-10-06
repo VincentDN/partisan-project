@@ -105,6 +105,10 @@ export const LEVEL_LOOT = {
   convoy: {label: 'Convoy cargo', kinds: {weapon: 2, ammo: 1.6, gear: 1, attachment: 1, drone: 0.6, goods: 1}},
   compound: {label: 'Compound stores', kinds: {gear: 2, drone: 1.6, attachment: 1.3, weapon: 1, ammo: 1, goods: 1.4}},
   cave: {label: 'Abandoned caches', kinds: {ammo: 2, attachment: 1.5, weapon: 1.2, gear: 1, drone: 0.8, goods: 1.2}},
+  'forest-road': {label: 'Supply trucks', kinds: {ammo: 1.8, weapon: 1.6, gear: 1.2, attachment: 1, drone: 0.5, goods: 1.3}},
+  checkpoint: {label: 'Checkpoint stores', kinds: {weapon: 1.4, ammo: 1.4, gear: 1.4, attachment: 1.2, drone: 0.8, goods: 1.6}},
+  village: {label: 'The garrison depot', kinds: {goods: 2.2, gear: 1.5, ammo: 1.2, weapon: 1, attachment: 1, drone: 0.6}},
+  hilltop: {label: 'From the fallen', kinds: {weapon: 1.8, ammo: 1.6, attachment: 1.3, gear: 1, drone: 0.4, goods: 0.6}},
 };
 const GOODS_WEIGHT = 5; // trade goods against one kind of equipment: about a quarter of the drops
 
