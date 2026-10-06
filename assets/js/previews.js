@@ -302,8 +302,8 @@ const SCENES = {
     g.fillStyle = '#eee';
     g.fillRect(0, 0, W, H);
     g.fillStyle = '#999';
-    for (let x = 0; x <= 5; x++) g.fillRect(4 + x * 8, 4, 1, 33), g.fillRect(68 + x * 8, 4, 1, 33);
-    for (let y = 0; y <= 4; y++) g.fillRect(4, 4 + y * 8, 41, 1), g.fillRect(68, 4 + y * 8, 41, 1);
+    for (let x = 0; x <= 5; x++) (g.fillRect(4 + x * 8, 4, 1, 33), g.fillRect(68 + x * 8, 4, 1, 33));
+    for (let y = 0; y <= 4; y++) (g.fillRect(4, 4 + y * 8, 41, 1), g.fillRect(68, 4 + y * 8, 41, 1));
     rifle(g, 82, 7, 0.45, '#333');
     const k = (Math.sin(t * 1.6) + 1) / 2,
       mx = 76 - k * 56;
