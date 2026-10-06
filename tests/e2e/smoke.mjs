@@ -101,56 +101,73 @@ await check('index: the Nokia screen lies on the table and opens straight on the
   await page.close();
 });
 
-await check('opening scene: the table, the rifle, one button; the shell keeps one sound layer across pages', async () => {
-  const page = await open(browser, server.url + 'intro/');
-  await page.waitForFunction(
-    () => {
-      const b = document.querySelector('#start');
-      return !!b && !b.disabled;
-    },
-    null,
-    {timeout: 90000},
-  );
-  const labels = await page.locator('#start').allInnerTexts();
-  assert.equal(await page.locator('.prompt a, .prompt button').count(), 1, 'one action on the scene');
-  assert.deepEqual(
-    labels.map(l => l.replace(/\s*E$/, '').trim().toLowerCase()),
-    ['load all demos'],
-    'the orange button is the only action; the rest is in the top bar',
-  );
-  assert.equal(await page.locator('.pbar a[href$="menu/"]').count(), 1, 'top bar has INDEX');
-  assert.equal(await page.locator('.pbar a[href$="game-design-master-doc.html"]').count(), 1, 'top bar has GAME DESIGN DOC');
-  assert.equal(await page.locator('.pbar a.brand[title="Return to home"]').count(), 1, 'lambda mark returns home');
-  assert.equal(await page.locator('.pbar > a:not(.brand)').count(), 2, 'top bar has only INDEX and GAME DESIGN DOC');
-  assert.equal(await page.locator('#music-player').isHidden(), true, 'the player is a drop-down');
-  await page.locator('#music-menu').click();
-  assert.equal(await page.locator('#music-player').isVisible(), true);
-  assert.equal(await page.locator('.pbar #music-toggle').count(), 1, 'music player is in the top bar');
-  noProblems(page);
-  await page.close();
-  // The shell: pages open inside one frame that owns the sound layer, and the address follows the frame.
-  const shell = await open(browser, server.url);
-  await shell.waitForFunction(
-    () => {
-      const b = document.querySelector('#view')?.contentDocument?.querySelector('#start');
-      return !!b && !b.disabled;
-    },
-    null,
-    {timeout: 90000},
-  );
-  const same = () =>
-    shell.evaluate(() => document.querySelector('#view').contentWindow.parent.parpSound === window.parpSound && !!window.parpSound);
-  assert.equal(await same(), true, 'the shell owns the sound layer');
-  const frame = shell.frameLocator('#view');
-  await frame.locator('.pbar a[href$="menu/"]').click();
-  await shell.waitForFunction(() => document.querySelector('#view').contentWindow.location.pathname.endsWith('/menu/'), null, {
-    timeout: 90000,
-  });
-  await shell.waitForFunction(() => document.querySelector('#view').contentWindow.PARP_INDEX?.ready, null, {timeout: 90000});
-  assert.equal(await same(), true, 'the same sound layer after navigating');
-  await shell.waitForFunction(() => location.search.includes('p=menu'), null, {timeout: 5000});
-  await shell.close();
-});
+await check(
+  'opening scene: the table, the rifle, the campaign / demos / guided buttons; the shell keeps one sound layer across pages',
+  async () => {
+    const page = await open(browser, server.url + 'intro/');
+    await page.waitForFunction(
+      () => {
+        const b = document.querySelector('#start');
+        return !!b && !b.disabled;
+      },
+      null,
+      {timeout: 90000},
+    );
+    // three actions: the test campaign (primary), every demo, and the guided demo (not available yet)
+    const labels = await page.locator('.prompt button').allInnerTexts();
+    assert.deepEqual(
+      labels.map(l => l.replace(/\s+/g, ' ').trim().toLowerCase()),
+      ['start test campaign c', 'try all demos e', 'start guided demo unavailable'],
+    );
+    assert.equal(await page.evaluate(() => document.activeElement.id), 'campaign', 'the campaign is the first choice');
+    assert.equal(await page.locator('#guided').getAttribute('aria-disabled'), 'true');
+    for (const [id, text] of [
+      ['campaign', /liberating Yantis/],
+      ['start', /Mod your gun and your operator/],
+      ['guided', /Vincent explains/],
+    ]) {
+      await page.locator('#' + id).focus();
+      const tip = page.locator('#' + (await page.locator('#' + id).getAttribute('aria-describedby')));
+      assert.match(await tip.innerText(), text);
+      await tip.evaluate(t => new Promise(r => setTimeout(r, 300)));
+      assert.equal(await tip.evaluate(t => getComputedStyle(t).opacity), '1', `${id}: tooltip shows on focus`);
+    }
+    await page.locator('#guided').click();
+    assert.equal(await page.evaluate(() => document.body.classList.contains('leaving')), false, 'the guided demo does nothing yet');
+    assert.equal(await page.locator('.pbar a[href$="menu/"]').count(), 1, 'top bar has INDEX');
+    assert.equal(await page.locator('.pbar a[href$="game-design-master-doc.html"]').count(), 1, 'top bar has GAME DESIGN DOC');
+    assert.equal(await page.locator('.pbar a.brand[title="Return to home"]').count(), 1, 'lambda mark returns home');
+    assert.equal(await page.locator('.pbar > a:not(.brand)').count(), 2, 'top bar has only INDEX and GAME DESIGN DOC');
+    assert.equal(await page.locator('#music-player').isHidden(), true, 'the player is a drop-down');
+    await page.locator('#music-menu').click();
+    assert.equal(await page.locator('#music-player').isVisible(), true);
+    assert.equal(await page.locator('.pbar #music-toggle').count(), 1, 'music player is in the top bar');
+    noProblems(page);
+    await page.close();
+    // The shell: pages open inside one frame that owns the sound layer, and the address follows the frame.
+    const shell = await open(browser, server.url);
+    await shell.waitForFunction(
+      () => {
+        const b = document.querySelector('#view')?.contentDocument?.querySelector('#start');
+        return !!b && !b.disabled;
+      },
+      null,
+      {timeout: 90000},
+    );
+    const same = () =>
+      shell.evaluate(() => document.querySelector('#view').contentWindow.parent.parpSound === window.parpSound && !!window.parpSound);
+    assert.equal(await same(), true, 'the shell owns the sound layer');
+    const frame = shell.frameLocator('#view');
+    await frame.locator('.pbar a[href$="menu/"]').click();
+    await shell.waitForFunction(() => document.querySelector('#view').contentWindow.location.pathname.endsWith('/menu/'), null, {
+      timeout: 90000,
+    });
+    await shell.waitForFunction(() => document.querySelector('#view').contentWindow.PARP_INDEX?.ready, null, {timeout: 90000});
+    assert.equal(await same(), true, 'the same sound layer after navigating');
+    await shell.waitForFunction(() => location.search.includes('p=menu'), null, {timeout: 5000});
+    await shell.close();
+  },
+);
 
 await check('operator: loads, equipment toggles, zones are independent, hash round-trips, poses and weapon', async () => {
   const page = await open(browser, server.url + 'operator/#base=base');

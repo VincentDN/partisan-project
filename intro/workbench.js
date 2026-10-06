@@ -14,6 +14,7 @@ import {mountTopBar} from '../shared/topbar.js';
 import * as mech from './ak15-weapon-customiser/mech.js';
 
 const INDEX='../menu/';// the Nokia index: every demo
+const CAMPAIGN='../map/?campaign=c1';// the test campaign: the band on the world map (docs/campaign-roadmap.md)
 const TABLE={top:.86,x:[-.95,.95],z:[.24,1.04]};
 const RIFLE_AT=new T.Vector3(.04,0,.47);// x/z on the table; y comes from the rifle's own thickness
 // Camera behind and above the right shoulder, looking down at the rifle.
@@ -27,6 +28,7 @@ const reduceMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const sound=mountTopBar({scene:'bench',overlay:true,current:'intro'});
 
 const stage=document.querySelector('#stage'),status=document.querySelector('#status'),start=document.querySelector('#start'),fade=document.querySelector('#fade');
+const campaignBtn=document.querySelector('#campaign'),guided=document.querySelector('#guided'),actions=[campaignBtn,start];
 const renderer=new T.WebGLRenderer({antialias:true});
 renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFSoftShadowMap;
 renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;stage.append(renderer.domElement);
@@ -239,23 +241,31 @@ function pollPad(){
  for(const pad of navigator.getGamepads?.()||[]){
   if(!pad)continue;
   const [x,y]=pad.axes;if(Math.hypot(x,y)>.15){want.x=x;want.y=y;}
-  if(pad.buttons[0]?.pressed||pad.buttons[9]?.pressed)begin();
+  if(pad.buttons[0]?.pressed)begin(CAMPAIGN);else if(pad.buttons[9]?.pressed)begin(INDEX);
  }
 }
 let push=null;
-function begin(){
+// Leave the bench for `dest`. The demos push down onto the Nokia (the index is that phone close up); the campaign
+// leans in over the bench, as if to the map spread on it, and fades.
+function begin(dest=INDEX){
  if(push||start.disabled)return;
- start.disabled=true;document.body.classList.add('leaving');
+ for(const b of actions)b.disabled=true;
+ document.body.classList.add('leaving');
  mech.tap();// a key press on the phone
  phone.updateMatrixWorld(true);
- const focus=phoneScreen();// straight down onto the LCD, from the operator's side
- push={start:performance.now()/1000,from:camera.position.clone(),fromTarget:currentTarget.clone(),to:focus.clone().add(new T.Vector3(0,.075,-.025)),toTarget:focus,faded:false};
+ const from=camera.position.clone(),fromTarget=currentTarget.clone();
+ let to,toTarget;
+ if(dest===INDEX){toTarget=phoneScreen();to=toTarget.clone().add(new T.Vector3(0,.075,-.025));}// straight down onto the LCD
+ else{toTarget=fromTarget.clone();to=from.clone().lerp(fromTarget,.45);}// lean in over the bench
+ push={start:performance.now()/1000,from,fromTarget,to,toTarget,faded:false,dest};
  if(reduceMotion)push.start-=PUSH_IN.duration*PUSH_IN.fadeAt;
 }
-start.addEventListener('click',begin);
-addEventListener('keydown',e=>{if(e.target.matches('a,button,input,select,textarea'))return;if(e.key==='e'||e.key==='E'||e.key==='Enter')begin();});
+campaignBtn.addEventListener('click',()=>begin(CAMPAIGN));
+start.addEventListener('click',()=>begin(INDEX));
+guided.addEventListener('click',e=>e.preventDefault());// not available yet: it says so in its tooltip
+addEventListener('keydown',e=>{if(e.target.matches('a,button,input,select,textarea'))return;const k=e.key.toLowerCase();if(k==='c')begin(CAMPAIGN);else if(k==='e')begin(INDEX);});
 // Coming back with the browser's back button restores this page from cache: reset the shot.
-addEventListener('pageshow',e=>{if(e.persisted){sound.scene('bench');push=null;start.disabled=false;document.body.classList.remove('leaving');fade.classList.add('clear');clock.getDelta();requestAnimationFrame(frame);}});
+addEventListener('pageshow',e=>{if(e.persisted){sound.scene('bench');push=null;for(const b of actions)b.disabled=false;document.body.classList.remove('leaving');fade.classList.add('clear');clock.getDelta();requestAnimationFrame(frame);}});
 
 const currentTarget=SHOT.target.clone();
 const ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
@@ -279,7 +289,7 @@ function frame(){
   camera.position.lerpVectors(push.from,push.to,e);currentTarget.lerpVectors(push.fromTarget,push.toTarget,e);
   if(u>=PUSH_IN.fadeAt&&!push.faded){push.faded=true;fade.classList.remove('clear');}
   // Fully black: stop rendering so the main thread is free for the navigation.
-  if(t>=PUSH_IN.duration+.5){if(!sound.shared)sound.music.handoff();location.href=INDEX;return;}
+  if(t>=PUSH_IN.duration+.5){if(!sound.shared)sound.music.handoff();location.href=push.dest;return;}
  }else{
   const sway=reduceMotion?0:Math.sin(time*.6)*.006;
   camera.position.set(SHOT.position.x+look.x*.05,SHOT.position.y-look.y*.03+sway,SHOT.position.z);
@@ -374,6 +384,6 @@ requestAnimationFrame(drawDither);
 const reveal=()=>{loadedAt??=performance.now()/1000;};
 
 loadRifle().then(()=>{
- status.hidden=true;start.disabled=false;start.focus({preventScroll:true});
+ status.hidden=true;for(const b of actions)b.disabled=false;campaignBtn.focus({preventScroll:true});
  requestAnimationFrame(frame);requestAnimationFrame(reveal);
 }).catch(err=>{status.textContent='Could not load the rifle: '+err.message;reveal();});
