@@ -120,7 +120,18 @@ try {
   });
   await page.waitForTimeout(800); // the frame loop is running again before measuring
   const moving = await head();
-  await page.waitForTimeout(450);
+  // the idle sway moves the head: wait for a frame that shows it (software rendering runs about one frame a second)
+  await page
+    .waitForFunction(
+      m =>
+        window.PARP_OPERATOR.rig.bones
+          .get('head')
+          .quaternion.toArray()
+          .some((v, i) => v !== m[i]),
+      moving,
+      {timeout: 20000},
+    )
+    .catch(() => {});
   assert.notDeepEqual(await head(), moving);
   const blend = await page.evaluate(() => {
     const o = window.PARP_OPERATOR;
