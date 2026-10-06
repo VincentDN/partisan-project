@@ -5,12 +5,12 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json); full plan: [ta
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-06 08:39 UTC · codex · WP-CM4 · done**
+**2026-10-06 14:57 UTC · codex · WP-CM5 · done**
 
-- Branch `codex/generated-operator-equipment` at `89baad3`; working tree clean.
-- Last commits: 89baad3 feat(WP-CM4): resolve modular equipment assemblies and compatibility · 41efb77 docs(WP-CM3): record completed head and hands handoff · 3bc89c3 feat(WP-CM3): add removable headwear and articulated Recon hands
-- What happened: Completed locally in 89baad3: pure-data equipment resolver, schema validation, recoverable subtree removal, coverage and budget accounting, tests and integration contract. Eleven focused tests, configured typecheck, lint, formatting, plan tests and build/check pass. Full units 233/235 with the same two unrelated downloader failures. Automatic approval review rejected the GitHub push for lack of explicit authorization to export code/documentation to this remote. No workaround attempted; ask the owner to authorize pushing the feature branch. Main remains protected.
-- Next step: After explicit push authorization, push CM4 and this handoff to origin/codex/generated-operator-equipment. Then CM5: author the lightweight carrier and measured catalogue/mount definitions against the CM3 foundation. Read docs/engineering/operator-assembly.md and WP-CM5 inputs; preserve canonical rig frames and pose fits.
+- Branch `codex/generated-operator-equipment` at `ee610fa`; working tree clean.
+- Last commits: ee610fa feat(WP-CM5): add fitted modular lightweight plate carrier · 2df7e96 docs(WP-CM4): hand off resolver and record pending push approval · 89baad3 feat(WP-CM4): resolve modular equipment assemblies and compatibility
+- What happened: Pushed CM4 after explicit owner authorization, then completed and pushed CM5 in ee610fa: fitted textured carrier, detachable placard, measured CM4 definitions and equipped pose profile. Body plus full loaded pack is 6,684 triangles. Carrier units and 24 equipped, 24 bare-foundation and 88 legacy Recon carries pass; built-site smoke, lint, typecheck, formatting, plan checks and build/check pass. Full units 237/239 with the same two unrelated downloader failures. Main remains protected.
+- Next step: CM6: read docs/engineering/recon-carrier.md, operator/recon-carrier.json and WP-CM6 inputs. Author separate magazine, utility and radio pouches, implement mount-space skin binding and occupied-cell validation, preserve owned radio/cable geometry, and validate posed clearance. Do not treat reserved mount grids as verified pouch fits.
 <!-- handoff:end -->
 
 ## Resume here
