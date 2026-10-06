@@ -5,12 +5,12 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json); full plan: [ta
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-05 16:22 UTC · codex · WP-CM3 · done**
+**2026-10-06 08:39 UTC · codex · WP-CM4 · done**
 
-- Branch `codex/generated-operator-equipment` at `3bc89c3`; working tree clean.
-- Last commits: 3bc89c3 feat(WP-CM3): add removable headwear and articulated Recon hands · e158c28 docs(WP-CM2): hand off hood-free foundation refinement · 5bfc454 fix(WP-CM2): remove foundation hood and strengthen chest and neck
-- What happened: Completed and pushed 3bc89c3: complete stylized head, removable mask/cap, articulated gloves and four data-driven hand shapes. The 5,568-triangle foundation preserves 26 canonical joints and adds 30 finger joints. Foundation geometry/browser checks and 24 rifle carries pass; original Recon passes 88 carries. Built smoke, build/check, lint, typecheck, formatting and plan tests pass. Full units 222/224 with two unchanged downloader failures. Review sheets committed and preview current.
-- Next step: CM4: implement pure item-instance/compatibility resolver from the modular contract and roadmap; refine its acceptance first. CM5 then authors the first carrier. Preserve body rest frames, local finger rotations and CM2 collar/wrist constraints. No main merge or push.
+- Branch `codex/generated-operator-equipment` at `89baad3`; working tree clean.
+- Last commits: 89baad3 feat(WP-CM4): resolve modular equipment assemblies and compatibility · 41efb77 docs(WP-CM3): record completed head and hands handoff · 3bc89c3 feat(WP-CM3): add removable headwear and articulated Recon hands
+- What happened: Completed locally in 89baad3: pure-data equipment resolver, schema validation, recoverable subtree removal, coverage and budget accounting, tests and integration contract. Eleven focused tests, configured typecheck, lint, formatting, plan tests and build/check pass. Full units 233/235 with the same two unrelated downloader failures. Automatic approval review rejected the GitHub push for lack of explicit authorization to export code/documentation to this remote. No workaround attempted; ask the owner to authorize pushing the feature branch. Main remains protected.
+- Next step: After explicit push authorization, push CM4 and this handoff to origin/codex/generated-operator-equipment. Then CM5: author the lightweight carrier and measured catalogue/mount definitions against the CM3 foundation. Read docs/engineering/operator-assembly.md and WP-CM5 inputs; preserve canonical rig frames and pose fits.
 <!-- handoff:end -->
 
 ## Resume here
