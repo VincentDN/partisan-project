@@ -277,11 +277,13 @@ export function mountInventory(root, {cat, panels, make, onChange = () => {}, ic
       } else if (k.toLowerCase() === 'r') carry.rot = carry.rot ? 0 : 1;
       else if (k === 'Enter' || k === ' ' || k === 'Escape') {
         ev.preventDefault();
+        ev.stopImmediatePropagation(); // Escape puts the item back; it does not also close the screen
         removeEventListener('keydown', onKey, true);
         if (k === 'Escape') carry.target = null;
         return drop(ev.shiftKey);
       } else return;
       ev.preventDefault();
+      ev.stopImmediatePropagation();
       const G = grids[gi2].container.grids[grids[gi2].g];
       updateTarget(gi2, Math.max(0, Math.min(G.w - 1, nx)), Math.max(0, Math.min(G.h - 1, ny)));
     };

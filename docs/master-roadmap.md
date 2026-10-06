@@ -292,7 +292,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-S7` | Level visuals (retired: delivered by WP-V9 structures and WP-V12 lighting in the 2-D renderer) | S (8) | blocked | — | — |
 | `WP-S8` | Inventory domain: grid containers with rotation, unique items, equipment slots, magazines holding real rounds, loose ammo stacks, calibres from the catalogue | M (20) | done | — | — |
 | `WP-S9` | Looting in levels: the dead, vehicle cargo and caches as searchable grid containers; hold E to search (exposed); order a teammate to loot | M (20) | ready | — | `WP-S8`, `WP-S2` |
-| `WP-S10` | Grid inventory UI: drag, rotate, split stacks, load and unload magazines, field loot panel beside your rig and backpack, between-mission squad and stash screens | M (20) | in progress (test page `inventory/` done; mission loot panel and stash screen next) | — | `WP-S8`, `WP-S9`, `WP-S29` |
+| `WP-S10` | Grid inventory UI: drag, rotate, split stacks, load and unload magazines, field loot panel beside your rig and backpack, between-mission squad and stash screens | M (20) | ready | — | `WP-S8`, `WP-S9`, `WP-S29` |
 | `WP-S11` | Finite combat: 60 rounds per rebel, reloads swap real magazines, damage from the chambered round, AI spends and loots ammunition | M (20) | ready | — | `WP-S8`, `WP-S3` |
 | `WP-S12` | Campaign controller: briefing, durable deployment, debrief settlement, squad availability, recruit and reset | M (20) | planned | — | `WP-S29`, `WP-S30`, `WP-S10`, `WP-S11` |
 | `WP-S13` | Unlocks into the Weapon Modder: first extraction unlocks; locked parts greyed with where to steal them; ?unlock=all | M (20) | planned | — | `WP-S12`, `WP-S33` |

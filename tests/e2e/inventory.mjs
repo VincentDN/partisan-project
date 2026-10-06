@@ -1,6 +1,7 @@
 // The grid inventory screen in the browser (WP-S10, TAC-C-11): the rebel's 60 rounds, the weapon's magazine out by
 // keyboard, loot dragged from the cache into the backpack, a magazine emptied, loaded from loose rounds by dropping
-// them on it, and swapped back into the rifle; nothing created or lost on the way.
+// them on it, and swapped back into the rifle; nothing created or lost on the way. Then in a mission: sixty rounds,
+// hold E by a body to search it, Escape back to the fight (WP-S9).
 import assert from 'node:assert/strict';
 import {launch, open, startServer} from './browser.mjs';
 
@@ -66,6 +67,36 @@ try {
   assert.equal((await state()).mag, mag, 'the magazine is in the rifle');
   assert.equal(await carried(), 60 + loose.n, 'nothing created or lost');
   await page.screenshot({path: process.env.SHOT || '/tmp/inventory.png'});
+  await page.close();
+
+  // in a mission: the rebel fires the rounds in their kit; hold E by the dead to search them; Escape goes back
+  const m = await open(browser, server.url + 'convoy/?seed=7');
+  await m.waitForFunction(() => window.PARP_SPRITES?.ready, null, {timeout: 60000});
+  await m.locator('#start').click();
+  const kit = await m.evaluate(() => {
+    const {sim, search} = window.PARP_SPRITES,
+      p = sim.player;
+    return {kit: !!search.ammo.kitOf(p), ready: p.mags[p.weapon], reserve: p.reserve[p.weapon]};
+  });
+  assert.deepEqual(kit, {kit: true, ready: 30, reserve: 30}, 'sixty rounds in the mission too');
+  await m.evaluate(() => {
+    const {sim} = window.PARP_SPRITES,
+      p = sim.player,
+      u = sim.units.find(o => o.side === 'army');
+    Object.assign(u, {state: 'idle', alive: false, x: p.x + 1, z: p.z});
+  });
+  await m.locator('canvas').first().focus();
+  await m.keyboard.down('e');
+  await m.waitForFunction(() => window.PARP_SPRITES.search.open, null, {timeout: 60000});
+  await m.keyboard.up('e');
+  assert.equal(await m.locator('.field-search .inv-panel').count(), 2, 'your kit beside the body');
+  assert.ok((await m.locator('.field-search .inv-panel:last-child .k-weapon').count()) >= 1, 'his weapon on him');
+  if (process.env.SHOT2) await m.screenshot({path: process.env.SHOT2});
+  const t0 = await m.evaluate(() => window.PARP_SPRITES.sim.time);
+  await m.keyboard.press('Escape');
+  assert.equal(await m.evaluate(() => window.PARP_SPRITES.search.open), false, 'Escape closes it');
+  await m.waitForFunction(t => window.PARP_SPRITES.sim.time > t, t0, {timeout: 30000});
+  await m.close();
   console.log('inventory: ok');
 } finally {
   await browser.close();

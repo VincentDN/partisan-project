@@ -133,6 +133,9 @@ export class Sim {
     this.smokes = []; // {x, z, r, t, until}: block sight
     this.mines = []; // {x, z, by}: burst under the army
     this.reveals = []; // {x, z, r, t, until, kind?}: for the renderer
+    // Real ammunition (TAC-C-11, convoy/kit-ammo.js): when set, the weapons it owns fire the rounds in their fighter's
+    // grid kit and reload real magazines from it. {owns(u, wid), canReload(u, wid), reloaded(u, wid), fired(u, wid)}
+    this.ammo = null;
     this.jamUntil = -Infinity; // the army's radio is jammed until then
     this.time = 0;
     this.alarm = false; // the ambush has been sprung (or the army spotted the partisans)
@@ -465,11 +468,12 @@ export class Sim {
 
   startReload(u, wid = u.weapon) {
     const W = WEAPONS[wid];
-    if (u.reload > 0 || u.mags[wid] >= W.mag || u.reserve[wid] <= 0) return false;
+    const real = this.ammo?.owns(u, wid);
+    if (u.reload > 0 || (real ? !this.ammo.canReload(u, wid) : u.mags[wid] >= W.mag || u.reserve[wid] <= 0)) return false;
     u.reload = W.reload * (u.mods?.reload ?? 1);
     u.reloadTime = u.reload;
     u.reloading = wid;
-    if (u.reserve[wid] !== Infinity) u.reserve[wid]--;
+    if (!real && u.reserve[wid] !== Infinity) u.reserve[wid]--;
     this.sound({type: 'reload', x: u.x, z: u.z, weapon: wid, seconds: u.reload, unit: u.id, side: u.side});
     if (u !== this.player) this.say(u, 'Reloading!', 'reload', 6);
     return true;
@@ -488,6 +492,7 @@ export class Sim {
       return false;
     }
     u.mags[wid]--;
+    const mult = this.ammo?.owns(u, wid) ? this.ammo.fired(u, wid) : 1; // the round fired: its damage against the issue round
     u.cd = W.cd;
     const base = Math.atan2(tz - u.z, tx - u.x);
     u.facing = base;
@@ -516,7 +521,7 @@ export class Sim {
         z1 = u.z + dz * d;
       this.tracers.push({x0: ox, z0: oz, x1, z1, side: u.side, weapon: wid, t: this.time, unit: u.id});
       this.sound({type: 'shot', x: ox, z: oz, x1, z1, weapon: wid, side: u.side, unit: u.id});
-      this.launch(u, wid, ox, oz, x1, z1, {lob: true});
+      this.launch(u, wid, ox, oz, x1, z1, {lob: true, mult});
       return true;
     }
     // Every box the round could hit; a turret gunner sits above his own hull, so that box does not shield him.
@@ -553,7 +558,7 @@ export class Sim {
       if (along > 0 && along < best + 1.5 && Math.abs(px * dz - pz * dx) < 2.6)
         o.supp = Math.min(1, o.supp + W.supp * (u.mods?.suppOut ?? 1) * (u.bipod ? 1.25 : 1) * (o.armour ?? 1));
     }
-    this.launch(u, wid, ox, oz, x1, z1, {hit, hitBox});
+    this.launch(u, wid, ox, oz, x1, z1, {hit, hitBox, mult});
     return true;
   }
 
@@ -578,11 +583,11 @@ export class Sim {
   }
 
   /** A round leaves the muzzle: it lands after its flight time (weapon speed), or at once without one. */
-  launch(u, wid, x0, z0, x1, z1, {hit = null, hitBox = null, lob = false} = {}) {
+  launch(u, wid, x0, z0, x1, z1, {hit = null, hitBox = null, lob = false, mult = 1} = {}) {
     const W = munition(wid),
       d = Math.hypot(x1 - x0, z1 - z0),
       flight = W.speed ? Math.max(lob ? 0.45 : 0, d / W.speed) : 0;
-    const p = {x0, z0, x1, z1, t0: this.time, t1: this.time + flight, weapon: wid, side: u.side, by: u, hit, hitBox, lob};
+    const p = {x0, z0, x1, z1, t0: this.time, t1: this.time + flight, weapon: wid, side: u.side, by: u, hit, hitBox, lob, mult};
     if (flight <= 0) this.land(p);
     else this.projectiles.push(p);
   }
@@ -600,7 +605,7 @@ export class Sim {
     let surface = p.hitBox?.vehicle || p.hitBox?.target ? 'metal' : p.hitBox ? 'wall' : 'ground';
     if (p.hit && p.hit.alive && !p.hit.escaped) {
       surface = 'flesh';
-      this.damage(p.hit, by, W.damage);
+      this.damage(p.hit, by, W.damage * (p.mult ?? 1));
     } else if (p.hitBox?.target && by.side === 'partisan') this.damageTarget(p.hitBox.target, W.damage * 0.5, by);
     this.sound({type: 'impact', x: p.x1, z: p.z1, surface});
     this.impacts.push({x: p.x1, z: p.z1, surface, weapon: p.weapon, t: this.time, dx: p.x1 - p.x0, dz: p.z1 - p.z0});
@@ -812,7 +817,8 @@ export class Sim {
       u.supp = Math.max(0, u.supp - dt * 0.18 * (u.mods?.recover ?? 1));
       if (u.reload > 0 && (u.reload -= dt) <= 0) {
         u.reload = 0;
-        if (u.reloading) u.mags[u.reloading] = WEAPONS[u.reloading].mag;
+        if (u.reloading)
+          u.mags[u.reloading] = this.ammo?.owns(u, u.reloading) ? this.ammo.reloaded(u, u.reloading) : WEAPONS[u.reloading].mag;
         u.reloading = null;
       }
       decay(this, u, dt);

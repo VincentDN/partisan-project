@@ -1339,7 +1339,7 @@
    "milestone": "S",
    "size": "M",
    "bu": 20,
-   "status": "planned",
+   "status": "ready",
    "deps": [
     "WP-S8",
     "WP-S9",

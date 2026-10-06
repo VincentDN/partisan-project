@@ -17,6 +17,8 @@ import {vary, TIMES, WEATHERS} from './levels/variants.js';
 import {createSquadPicker} from './squad-picker.js';
 import {createSoundscape} from './soundscape.js';
 import {createSpriteRenderer} from './sprite-render.js';
+import {createFieldSearch} from './field-search.js';
+import {createCatalogue} from '../shared/inventory/catalogue.js';
 import {COSMETICS, buildPawn, lookFor, saveLook, resetLook, savedLook} from './sprite-art.js';
 
 mountTopBar({title: 'Partisan Tactical', scene: 'viewer'});
@@ -71,13 +73,15 @@ let sim,
   selected = [];
 function newGame() {
   const awareness = Number($('#aware').value) / 100;
+  const seed = cm?.action === 'play' ? cm.deployment.seed : Number(params.get('seed')) || Math.floor(Math.random() * 1e6);
   sim = new Sim({
     level: vary(LEVELS[levelId], conditions()),
-    seed: cm?.action === 'play' ? cm.deployment.seed : Number(params.get('seed')) || Math.floor(Math.random() * 1e6),
+    seed,
     awareness,
     squad: cm ? {...squad.classes, ...cm.classes()} : squad.classes,
     difficulty: diffId,
   });
+  search?.attach(sim, {seed});
   awarded = false;
   lastLoot = lastEarned = null;
   R.snap(sim);
@@ -203,6 +207,7 @@ let fire = false,
   pointer = null; // CSS pixels on the canvas
 const aimPoint = () => (pointer ? R.toWorld(pointer.x, pointer.y) : null);
 addEventListener('keydown', e => {
+  if (search?.key(e)) return;
   if (picker.key(e)) return;
   if (e.key.toLowerCase() === 'q' && started && !sim.outcome) {
     e.preventDefault();
@@ -440,6 +445,12 @@ const POOL = await fetch(new URL('./data/loot-pool.json', import.meta.url))
   .then(r => r.json())
   .then(d => d.items)
   .catch(() => []);
+// The grid inventory (TAC-C-11): the rebels fire the rounds in their kits, and hold E by the dead to search them.
+const CAT = await fetch(new URL('../wiki/data/items.json', import.meta.url))
+  .then(r => r.json())
+  .then(createCatalogue)
+  .catch(() => null);
+const search = CAT ? createFieldSearch(CAT, {onOpen: () => clearInput(), onClose: () => clearInput()}) : null;
 const camp = createCamp({
   get: () => squad,
   set: (next, why) => {
@@ -668,12 +679,14 @@ function frame() {
   last = now;
   if (started && !document.hidden) picker.update(elapsed);
   acc = Math.min(acc + elapsed * picker.scale, 0.25);
-  if (started && !paused && !document.hidden)
+  const live = started && !paused && !sim.outcome && !search?.open;
+  if (started && !paused && !search?.open && !document.hidden)
     while (acc >= STEP) {
       sim.step(STEP, input());
       acc -= STEP;
     }
   else acc = 0;
+  search?.update(live ? elapsed : 0, live && keys.has('e'));
   if (sim.outcome && $('#card').hidden) {
     showDebrief(sim.debrief());
     $('#card').hidden = false;
@@ -713,6 +726,7 @@ window.PARP_SPRITES = {
     return squad;
   },
   campaign: cm,
+  search,
   get slowmo() {
     return slowmo;
   },

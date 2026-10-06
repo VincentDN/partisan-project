@@ -23,6 +23,7 @@ export function sceneFor(item) {
   if (h.includes('band/')) return 'band';
   if (h.includes('map/') || h.includes('map25/')) return 'map';
   if (h.includes('wiki/')) return 'wiki';
+  if (h.includes('inventory/')) return 'inventory';
   if (h.includes('viewer/')) return 'viewer';
   if (h.includes('moodboard')) return 'moodboard';
   if (h.includes('docs/')) return 'doc';
@@ -296,6 +297,20 @@ const SCENES = {
     g.fillStyle = '#333';
     for (let i = 0; i < 3; i++) g.fillRect(60, 28 + i * 4, 24 + ((i * 13 + Math.floor(t * 1.5) * 7) % 20), 2);
   },
+  inventory(g, t) {
+    // a grid of cells; a magazine carried from the body's grid to the rig, rounds dropping into it
+    g.fillStyle = '#eee';
+    g.fillRect(0, 0, W, H);
+    g.fillStyle = '#999';
+    for (let x = 0; x <= 5; x++) g.fillRect(4 + x * 8, 4, 1, 33), g.fillRect(68 + x * 8, 4, 1, 33);
+    for (let y = 0; y <= 4; y++) g.fillRect(4, 4 + y * 8, 41, 1), g.fillRect(68, 4 + y * 8, 41, 1);
+    rifle(g, 82, 7, 0.45, '#333');
+    const k = (Math.sin(t * 1.6) + 1) / 2,
+      mx = 76 - k * 56;
+    g.fillStyle = '#111';
+    g.fillRect(mx, 14 + Math.sin(k * Math.PI) * -6, 6, 14); // the magazine
+    for (let i = 0; i < 3; i++) g.fillRect(14 + i * 6, 30 + ((t * 9 + i * 3) % 6), 2, 3); // loose rounds
+  },
   call(g, t) {
     // ringing handset
     g.fillStyle = '#eee';
@@ -486,6 +501,7 @@ const SOUNDS = {
     every: 1.1,
     play: (L, t) => (burst(L, t, {dur: 0.03, freq: 2600, q: 2, gain: 0.4}), burst(L, t + 0.5, {dur: 0.2, freq: 1500, q: 0.5, gain: 0.25})),
   },
+  inventory: {every: 1.4, play: (L, t) => (clank(L, t), tone(L, t + 0.3, {freq: 1200, dur: 0.04, gain: 0.25}))},
   call: {every: 2, play: (L, t) => tone(L, t, {freq: 425, dur: 0.9, type: 'sine', gain: 0.35})}, // a ringing tone
 };
 
