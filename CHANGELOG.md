@@ -4,6 +4,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 ## [Unreleased]
 
+### Added (inventory screen, TAC-C-11)
+- **Inventory test page** (`inventory/`, on the Nokia index; WP-S10, first cut): your rebel's kit (the rifle in hand, the chest rig's pouches, pockets, a backpack) beside a fallen soldier and a supply cache. Drag items between grids, **R** turns what you carry, drop loose rounds on a magazine to load them (the right calibre only), drop a magazine on the rifle to swap it, **Shift**-drop splits a stack, **U** unloads a magazine, **E** on the rifle ejects its magazine; tiles read like Tarkov's (`6L23 26/30 PS`). Fully keyboard-operable (Enter picks up, arrows and [ ] move, Enter drops, Escape puts back). Rounds are never created or lost.
+
 ### Added (inventory core, TAC-C-11)
 - **A Tarkov-style grid inventory, underneath** (`shared/inventory/`, WP-S8 and S43): items with their real footprints from the Equipment Wiki on grids, turned on their side, never overlapping, each in exactly one place; a rig of magazine pouches, pockets, backpacks, the dead, caches and the stash as containers. **Rounds and magazines are separate**: a magazine holds an ordered stack of real cartridges (5.45x39mm PS, BP, 7N40, ...; 7.62x54R LPS; 12-gauge buckshot; VOG-25; PG-7V) of its calibre only, up to its capacity; loose rounds stack; the chambered round sets damage and penetration; a reload swaps the actual magazine and the old one keeps what it held. **Ammunition is scarce**: a rebel deploys with 60 rounds (two full 30-round magazines for an AK) and nothing loose; the dead carry a part-spent magazine and a little more. Every weapon in the game maps to a real firearm. Not yet on screen: the grid UI (S10), looting in missions (S9) and finite ammunition in the fights (S11) come next.
 

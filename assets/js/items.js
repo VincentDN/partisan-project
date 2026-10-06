@@ -43,6 +43,12 @@ export const ITEMS = [
     help: 'Test. The same island in HD-2D style, like Octopath Traveler: pixel sprites for every soldier and vehicle standing on the 3-D world, a tilt-shift miniature frame, warm light. Click land to march.',
   },
   {
+    label: 'Inventory',
+    href: '../inventory/',
+    icon: px('1111110101111111010111111'),
+    help: 'Test. A Tarkov-style grid inventory: your rebel deploys with 60 rounds in real magazines. Loot a fallen soldier and a supply cache, load loose rounds into magazines, swap magazines in the rifle.',
+  },
+  {
     label: 'Dev tools',
     folder: true,
     icon: px('1110010010111111000111111'),

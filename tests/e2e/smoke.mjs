@@ -48,7 +48,7 @@ await check('index: the Nokia screen lies on the table and opens straight on the
   await page.reload();
   await page.waitForFunction(() => window.PARP_INDEX?.ready && window.PARP_MENU?.ready);
   const rows = await page.locator('.menu a').allInnerTexts();
-  assert.equal(rows.length, 10, 'six demos, the locked dev tools, sound, about, projects');
+  assert.equal(rows.length, 11, 'seven demos, the locked dev tools, sound, about, projects');
   assert.match(rows[0], /Weapon Modder/i);
   assert.match(rows[1], /Operator Modder/i);
   assert.match(rows[2], /Top-down Shooter Tests/i);
@@ -82,18 +82,18 @@ await check('index: the Nokia screen lies on the table and opens straight on the
   await page.keyboard.press('Escape');
   assert.equal(await page.evaluate(() => window.PARP_INDEX.open), -1, 'Escape folds it shut');
   // dev tools: seven taps unlock the folder, which then shows its tools
-  for (let i = 0; i < 6; i++) await page.locator('.menu a[data-i="6"]').click();
-  assert.match(await page.locator('.menu a[data-i="6"]').innerText(), /tap to unlock/i, 'no countdown on screen: the pings climb');
+  for (let i = 0; i < 6; i++) await page.locator('.menu a[data-i="7"]').click();
+  assert.match(await page.locator('.menu a[data-i="7"]').innerText(), /tap to unlock/i, 'no countdown on screen: the pings climb');
   assert.doesNotMatch(await page.locator('#help').innerText(), /\d+ more tap/i);
   assert.equal(await page.evaluate(() => window.PARP_INDEX.devUnlocked), false);
-  await page.locator('.menu a[data-i="6"]').click();
+  await page.locator('.menu a[data-i="7"]').click();
   assert.equal(await page.evaluate(() => window.PARP_INDEX.devUnlocked), true);
   const dev = await page.evaluate(() => window.PARP_INDEX.rows);
   for (const name of ['Equipment Wiki', 'Asset Viewer', 'Game Design Doc', 'Moodboard', 'Advanced animations'])
     assert.ok(dev.includes(name), name);
   assert.equal(await page.evaluate(() => localStorage.getItem('parp-devtools')), 'unlocked');
-  await page.locator('.menu a[data-i="6"]').click();
-  assert.equal(await page.locator('.menu a').count(), 10, 'a tap folds the tools away again');
+  await page.locator('.menu a[data-i="7"]').click();
+  assert.equal(await page.locator('.menu a').count(), 11, 'a tap folds the tools away again');
   // LAUNCH opens the demo
   await page.locator('.menu a[data-i="1"]').click();
   await Promise.all([page.waitForURL(/operator\/?$/), page.locator('#fold-1 .launch').click()]);

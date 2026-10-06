@@ -26,6 +26,7 @@ export default [
       'convoy/**',
       'band/**',
       'map/**',
+      'inventory/**',
       'wiki/**',
       'shared/**',
       'assets/js/**',

@@ -34,6 +34,7 @@ const ALLOW = [
   'band',
   'map',
   'map25',
+  'inventory',
   'wiki',
   'docs/game-design-master-doc.html',
   'docs/moodboard',
