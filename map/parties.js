@@ -21,7 +21,7 @@ const recon = BASES['generated-recon'];
 let poseData = null;
 
 /** A posed figure holding a rifle: {root, update(dt, t)}. `paint` recolours the uniform (enemies). */
-async function figure({pose, idle, rifle = 'ak74m', paint = null}) {
+async function figure3d({pose, idle, rifle = 'ak74m', paint = null}) {
   poseData ??= await (await fetch(new URL('../operator/poses.json', import.meta.url))).json();
   const root = new T.Group();
   const body = SkeletonUtils.clone(await loadTemplate(new URL(recon.model, new URL('../operator/', import.meta.url)).href));
@@ -101,7 +101,7 @@ const VEHICLES = {
   humvee: {file: 'humvee.glb', length: 4.9},
 };
 /** A vehicle laid along +x (its front), wheels on y = 0, at token scale. */
-async function vehicle(id) {
+async function vehicle3d(id) {
   const v = VEHICLES[id];
   const model = await loadModel(new URL(`../assets/models/vehicles/${v.file}`, import.meta.url).href);
   const holder = new T.Group();
@@ -122,14 +122,20 @@ async function vehicle(id) {
   return holder;
 }
 
-export async function buildParties(field, roads, layer) {
+/**
+ * Build the parties. `makers` swaps how they look: {figure(opts), vehicle(id)} (map/sprite-parties.js draws them as
+ * sprites for the 2.5-D overworld); by default they are the 3-D figures and vehicle models above.
+ */
+export async function buildParties(field, roads, layer, makers = {}) {
+  const figure = makers.figure || figure3d,
+    vehicle = makers.vehicle || vehicle3d;
   const group = new T.Group();
   group.name = 'parties';
   const parties = [];
   const ground = (x, z) => sample(field, x, z);
 
   // the player: the hooded Recon on a knoll in the Resistance's hills, rifle raised, looking out toward Fort Orion
-  const hero = await figure({pose: 'hero', idle: 'calm'});
+  const hero = await figure({pose: 'hero', idle: 'calm', side: 'partisan', crowd: 3});
   hero.root.position.set(PARTY_SPOTS.player[0], ground(...PARTY_SPOTS.player), PARTY_SPOTS.player[1]);
   hero.root.rotation.y = 1.15; // looking east toward the raiders on the ridge, three-quarters to the opening camera
   group.add(hero.root);
@@ -181,7 +187,7 @@ export async function buildParties(field, roads, layer) {
   for (const p of PATROLS) {
     const men = [];
     for (const [i, [pose, idle]] of p.men.entries()) {
-      const f = await figure({pose, idle, paint: '#8d97a3', rifle: i === 2 ? 'rpk' : 'ak74m'});
+      const f = await figure({pose, idle, paint: '#8d97a3', rifle: i === 2 ? 'rpk' : 'ak74m', side: 'army'});
       const ox = (i - (p.men.length - 1) / 2) * 2.2,
         oz = (i % 2) * 1.6;
       const x = p.at[0] + Math.cos(p.facing) * ox,

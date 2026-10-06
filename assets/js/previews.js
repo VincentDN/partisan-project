@@ -21,7 +21,7 @@ export function sceneFor(item) {
   if (h.includes('operator/')) return 'operator';
   if (h.includes('convoy/')) return 'tactical';
   if (h.includes('band/')) return 'band';
-  if (h.includes('map/')) return 'map';
+  if (h.includes('map/') || h.includes('map25/')) return 'map';
   if (h.includes('wiki/')) return 'wiki';
   if (h.includes('viewer/')) return 'viewer';
   if (h.includes('moodboard')) return 'moodboard';

@@ -4,6 +4,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 ## [Unreleased]
 
+### Added (overworld)
+- **Overworld 2.5-D test** (`map25/`, on the Nokia index): the same 3-D island in an HD-2D style like Octopath Traveler. Every soldier, rebel and vehicle is a pixel sprite from Partisan Tactical's art (paper-doll people with their rifles, vehicles repainted Invader drab), standing upright on the 3-D world, always turned to the camera, showing front, side or back by where it heads, with real pixel shadows; the band walks with a bob. The frame is a tilt-shift miniature (the top and bottom of the screen blur), with a little bloom, a warm grade and a vignette, through a longer, lower lens. Click to march works here too.
+
 ### Added (campaign)
 - **The band marches on the map** (WP-W3): click land on the Overworld Map and the Lead rebel's band walks there along the quickest route, never across the sea, quicker on roads and slower in forest, mountains and snow. A trail of dots shows the way to a marker, a note gives the destination and roughly how long it takes; the camera follows until you pan away (F brings it back), and pausing the clock stops the march. In a campaign (`map/?campaign=...`) the band's position is saved and survives a reload, and a mission left unfinished settles as withdrawn. Rules in `shared/campaign/nav.js`.
 - **Opening scene**: three choices: **Start Test Campaign** (C), **Try all demos** (E) and **Start Guided Demo** (not available yet), each with a tooltip on hover and keyboard focus.

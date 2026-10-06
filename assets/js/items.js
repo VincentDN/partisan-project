@@ -37,6 +37,12 @@ export const ITEMS = [
     help: 'Test. A Bannerlord-style campaign map of the island: provinces, towns, your party on a hill, Invader patrols and convoys on the roads.',
   },
   {
+    label: 'Overworld 2.5-D',
+    href: '../map25/',
+    icon: px('0010001110111110010001010'),
+    help: 'Test. The same island in HD-2D style, like Octopath Traveler: pixel sprites for every soldier and vehicle standing on the 3-D world, a tilt-shift miniature frame, warm light. Click land to march.',
+  },
+  {
     label: 'Dev tools',
     folder: true,
     icon: px('1110010010111111000111111'),

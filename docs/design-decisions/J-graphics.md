@@ -545,3 +545,13 @@ The 2.5-D top-down sprite look for the shooter (RimWorld style) and the retro ov
 - Cost to change: Low.
 - Revisit if: A depth-based effect returns (it would need its own antialiasing strategy, e.g. a resolved depth pre-pass).
 - Owner feedback: 5 October 2026: pixel artefacts, revert the antialiasing, remove the blur.
+
+### TAC-J-55 · An HD-2D overworld test: sprites on the 3-D island
+- Status: built (test)  ·  Packet: WP-V
+- Decision: A second overworld page (`map25/`) renders the same island, props and towns in 3-D, but every party as a sprite card (`map/sprite-parties.js`): the RimWorld paper dolls with their gun sprites and the set's vehicle side views, nearest-filtered, unlit with a warm tint, billboarded to the camera's yaw, with four facings chosen from the party's heading relative to the camera and pixel shadows cast through alpha-tested depth. The frame (`map/hd2d.js`) is a single pass over a multisampled buffer: a tilt-shift blur by screen height (not depth), a small bloom, a warm grade with lifted saturation, a vignette and grain; the camera uses a 28° lens and a steadier tilt. `map/map.js` switches to this style when its page says so, so travel, the campaign and the parties are shared.
+- Why: Owner request: a 2.5-D test that puts the shooter's sprites on the 3-D world, in an Octopath-like mix with a tilt-shift feel.
+- Alternatives rejected: three.js Sprite objects (they tilt with the camera's pitch; HD-2D sprites stay upright); lit sprite cards (they go black when the sun is behind them); a depth-based depth of field (its edge artefacts, TAC-J-54).
+- Cost / risk: The vehicle art is the set's ruined wrecks, repainted; proper side-view vehicle sprites are still to draw. Sprites are seen from the camera's side only (a card has no thickness), which suits the fixed-tilt camera.
+- Cost to change: Low.
+- Revisit if: The owner picks this style for the campaign map (then: proper vehicle sprites, walk cycles, sprite settlements).
+- Owner feedback: —

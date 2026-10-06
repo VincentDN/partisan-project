@@ -804,6 +804,40 @@ await check('rebel band: the band idles, the stash, an upgrade that plays a prom
   await page.close();
 });
 
+await check('overworld 2.5-D: every party a sprite on the 3-D island, the HD-2D frame, click to march', async () => {
+  const page = await open(browser, server.url + 'map25/');
+  await page.waitForFunction(() => window.PARP_MAP?.ready, null, {timeout: 180000});
+  const info = await page.evaluate(() => {
+    const m = window.PARP_MAP;
+    let meshes3d = 0;
+    m.parties.group.traverse(o => o.isSkinnedMesh && meshes3d++);
+    return {cards: m.sprites.cards.length, hd2d: !!m.hd2d, meshes3d, fov: m.camera.fov};
+  });
+  assert.ok(info.cards >= 10, `sprite cards: ${info.cards}`);
+  assert.equal(info.meshes3d, 0, 'no 3-D figures among the parties');
+  assert.equal(info.hd2d, true, 'the HD-2D frame');
+  assert.ok(info.fov < 35, 'the longer lens');
+  // the cards turn to the camera
+  const facing = await page.evaluate(
+    () =>
+      new Promise(r =>
+        requestAnimationFrame(() => {
+          const m = window.PARP_MAP,
+            v = new m.camera.position.constructor();
+          m.camera.getWorldDirection(v);
+          const card = m.sprites.cards[0].members[0].mesh,
+            q = card.getWorldQuaternion(new m.camera.quaternion.constructor()),
+            n = new m.camera.position.constructor(0, 0, 1).applyQuaternion(q);
+          r(n.x * -v.x + n.z * -v.z);
+        }),
+      ),
+  );
+  assert.ok(facing > 0.9, `cards face the camera (${facing.toFixed(2)})`);
+  assert.ok(await page.evaluate(() => !!window.PARP_MAP.travel.moveTo(-60, 120)), 'click to march works here too');
+  noProblems(page);
+  await page.close();
+});
+
 await check('equipment wiki: categories, search and an item card', async () => {
   const page = await open(browser, server.url + 'wiki/');
   await page.waitForFunction(() => window.PARP_WIKI?.ready, null, {timeout: 60000});

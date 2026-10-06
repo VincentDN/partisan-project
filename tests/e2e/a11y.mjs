@@ -27,6 +27,7 @@ const pages = [
   ['equipment wiki', 'wiki/', async p => p.waitForFunction(() => window.PARP_WIKI?.ready, null, {timeout: 60000})],
   ['rebel band', 'band/', async p => p.waitForFunction(() => window.PARP_BAND?.ready, null, {timeout: 60000})],
   ['overworld map', 'map/', async p => p.waitForFunction(() => window.PARP_MAP?.ready, null, {timeout: 120000})],
+  ['overworld 2.5-D', 'map25/', async p => p.waitForFunction(() => window.PARP_MAP?.ready, null, {timeout: 180000})],
   ['partisan tactical', 'convoy/', async p => p.waitForFunction(() => window.PARP_SPRITES?.ready, null, {timeout: 60000})],
   [
     'advanced animations',

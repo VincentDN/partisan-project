@@ -12,8 +12,14 @@ import {buildProps} from './props.js';
 import {buildParties} from './parties.js';
 import {mountTravel} from './travel.js';
 import {mountCampaign} from './campaign-ui.js';
+import {createSpriteLayer} from './sprite-parties.js';
+import {createHD2D} from './hd2d.js';
 
-mountTopBar({title: 'Overworld map', scene: 'viewer', overlay: true});
+// The 2.5-D overworld test (map25/) is this page in HD-2D style: sprites for every person and vehicle, a lower and
+// longer lens, warmer light and the tilt-shift frame (map/hd2d.js). Its page sets <html data-map-style="hd2d">.
+const HD2D = document.documentElement.dataset.mapStyle === 'hd2d';
+
+mountTopBar({title: HD2D ? 'Overworld 2.5-D test' : 'Overworld map', scene: 'viewer', overlay: true});
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const $ = s => document.querySelector(s);
 const stageEl = $('#stage'),
@@ -31,10 +37,10 @@ const scene = new T.Scene();
 const HAZE = new T.Color('#b9cfe2');
 scene.background = HAZE;
 scene.fog = new T.Fog(HAZE, 300, 1400);
-const camera = new T.PerspectiveCamera(40, 1, 1, 4000);
+const camera = new T.PerspectiveCamera(HD2D ? 28 : 40, 1, 1, 4000); // HD-2D: a longer lens, flatter, more diorama
 
 const sunDir = new T.Vector3(0.55, 0.75, 0.35).normalize();
-const sun = new T.DirectionalLight('#fff1d8', 2.7);
+const sun = new T.DirectionalLight(HD2D ? '#ffe0b0' : '#fff1d8', HD2D ? 3.1 : 2.7);
 sun.castShadow = true;
 sun.shadow.mapSize.setScalar(2048);
 sun.shadow.bias = -0.0004;
@@ -60,14 +66,18 @@ const townLabels = SETTLEMENTS.map(s => {
 
 // ---------- camera: Bannerlord's campaign camera (tilts toward the horizon as it comes down) ----------
 // it opens behind the player's party, looking east past it to the raiders on the ridge and Fort Orion beyond
-const cam = {x: -128, z: 38, d: 70, yaw: -1.3, tx: -128, tz: 38, td: 70, tyaw: -1.3}; // opens on the player's party
+const D0 = HD2D ? 95 : 70; // the lens is longer in HD-2D, so the camera stands further off for the same view
+const cam = {x: -128, z: 38, d: D0, yaw: -1.3, tx: -128, tz: 38, td: D0, tyaw: -1.3}; // opens on the player's party
 function placeCamera(dt) {
   const k = reduceMotion ? 1 : 1 - Math.exp(-dt * 8);
   cam.x += (cam.tx - cam.x) * k;
   cam.z += (cam.tz - cam.z) * k;
   cam.d += (cam.td - cam.d) * k;
   cam.yaw += (cam.tyaw - cam.yaw) * k;
-  const pitch = T.MathUtils.lerp(0.42, 1.22, T.MathUtils.smoothstep(cam.d, 30, 520)); // radians above the horizon: low and long up close
+  // radians above the horizon: low and long up close (HD-2D keeps a steadier, diorama-like tilt)
+  const pitch = HD2D
+    ? T.MathUtils.lerp(0.62, 1.05, T.MathUtils.smoothstep(cam.d, 40, 700))
+    : T.MathUtils.lerp(0.42, 1.22, T.MathUtils.smoothstep(cam.d, 30, 520));
   const gy = Math.max(0, sample(field, cam.x, cam.z));
   camera.position.set(
     cam.x + Math.sin(cam.yaw) * Math.cos(pitch) * cam.d,
@@ -198,7 +208,9 @@ const resize = () => {
 new ResizeObserver(resize).observe(stageEl);
 resize();
 
-const parties = await buildParties(field, props.roads, labels);
+const sprites = HD2D ? await createSpriteLayer() : null;
+const parties = await buildParties(field, props.roads, labels, sprites?.makers);
+const hd2d = HD2D ? createHD2D(renderer) : null;
 scene.add(parties.group);
 const travel = mountTravel({
   scene,
@@ -248,7 +260,9 @@ renderer.setAnimationLoop(() => {
   $('#date').textContent = campaignUi
     ? campaignUi.clockText()
     : `${day.season} ${day.n}, Year ${day.year} of the Occupation · ${String(Math.floor(day.hours)).padStart(2, '0')}:00`;
-  renderer.render(scene, camera);
+  sprites?.update(camera, worldT);
+  if (hd2d) hd2d.render(scene, camera, worldT);
+  else renderer.render(scene, camera);
 });
 
 window.PARP_MAP = {
@@ -264,5 +278,7 @@ window.PARP_MAP = {
   setSpeed,
   travel,
   campaign: campaignUi,
+  sprites,
+  hd2d,
   ready: true,
 };
