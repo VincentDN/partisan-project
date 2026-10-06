@@ -553,7 +553,7 @@
    }
   },
   "reconFoundation": {
-   "note": "Clean clothing foundation uses its own carry fit; legacy generated Recon stays unchanged.",
+   "note": "Clean clothing foundation uses its own carry fit; legacy generated Recon stays unchanged. Relaxed carry raised and forward 8 cm to clear the CM3 jacket hem (AK-74M, G3, AK-15K measured).",
    "offsets": {
     "upperarm_r": [
      0,
@@ -583,6 +583,13 @@
      "hands": {
       "r": "relaxed",
       "l": "relaxed"
+     },
+     "weapon": {
+      "hold": [
+       -0.3,
+       -0.16,
+       0.14
+      ]
      }
     },
     "hero": {

@@ -31,7 +31,12 @@ try {
   await page.mouse.click(box.x + box.width * 0.62, box.y + box.height * 0.55);
   await page.waitForFunction(() => !!window.PARP_MAP.travel.party.route, null, {timeout: 10000});
   assert.match(await page.locator('#toast').innerText(), /Marching to .+ province .+ about \d/);
-  assert.equal(await page.evaluate(() => window.PARP_MAP.scene.children.some(o => o.isLine)), true, 'the route on the ground');
+  assert.ok(
+    await page.evaluate(
+      () => window.PARP_MAP.scene.getObjectByName('route').count > 3 && window.PARP_MAP.scene.getObjectByName('route-end').visible,
+    ),
+    'the route on the ground, with its end marked',
+  );
   const still = await page.evaluate(() => ({...window.PARP_MAP.travel.party}));
   await page.waitForTimeout(600);
   const after = await page.evaluate(() => ({...window.PARP_MAP.travel.party}));
@@ -71,6 +76,7 @@ try {
   await page.evaluate(t => window.PARP_MAP.travel.update(t + 5), plan.time);
   const end = await page.evaluate(() => ({...window.PARP_MAP.travel.party}));
   assert.equal(end.route, null, 'arrived');
+  assert.equal(await page.evaluate(() => window.PARP_MAP.scene.getObjectByName('route-end').visible), false, 'the marker goes');
   assert.ok(Math.hypot(end.x - plan.end.x, end.z - plan.end.z) < 0.5);
   assert.match(await page.locator('#toast').innerText(), /arrived/);
   const s = (await saved(page)).world.party;

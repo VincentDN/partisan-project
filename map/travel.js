@@ -1,5 +1,5 @@
 // The band on the campaign map (WP-W3): click land and the player's party marches there along the quickest route
-// (shared/campaign/nav.js: never through sea, quick on roads, slow in forest and snow), shown as a dashed line to a
+// (shared/campaign/nav.js: never through sea, quick on roads, slow in forest and snow), shown as a trail of dots to a
 // marker; the camera follows it until you pan away (F brings it back). It moves on the map clock, so pause stops it.
 // In a campaign (?campaign) its position lives in the campaign save, and the map settles a mission left unfinished.
 import * as T from 'three';
@@ -38,49 +38,60 @@ export function mountTravel({scene, camera, field, terrain, stageEl, hero, cam, 
   if (campaign && !campaign.world.party) save();
   if (note) toast(note);
 
-  // ---------- the route on the ground and the marker at its end ----------
-  const lineMat = new T.LineDashedMaterial({
-    color: '#f3e3a8',
-    dashSize: 2.2,
-    gapSize: 1.4,
-    transparent: true,
-    opacity: 0.95,
-    depthTest: false,
-  });
-  let line = null;
+  // ---------- the route on the ground (a trail of dots, as Bannerlord draws one) and the marker at its end ----------
+  // drawn over the terrain and sized with the camera's distance, so it reads at every zoom
+  const MAX_DOTS = 900,
+    DOT_GAP = 3;
+  const dotMat = new T.MeshBasicMaterial({color: '#f6e7b0', transparent: true, opacity: 0.95, depthTest: false});
+  const dots = new T.InstancedMesh(new T.CircleGeometry(0.55, 12).rotateX(-Math.PI / 2), dotMat, MAX_DOTS);
+  dots.name = 'route';
+  dots.count = 0;
+  dots.renderOrder = 5;
+  dots.frustumCulled = false;
   const marker = new T.Mesh(
-    new T.RingGeometry(1.6, 2.3, 32).rotateX(-Math.PI / 2),
-    new T.MeshBasicMaterial({color: '#f3e3a8', transparent: true, opacity: 0.9, depthTest: false}),
+    new T.RingGeometry(1.5, 2.3, 32).rotateX(-Math.PI / 2),
+    new T.MeshBasicMaterial({color: '#f6e7b0', transparent: true, opacity: 0.95, depthTest: false}),
   );
-  marker.renderOrder = line?.renderOrder ?? 5;
+  marker.name = 'route-end';
+  marker.renderOrder = 5;
   marker.visible = false;
-  scene.add(marker);
+  scene.add(dots, marker);
+  let trail = []; // the dots' ground positions
+  const m4 = new T.Matrix4(),
+    q = new T.Quaternion(),
+    sc = new T.Vector3(),
+    at = new T.Vector3();
   function drawRoute() {
-    if (line) {
-      scene.remove(line);
-      line.geometry.dispose();
-      line = null;
+    trail = [];
+    if (!party.route) {
+      dots.count = 0;
+      marker.visible = false;
+      return;
     }
-    if (!party.route) return void (marker.visible = false);
-    const pts = [new T.Vector3(party.x, 0, party.z), ...party.route.points.slice(party.route.leg).map(p => new T.Vector3(p.x, 0, p.z))];
-    const draped = [];
-    for (let k = 1; k < pts.length; k++) {
+    const pts = [{x: party.x, z: party.z}, ...party.route.points.slice(party.route.leg)];
+    let carry = DOT_GAP * 0.6; // the first dot a little ahead of the band
+    for (let k = 1; k < pts.length && trail.length < MAX_DOTS; k++) {
       const a = pts[k - 1],
         b = pts[k],
-        n = Math.max(1, Math.ceil(a.distanceTo(b) / 2));
-      for (let s = k === 1 ? 0 : 1; s <= n; s++) {
-        const p = a.clone().lerp(b, s / n);
-        p.y = Math.max(0.3, sample(field, p.x, p.z)) + 0.6;
-        draped.push(p);
+        len = Math.hypot(b.x - a.x, b.z - a.z);
+      for (let d = carry; d < len && trail.length < MAX_DOTS; d += DOT_GAP) {
+        const x = a.x + ((b.x - a.x) * d) / len,
+          z = a.z + ((b.z - a.z) * d) / len;
+        trail.push(new T.Vector3(x, Math.max(0.3, sample(field, x, z)) + 0.5, z));
       }
+      carry = (((carry - len) % DOT_GAP) + DOT_GAP) % DOT_GAP;
     }
-    line = new T.Line(new T.BufferGeometry().setFromPoints(draped), lineMat);
-    line.computeLineDistances();
-    line.renderOrder = 5;
-    scene.add(line);
-    const end = draped.at(-1);
-    marker.position.set(end.x, end.y, end.z);
+    const end = pts.at(-1);
+    marker.position.set(end.x, Math.max(0.3, sample(field, end.x, end.z)) + 0.5, end.z);
     marker.visible = true;
+  }
+  /** Size the dots and the marker for the camera's distance: a few pixels across whatever the zoom. */
+  function sizeRoute() {
+    const k = T.MathUtils.clamp(cam.d / 95, 0.6, 5);
+    dots.count = trail.length;
+    for (let i = 0; i < trail.length; i++) dots.setMatrixAt(i, m4.compose(at.copy(trail[i]), q, sc.setScalar(k)));
+    dots.instanceMatrix.needsUpdate = true;
+    marker.scale.setScalar(k * (1 + 0.08 * Math.sin(performance.now() / 260)));
   }
 
   // ---------- orders: a click (not a drag) on land ----------
@@ -158,7 +169,7 @@ export function mountTravel({scene, camera, field, terrain, stageEl, hero, cam, 
       cam.tx = party.x;
       cam.tz = party.z;
     }
-    lineMat.opacity = 0.7 + 0.25 * Math.sin(performance.now() / 300);
+    sizeRoute();
   }
   return {
     nav,

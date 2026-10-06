@@ -5,6 +5,13 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 ## [Unreleased]
 
 ### Added (campaign)
+- **The band marches on the map** (WP-W3): click land on the Overworld Map and the Lead rebel's band walks there along the quickest route, never across the sea, quicker on roads and slower in forest, mountains and snow. A trail of dots shows the way to a marker, a note gives the destination and roughly how long it takes; the camera follows until you pan away (F brings it back), and pausing the clock stops the march. In a campaign (`map/?campaign=...`) the band's position is saved and survives a reload, and a mission left unfinished settles as withdrawn. Rules in `shared/campaign/nav.js`.
+- **Opening scene**: three choices: **Start Test Campaign** (C), **Try all demos** (E) and **Start Guided Demo** (not available yet), each with a tooltip on hover and keyboard focus.
+
+### Fixed (operator)
+- **The new Recon foundation's Relaxed carry** no longer sinks the rifle into the jacket hem (raised and forward 8 cm in its pose profile; measured on the AK-74M, G3 and AK-15K).
+
+### Added (campaign)
 - **Mission bridge** (WP-W2): `convoy/?campaign=<id>&encounter=<id>` plays the deployment the campaign save holds (its level, seed and fighters, the kit taken out of the stash), with no mission select, restart or practice camp; the debrief writes one result and **Return to the map** settles it once (experience, wounds, kit back, loot in, the record). A reload on the debrief shows it again; a reload mid-mission counts as withdrawn (the fighters come back wounded, nothing taken); an old link plays nothing. Practice mode is unchanged. Rules in `shared/campaign/encounter.js`; the map starts sending deployments in W8/W9.
 
 ### Added (Rebel Band)
