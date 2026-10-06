@@ -55,7 +55,7 @@ await check('index: the Nokia screen lies on the table and opens straight on the
   assert.match(rows[3], /Rebel Band/i);
   assert.match(rows[4], /Overworld Map/i);
   assert.match(rows[5], /Overworld 2.5-D/i);
-  assert.match(rows[6], /Dev tools - tap to unlock/i);
+  assert.match(rows[7], /Dev tools - tap to unlock/i);
   await page.keyboard.press('ArrowDown');
   assert.equal(await page.evaluate(() => window.PARP_INDEX.index), 1);
   // the first press folds open the explainer with a dithered preview and a big LAUNCH button

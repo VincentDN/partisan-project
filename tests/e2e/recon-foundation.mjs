@@ -95,7 +95,18 @@ try {
   await page.waitForTimeout(300);
   assert.deepEqual(await head(), still);
   await page.emulateMedia({reducedMotion: 'no-preference'});
-  await page.waitForTimeout(300);
+  // the idle sway resumes: wait for a frame that shows it (software rendering runs about one frame a second)
+  await page
+    .waitForFunction(
+      m =>
+        window.PARP_RECON_FOUNDATION.rig.bones
+          .get('head')
+          .quaternion.toArray()
+          .some((v, i) => v !== m[i]),
+      still,
+      {timeout: 20000},
+    )
+    .catch(() => {});
   assert.notDeepEqual(await head(), still);
   await page.emulateMedia({reducedMotion: 'reduce'});
   await page.getByRole('button', {name: 'Wireframe', exact: true}).click();
