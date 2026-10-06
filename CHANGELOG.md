@@ -4,6 +4,10 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 ## [Unreleased]
 
+### Added (Equipment assembly rules, WP-CM4)
+- Add a renderer-independent equipment resolver with repeated item instances, parent-owned attachments, recoverable subtree removal, socket/grid footprints and explicit compatibility reasons. Coverage restores on removal and budgets include every loaded copy.
+- Document the versioned contract for the first carrier and future editor; the existing Modder remains on its current interface.
+
 ### Added (Recon headwear and articulated hands, WP-CM3)
 - Add a complete stylized head beneath independently removable mask and cap, and cuffed gloves with thirty finger joints. The original Recon remains available; the foundation keeps its hood-free silhouette and stronger chest/neck.
 - Compare open, relaxed, rifle and support grips in the inspector. Headwear choices round-trip with saved outfits; poses select hand shapes automatically. The 5,568-triangle model preserves all 26 original body bones and records the recon-v2 extension.

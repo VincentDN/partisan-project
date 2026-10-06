@@ -1,6 +1,6 @@
 # Deep character customisation: Recon modular equipment system
 
-Roadmap updated 5 October 2026. Planning, the [source teardown/authoring contract](engineering/recon-modular-audit.md), the [clean clothing foundation](engineering/recon-clothing-foundation.md), and [removable headwear/articulated hands](engineering/recon-head-hands.md) are complete. New equipment and the assembly editor remain planned work. Work packets use the `WP-CM` prefix in [packets.json](agent-ops/packets.json).
+Roadmap updated 6 October 2026. Planning, the [source teardown/authoring contract](engineering/recon-modular-audit.md), the [clean clothing foundation](engineering/recon-clothing-foundation.md), and [removable headwear/articulated hands](engineering/recon-head-hands.md) are complete. The [equipment assembly resolver](engineering/operator-assembly.md) is also complete. New equipment and the assembly editor remain planned work. Work packets use the `WP-CM` prefix in [packets.json](agent-ops/packets.json).
 
 Build a character that can be stripped to complete clothing, then dressed with genuinely different carriers, chest rigs, belts, pouches and bags. Keep the Recon's compact proportions, layered fabric and readable gear shapes, with a hood-free base beneath optional headwear. The result should support assembling individual pieces, inspecting their fit in motion, saving outfits and eventually equipping the same items on rebels.
 
@@ -135,7 +135,7 @@ Record triangles, draw calls, decoded texture memory, compressed outfit bytes an
 
 ## 8. Sequence and work packets
 
-Sizes are repository planning units (S = 8 BU, M = 20 BU), not days or delivery promises. Each packet is bounded to its listed deliverable; split it further if the modelling or fitting work will exceed M. CM0 through CM3 are complete. CM4 is ready; later dependent packets remain planned until their gates pass.
+Sizes are repository planning units (S = 8 BU, M = 20 BU), not days or delivery promises. Each packet is bounded to its listed deliverable; split it further if the modelling or fitting work will exceed M. CM0 through CM4 are complete. CM5 is ready; later dependent packets remain planned until their gates pass.
 
 | Packet | Deliverable | Depends on | Size | Done when |
 |---|---|---|---|---|
@@ -162,7 +162,7 @@ Sizes are repository planning units (S = 8 BU, M = 20 BU), not days or delivery 
 | CM20 | Tactical sprite appearance adapter | CM19, V6 | S | Key carrier/pack/headgear silhouettes map to the established 2D paper-doll system |
 | CM21 | Expanded catalogue release gate | CM11–CM18 | M | Coverage matrix, save migrations, catalogue load/memory and representative outfits pass |
 
-**Next packet:** CM4, the item-instance and compatibility resolver. The [5,568-triangle foundation](engineering/recon-head-hands.md) now has a complete head, removable mask/cap and articulated gloves. CM5 then models the first carrier against the finished clothing.
+**Next packet:** CM5, the lightweight modular carrier. The [5,568-triangle foundation](engineering/recon-head-hands.md) supplies the fitted body; the [CM4 resolver](engineering/operator-assembly.md) supplies parent/child ownership, mount footprints, compatibility and budget checks. Author the carrier and measured mount definitions next.
 
 CM19–CM20 are integration follow-ups and do not block the 3D catalogue release. They extend the existing inventory/unlock and sprite-equipment work instead of duplicating it. CM1 should also reuse completed patches, headwear and prop work from the older C packets where it fits the new contracts.
 

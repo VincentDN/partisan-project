@@ -156,7 +156,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 |---|---|---|---|---|
 | **M0** Foundation | v0.3.0 | 10/10 | 130 BU | 100% |
 | **M1** Gun modder: real parts, three weapons | v0.4.0 | 9/11 | 143 BU | 89% |
-| **M2** Operator roster: Recon, Insurgent, Enforcer | v0.5.0 | 16/33 | 552 BU | 45% |
+| **M2** Operator roster: Recon, Insurgent, Enforcer | v0.5.0 | 17/33 | 552 BU | 46% |
 | **M3** Integration and sharing | v0.6.0 | 4/8 | 124 BU | 45% |
 | **M4** Weapon roster 2: modern and WW2 | v0.7.0 | 7/7 | 111 BU | 100% |
 | **M5** Production acceptance | v1.0.0 | 3/5 | 59 BU | 61% |
@@ -218,8 +218,8 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-CM1` | Audit Recon sources, module boundaries and skeleton contract | S (8) | done | bpy, browser | `WP-CM0` |
 | `WP-CM2` | Rebuild the clean Recon torso and clothing underneath equipment | M (20) | done | bpy, browser | `WP-CM1` |
 | `WP-CM3` | Separate Recon headwear and rebuild articulated hands | M (20) | done | bpy, browser | `WP-CM2` |
-| `WP-CM4` | Define item instances, assembly hierarchy and compatibility resolver | S (8) | ready | — | `WP-CM1` |
-| `WP-CM5` | Model the lightweight modular plate carrier | M (20) | planned | bpy, browser | `WP-CM2`, `WP-CM4` |
+| `WP-CM4` | Define item instances, assembly hierarchy and compatibility resolver | S (8) | done | — | `WP-CM1` |
+| `WP-CM5` | Model the lightweight modular plate carrier | M (20) | ready | bpy, browser | `WP-CM2`, `WP-CM4` |
 | `WP-CM6` | Model magazine, utility and radio attachment modules | M (20) | planned | bpy, browser | `WP-CM5` |
 | `WP-CM7` | Model the equipment belt and small daypack | M (20) | planned | bpy, browser | `WP-CM3`, `WP-CM5` |
 | `WP-CM8` | Build the assembly editor, undo/redo and versioned outfit saves | M (20) | planned | browser | `WP-CM4`, `WP-CM6`, `WP-CM7` |

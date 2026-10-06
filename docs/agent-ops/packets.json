@@ -2611,7 +2611,7 @@
    "milestone": "M2",
    "size": "S",
    "bu": 8,
-   "status": "ready",
+   "status": "done",
    "deps": [
     "WP-CM1"
    ],
@@ -2625,7 +2625,7 @@
     "docs/engineering/recon-head-hands.md",
     "assets/models/operators/recon-modular.rig.json"
    ],
-   "acceptance": "Pure-data tests cover parent dependencies, repeated item instances, mount footprints, conflicts, coverage masks and full-outfit triangle accounting."
+   "acceptance": "node --test tests/operator-assembly.test.mjs; immutable deterministic parent-first instances, recoverable subtree removal, socket/grid footprints, explicit compatibility reasons, coverage restoration, repeated/hidden geometry budgets and malformed-data rejection pass without renderer dependencies."
   },
   {
    "id": "WP-CM5",
@@ -2634,7 +2634,7 @@
    "milestone": "M2",
    "size": "M",
    "bu": 20,
-   "status": "planned",
+   "status": "ready",
    "deps": [
     "WP-CM2",
     "WP-CM4"
@@ -2646,7 +2646,11 @@
    ],
    "inputs": [
     "docs/character-customisation-roadmap.md",
-    "docs/engineering/generated-recon.md"
+    "docs/engineering/generated-recon.md",
+    "docs/engineering/operator-assembly.md",
+    "operator/assembly.js",
+    "tools/assets/recon-modular-contract.json",
+    "docs/engineering/recon-head-hands.md"
    ],
    "acceptance": "Front/rear bags, straps, cummerbund and placard are independently authored; empty/loaded fits pass torso poses and complete removal restores the clean jacket."
   },
