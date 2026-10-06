@@ -1203,6 +1203,17 @@
    "budget": {
     "triangles": 8000
    }
+  },
+  {
+   "id": "recon-carrier",
+   "label": "Recon lightweight plate carrier",
+   "path": "assets/models/operators/recon-carrier.glb",
+   "kind": "character",
+   "status": "real",
+   "notes": "CM5 independent 1,116-triangle pack: closed front/rear bags, shoulder straps/pads, buckles, fitted cummerbund and removable placard. Combined loaded foundation and carrier: 6,684 triangles. Rebuild with assets:recon-carrier.",
+   "budget": {
+    "triangles": 1700
+   }
   }
  ],
  "pipeline": [

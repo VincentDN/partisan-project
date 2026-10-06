@@ -34,7 +34,7 @@ function vertices(mesh) {
 test('foundation is opt-in, contains no legacy gear and preserves all 26 rest transforms', () => {
   assert.equal(DEFAULT_BASE, 'generated-recon');
   assert.equal(BASES['recon-modular'].poseProfile, 'reconFoundation');
-  assert.deepEqual(Object.keys(BASES['recon-modular'].parts), ['mask', 'cap']);
+  assert.deepEqual(Object.keys(BASES['recon-modular'].parts), ['mask', 'cap', 'carrier', 'placard']);
   assert.equal(rig.bones.size, 56);
   for (const expected of audit.current.bones) {
     const bone = rig.bones.get(expected.name);

@@ -1,11 +1,12 @@
 // Resolve data-authored rest-pose differences without changing the shared pose definitions.
-export function posesForProfile(data, profileId) {
+export function posesForProfile(data, profileId, chain = []) {
   if (!profileId) return data;
   const profile = data.profiles?.[profileId];
   if (!profile) throw new Error(`Unknown pose profile: ${profileId}`);
-  const result = structuredClone(data);
-  result.localBones = profile.localBones || [];
-  result.handShapes = structuredClone(profile.handShapes || {});
+  if (chain.includes(profileId)) throw new Error('Cyclic pose profile inheritance');
+  const result = profile.extends ? posesForProfile(data, profile.extends, [...chain, profileId]) : structuredClone(data);
+  result.localBones = profile.localBones || result.localBones || [];
+  result.handShapes = {...result.handShapes, ...structuredClone(profile.handShapes || {})};
   for (const [id, pose] of Object.entries(result.poses)) {
     for (const [bone, offset] of Object.entries(profile.offsets || {})) {
       const current = pose.bones[bone] || [0, 0, 0];

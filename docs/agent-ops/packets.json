@@ -2634,7 +2634,7 @@
    "milestone": "M2",
    "size": "M",
    "bu": 20,
-   "status": "ready",
+   "status": "done",
    "deps": [
     "WP-CM2",
     "WP-CM4"
@@ -2652,7 +2652,7 @@
     "tools/assets/recon-modular-contract.json",
     "docs/engineering/recon-head-hands.md"
    ],
-   "acceptance": "Front/rear bags, straps, cummerbund and placard are independently authored; empty/loaded fits pass torso poses and complete removal restores the clean jacket."
+   "acceptance": "npm run test:carrier; closed independently authored front/rear bags, shoulders, cummerbund and removable placard; real catalogue budgets, canonical binding, ten reference poses, 24 equipped rifle carries, removal/share reload and committed contact sheet pass. Loaded pack remains within 1,700 triangles."
   },
   {
    "id": "WP-CM6",
@@ -2661,7 +2661,7 @@
    "milestone": "M2",
    "size": "M",
    "bu": 20,
-   "status": "planned",
+   "status": "ready",
    "deps": [
     "WP-CM5"
    ],
@@ -2672,7 +2672,11 @@
    ],
    "inputs": [
     "docs/character-customisation-roadmap.md",
-    "docs/engineering/generated-recon.md"
+    "docs/engineering/generated-recon.md",
+    "docs/engineering/recon-carrier.md",
+    "operator/recon-carrier.json",
+    "operator/assembly.js",
+    "tools/assets/build-recon-carrier.py"
    ],
    "acceptance": "Three independent pouch modules mount, duplicate and remove with occupied-cell validation; radio/cable follows its owning pouch; UV and posed contact sheets pass."
   },

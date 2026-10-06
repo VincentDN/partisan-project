@@ -1,0 +1,152 @@
+{
+ "generated": "2026-10-06",
+ "triangles": 1116,
+ "bones": [
+  "root",
+  "pelvis",
+  "spine_01",
+  "spine_02",
+  "spine_03",
+  "spine_04",
+  "neck_01",
+  "neck_02",
+  "neck_03",
+  "head",
+  "clavicle_r",
+  "upperarm_r",
+  "lowerarm_r",
+  "hand_r",
+  "clavicle_l",
+  "upperarm_l",
+  "lowerarm_l",
+  "hand_l",
+  "thigh_r",
+  "calf_r",
+  "foot_r",
+  "ball_r",
+  "thigh_l",
+  "calf_l",
+  "foot_l",
+  "ball_l"
+ ],
+ "meshes": [
+  {
+   "node": "SK_LC_Buckle_L",
+   "triangles": 12,
+   "materials": [
+    "M_CM_CarrierHardware"
+   ]
+  },
+  {
+   "node": "SK_LC_Buckle_R",
+   "triangles": 12,
+   "materials": [
+    "M_CM_CarrierHardware"
+   ]
+  },
+  {
+   "node": "SK_LC_Cummerbund_L",
+   "triangles": 104,
+   "materials": [
+    "M_CM_Carrier"
+   ]
+  },
+  {
+   "node": "SK_LC_Cummerbund_R",
+   "triangles": 104,
+   "materials": [
+    "M_CM_Carrier"
+   ]
+  },
+  {
+   "node": "SK_LC_Front",
+   "triangles": 268,
+   "materials": [
+    "M_CM_Carrier",
+    "M_CM_CarrierWebbing"
+   ]
+  },
+  {
+   "node": "SK_LC_Pad_L",
+   "triangles": 20,
+   "materials": [
+    "M_CM_Carrier"
+   ]
+  },
+  {
+   "node": "SK_LC_Pad_R",
+   "triangles": 20,
+   "materials": [
+    "M_CM_Carrier"
+   ]
+  },
+  {
+   "node": "SK_LC_Placard",
+   "triangles": 236,
+   "materials": [
+    "M_CM_Placard",
+    "M_CM_CarrierWebbing"
+   ]
+  },
+  {
+   "node": "SK_LC_Rear",
+   "triangles": 268,
+   "materials": [
+    "M_CM_Carrier",
+    "M_CM_CarrierWebbing"
+   ]
+  },
+  {
+   "node": "SK_LC_Shoulder_L",
+   "triangles": 36,
+   "materials": [
+    "M_CM_CarrierWebbing"
+   ]
+  },
+  {
+   "node": "SK_LC_Shoulder_R",
+   "triangles": 36,
+   "materials": [
+    "M_CM_CarrierWebbing"
+   ]
+  }
+ ],
+ "materials": [
+  {
+   "name": "M_CM_CarrierHardware",
+   "baseColor": [
+    1,
+    1,
+    1
+   ],
+   "textured": true
+  },
+  {
+   "name": "M_CM_Carrier",
+   "baseColor": [
+    1,
+    1,
+    1
+   ],
+   "textured": true
+  },
+  {
+   "name": "M_CM_CarrierWebbing",
+   "baseColor": [
+    1,
+    1,
+    1
+   ],
+   "textured": true
+  },
+  {
+   "name": "M_CM_Placard",
+   "baseColor": [
+    1,
+    1,
+    1
+   ],
+   "textured": true
+  }
+ ]
+}

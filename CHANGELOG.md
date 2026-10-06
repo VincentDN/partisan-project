@@ -4,6 +4,10 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 ## [Unreleased]
 
+### Added (Lightweight plate carrier, WP-CM5)
+- Add an independent 1,116-triangle carrier with front/rear bags, straps, pads, cummerbund and removable front placard. Compare clean clothing and both carrier states in the inspector or Modder; fabric colours and carrier choices round-trip in saved links.
+- Fit carrier-only carry poses, preserve the existing body, and add asset-backed assembly definitions, closed-surface checks and real rifle clearance tests.
+
 ### Added (Equipment assembly rules, WP-CM4)
 - Add a renderer-independent equipment resolver with repeated item instances, parent-owned attachments, recoverable subtree removal, socket/grid footprints and explicit compatibility reasons. Coverage restores on removal and budgets include every loaded copy.
 - Document the versioned contract for the first carrier and future editor; the existing Modder remains on its current interface.

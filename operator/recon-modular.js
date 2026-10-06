@@ -13,17 +13,48 @@ export function modularRecon(weaponSlot) {
     id: 'recon-modular',
     label: 'Recon · foundation',
     status: 'available',
-    description: 'Hood-free clothing foundation with a broader chest and neck, articulated gloves and removable face covering and cap.',
+    description:
+      'Hood-free clothing foundation with a broader chest and neck, articulated gloves, removable face covering/cap and a fitted lightweight plate carrier.',
     model: '../assets/models/operators/recon-modular.glb',
-    packs: [],
+    packs: ['../assets/models/operators/recon-carrier.glb'],
     poseProfile: 'reconFoundation',
+    equippedPoseProfile: {slot: 'carrier', options: ['light', 'placard'], profile: 'reconCarrier'},
     // Measured palm targets and upward knuckle direction keep the wrist below the stock.
     grip: {
       palms: {r: [0, 0.078, 0.024], l: [0, 0.078, 0.024]},
       grips: {grip: {at: [-0.028, -0.058, 0], finger: [0.65, 0.76, 0], side: [-0.76, 0.65, 0]}},
     },
-    parts: {mask: {nodes: ['SK_CM_Mask']}, cap: {nodes: ['SK_CM_HeadCap']}},
+    parts: {
+      mask: {nodes: ['SK_CM_Mask']},
+      cap: {nodes: ['SK_CM_HeadCap']},
+      carrier: {
+        nodes: [
+          'SK_LC_Front',
+          'SK_LC_Rear',
+          'SK_LC_Shoulder_L',
+          'SK_LC_Shoulder_R',
+          'SK_LC_Pad_L',
+          'SK_LC_Pad_R',
+          'SK_LC_Buckle_L',
+          'SK_LC_Buckle_R',
+          'SK_LC_Cummerbund_L',
+          'SK_LC_Cummerbund_R',
+        ],
+      },
+      placard: {nodes: ['SK_LC_Placard']},
+    },
     slots: [
+      {
+        id: 'carrier',
+        label: 'Plate carrier',
+        camera: 'torso',
+        default: 'none',
+        options: [
+          {id: 'none', label: 'Clean clothing', show: []},
+          {id: 'light', label: 'Lightweight carrier', show: ['carrier']},
+          {id: 'placard', label: 'Carrier + front placard', show: ['carrier', 'placard']},
+        ],
+      },
       {
         id: 'mask',
         label: 'Face covering',
@@ -53,8 +84,14 @@ export function modularRecon(weaponSlot) {
       zone('neck', 'Collar', ['M_CM_Neck'], 'head'),
       zone('gloves', 'Gloves', ['M_CM_Gloves']),
       zone('boots', 'Boots', ['M_GR_boots'], 'legs'),
+      zone('carrier', 'Carrier fabric', ['M_CM_Carrier']),
+      zone('webbing', 'Carrier webbing', ['M_CM_CarrierWebbing']),
+      zone('placard', 'Front placard', ['M_CM_Placard']),
     ],
-    presets: [{id: 'foundation', label: 'Clean clothing', state: {}}],
+    presets: [
+      {id: 'foundation', label: 'Clean clothing', state: {carrier: 'none'}},
+      {id: 'light-carrier', label: 'Light carrier', state: {carrier: 'placard'}},
+    ],
     defaults: {pose: 'relaxed'},
   };
 }

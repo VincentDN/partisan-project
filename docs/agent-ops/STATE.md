@@ -15,16 +15,17 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json); full plan: [ta
 
 ## Resume here
 
-1. CM4 is complete. Read docs/engineering/operator-assembly.md, operator/assembly.js and operator/assembly-schema.js. Pure-data resolution validates ownership, repeated copies, mounted footprints, fit/skeleton versions, exclusions, coverage and full geometry cost. Detachment returns a recoverable subtree draft. The current Modder interface is unchanged.
-2. Next packet is CM5: model the lightweight plate carrier against the CM3 foundation. Author separate front/rear plate bags, shoulders, cummerbund and placard, then measured asset-backed definitions/mounts. Test empty/loaded poses and clean removal. Synthetic tests/fixtures/operator-assembly.mjs dimensions are examples, not production fits.
-3. The opt-in foundation stays 5,568 triangles: hood-free, broader chest/neck, complete stylized head, removable mask/cap and articulated gloves. Inspect http://localhost:8132/operator/foundation.html or operator/#base=recon-modular. The original/current comparison remains available.
-4. Preserve recon-v2's 26 canonical body frames plus 30 finger joints, local finger rotations, measured palm targets and CM2 collar/wrist constraints. Rebuild with assets:recon-foundation and BLENDER set; generated .blend stays ignored.
-5. Keep CM5 definitions compatible with the version 1 assembly contract. CM8 will connect the renderer/editor, undo and URL/save migration; do not replace existing saves prematurely. Work remains on codex/generated-operator-equipment; no main merge/push under the protection rule.
+1. CM5 is complete: independent lightweight carrier, removable placard, four textured materials, fitted carrier pose profile and measured CM4 catalogue. Read docs/engineering/recon-carrier.md, operator/recon-carrier.json and tools/assets/build-recon-carrier.mjs. CM4 was pushed after the owner's explicit authorization.
+2. Next packet is CM6: independent magazine, utility and radio pouches. Use the measured front/rear mount surfaces, implement posed pouch skin binding, occupied-cell checks and owned radio/cable geometry. The current grids are asset-rest coordinates; do not attach rigid pouches to an assumed bone frame.
+3. The opt-in foundation stays 5,568 triangles: hood-free, broader chest/neck, stylized head, removable mask/cap and articulated gloves. The entire carrier pack adds 1,116 triangles (6,684 total loaded); placard visibility adds no separate geometry cost. Default remains bare. Inspect operator/foundation.html or operator/#base=recon-modular&carrier=placard.
+4. Preserve recon-v2's 26 canonical body frames plus 30 finger joints, local finger rotations, measured palm targets and CM2 collar/wrist constraints. Source/body geometry is unchanged. Rebuild with assets:recon-carrier and BLENDER set; generated .blend stays ignored.
+5. Keep equipment compatible with the version 1 assembly contract. CM8 will connect the full renderer/editor, undo and URL/save migration. Work remains on codex/generated-operator-equipment; no main merge/push under the protection rule.
 
 ## Known limits
 
-- CM4 has no asset-backed equipment catalogue or visible new carrier. It validates authored data; it cannot prove animation clearance, repair missing clothing, apply material finishes or perform gameplay inventory transactions. Unknown items remain in the caller's draft for recovery.
-- CM3 face/eyes are stylized flat materials without facial animation. Prior geometry/browser checks cover 24 foundation and 88 existing-Recon rifle carries, not all attachments or transition frames. CM4 changes no geometry or pose code.
-- Full-suite and build results are recorded in the latest handoff. Two prior downloader failures are unrelated to CM4: standalone generated-file mismatch and missing python3 on Windows PATH.
-- Built site remains above the inherited 90 MB target (approximately 245.8 MB). Inspection reference models contribute to this total.
+- CM5 includes carrier/placard only; pouches and arbitrary mounted attachment clearance are not implemented. CM4 validates authored data, not physical fit. Unknown items stay recoverable in the caller's draft.
+- CM3 face/eyes are stylized flat materials without facial animation. CM5 checks cover 24 equipped carries, 24 bare-foundation carries and 88 existing-Recon carries. Carrier/jacket vertex samples use a 5 mm garment tolerance; these do not certify all triangle crossings, attachments or transition frames.
+- Full units: 237/239 pass. The two prior downloader failures remain: standalone generated-file mismatch and missing python3 on Windows PATH. Configured typecheck, lint, changed-file formatting, carrier acceptance and site build/check pass.
+- Built site remains above the inherited 90 MB target (246.2 MB). Inspection reference models contribute to this total.
+- The local sandbox launcher fails while enumerating volume V:. Escalated authorized local commands and browser checks work. No push approval is outstanding.
 - No usage-meter values were available; no budget calibration was invented.

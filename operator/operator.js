@@ -4,6 +4,7 @@
 // State is one flat object {base, slot ids, 'z.<zone>' colours, pose, idle} serialised to the URL hash
 // (only values that differ from the base's defaults), so every look is a shareable link.
 import * as T from 'three';
+import {bindPack} from './bind-pack.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
 import {shareCardDataUrl} from './share-card.js';
@@ -58,40 +59,11 @@ const baseCache = new Map(); // id -> {scene, rig}: switching back is instant
 const triangles = mesh => (mesh.geometry.index ? mesh.geometry.index.count : mesh.geometry.attributes.position.count) / 3;
 // Multi-primitive nodes load as Group(SK_x) > SkinnedMesh(SK_x_2): the outermost SK_ ancestor is the node.
 const nodeOf = mesh => {
+  if (mesh.userData.packPart) return mesh.userData.packPart;
   let name = null;
   for (let o = mesh; o; o = o.parent) if (o.name?.startsWith('SK_')) name = o.name;
   return name;
 };
-
-// An extension pack ships the shared armature plus new skinned meshes. Re-bind each mesh to the base's own
-// bones by name (same rest pose, so the pack's inverse bind matrices stay valid) and parent it to the base's
-// Armature node, so posing, idle and visibility treat pack meshes exactly like the original ones.
-function bindPack(packScene, scene, baseRig) {
-  const armature = scene.getObjectByName('Armature') || scene;
-  const baseMaterials = new Map();
-  scene.traverse(o => {
-    if (o.isMesh && !baseMaterials.has(o.material.name)) baseMaterials.set(o.material.name, o.material);
-  });
-  const skinned = [];
-  packScene.traverse(o => {
-    if (o.isSkinnedMesh) skinned.push(o);
-  });
-  for (const mesh of skinned) {
-    const bones = mesh.skeleton.bones.map(b => baseRig.bones.get(b.name));
-    if (bones.some(b => !b)) throw new Error(`pack mesh ${mesh.name} uses bones the base does not have`);
-    // A pack material named like one of the base's shares the base instance, so colour zones paint both.
-    const shared = baseMaterials.get(mesh.material.name);
-    if (shared) mesh.material = shared;
-    else baseMaterials.set(mesh.material.name, mesh.material); // also share between pack meshes (e.g. hair, moustache, beard)
-    mesh.bind(new T.Skeleton(bones, mesh.skeleton.boneInverses), mesh.bindMatrix);
-    // The base's skin material uses vertex colours; a pack mesh without a colour attribute would render black.
-    if (mesh.material.vertexColors && !mesh.geometry.attributes.color) {
-      const n = mesh.geometry.attributes.position.count;
-      mesh.geometry.setAttribute('color', new T.BufferAttribute(new Float32Array(n * 3).fill(1), 3));
-    }
-    armature.add(mesh);
-  }
-}
 
 async function loadBase(id) {
   const next = BASES[id] || BASES[DEFAULT_BASE];
@@ -223,6 +195,12 @@ function applyEquipment() {
   $('#tris-bar').style.width = Math.min(100, (tris / TRIANGLE_BUDGET) * 100) + '%';
 }
 function applyAll(blendSeconds = 0) {
+  const fit = base.equippedPoseProfile;
+  const profile = fit?.options.includes(state[fit.slot]) ? fit.profile : base.poseProfile;
+  if (rig.profileId !== profile) {
+    rig.data = posesForProfile(poseData, profile);
+    rig.profileId = profile;
+  }
   applyEquipment();
   for (const zone of base.zones) paintZone(zone, state[`z.${zone.id}`]);
   rig.setPose(state.pose, blendSeconds);
