@@ -20,7 +20,7 @@ const el = (tag, cls, text) => {
 let catalogue = null;
 // a failed download is forgotten, so the next open tries again
 const loadCatalogue = () =>
-  (catalogue ||= fetch(new URL('../wiki/data/items.json', import.meta.url))
+  (catalogue ||= fetch(new URL('../convoy/data/inventory-items.json', import.meta.url))
     .then(r => r.json())
     .then(d => createCatalogue(d))
     .catch(e => {

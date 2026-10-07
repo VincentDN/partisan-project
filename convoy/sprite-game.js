@@ -450,7 +450,7 @@ const POOL = await fetch(new URL('./data/loot-pool.json', import.meta.url))
   .then(d => d.items)
   .catch(() => []);
 // The grid inventory (TAC-C-11): the rebels fire the rounds in their kits, and hold E by the dead to search them.
-const CAT = await fetch(new URL('../wiki/data/items.json', import.meta.url))
+const CAT = await fetch(new URL('./data/inventory-items.json', import.meta.url))
   .then(r => r.json())
   .then(createCatalogue)
   .catch(() => null);

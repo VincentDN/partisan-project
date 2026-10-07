@@ -3742,7 +3742,7 @@
    "milestone": "QA",
    "size": "S",
    "bu": 8,
-   "status": "ready",
+   "status": "done",
    "deps": [
     "WP-QA2"
    ],

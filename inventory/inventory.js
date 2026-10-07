@@ -5,7 +5,7 @@ import {createKit} from '../shared/inventory/kit.js';
 import {roundsCarried} from '../shared/inventory/ammo.js';
 import {mountInventory} from '../shared/inventory/grid-ui.js';
 
-const data = await (await fetch('../wiki/data/items.json')).json();
+const data = await (await fetch('../convoy/data/inventory-items.json')).json();
 const cat = createCatalogue(data);
 const kit = createKit(cat);
 const rebel = kit.issue('ak74m');
