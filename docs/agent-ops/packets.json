@@ -3743,15 +3743,13 @@
    "size": "S",
    "bu": 8,
    "status": "done",
-   "deps": [
-    "WP-QA2"
-   ],
+   "deps": [],
    "agent": "any",
    "needs": [],
    "inputs": [
     "docs/quality-roadmap.md"
    ],
-   "acceptance": "A generated inventory catalogue under 200 KB that builds in under 50 ms; missions, the map kit screen and the inventory page use it; the wiki keeps the full one."
+   "acceptance": "A generated inventory catalogue under 200 KB that builds in under 50 ms; missions, the map kit screen and the inventory page use it; the wiki keeps the full one. Its size and build-time budget live in tests/inventory-catalogue.test.mjs."
   },
   {
    "id": "WP-QA13",

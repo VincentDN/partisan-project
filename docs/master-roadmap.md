@@ -400,7 +400,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-QA9` | Firefox and WebKit smoke runs | S (8) | ready | — | `WP-QA3` |
 | `WP-QA10` | Memory leak hunt: restarts, overlays, map and mission trips | S (8) | ready | — | — |
 | `WP-QA11` | Sim hot path: cached static boxes, a spatial grid for rays and movement, no per-step allocation | M (20) | ready | — | `WP-QA18`, `WP-QA2` |
-| `WP-QA12` | Compact inventory catalogue: only the kinds the inventory uses | S (8) | done | — | `WP-QA2` |
+| `WP-QA12` | Compact inventory catalogue: only the kinds the inventory uses | S (8) | done | — | — |
 | `WP-QA13` | Asset diet: mission terrain at drawn size in WebP; the site trimmed to what pages load | M (20) | ready | — | `WP-QA2` |
 | `WP-QA14` | Mission renderer: fog of war at a lower rate or incremental, static layers cached | M (20) | ready | — | `WP-QA2` |
 | `WP-QA15` | Overworld map budget: lazy 3-D figures, texture sizes, draw calls | S (8) | ready | — | `WP-QA2` |
