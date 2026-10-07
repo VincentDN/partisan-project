@@ -18,10 +18,15 @@ const el = (tag, cls, text) => {
   return e;
 };
 let catalogue = null;
+// a failed download is forgotten, so the next open tries again
 const loadCatalogue = () =>
   (catalogue ||= fetch(new URL('../wiki/data/items.json', import.meta.url))
     .then(r => r.json())
-    .then(d => createCatalogue(d)));
+    .then(d => createCatalogue(d))
+    .catch(e => {
+      catalogue = null;
+      throw e;
+    }));
 
 /** {campaign, save, names: {id: name}, onClose} -> {open(fighterId), close(), isOpen} */
 export function createKitScreen({campaign, save, names = {}, onClose = () => {}}) {
@@ -45,7 +50,13 @@ export function createKitScreen({campaign, save, names = {}, onClose = () => {}}
   let isOpen = false;
 
   async function open(id) {
-    const cat = await loadCatalogue();
+    let cat;
+    try {
+      cat = await loadCatalogue();
+    } catch {
+      document.querySelector('.band-panel .note')?.replaceChildren('The kit list could not be loaded. Check the connection and try again.');
+      return;
+    }
     const f = campaign.band.fighters[id];
     if (!f) return;
     // ids made here never meet a mission's (those start m<seed>-) or an earlier visit's

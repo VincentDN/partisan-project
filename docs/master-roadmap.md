@@ -174,7 +174,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | **S** Partisan Tactical: extraction PvE, campaign and gated online research | v0.8.0 | 15/43 | 653 BU | 35% |
 | **V** Graphics: 2.5D top-down sprites for the shooter (the overworld moved to W) | v0.9.0 | 2/20 | 251 BU | 11% |
 | **W** World campaign: the Bannerlord loop (map, missions, loot, upgrades) | v0.10.0 | 4/26 | 359 BU | 14% |
-| **QA** Bug hunt and optimisation (docs/quality-roadmap.md) | — | 0/19 | 226 BU | 0% |
+| **QA** Bug hunt and optimisation (docs/quality-roadmap.md) | — | 2/19 | 226 BU | 7% |
 
 ### M0 · Foundation
 
@@ -388,8 +388,8 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 
 | ID | Packet | Size | Status | Needs | Depends on |
 |---|---|---|---|---|---|
-| `WP-QA18` | Golden replays: recorded input streams per level; same seed and inputs give the same debrief | S (8) | ready | — | — |
-| `WP-QA1` | Fuzz harness in the repo: randomised fights over every level, variant and difficulty with invariants | S (8) | ready | — | — |
+| `WP-QA18` | Golden replays: recorded input streams per level; same seed and inputs give the same debrief | S (8) | done | — | — |
+| `WP-QA1` | Fuzz harness in the repo: randomised fights over every level, variant and difficulty with invariants | S (8) | done | — | — |
 | `WP-QA2` | Performance budgets: sim step and page-load benchmarks with a stored baseline | S (8) | ready | — | — |
 | `WP-QA3` | Every browser suite fails on a console error or an unhandled rejection | XS (3) | ready | — | — |
 | `WP-QA4` | Campaign save hunt: fuzz normalize and migrate, two tabs, crash between result and settle, quota | M (20) | ready | — | `WP-QA1` |

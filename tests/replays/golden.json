@@ -1,0 +1,66 @@
+{
+  "convoy#1": {
+    "digest": "f19e2c941b1227df",
+    "summary": "lost at 44.433s, 1 down, 0 rebels standing"
+  },
+  "convoy#2": {
+    "digest": "08b9187d8c70085e",
+    "summary": "lost at 37.4s, 0 down, 0 rebels standing"
+  },
+  "compound#1": {
+    "digest": "bc14d81d0737da3c",
+    "summary": "running at 90s, 0 down, 3 rebels standing"
+  },
+  "compound#2": {
+    "digest": "a5a575b6ae31b00c",
+    "summary": "running at 90s, 0 down, 3 rebels standing"
+  },
+  "cave#1": {
+    "digest": "ff9c882a296aa453",
+    "summary": "running at 90s, 2 down, 2 rebels standing"
+  },
+  "cave#2": {
+    "digest": "4fa898f2df3d702c",
+    "summary": "lost at 50.283s, 3 down, 0 rebels standing"
+  },
+  "forest-road#1": {
+    "digest": "69a6b1966c95b85c",
+    "summary": "running at 90s, 1 down, 3 rebels standing"
+  },
+  "forest-road#2": {
+    "digest": "9d2dc9435ff789c0",
+    "summary": "lost at 39.033s, 2 down, 0 rebels standing"
+  },
+  "checkpoint#1": {
+    "digest": "07099d89c9d9e2f9",
+    "summary": "running at 90s, 1 down, 1 rebels standing"
+  },
+  "checkpoint#2": {
+    "digest": "d81506ed6fa69dbb",
+    "summary": "lost at 48.933s, 0 down, 0 rebels standing"
+  },
+  "village#1": {
+    "digest": "516abaa7b9755050",
+    "summary": "running at 90s, 2 down, 3 rebels standing"
+  },
+  "village#2": {
+    "digest": "bca5c77befc1bf11",
+    "summary": "lost at 52.05s, 0 down, 0 rebels standing"
+  },
+  "hilltop#1": {
+    "digest": "6a04cbfb3dedc667",
+    "summary": "running at 90s, 0 down, 3 rebels standing"
+  },
+  "hilltop#2": {
+    "digest": "ba77b0937781a895",
+    "summary": "running at 90s, 0 down, 3 rebels standing"
+  },
+  "convoy#1+kits": {
+    "digest": "35f71a2484c32c6f",
+    "summary": "lost at 53.817s, 1 down, 0 rebels standing"
+  },
+  "compound#1+kits": {
+    "digest": "01f473a7cfdb10d8",
+    "summary": "lost at 89.25s, 0 down, 0 rebels standing"
+  }
+}

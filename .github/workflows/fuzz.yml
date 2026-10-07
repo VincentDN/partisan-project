@@ -1,0 +1,24 @@
+# The long fuzz run (WP-QA1): every level, twelve seeds, two and a half simulated minutes each, with real ammunition
+# on both sides; fails on any broken invariant (tests/fuzz/fuzz.mjs). A short run is part of npm test on every push.
+name: Nightly fuzz
+
+on:
+  schedule:
+    - cron: '17 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  fuzz:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run fuzz -- --seeds 12 --seconds 150

@@ -21,7 +21,9 @@
     "test:comparison": "node tests/e2e/recon-comparison.mjs",
     "test:teardown": "node --test tests/recon-audit.test.mjs && node tests/e2e/recon-teardown.mjs",
     "assets:recon-foundation": "node tools/assets/build-recon-foundation.mjs",
-    "test:foundation": "node --test tests/recon-foundation.test.mjs && node tests/e2e/recon-foundation.mjs"
+    "test:foundation": "node --test tests/recon-foundation.test.mjs && node tests/e2e/recon-foundation.mjs",
+    "fuzz": "node tests/fuzz/fuzz.mjs",
+    "replays": "node tests/replays/replay.mjs --write"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",
