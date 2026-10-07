@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {createRequire} from 'node:module';
-import {launch, open, startServer} from './browser.mjs';
+import {launch, open, startServer, frames} from './browser.mjs';
 assert.ok(
   fs
     .readFileSync('inbound/Models/PARP_Recon_hooded_model_v01_05.glb')
@@ -49,10 +49,10 @@ try {
   );
   await page.getByRole('button', {name: 'Wireframe', exact: true}).click();
   await page.locator('#environment').selectOption('studio');
-  await page.waitForTimeout(500);
+  await frames(page, 2);
   await page.locator('#environment').selectOption('outdoor');
   await page.getByRole('button', {name: 'Full body', exact: true}).click();
-  await page.waitForTimeout(700);
+  await frames(page, 3);
   if (process.env.COMPARISON_SHOT) await page.screenshot({path: process.env.COMPARISON_SHOT, fullPage: true});
   await page.getByRole('button', {name: 'Face', exact: true}).click();
   await page.reload();

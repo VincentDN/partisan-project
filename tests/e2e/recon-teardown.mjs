@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {createRequire} from 'node:module';
 import sharp from 'sharp';
-import {launch, open, startServer} from './browser.mjs';
+import {launch, open, startServer, frames} from './browser.mjs';
 const server = await startServer(8193),
   browser = await launch();
 try {
@@ -78,7 +78,7 @@ try {
         },
         [mode, camera],
       );
-      await page.waitForTimeout(450);
+      await frames(page, 3);
       const raw = await page.locator('section').screenshot();
       const tile = await sharp(raw).resize(900, 660, {fit: 'contain', background: '#11170f'}).toBuffer();
       const title = Buffer.from(

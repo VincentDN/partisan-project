@@ -3,7 +3,7 @@
 //   node tests/e2e/smoke.mjs --url https://vincentdn.github.io/partisan-project/     (a live deployment)
 //   ROOT=_site node tests/e2e/smoke.mjs   (the built artifact)
 import assert from 'node:assert/strict';
-import {launch, open, startServer} from './browser.mjs';
+import {launch, open, startServer, frames} from './browser.mjs';
 import {checkSquadControl} from './squad-control.mjs';
 
 import {execFileSync} from 'node:child_process';
@@ -61,7 +61,7 @@ await check('index: the Nokia screen lies on the table and opens straight on the
   // the first press folds open the explainer with a dithered preview and a big LAUNCH button
   await page.keyboard.press('3');
   assert.equal(await page.evaluate(() => window.PARP_INDEX.open), 2, 'explainer open');
-  await page.waitForTimeout(400);
+  await frames(page, 3);
   const ink = await page.locator('#fold-2 canvas').evaluate(c => {
     const d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data;
     let dark = 0;
@@ -346,7 +346,17 @@ await check('operator: idle animation moves bones; reduced motion freezes them',
   await page.waitForFunction(() => window.PARP_OPERATOR?.ready, null, {timeout: 60000});
   const head = () => page.evaluate(() => window.PARP_OPERATOR.rig.bones.get('head').quaternion.toArray());
   const a = await head();
-  await page.waitForTimeout(1500);
+  await page
+    .waitForFunction(
+      a =>
+        window.PARP_OPERATOR.rig.bones
+          .get('head')
+          .quaternion.toArray()
+          .some((v, i) => v !== a[i]),
+      a,
+      {timeout: 30000},
+    )
+    .catch(() => {});
   const b = await head();
   assert.ok(
     a.some((v, i) => Math.abs(v - b[i]) > 1e-5),
@@ -356,7 +366,7 @@ await check('operator: idle animation moves bones; reduced motion freezes them',
   const still = await open(browser, server.url + 'operator/#base=base&idle=alert', {reducedMotion: 'reduce'});
   await still.waitForFunction(() => window.PARP_OPERATOR?.ready, null, {timeout: 60000});
   const c = await still.evaluate(() => window.PARP_OPERATOR.rig.bones.get('head').quaternion.toArray());
-  await still.waitForTimeout(1200);
+  await frames(still, 5);
   const d = await still.evaluate(() => window.PARP_OPERATOR.rig.bones.get('head').quaternion.toArray());
   assert.deepEqual(c, d);
   await still.close();
@@ -536,7 +546,7 @@ await check('art style lab: every style renders over the operator and switching 
   const before = await page.evaluate(() => window.PARP_OPERATOR.meshes.map(m => m.material.uuid).join());
   for (const id of await page.locator('#styles button').evaluateAll(bs => bs.map(b => b.dataset.style))) {
     await page.locator(`#styles button[data-style="${id}"]`).click();
-    await page.waitForTimeout(400);
+    await page.waitForFunction(id => location.href.includes(`lab=${id}`), id, {timeout: 30000});
     assert.equal(await page.locator(`#styles button[data-style="${id}"]`).getAttribute('aria-pressed'), 'true');
     assert.match(page.url(), new RegExp(`lab=${id}`));
   }
@@ -689,7 +699,7 @@ await check('2.5-D sprite view: the ambush draws with the placeholder art and pl
     const v = sim.vehicles[1];
     for (let i = 0; i < 60; i++) sim.step(1 / 60, {ax: v.x, az: v.z, fire: true});
   });
-  await page.waitForTimeout(600);
+  await frames(page, 3);
   const r = await page.evaluate(() => {
     const {sim, renderer} = window.PARP_SPRITES;
     const c = document.querySelector('#view'),
@@ -756,7 +766,7 @@ await check('rebel band: the band idles, the stash, an upgrade that plays a prom
   // the pawn idles: its pixels change from one moment to the next
   const pixels = () => page.locator('#pawn').evaluate(c => c.toDataURL());
   const still = await pixels();
-  await page.waitForTimeout(500);
+  await page.waitForFunction(s => document.querySelector('#pawn').toDataURL() !== s, still, {timeout: 30000}).catch(() => {});
   assert.notEqual(await pixels(), still, 'the pawn breathes');
   // the upgrade buttons sit right under the character, before the abilities
   assert.equal(await page.evaluate(() => document.querySelector('#pawn').nextElementSibling.id), 'ups');

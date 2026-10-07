@@ -2,7 +2,7 @@
 // the ground; the band walks it on the map clock and the camera follows; open sea is refused; in a campaign the
 // position is saved and survives a reload; without ?campaign nothing is saved.
 import assert from 'node:assert/strict';
-import {launch, open, startServer} from './browser.mjs';
+import {launch, open, startServer, frames} from './browser.mjs';
 
 const server = await startServer(8196),
   browser = await launch();
@@ -39,7 +39,7 @@ try {
     'the route on the ground, with its end marked',
   );
   const still = await page.evaluate(() => ({...window.PARP_MAP.travel.party}));
-  await page.waitForTimeout(600);
+  await frames(page, 5);
   const after = await page.evaluate(() => ({...window.PARP_MAP.travel.party}));
   assert.deepEqual([after.x, after.z], [still.x, still.z], 'paused: the band waits');
 

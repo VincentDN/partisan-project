@@ -4,7 +4,7 @@
 import fs from 'node:fs';
 import {createRequire} from 'node:module';
 import {execFileSync} from 'node:child_process';
-import {launch, open, startServer} from './browser.mjs';
+import {launch, open, startServer, frames} from './browser.mjs';
 
 const axeSource = fs.readFileSync(createRequire(import.meta.url).resolve('axe-core/axe.min.js'), 'utf8');
 if (!process.env.ROOT) {
@@ -47,7 +47,7 @@ for (const [name, path, ready] of pages) {
     await page.goto(server.url + '#menu');
   }
   await ready(page);
-  await page.waitForTimeout(600);
+  await frames(page, 3); // settled
   await page.addScriptTag({content: axeSource});
   const result = await page.evaluate(() =>
     axe.run(document, {

@@ -67,3 +67,19 @@ export async function open(browser, url, opts = {}) {
   await page.goto(url);
   return page;
 }
+
+/**
+ * Wait until the page has rendered `n` more animation frames (WP-QA16). Use it instead of a fixed sleep: to let a
+ * change settle before a screenshot, or to check that something does not move over a few frames. A software-rendered
+ * browser on a busy machine may take seconds per frame; frames, not milliseconds, are what matter.
+ */
+export async function frames(page, n = 3) {
+  await page.evaluate(
+    k =>
+      new Promise(done => {
+        const tick = () => (--k <= 0 ? done() : requestAnimationFrame(tick));
+        requestAnimationFrame(tick);
+      }),
+    n,
+  );
+}

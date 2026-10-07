@@ -77,7 +77,7 @@ try {
   await page.goto(server.url + 'convoy/?campaign=c1&encounter=e2');
   await ready(page);
   await page.locator('#start').click();
-  await page.waitForTimeout(500);
+  await page.waitForFunction(() => window.PARP_SPRITES.sim.time > 0, null, {timeout: 60000}); // the mission is under way
   await page.reload();
   await ready(page);
   assert.equal(await page.evaluate(() => window.PARP_SPRITES.campaign.action), 'withdrawn');

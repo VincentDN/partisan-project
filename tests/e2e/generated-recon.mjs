@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {createRequire} from 'node:module';
-import {launch, open, startServer} from './browser.mjs';
+import {launch, open, startServer, frames} from './browser.mjs';
 import {reconClearance, reconPalmDistances, settlePose} from './recon-clearance.mjs';
 const server = await startServer(8197),
   browser = await launch();
@@ -53,7 +53,7 @@ try {
   // Reduced motion holds the exact same bones even with an idle selected.
   const head = () => page.evaluate(() => window.PARP_OPERATOR.rig.bones.get('head').quaternion.toArray());
   const still = await head();
-  await page.waitForTimeout(350);
+  await frames(page, 5);
   assert.deepEqual(await head(), still);
   await page.evaluate(() => {
     window.PARP_OPERATOR.set('weapon', 'ak74m');
@@ -118,7 +118,7 @@ try {
     window.PARP_OPERATOR.set('look', 'off');
     window.PARP_OPERATOR.set('idle', 'alert');
   });
-  await page.waitForTimeout(800); // the frame loop is running again before measuring
+  await frames(page, 2); // the frame loop is running again before measuring
   const moving = await head();
   // the idle sway moves the head: wait for a frame that shows it (software rendering runs about one frame a second)
   await page

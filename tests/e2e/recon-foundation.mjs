@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {createRequire} from 'node:module';
 import sharp from 'sharp';
-import {launch, open, startServer} from './browser.mjs';
+import {launch, open, startServer, frames} from './browser.mjs';
 import {reconClearance, reconPalmDistances, settlePose} from './recon-clearance.mjs';
 const server = await startServer(8191),
   browser = await launch();
@@ -45,7 +45,7 @@ try {
   const poses = await page.locator('#pose option').evaluateAll(options => options.map(o => o.value));
   for (const pose of poses) {
     await page.locator('#pose').selectOption(pose);
-    await page.waitForTimeout(60);
+    await frames(page, 1);
   }
   await page.locator('#pose').selectOption('rest');
   assert.equal(await page.evaluate(() => window.PARP_RECON_FOUNDATION.scene.position.y), 0);
@@ -60,7 +60,7 @@ try {
   ]) {
     await page.locator('#pose').selectOption(pose);
     await page.getByRole('button', {name: view[0].toUpperCase() + view.slice(1), exact: true}).click();
-    await page.waitForTimeout(300);
+    await frames(page, 3);
     if (process.env.FOUNDATION_SHOT) {
       const tile = await sharp(await page.locator('section').screenshot())
         .resize(600, 700, {fit: 'contain', background: '#11170f'})
@@ -92,7 +92,7 @@ try {
   await page.locator('#idle').selectOption('alert');
   const head = () => page.evaluate(() => window.PARP_RECON_FOUNDATION.rig.bones.get('head').quaternion.toArray());
   const still = await head();
-  await page.waitForTimeout(300);
+  await frames(page, 5);
   assert.deepEqual(await head(), still);
   await page.emulateMedia({reducedMotion: 'no-preference'});
   // the idle sway resumes: wait for a frame that shows it (software rendering runs about one frame a second)
