@@ -76,7 +76,7 @@ export function newCampaign({id = 'c1', seed = 1, now = 0} = {}) {
       parties: [], // Invader patrols, convoys, hunter columns (WP-W5 onward)
       settlements: {}, // per-settlement state by id: owner, garrison, heat (WP-W19)
       heat: 0,
-      seen: 0, // log entries the map has already shown (it reports mission results once)
+      seen: 0, // the last log entry (by seq) the map has shown: it reports mission results once
     },
     band: {
       leader: structuredClone(LEADER),
@@ -132,6 +132,12 @@ export function normalize(raw) {
   c.deployment = isObj(o.deployment) ? o.deployment : null;
   if (Array.isArray(o.settled)) c.settled = o.settled.filter(s => typeof s === 'string');
   if (Array.isArray(o.log)) c.log = o.log.filter(isObj).slice(-LOG_LIMIT);
+  // saves from before entries had a seq: number them, and turn `seen` (then a position in the log) into a seq
+  if (c.log.some(e => !Number.isFinite(e.seq))) {
+    const wasIndex = c.world.seen;
+    c.log.forEach((e, i) => (e.seq = i + 1));
+    c.world.seen = Math.min(wasIndex, c.log.length);
+  }
   if (Array.isArray(o.migratedFrom)) c.migratedFrom = o.migratedFrom.filter(s => typeof s === 'string');
   return c;
 }
@@ -156,7 +162,7 @@ export function migrate({squad = null, band = null} = {}, opts = {}) {
       c.goods = s.goods;
       c.scrip = s.scrip;
       c.record = s.record;
-      c.log = s.log.map(e => ({kind: 'mission', ...e}));
+      c.log = s.log.slice(-LOG_LIMIT).map((e, i) => ({kind: 'mission', ...e, seq: i + 1}));
       from.push(SQUAD_KEY);
     }
   }
@@ -177,9 +183,12 @@ export function migrate({squad = null, band = null} = {}, opts = {}) {
   return c;
 }
 
-/** Add an entry to the encounter log (kept to the last LOG_LIMIT). Returns the campaign. */
+/**
+ * Add an entry to the encounter log (kept to the last LOG_LIMIT). Each entry has a `seq` that only ever grows, so a
+ * reader can remember where it got to (world.seen) however the log is trimmed. Returns the campaign.
+ */
 export function logEvent(c, entry) {
-  c.log.push({day: c.world.clock.day, hour: c.world.clock.hour, ...entry});
+  c.log.push({day: c.world.clock.day, hour: c.world.clock.hour, ...entry, seq: (c.log.at(-1)?.seq || 0) + 1});
   if (c.log.length > LOG_LIMIT) c.log.splice(0, c.log.length - LOG_LIMIT);
   return c;
 }

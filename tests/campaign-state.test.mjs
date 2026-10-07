@@ -119,14 +119,14 @@ test('normalize repairs fields and rejects what is not a version-1 campaign', ()
   assert.equal(n.scrip, c.scrip);
   assert.deepEqual(n.settled, ['e1']);
   assert.equal(n.log.length, 200);
-  assert.deepEqual(n.log.at(-1), {i: 249}, 'the newest entries kept');
+  assert.deepEqual(n.log.at(-1), {i: 249, seq: 200}, 'the newest entries kept (numbered: an old save had no seq)');
 });
 
 test('the log stamps entries with the campaign clock and stays bounded', () => {
   const c = newCampaign();
   c.world.clock.day = 4;
   logEvent(c, {kind: 'encounter', text: 'Convoy sighted'});
-  assert.deepEqual(c.log[0], {day: 4, hour: 8, kind: 'encounter', text: 'Convoy sighted'});
+  assert.deepEqual(c.log[0], {day: 4, hour: 8, kind: 'encounter', text: 'Convoy sighted', seq: 1});
   for (let i = 0; i < 260; i++) logEvent(c, {i});
   assert.equal(c.log.length, 200);
 });
@@ -167,4 +167,18 @@ test('store: a corrupt save is kept aside and a fresh campaign starts; blocked s
   assert.equal(blocked.save(b.campaign), false, 'save reports failure instead of throwing');
   assert.doesNotThrow(() => blocked.clear());
   assert.equal(createStore(null).load().status, 'new', 'no storage at all');
+});
+
+test('an old save (log without seq, seen as a position) is read on from where it was', () => {
+  const c = newCampaign();
+  for (let i = 0; i < 5; i++) logEvent(c, {kind: 'result', i});
+  const old = JSON.parse(JSON.stringify(c));
+  for (const e of old.log) delete e.seq;
+  old.world.seen = 3; // the map had shown the first three
+  const n = normalize(old);
+  assert.deepEqual(
+    n.log.filter(e => e.seq > n.world.seen).map(e => e.i),
+    [3, 4],
+    'the last two are still to be shown',
+  );
 });

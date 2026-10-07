@@ -30,10 +30,13 @@ export function mountTravel({scene, camera, field, terrain, stageEl, hero, cam, 
   }
   const [sx, sz] = campaign?.world.party ? [campaign.world.party.x, campaign.world.party.z] : PARTY_SPOTS.player;
   const party = {x: sx, z: sz, heading: hero.root.rotation.y, route: null};
+  let unsaved = false; // said once: storage full or blocked (private mode), the campaign runs on in memory
   const save = () => {
     if (!campaign) return;
     campaign.world.party = {x: Math.round(party.x * 10) / 10, z: Math.round(party.z * 10) / 10};
-    store.save(campaign);
+    const ok = store.save(campaign);
+    if (!ok && !unsaved) toast('The campaign cannot be saved: browser storage is full or blocked. Progress lasts until the tab closes.');
+    unsaved = !ok;
   };
   if (campaign && !campaign.world.party) save();
   if (note) toast(note);

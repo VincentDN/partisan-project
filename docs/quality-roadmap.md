@@ -81,6 +81,21 @@ found no crashes and no broken invariants, except one. That and a read of the in
 3. A **cancelled drag** (a touch interrupted by the system, `pointercancel`) left the item carried and the drag's
    listeners on the window. It now puts the item back.
 
+### Found by the hunts (QA4, QA5, QA7)
+
+4. **The map stopped reporting results after about 80 encounters** (QA7 soak). The map remembered how far it had
+   read the campaign log as a position in it, but the log keeps only its last 200 entries: once full, every new
+   entry pushed one out and the position never moved past the end. Won fights no longer took enemy parties off the
+   map and raids no longer took settlements. Log entries now carry a sequence number that only grows; old saves are
+   numbered on load and read on from where they were.
+5. **A failed catalogue download disabled the kit screen** until the page was reloaded (the rejected promise was
+   cached). It now tries again on the next open and says why it could not.
+6. **A save that could not be written was silent** (storage full, or blocked in private mode). The map now says so
+   once.
+
+The inventory hunt (9,000 random operations) and the save hunt (2,500 damaged saves: 2,472 repaired into usable
+campaigns, 28 refused and kept aside) found nothing else.
+
 ## 3. Where bugs are likely: hunts
 
 Ranked by (how likely × how bad), with the method for each.

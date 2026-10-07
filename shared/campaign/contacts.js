@@ -100,7 +100,7 @@ export function encounterFor(c, sourceId, source = SOURCES[sourceId], {ground = 
  */
 export function readResults(c, names = {}) {
   const lines = [];
-  for (const e of c.log.slice(c.world.seen)) {
+  for (const e of c.log.filter(e => e.seq > c.world.seen)) {
     if (e.kind !== 'result') continue;
     const src = SOURCES[e.source];
     const name = src?.name || names[e.source] || e.source || 'the enemy';
@@ -118,7 +118,7 @@ export function readResults(c, names = {}) {
           : `${name}: the attack failed${hurt}.`,
     );
   }
-  c.world.seen = c.log.length;
+  c.world.seen = c.log.at(-1)?.seq ?? c.world.seen;
   return lines;
 }
 
