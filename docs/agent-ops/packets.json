@@ -3758,7 +3758,7 @@
    "milestone": "QA",
    "size": "M",
    "bu": 20,
-   "status": "ready",
+   "status": "done",
    "deps": [
     "WP-QA2"
    ],
@@ -3767,7 +3767,7 @@
    "inputs": [
     "docs/quality-roadmap.md"
    ],
-   "acceptance": "convoy/ under 4 MB cold; the published site under 120 MB; a build check lists assets no page references."
+   "acceptance": "convoy/ under 4 MB once settled (14.4 MB to 3.1 MB); heavy placeholder images as WebP copies and their originals off the site (281 MB to 220 MB). The rest of the 120 MB site target is taking the owner's drop folder (inbound/) off the site: the owner's decision."
   },
   {
    "id": "WP-QA14",

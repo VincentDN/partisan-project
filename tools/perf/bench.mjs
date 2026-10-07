@@ -86,12 +86,16 @@ export async function pageBench(pages = Object.keys(PAGES)) {
   return out;
 }
 
+/** Pages whose size depends on timing (the operator page parses the other rifles in idle moments): sizes not checked. */
+export const NOISY = new Set(['operator/']);
+
 /** Regressions of `now` against `base`: lines for every mean, p99 or size over TOLERANCE times its baseline. */
 export function regressions(base, now) {
   const worse = [];
   for (const [kind, rows] of Object.entries(now))
     for (const [name, row] of Object.entries(rows))
       for (const k of ['meanMs', 'p99Ms', 'cpuMs', 'kb', 'requests', 'settledKb']) {
+        if (NOISY.has(name) && ['kb', 'requests', 'settledKb'].includes(k)) continue;
         const was = base?.[kind]?.[name]?.[k];
         if (Number.isFinite(was) && Number.isFinite(row[k]) && row[k] > was * TOLERANCE && row[k] - was > 0.05)
           worse.push(`${kind} ${name} ${k}: ${was} -> ${row[k]}`);

@@ -52,60 +52,60 @@
  },
  "pages": {
   "convoy/?seed=3": {
-   "requests": 134,
-   "kb": 14429,
-   "readyMs": 1295,
-   "settledRequests": 157,
-   "settledKb": 14590
+   "requests": 180,
+   "kb": 3135,
+   "readyMs": 3791,
+   "settledRequests": 180,
+   "settledKb": 3135
   },
   "map/": {
-   "requests": 92,
-   "kb": 8031,
-   "readyMs": 2414,
-   "settledRequests": 92,
-   "settledKb": 8031
+   "requests": 93,
+   "kb": 8034,
+   "readyMs": 2223,
+   "settledRequests": 93,
+   "settledKb": 8034
   },
   "map25/": {
-   "requests": 178,
-   "kb": 5186,
-   "readyMs": 1827,
-   "settledRequests": 178,
-   "settledKb": 5186
+   "requests": 179,
+   "kb": 5189,
+   "readyMs": 2144,
+   "settledRequests": 179,
+   "settledKb": 5189
   },
   "inventory/": {
    "requests": 12,
    "kb": 211,
-   "readyMs": 157,
+   "readyMs": 124,
    "settledRequests": 12,
    "settledKb": 211
   },
   "band/": {
-   "requests": 87,
-   "kb": 655,
-   "readyMs": 518,
-   "settledRequests": 137,
-   "settledKb": 957
+   "requests": 80,
+   "kb": 609,
+   "readyMs": 531,
+   "settledRequests": 138,
+   "settledKb": 960
   },
   "menu/": {
-   "requests": 23,
-   "kb": 916,
-   "readyMs": 2667,
+   "requests": 22,
+   "kb": 915,
+   "readyMs": 2340,
    "settledRequests": 23,
    "settledKb": 916
   },
   "workbench/": {
    "requests": 42,
    "kb": 3182,
-   "readyMs": 2975,
+   "readyMs": 3499,
    "settledRequests": 42,
    "settledKb": 3182
   },
   "operator/": {
-   "requests": 56,
-   "kb": 4618,
-   "readyMs": 6261,
-   "settledRequests": 56,
-   "settledKb": 4618
+   "requests": 63,
+   "kb": 5961,
+   "readyMs": 7795,
+   "settledRequests": 63,
+   "settledKb": 5961
   }
  },
  "measured": "2026-10-07"
