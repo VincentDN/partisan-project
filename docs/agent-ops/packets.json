@@ -3882,7 +3882,7 @@
    "milestone": "QA",
    "size": "M",
    "bu": 20,
-   "status": "ready",
+   "status": "done",
    "deps": [
     "WP-QA6",
     "WP-QA18"
@@ -3894,6 +3894,25 @@
     "tests/fuzz/soak.mjs"
    ],
    "acceptance": "Units plan a path (grid A* over the level's cover, cached per level) when the straight line to their destination is blocked, including followers of a moving player; tests/fuzz/soak.mjs reports no unit stuck for 20 s on any level and seed; golden replays re-recorded with the reason; the sim benchmark stays within budget."
+  },
+  {
+   "id": "WP-QA22",
+   "title": "AI retreat and cover spots inside buildings: choose reachable points only",
+   "track": "Quality",
+   "milestone": "QA",
+   "size": "S",
+   "bu": 8,
+   "status": "ready",
+   "deps": [
+    "WP-QA21"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/quality-roadmap.md",
+    "tests/fuzz/soak.mjs"
+   ],
+   "acceptance": "Soldiers retreating in the village no longer pick a point inside a closed house (soak: village seed 1, foot-4 and foot-5); spots are checked against the walk grid before they are chosen; soak clean."
   }
  ]
 }

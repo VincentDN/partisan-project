@@ -1,53 +1,53 @@
 {
  "sim": {
   "convoy": {
-   "steps": 14400,
-   "meanMs": 0.021,
-   "p99Ms": 0.115,
-   "worstMs": 6.242,
-   "cpuMs": 316
+   "steps": 5396,
+   "meanMs": 0.025,
+   "p99Ms": 0.156,
+   "worstMs": 5.684,
+   "cpuMs": 164
   },
   "compound": {
    "steps": 14400,
-   "meanMs": 0.025,
-   "p99Ms": 0.123,
-   "worstMs": 3.062,
-   "cpuMs": 422
+   "meanMs": 0.044,
+   "p99Ms": 0.205,
+   "worstMs": 14.267,
+   "cpuMs": 740
   },
   "cave": {
-   "steps": 14095,
-   "meanMs": 0.008,
-   "p99Ms": 0.056,
-   "worstMs": 2.026,
-   "cpuMs": 225
+   "steps": 14246,
+   "meanMs": 0.017,
+   "p99Ms": 0.119,
+   "worstMs": 7.091,
+   "cpuMs": 342
   },
   "forest-road": {
-   "steps": 10370,
-   "meanMs": 0.025,
-   "p99Ms": 0.132,
-   "worstMs": 3.248,
-   "cpuMs": 270
+   "steps": 9849,
+   "meanMs": 0.032,
+   "p99Ms": 0.155,
+   "worstMs": 14.145,
+   "cpuMs": 387
   },
   "checkpoint": {
-   "steps": 14400,
-   "meanMs": 0.017,
-   "p99Ms": 0.102,
-   "worstMs": 4.137,
-   "cpuMs": 273
+   "steps": 10724,
+   "meanMs": 0.021,
+   "p99Ms": 0.088,
+   "worstMs": 13.329,
+   "cpuMs": 267
   },
   "village": {
-   "steps": 14400,
-   "meanMs": 0.024,
-   "p99Ms": 0.123,
-   "worstMs": 2.325,
-   "cpuMs": 370
+   "steps": 8491,
+   "meanMs": 0.035,
+   "p99Ms": 0.132,
+   "worstMs": 56.344,
+   "cpuMs": 271
   },
   "hilltop": {
-   "steps": 14400,
+   "steps": 13994,
    "meanMs": 0.008,
-   "p99Ms": 0.06,
-   "worstMs": 1.672,
-   "cpuMs": 161
+   "p99Ms": 0.058,
+   "worstMs": 1.676,
+   "cpuMs": 153
   }
  },
  "pages": {

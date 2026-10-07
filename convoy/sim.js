@@ -9,6 +9,7 @@ import {requestControl, selectControl, cancelControl, ensureControl, advanceCont
 import {bestBelief, compass, perceive, hear, decay, armyThink, armyAct, partisanThink, partisanAct, squadThink, receive} from './ai.js';
 import {BARKS} from './banter-lines.js';
 import {coverGrid, PAD} from './cover-grid.js';
+import {findPath, walkable} from './pathfind.js';
 
 /** mulberry32: small seeded PRNG so a run can be replayed exactly. */
 export function rng(seed) {
@@ -765,13 +766,36 @@ export class Sim {
   move(u, dt) {
     u.moving = false;
     if (!u.moveTo) return true;
-    const dx = u.moveTo.x - u.x,
-      dz = u.moveTo.z - u.z,
-      d = Math.hypot(dx, dz);
-    if (d < 0.35) {
-      u.moveTo = null;
+    const goal = u.moveTo;
+    if (Math.hypot(goal.x - u.x, goal.z - u.z) < 0.35) {
+      u.moveTo = u.way = null;
       return true;
     }
+    // the way there: straight when nothing stands in it, else a path round (convoy/pathfind.js); looked at twice a
+    // second, and again when the destination moves on (followers, the AI re-thinking)
+    if (u.way && Math.hypot(u.way.gx - goal.x, u.way.gz - goal.z) > 2) u.way = null;
+    if (!u.way && this.time >= (u.wayAt ?? 0)) {
+      u.wayAt = this.time + 0.5;
+      if (!walkable(this, u.x, u.z, goal.x, goal.z)) {
+        const pts = findPath(this, u, goal);
+        if (pts.length) u.way = {gx: goal.x, gz: goal.z, pts, i: 0};
+        else {
+          // the destination cannot be reached (inside cover, off the map) and this is as near as it gets: stop here
+          u.moveTo = null;
+          return true;
+        }
+      }
+    }
+    let to = goal;
+    if (u.way) {
+      const R = u.way;
+      while (R.i < R.pts.length - 1 && Math.hypot(R.pts[R.i].x - u.x, R.pts[R.i].z - u.z) < 0.5) R.i++;
+      to = R.i < R.pts.length - 1 ? R.pts[R.i] : goal;
+      if (to === goal) u.way = null;
+    }
+    const dx = to.x - u.x,
+      dz = to.z - u.z,
+      d = Math.hypot(dx, dz);
     const step = Math.min(d, u.speed * this.pace(u) * (1 - u.supp * 0.4) * dt);
     this.slide(u, (dx / d) * step, (dz / d) * step);
     u.facing = Math.atan2(dz, dx);

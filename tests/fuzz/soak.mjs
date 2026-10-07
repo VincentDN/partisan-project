@@ -40,7 +40,7 @@ export function soak(id, seed, minutes = 10) {
       const t = track.get(u.id);
       // stuck: trying to move (sim.move sets `moving`) the whole time, and getting nowhere; holding still on purpose
       // (an order, a covering bound, waiting to open fire) does not count
-      if (!t || !u.moving || Math.hypot(u.x - t.x, u.z - t.z) > 0.5) track.set(u.id, {x: u.x, z: u.z, since: sim.time});
+      if (!t || !u.moving || !u.moveTo || Math.hypot(u.x - t.x, u.z - t.z) > 0.5) track.set(u.id, {x: u.x, z: u.z, since: sim.time});
       else if (u.moveTo && sim.time - t.since > 20 && u !== p)
         note(
           'stuck',

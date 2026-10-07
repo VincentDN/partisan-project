@@ -174,7 +174,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | **S** Partisan Tactical: extraction PvE, campaign and gated online research | v0.8.0 | 15/43 | 653 BU | 35% |
 | **V** Graphics: 2.5D top-down sprites for the shooter (the overworld moved to W) | v0.9.0 | 2/20 | 251 BU | 11% |
 | **W** World campaign: the Bannerlord loop (map, missions, loot, upgrades) | v0.10.0 | 4/26 | 359 BU | 14% |
-| **QA** Bug hunt and optimisation (docs/quality-roadmap.md) | — | 13/21 | 266 BU | 58% |
+| **QA** Bug hunt and optimisation (docs/quality-roadmap.md) | — | 14/22 | 274 BU | 64% |
 
 ### M0 · Foundation
 
@@ -408,7 +408,8 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-QA17` | Split the oversized modules along their seams (sprite-render, soundscape, sim, sprite-game, ai) | M (20) | ready | — | `WP-QA18` |
 | `WP-QA19` | Static checks: a report of unused exports and unreferenced files; dead code removed | XS (3) | done | — | — |
 | `WP-QA20` | Strict null checks for shared/ and the modules it imports (JSDoc types where inference gives null or never) | M (20) | ready | — | `WP-QA19` |
-| `WP-QA21` | Pathfinding for mission movement: units stuck against concave cover (soak findings) | M (20) | ready | — | `WP-QA6`, `WP-QA18` |
+| `WP-QA21` | Pathfinding for mission movement: units stuck against concave cover (soak findings) | M (20) | done | — | `WP-QA6`, `WP-QA18` |
+| `WP-QA22` | AI retreat and cover spots inside buildings: choose reachable points only | S (8) | ready | — | `WP-QA21` |
 
 ### TD · Tech debt (fill windows)
 

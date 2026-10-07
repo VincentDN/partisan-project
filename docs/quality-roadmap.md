@@ -137,6 +137,17 @@ fight and is its own packet, **WP-QA21**, with the replays re-recorded on purpos
 the soak player's limits (it walks straight at the nearest soldier), not proven unreachable objectives. Nothing was
 found inside cover.
 
+### Pathfinding (QA21)
+
+Units whose straight line to their destination is blocked now plan a path over a 1 m grid of the level
+(`convoy/pathfind.js`, A* with no corner cutting, capped at 4,000 cells, string-pulled); in the open they move exactly
+as before. A destination inside cover snaps to the nearest open cell, and one out of reach stops the unit where it
+is instead of grinding into a wall. The soak's stuck units went from 42 findings to 2, both the same AI choosing a
+retreat spot inside a closed house (filed as WP-QA22). The first version cost the village 2.4 ms a step; reusing the
+search arrays, marking vehicles once per search and capping the search brought it back to 0.02 ms, and total sim
+CPU is lower than before paths (1,891 ms against 2,037). The golden replays were re-recorded on purpose: both
+sides now walk round cover, so the fights end differently.
+
 ### Static checks (QA19)
 
 `node tools/qa/unused.mjs` reports exports no other file mentions: 52, nearly all used inside their own module; three
