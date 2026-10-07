@@ -18,6 +18,11 @@ export async function launch() {
     args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist', '--no-sandbox'],
   });
 }
+/** Wait until the Operator has applied its rig and weapon transforms in an actual rendered frame. */
+export async function operatorRendered(page) {
+  const frame = await page.evaluate(() => window.PARP_OPERATOR.stage.renderer.info.render.frame);
+  await page.waitForFunction(frame => window.PARP_OPERATOR.stage.renderer.info.render.frame > frame, frame);
+}
 /** Open a page that records console errors, page errors and failed requests. */
 export async function open(browser, url, opts = {}) {
   const page = await browser.newPage({viewport: {width: 1280, height: 800}, reducedMotion: 'reduce', ...opts});

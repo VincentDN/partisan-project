@@ -10,7 +10,7 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json).
 - Work remains on `codex/generated-operator-equipment`; no main merge/push or PR.
 - Implemented the radio display topology repair, post-export checks, measured webbing seating, loaded pose/slung fitting and keyboard focus preservation. Geometry still totals 860 template triangles; six radios with the body/carrier total 8,940.
 - Verified 244 units, lint and typecheck in the cloud. The 108 held/slung configurations, 19 motion samples and colour/keyboard/mobile checks passed before the final 7.5 mm seating refinement; five focused units pass with that refinement. Final built-site regressions are queued in `.github/workflows/cm6-cloud.yml` on GitHub-hosted Ubuntu because the interactive cloud sandbox blocks Chromium sockets without a separate runtime permission.
-- Next step: inspect the CM6 cloud acceptance run for this branch. Fix any failed checks, review its contact-sheet artifact, then mark CM6 done, update this handoff and push the final documentation. Do not start CM7 before acceptance.
+- Cloud run 37666809660 passed units, lint, types, formatting, build/check and site smoke, then the original Recon test sampled a stale ready pose after a fixed 250 ms delay. Carry tests now share the pouch suite's rendered-frame wait; clearance thresholds are unchanged. Inspect the next run, review its final contact-sheet artifact, then mark CM6 done and push completion before CM7.
 <!-- handoff:end -->
 
 ## Resume here

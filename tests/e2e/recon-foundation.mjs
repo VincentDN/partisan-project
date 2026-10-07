@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {createRequire} from 'node:module';
 import sharp from 'sharp';
-import {launch, open, startServer} from './browser.mjs';
+import {launch, open, startServer, operatorRendered} from './browser.mjs';
 import {reconClearance, reconPalmDistances} from './recon-clearance.mjs';
 const server = await startServer(8191),
   browser = await launch();
@@ -128,7 +128,7 @@ try {
     await modder.waitForFunction(id => window.PARP_OPERATOR.weapon?.rifle.id === id, weapon);
     for (const pose of ['hero', 'ready', 'crouch', 'kneel', 'highready', 'port', 'gunner', 'herotwo']) {
       await modder.evaluate(p => window.PARP_OPERATOR.set('pose', p), pose);
-      await modder.waitForTimeout(300);
+      await operatorRendered(modder);
       assert.ok(
         (await modder.evaluate(reconPalmDistances)).every(d => d < 0.025),
         `${weapon}/${pose} palm reach`,

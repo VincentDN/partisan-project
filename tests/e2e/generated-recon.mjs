@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {createRequire} from 'node:module';
-import {launch, open, startServer} from './browser.mjs';
+import {launch, open, startServer, operatorRendered} from './browser.mjs';
 import {reconClearance, reconPalmDistances} from './recon-clearance.mjs';
 const server = await startServer(8197),
   browser = await launch();
@@ -71,7 +71,7 @@ try {
     ['herotwo', ['r', 'l']],
   ]) {
     await page.evaluate(p => window.PARP_OPERATOR.set('pose', p), pose);
-    await page.waitForTimeout(1500);
+    await operatorRendered(page);
     const distances = await page.evaluate(sides => {
       const o = window.PARP_OPERATOR,
         {Vector3: V, Quaternion: Q} = o.stage.T;
@@ -99,7 +99,7 @@ try {
     await page.waitForFunction(id => window.PARP_OPERATOR.weapon?.rifle.id === id, id);
     for (const pose of ['hero', 'ready', 'crouch', 'kneel', 'highready', 'port', 'gunner', 'herotwo']) {
       await page.evaluate(pose => window.PARP_OPERATOR.set('pose', pose), pose);
-      await page.waitForTimeout(250);
+      await operatorRendered(page);
       assert.deepEqual(await page.evaluate(reconClearance), [], `${id}/${pose}: rifle penetrates the torso or equipment`);
       const palms = await page.evaluate(reconPalmDistances);
       assert.ok(

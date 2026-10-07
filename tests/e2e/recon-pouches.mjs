@@ -1,16 +1,12 @@
 // Exercise mounted pouch copies, saved state, removal and all rifle carries; capture front/rear fit references.
 import assert from 'node:assert/strict';
 import sharp from 'sharp';
-import {launch, open, startServer} from './browser.mjs';
+import {launch, open, startServer, operatorRendered as rendered} from './browser.mjs';
 import {reconClearance, reconPalmDistances} from './recon-clearance.mjs';
 import {carrierClothingClearance} from './carrier-clearance.mjs';
 import {pouchInteractions, pouchMotion} from './pouch-interactions.mjs';
 const server = await startServer(8194),
   browser = await launch();
-async function rendered(page) {
-  const frame = await page.evaluate(() => window.PARP_OPERATOR.stage.renderer.info.render.frame);
-  await page.waitForFunction(frame => window.PARP_OPERATOR.stage.renderer.info.render.frame > frame, frame);
-}
 try {
   const page = await open(browser, server.url + 'operator/?standalone#base=recon-modular&carrier=placard&look=off&idle=off&pose=ready');
   await page.waitForFunction(() => window.PARP_OPERATOR?.ready && window.PARP_OPERATOR.weapon?.rifle.id === 'ak74m', null, {

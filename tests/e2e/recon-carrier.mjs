@@ -1,7 +1,7 @@
 // Inspect the first carrier fit and render a contact sheet.
 import assert from 'node:assert/strict';
 import sharp from 'sharp';
-import {launch, open, startServer} from './browser.mjs';
+import {launch, open, startServer, operatorRendered} from './browser.mjs';
 import {reconClearance, reconPalmDistances} from './recon-clearance.mjs';
 import {carrierClothingClearance} from './carrier-clearance.mjs';
 const server = await startServer(8193),
@@ -61,7 +61,7 @@ try {
     await modder.waitForFunction(id => window.PARP_OPERATOR.weapon?.rifle.id === id, weapon);
     for (const pose of ['hero', 'ready', 'crouch', 'kneel', 'highready', 'port', 'gunner', 'herotwo']) {
       await modder.evaluate(id => window.PARP_OPERATOR.set('pose', id), pose);
-      await modder.waitForTimeout(400);
+      await operatorRendered(modder);
       const palms = await modder.evaluate(reconPalmDistances),
         hits = await modder.evaluate(reconClearance);
       const clothing = await modder.evaluate(carrierClothingClearance);
