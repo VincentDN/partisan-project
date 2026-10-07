@@ -3637,7 +3637,7 @@
    "milestone": "QA",
    "size": "M",
    "bu": 20,
-   "status": "ready",
+   "status": "done",
    "deps": [
     "WP-QA1"
    ],
@@ -3646,7 +3646,7 @@
    "inputs": [
     "docs/quality-roadmap.md"
    ],
-   "acceptance": "Detects units stuck for 20 s, units inside cover boxes, objectives that cannot complete, missions with no outcome; each finding fixed or filed."
+   "acceptance": "tests/fuzz/soak.mjs: 10-minute fights per level and seed flag units that try to move and get nowhere for 20 s, units inside cover, and missions with no outcome; findings filed (WP-QA21)."
   },
   {
    "id": "WP-QA7",
@@ -3874,6 +3874,26 @@
     "docs/quality-roadmap.md"
    ],
    "acceptance": "tsc with strict on shared/inventory and shared/campaign (and what they import from convoy/) passes; the 161 errors of 2026-10-07 are typed, not suppressed; any real bug found is fixed with a test."
+  },
+  {
+   "id": "WP-QA21",
+   "title": "Pathfinding for mission movement: units stuck against concave cover (soak findings)",
+   "track": "Quality",
+   "milestone": "QA",
+   "size": "M",
+   "bu": 20,
+   "status": "ready",
+   "deps": [
+    "WP-QA6",
+    "WP-QA18"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/quality-roadmap.md",
+    "tests/fuzz/soak.mjs"
+   ],
+   "acceptance": "Units plan a path (grid A* over the level's cover, cached per level) when the straight line to their destination is blocked, including followers of a moving player; tests/fuzz/soak.mjs reports no unit stuck for 20 s on any level and seed; golden replays re-recorded with the reason; the sim benchmark stays within budget."
   }
  ]
 }

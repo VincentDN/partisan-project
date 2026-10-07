@@ -174,7 +174,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | **S** Partisan Tactical: extraction PvE, campaign and gated online research | v0.8.0 | 15/43 | 653 BU | 35% |
 | **V** Graphics: 2.5D top-down sprites for the shooter (the overworld moved to W) | v0.9.0 | 2/20 | 251 BU | 11% |
 | **W** World campaign: the Bannerlord loop (map, missions, loot, upgrades) | v0.10.0 | 4/26 | 359 BU | 14% |
-| **QA** Bug hunt and optimisation (docs/quality-roadmap.md) | — | 11/20 | 246 BU | 51% |
+| **QA** Bug hunt and optimisation (docs/quality-roadmap.md) | — | 12/21 | 266 BU | 55% |
 
 ### M0 · Foundation
 
@@ -394,7 +394,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-QA3` | Every browser suite fails on a console error or an unhandled rejection | XS (3) | done | — | — |
 | `WP-QA4` | Campaign save hunt: fuzz normalize and migrate, two tabs, crash between result and settle, quota | M (20) | done | — | `WP-QA1` |
 | `WP-QA5` | Inventory hunt: random operation sequences with conservation and ownership invariants | M (20) | done | — | `WP-QA1` |
-| `WP-QA6` | Sim and AI soak: 10-minute fights per level and variant; stuck units, unreachable objectives | M (20) | ready | — | `WP-QA1` |
+| `WP-QA6` | Sim and AI soak: 10-minute fights per level and variant; stuck units, unreachable objectives | M (20) | done | — | `WP-QA1` |
 | `WP-QA7` | Campaign loop soak: 30 encounters through the pure modules with invariants | S (8) | done | — | `WP-QA1` |
 | `WP-QA8` | Input and focus audit across the overlays (encounter, band, kit, search) | S (8) | ready | — | — |
 | `WP-QA9` | Firefox and WebKit smoke runs | S (8) | ready | — | `WP-QA3` |
@@ -408,6 +408,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-QA17` | Split the oversized modules along their seams (sprite-render, soundscape, sim, sprite-game, ai) | M (20) | ready | — | `WP-QA18` |
 | `WP-QA19` | Static checks: a report of unused exports and unreferenced files; dead code removed | XS (3) | done | — | — |
 | `WP-QA20` | Strict null checks for shared/ and the modules it imports (JSDoc types where inference gives null or never) | M (20) | ready | — | `WP-QA19` |
+| `WP-QA21` | Pathfinding for mission movement: units stuck against concave cover (soak findings) | M (20) | ready | — | `WP-QA6`, `WP-QA18` |
 
 ### TD · Tech debt (fill windows)
 

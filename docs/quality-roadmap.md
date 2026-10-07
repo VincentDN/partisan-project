@@ -124,6 +124,19 @@ Warming the fonts beforehand made no measurable difference (890/45/25 ms with, 2
 kept. The 60 fps question (WP-Q2) needs a measurement on real hardware: open a mission, then the browser's
 performance panel, and record a minute of a fight.
 
+### The sim soak (QA6) and what it found
+
+`node tests/fuzz/soak.mjs` fights every level for ten simulated minutes per seed with a player who closes in and
+fires, and flags units that keep trying to move and get nowhere for 20 s, units standing inside cover, and missions
+with no outcome. On 21 fights it found **units stuck against cover**: a straight slide toward the destination cannot
+leave the inside corner of an L of walls (Mila and Dragan on the hilltop, at the corner of the two inner walls, for
+the rest of the fight), get round a long wall end-on, or reach a point just behind a crate. A detour planned when a
+unit stops making headway freed some of them, but not the followers of a moving player (their destination moves on
+every think), so it was not kept: units need real pathfinding (grid A* over the level's cover), which changes every
+fight and is its own packet, **WP-QA21**, with the replays re-recorded on purpose. The missions with no outcome are
+the soak player's limits (it walks straight at the nearest soldier), not proven unreachable objectives. Nothing was
+found inside cover.
+
 ### Static checks (QA19)
 
 `node tools/qa/unused.mjs` reports exports no other file mentions: 52, nearly all used inside their own module; three
