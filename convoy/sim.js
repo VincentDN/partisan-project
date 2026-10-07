@@ -8,6 +8,7 @@ import {initObjectives, evaluate} from './objectives.js';
 import {requestControl, selectControl, cancelControl, ensureControl, advanceControl} from './squad-control.js';
 import {bestBelief, compass, perceive, hear, decay, armyThink, armyAct, partisanThink, partisanAct, squadThink, receive} from './ai.js';
 import {BARKS} from './banter-lines.js';
+import {coverGrid, PAD} from './cover-grid.js';
 
 /** mulberry32: small seeded PRNG so a run can be replayed exactly. */
 export function rng(seed) {
@@ -31,20 +32,26 @@ export function segmentBox(ax, az, bx, bz, box, pad = 0) {
     dz = bz - az;
   let t0 = 0,
     t1 = 1;
-  for (const [p, d, lo, hi] of [
-    [ax, dx, minX, maxX],
-    [az, dz, minZ, maxZ],
-  ]) {
-    if (Math.abs(d) < 1e-9) {
-      if (p < lo || p > hi) return Infinity;
-    } else {
-      let ta = (lo - p) / d,
-        tb = (hi - p) / d;
-      if (ta > tb) [ta, tb] = [tb, ta];
-      t0 = Math.max(t0, ta);
-      t1 = Math.min(t1, tb);
-      if (t0 > t1) return Infinity;
-    }
+  // the x slab, then the z slab (unrolled: this runs for every ray against every box near it)
+  if (Math.abs(dx) < 1e-9) {
+    if (ax < minX || ax > maxX) return Infinity;
+  } else {
+    let ta = (minX - ax) / dx,
+      tb = (maxX - ax) / dx;
+    if (ta > tb) [ta, tb] = [tb, ta];
+    t0 = Math.max(t0, ta);
+    t1 = Math.min(t1, tb);
+    if (t0 > t1) return Infinity;
+  }
+  if (Math.abs(dz) < 1e-9) {
+    if (az < minZ || az > maxZ) return Infinity;
+  } else {
+    let ta = (minZ - az) / dz,
+      tb = (maxZ - az) / dz;
+    if (ta > tb) [ta, tb] = [tb, ta];
+    t0 = Math.max(t0, ta);
+    t1 = Math.min(t1, tb);
+    if (t0 > t1) return Infinity;
   }
   return t0;
 }
@@ -304,20 +311,35 @@ export class Sim {
 
   /** Static cover plus the vehicles, as boxes. */
   boxes() {
+    return [...this.level.cover, ...this.dynamicBoxes()];
+  }
+  /** What can change during a fight, as boxes: fieldworks, standing targets, vehicles. */
+  dynamicBoxes() {
     return [
-      ...this.level.cover,
       ...this.fieldworks,
       ...this.targets.filter(t => !t.destroyed).map(t => ({x: t.x, z: t.z, w: t.w, d: t.d, h: t.h, kind: 'target', target: t})),
       ...this.vehicles.map(v => ({x: v.x, z: v.z, w: v.w, d: v.d, h: v.h, kind: 'vehicle', vehicle: v})),
     ];
   }
 
+  /** Does any of the level's static cover near a rectangle pass `test`? (convoy/cover-grid.js; no allocation) */
+  someCoverNear(x0, z0, x1, z1, test) {
+    const grid = (this._grid ||= coverGrid(this.level.cover)),
+      cover = this.level.cover;
+    for (const n of grid.near(x0, z0, x1, z1, (this._near ||= []))) if (test(cover[n])) return true;
+    return false;
+  }
+  /** The level's static cover near a rectangle, in level order. */
+  coverNear(x0, z0, x1, z1) {
+    const grid = (this._grid ||= coverGrid(this.level.cover));
+    return grid.near(x0, z0, x1, z1, [], true).map(n => this.level.cover[n]);
+  }
+
   /** Line of sight between two points (eye height is implied: every obstacle is taller than a crouching man). */
   los(ax, az, bx, bz) {
-    for (const b of this.boxes()) {
-      if (inBox(ax, az, b) || inBox(bx, bz, b)) continue;
-      if (segmentBox(ax, az, bx, bz, b, -0.05) < 1) return false;
-    }
+    const blocks = b => !inBox(ax, az, b) && !inBox(bx, bz, b) && segmentBox(ax, az, bx, bz, b, -0.05) < 1;
+    if (this.someCoverNear(Math.min(ax, bx), Math.min(az, bz), Math.max(ax, bx), Math.max(az, bz), blocks)) return false;
+    for (const b of this.dynamicBoxes()) if (blocks(b)) return false;
     for (const c of this.smokes) if (this.time < c.until && segmentCircle(ax, az, bx, bz, c.x, c.z, c.r)) return false;
     return true;
   }
@@ -534,8 +556,11 @@ export class Sim {
       return true;
     }
     // Every box the round could hit; a turret gunner sits above his own hull, so that box does not shield him.
-    const boxHits = [];
-    for (const b of this.boxes()) {
+    const boxHits = [],
+      ex = ox + dx * W.range,
+      ez = oz + dz * W.range;
+    const near = [...this.coverNear(Math.min(ox, ex), Math.min(oz, ez), Math.max(ox, ex), Math.max(oz, ez)), ...this.dynamicBoxes()];
+    for (const b of near) {
       if (inBox(u.x, u.z, b, 0.1)) continue;
       const t = segmentBox(ox, oz, ox + dx * W.range, oz + dz * W.range, b);
       if (t <= 1) boxHits.push({s: t * W.range, b});
@@ -753,7 +778,14 @@ export class Sim {
 
   slide(u, sx, sz) {
     const B = this.level.bounds;
-    const blocked = (x, z) => this.boxes().some(b => inBox(x, z, b, u.r)) || x < B.minX || x > B.maxX || z < B.minZ || z > B.maxZ;
+    const hits = b => inBox(x0, z0, b, u.r);
+    let x0, z0;
+    const blocked = (x, z) => {
+      if (x < B.minX || x > B.maxX || z < B.minZ || z > B.maxZ) return true;
+      [x0, z0] = [x, z];
+      if (u.r > PAD) return this.boxes().some(hits); // larger than the grid files cover for: test everything
+      return this.someCoverNear(x, z, x, z, hits) || this.dynamicBoxes().some(hits);
+    };
     const ox = u.x,
       oz = u.z;
     if (!blocked(u.x + sx, u.z)) u.x += sx;

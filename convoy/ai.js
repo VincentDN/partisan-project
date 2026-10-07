@@ -12,6 +12,7 @@
 // The squad director (1 Hz) handles what no single soldier decides: flanking and falling back.
 import {WEAPONS, ROLES} from './weapons.js';
 import {dist, inBox} from './sim.js';
+import {PAD} from './cover-grid.js';
 
 const COMPASS = ['east', 'south-east', 'south', 'south-west', 'west', 'north-west', 'north', 'north-east'];
 /** Compass word for a direction on the map (x east, z south). */
@@ -133,10 +134,14 @@ export function hear(sim, shooter) {
 export function findCover(sim, u, threat) {
   let best = null,
     bestScore = -Infinity;
-  const boxes = sim.boxes();
-  const blocked = (x, z) => boxes.some(b => Math.abs(x - b.x) < b.w / 2 + u.r && Math.abs(z - b.z) < b.d / 2 + u.r);
+  // the cover near u (in level order, as a scan of every box would meet it) and what moves; only these can matter
+  const dyn = sim.dynamicBoxes(),
+    R = 28;
+  const boxes = [...sim.coverNear(u.x - R, u.z - R, u.x + R, u.z + R), ...dyn];
+  const hits = (x, z) => b => Math.abs(x - b.x) < b.w / 2 + u.r && Math.abs(z - b.z) < b.d / 2 + u.r;
+  const blocked = (x, z) => (u.r > PAD ? sim.boxes().some(hits(x, z)) : sim.someCoverNear(x, z, x, z, hits(x, z)) || dyn.some(hits(x, z)));
   for (const b of boxes) {
-    if (Math.hypot(b.x - u.x, b.z - u.z) > 28) continue;
+    if (Math.hypot(b.x - u.x, b.z - u.z) > R) continue;
     let ax = b.x - threat.x,
       az = b.z - threat.z;
     const al = Math.hypot(ax, az) || 1;
