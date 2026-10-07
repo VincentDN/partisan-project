@@ -4,7 +4,7 @@ export function reconClearance() {
     T = o.stage.T,
     solids = [];
   for (const mesh of o.meshes.filter(
-    m => m.visible && /Jacket|Hood|SK_LC_|SK_CM_Head|Harness|Scarf|UtilityPouch|MagPouches/.test(m.name),
+    m => m.visible && /Jacket|Hood|SK_LC_|SK_Pouch_|SK_CM_Head|Harness|Scarf|UtilityPouch|MagPouches/.test(m.name),
   )) {
     mesh.skeleton.update();
     const positions = [];

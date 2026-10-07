@@ -1,4 +1,5 @@
 // Opt-in clean Recon foundation with removable headwear, articulated gloves and independent fabric colours.
+import {pouchSlots} from './pouch-slots.js';
 export function modularRecon(weaponSlot) {
   const zone = (id, label, materials, camera = 'torso') => ({
     id,
@@ -17,6 +18,7 @@ export function modularRecon(weaponSlot) {
       'Hood-free clothing foundation with a broader chest and neck, articulated gloves, removable face covering/cap and a fitted lightweight plate carrier.',
     model: '../assets/models/operators/recon-modular.glb',
     packs: ['../assets/models/operators/recon-carrier.glb'],
+    pouchModel: '../assets/models/operators/recon-pouches.glb',
     poseProfile: 'reconFoundation',
     equippedPoseProfile: {slot: 'carrier', options: ['light', 'placard'], profile: 'reconCarrier'},
     // Measured palm targets and upward knuckle direction keep the wrist below the stock.
@@ -76,6 +78,7 @@ export function modularRecon(weaponSlot) {
         ],
       },
       weaponSlot,
+      ...pouchSlots(),
     ],
     zones: [
       zone('top', 'Clean jacket', ['M_CM_Jacket', 'M_CM_Seams']),
@@ -87,10 +90,17 @@ export function modularRecon(weaponSlot) {
       zone('carrier', 'Carrier fabric', ['M_CM_Carrier']),
       zone('webbing', 'Carrier webbing', ['M_CM_CarrierWebbing']),
       zone('placard', 'Front placard', ['M_CM_Placard']),
+      zone('pouches', 'Pouch fabric', ['M_CM_Pouches']),
+      zone('pouchtrim', 'Pouch straps', ['M_CM_PouchTrim']),
     ],
     presets: [
       {id: 'foundation', label: 'Clean clothing', state: {carrier: 'none'}},
       {id: 'light-carrier', label: 'Light carrier', state: {carrier: 'placard'}},
+      {
+        id: 'patrol-carrier',
+        label: 'Patrol carrier',
+        state: {carrier: 'placard', front1: 'magazine', front2: 'magazine', front3: 'utility', rear1: 'radio'},
+      },
     ],
     defaults: {pose: 'relaxed'},
   };

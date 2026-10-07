@@ -7,7 +7,7 @@
   },
   "include": [
     "shared/loadout.js", "shared/camo.js", "shared/music.js", "shared/sound-layer.js",
-    "operator/rig.js", "operator/config.js", "operator/assembly.js", "operator/assembly-schema.js", "operator/bind-pack.js", "operator/reference-grip.js", "workbench/rails.js", "workbench/stats.js", "assets/js/dither.js",
+    "operator/rig.js", "operator/config.js", "operator/assembly.js", "operator/assembly-schema.js", "operator/bind-pack.js", "operator/mounted-pouches.js", "operator/reference-grip.js", "workbench/rails.js", "workbench/stats.js", "assets/js/dither.js",
     "tools/agent/*.mjs"
   ]
 }

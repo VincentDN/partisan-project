@@ -2676,7 +2676,11 @@
     "docs/engineering/recon-carrier.md",
     "operator/recon-carrier.json",
     "operator/assembly.js",
-    "tools/assets/build-recon-carrier.py"
+    "tools/assets/build-recon-carrier.py",
+    "docs/agent-ops/CM6-CLOUD-HANDOFF.md",
+    "operator/mounted-pouches.js",
+    "operator/recon-pouches.json",
+    "tools/assets/build-recon-pouches.py"
    ],
    "acceptance": "Three independent pouch modules mount, duplicate and remove with occupied-cell validation; radio/cable follows its owning pouch; UV and posed contact sheets pass."
   },

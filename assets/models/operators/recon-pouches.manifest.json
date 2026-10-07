@@ -1,0 +1,73 @@
+{
+ "generated": "2026-10-06",
+ "triangles": 860,
+ "bones": [],
+ "meshes": [
+  {
+   "node": "Pouch_magazine",
+   "triangles": 264,
+   "materials": [
+    "M_CM_Pouches",
+    "M_CM_Magazine",
+    "M_CM_PouchTrim"
+   ]
+  },
+  {
+   "node": "Pouch_utility",
+   "triangles": 220,
+   "materials": [
+    "M_CM_Pouches",
+    "M_CM_PouchTrim",
+    "M_CM_Radio"
+   ]
+  },
+  {
+   "node": "Pouch_radio",
+   "triangles": 376,
+   "materials": [
+    "M_CM_Radio",
+    "M_CM_Pouches",
+    "M_CM_PouchTrim",
+    "M_CM_Magazine"
+   ]
+  }
+ ],
+ "materials": [
+  {
+   "name": "M_CM_Pouches",
+   "baseColor": [
+    1,
+    1,
+    1
+   ],
+   "textured": true
+  },
+  {
+   "name": "M_CM_Magazine",
+   "baseColor": [
+    1,
+    1,
+    1
+   ],
+   "textured": true
+  },
+  {
+   "name": "M_CM_PouchTrim",
+   "baseColor": [
+    1,
+    1,
+    1
+   ],
+   "textured": true
+  },
+  {
+   "name": "M_CM_Radio",
+   "baseColor": [
+    0.006,
+    0.007,
+    0.005
+   ],
+   "textured": false
+  }
+ ]
+}

@@ -1214,6 +1214,16 @@
    "budget": {
     "triangles": 1700
    }
+  },
+  {
+   "id": "recon-pouches",
+   "label": "Recon modular pouch templates",
+   "path": "assets/models/operators/recon-pouches.glb",
+   "kind": "character",
+   "status": "real",
+   "notes": "CM6 mount-local magazine (264), utility (220) and radio/cable (376) templates. Repeated mounted copies are budgeted per instance; six radios plus loaded foundation/carrier total 8,940 triangles. Rebuild with assets:recon-pouches.",
+   "budget": {"triangles": 1400},
+   "triangles": 860
   }
  ],
  "pipeline": [

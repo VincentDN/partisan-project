@@ -13,7 +13,7 @@ export function carrierClothingClearance() {
     ray = new T.Raycaster(),
     direction = new T.Vector3(1, 0.173, 0.317).normalize(),
     failures = [];
-  for (const m of o.meshes.filter(m => m.visible && m.userData.packPart?.startsWith('SK_LC_'))) {
+  for (const m of o.meshes.filter(m => m.visible && (m.userData.packPart?.startsWith('SK_LC_') || m.userData.pouchInstance))) {
     m.skeleton.update();
     let count = 0;
     for (let i = 0; i < m.geometry.attributes.position.count; i++) {

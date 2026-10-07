@@ -4,6 +4,10 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 ## [Unreleased]
 
+### In progress (Mounted pouches, WP-CM6)
+- Add candidate magazine, utility and owned radio/cable modules with six front/rear mounting positions, repeated instances, pouch colours and a patrol preset. Preserve selections when removing their carrier.
+- Checkpoint for cloud continuation: mounting tests pass; radio export topology and final pose/browser acceptance remain unfinished. See `docs/agent-ops/CM6-CLOUD-HANDOFF.md`.
+
 ### Added (Lightweight plate carrier, WP-CM5)
 - Add an independent 1,116-triangle carrier with front/rear bags, straps, pads, cummerbund and removable front placard. Compare clean clothing and both carrier states in the inspector or Modder; fabric colours and carrier choices round-trip in saved links.
 - Fit carrier-only carry poses, preserve the existing body, and add asset-backed assembly definitions, closed-surface checks and real rifle clearance tests.

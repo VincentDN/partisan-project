@@ -5,6 +5,7 @@
 // (only values that differ from the base's defaults), so every look is a shareable link.
 import * as T from 'three';
 import {bindPack} from './bind-pack.js';
+import {mountedPouches} from './mounted-pouches.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
 import {shareCardDataUrl} from './share-card.js';
@@ -74,6 +75,14 @@ async function loadBase(id) {
     const newRig = new Rig(gltf.scene, posesForProfile(poseData, next.poseProfile));
     newRig.grip = new Grip(newRig.bones, newRig.rest, next.grip);
     for (const url of next.packs || []) bindPack((await loader.loadAsync(url)).scene, gltf.scene, newRig);
+    if (next.pouchModel) {
+      const [templates, carrier, pouches] = await Promise.all([
+        loader.loadAsync(next.pouchModel),
+        fetch('recon-carrier.json').then(r => r.json()),
+        fetch('recon-pouches.json').then(r => r.json()),
+      ]);
+      newRig.pouches = mountedPouches(gltf.scene, newRig, templates.scene, carrier, pouches);
+    }
     gltf.scene.traverse(o => {
       if (o.isMesh) {
         o.castShadow = o.receiveShadow = true;
@@ -87,6 +96,10 @@ async function loadBase(id) {
   DEFAULTS = defaultsFor(base);
   ({scene: operator, rig} = baseCache.get(base.id));
   turn.add(operator);
+  indexMeshes();
+  status.hidden = true;
+}
+function indexMeshes() {
   meshes = [];
   meshPart = new Map();
   zoneMaterials = new Map();
@@ -105,7 +118,6 @@ async function loadBase(id) {
     m.userData.orig ??= {color: m.color.clone(), map: m.map};
     if (!zoneMaterials.has(m.name)) zoneMaterials.set(m.name, m);
   }
-  status.hidden = true;
 }
 
 // ---------- Hash <-> state ----------
@@ -176,6 +188,7 @@ function visibleParts() {
   return set;
 }
 function applyEquipment() {
+  if (rig.pouches?.update(state)) indexMeshes();
   const show = visibleParts();
   let tris = 0,
     calls = 0;
@@ -365,7 +378,15 @@ function render() {
       chips.className = 'chips';
       chips.role = 'group';
       chips.setAttribute('aria-label', slot.label);
-      for (const o of slot.options) chips.append(chip(o.label, state[slot.id] === o.id, () => set(slot.id, o.id, slot.camera)));
+      const unavailable =
+        slot.requiresCarrier && (state.carrier === 'none' || (slot.requiresCarrier === 'placard' && state.carrier !== 'placard'));
+      for (const o of slot.options) {
+        const button = chip(o.label, state[slot.id] === o.id, () => set(slot.id, o.id, slot.camera));
+        button.disabled = !!unavailable;
+        chips.append(button);
+      }
+      if (unavailable)
+        head.firstChild.textContent += slot.requiresCarrier === 'placard' ? ' · requires front placard' : ' · requires carrier';
       row.append(head, chips);
       return row;
     }),

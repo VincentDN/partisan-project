@@ -1,0 +1,95 @@
+{
+ "version": 1,
+ "catalogue": [
+  {
+   "id": "pouch.magazine",
+   "family": "pouch",
+   "owner": [
+    "carrier",
+    "placard"
+   ],
+   "mountType": "webbing",
+   "skeletonId": "recon-v1",
+   "fitProfile": "recon-standard",
+   "footprint": [
+    2,
+    3
+   ],
+   "depth": 0,
+   "excludes": [],
+   "coverage": [],
+   "materialRegions": [
+    "fabric",
+    "trim",
+    "hardware"
+   ],
+   "mounts": [],
+   "triangleCount": 264,
+   "geometry": {
+    "model": "recon-pouches.glb",
+    "node": "Pouch_magazine",
+    "space": "mount-local"
+   }
+  },
+  {
+   "id": "pouch.utility",
+   "family": "pouch",
+   "owner": [
+    "carrier",
+    "placard"
+   ],
+   "mountType": "webbing",
+   "skeletonId": "recon-v1",
+   "fitProfile": "recon-standard",
+   "footprint": [
+    2,
+    3
+   ],
+   "depth": 0,
+   "excludes": [],
+   "coverage": [],
+   "materialRegions": [
+    "fabric",
+    "trim",
+    "hardware"
+   ],
+   "mounts": [],
+   "triangleCount": 220,
+   "geometry": {
+    "model": "recon-pouches.glb",
+    "node": "Pouch_utility",
+    "space": "mount-local"
+   }
+  },
+  {
+   "id": "pouch.radio",
+   "family": "pouch",
+   "owner": [
+    "carrier",
+    "placard"
+   ],
+   "mountType": "webbing",
+   "skeletonId": "recon-v1",
+   "fitProfile": "recon-standard",
+   "footprint": [
+    2,
+    3
+   ],
+   "depth": 0,
+   "excludes": [],
+   "coverage": [],
+   "materialRegions": [
+    "fabric",
+    "trim",
+    "hardware"
+   ],
+   "mounts": [],
+   "triangleCount": 376,
+   "geometry": {
+    "model": "recon-pouches.glb",
+    "node": "Pouch_radio",
+    "space": "mount-local"
+   }
+  }
+ ]
+}
