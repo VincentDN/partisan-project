@@ -5,11 +5,12 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json).
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-07 · codex · WP-CM6 · partial — cloud continuation requested**
+**2026-10-07 10:46 UTC · codex · WP-CM6 · partial**
 
-- Branch: `codex/generated-operator-equipment`. CM5 is complete at `d666644`; CM6 is a partial checkpoint.
-- Owner requested committing all current work and preparing mobile/cloud continuation. Feature-branch commits/pushes are authorized; main is protected.
-- Continue from [CM6-CLOUD-HANDOFF.md](CM6-CLOUD-HANDOFF.md). It contains implementation details, known failures, environment setup and exact next actions.
+- Branch `codex/generated-operator-equipment` at `9d01521`; working tree clean.
+- Last commits: 9d01521 feat(WP-CM6): checkpoint mounted pouches for cloud continuation · d666644 docs(WP-CM5): record carrier validation and pouch handoff · ee610fa feat(WP-CM5): add fitted modular lightweight plate carrier
+- What happened: Owner requested commit/push and cloud-mobile handoff. All CM6 source, runtime candidates, tests and provisional preview are committed and pushed in 9d01521. Read docs/agent-ops/CM6-CLOUD-HANDOFF.md. Focused units 3/4: Pouch_radio_4 closed fails after compressed export. Typecheck, focused lint, changed-JS formatting and eight plan checks pass. Final browser fit acceptance remains unverified. This is a partial checkpoint, not completed CM6.
+- Next step: In the cloud, check out codex/generated-operator-equipment, read AGENTS.md and docs/agent-ops/CM6-CLOUD-HANDOFF.md, diagnose the radio topology failure, rerun pouch browser clearance and regressions, and finish CM6 documentation before CM7. Commit/push this feature branch only; main stays protected.
 <!-- handoff:end -->
 
 ## Resume here
