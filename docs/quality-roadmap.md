@@ -114,6 +114,16 @@ two shots). The published site leaves those 64 originals out: 281 MB → 220 MB.
 downloads 43 MB, raw models 13 MB, the set's UI art 45 MB) is shipped on purpose as the owner's drop folder; taking it
 off the site is the owner's decision, and it is what the 120 MB target needs.
 
+### The mission renderer, measured (QA14, open)
+
+A CPU profile of a running mission puts the renderer's own JavaScript at a median 5–8 ms a frame in the software
+test browser (fog of war about 2 ms of it); the rest of a frame there is the browser rasterising in software, which a
+real GPU does differently. One outlier: **the first frame of the fight** takes 25–900 ms, almost all in `fillText`
+for the ability bar, varying wildly between identical runs. It is the browser's first lookup of the system fonts.
+Warming the fonts beforehand made no measurable difference (890/45/25 ms with, 226/794/64 ms without), so it was not
+kept. The 60 fps question (WP-Q2) needs a measurement on real hardware: open a mission, then the browser's
+performance panel, and record a minute of a fight.
+
 ### Static checks (QA19)
 
 `node tools/qa/unused.mjs` reports exports no other file mentions: 52, nearly all used inside their own module; three
