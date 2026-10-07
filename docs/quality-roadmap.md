@@ -105,6 +105,15 @@ the accessibility suite exiting 0 whatever was reported (it now honours the repo
 assumption in the map-travel suite (a fixed distance in a fixed time on a machine running a fraction of a frame a
 second). Aborted loads during a close, reload or navigation are teardown and not counted.
 
+### Asset diet, first step (QA13)
+
+The 64 images over 150 KB in the placeholder set (terrain surfaces at 1–2 MB each, biome and hero art: 70 MB as
+PNG) have WebP copies under `assets/sprites/set/` (5.6 MB, `tools/assets/optimise-set.mjs`); the loader takes the
+copy. A mission screenshot with and without them differs by 0.4/255 on average (grass and soldiers moving between the
+two shots). The published site leaves those 64 originals out: 281 MB → 220 MB. The rest of `inbound/` (Sketchfab
+downloads 43 MB, raw models 13 MB, the set's UI art 45 MB) is shipped on purpose as the owner's drop folder; taking it
+off the site is the owner's decision, and it is what the 120 MB target needs.
+
 ### Static checks (QA19)
 
 `node tools/qa/unused.mjs` reports exports no other file mentions: 52, nearly all used inside their own module; three

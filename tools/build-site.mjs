@@ -2,6 +2,7 @@
 // Everything not listed here (docs/ai, docs/agent-ops, docs/adr, tools, tests, raw sources…) stays in
 // the repository and is never published. Add a path here deliberately when something should be public.
 //   node tools/build-site.mjs [outDir]
+import {OPTIMISED} from '../convoy/set-optimised.js';
 import fs from 'node:fs';
 import path from 'node:path';
 import {marked} from 'marked';
@@ -45,6 +46,10 @@ const ALLOW = [
 // The Codex workbench study links to repository Markdown, which is not published.
 const SKIP_DIRS = [/^outbound\/tlou2-workbench-study\//];
 const SKIP_FILES = [/\.psd$/i, /\.manifest\.json$/, /\.md$/, /\.test\.m?js$/, /\.DS_Store$/];
+// placeholder images with a light WebP copy (tools/assets/optimise-set.mjs): the pages load the copy, so the heavy
+// original (70 MB in all) stays out of the site
+const SET_DIR = 'inbound/Placeholder Assets/';
+const heavyOriginal = rel => rel.startsWith(SET_DIR) && OPTIMISED.has(rel.slice(SET_DIR.length));
 
 fs.rmSync(out, {recursive: true, force: true});
 fs.mkdirSync(out, {recursive: true});
@@ -56,7 +61,8 @@ function copy(rel) {
     for (const e of fs.readdirSync(src)) copy(path.join(rel, e));
     return;
   }
-  if (SKIP_FILES.some(re => re.test(rel)) || SKIP_DIRS.some(re => re.test(rel.split(path.sep).join('/')))) return;
+  const posix = rel.split(path.sep).join('/');
+  if (SKIP_FILES.some(re => re.test(rel)) || SKIP_DIRS.some(re => re.test(posix)) || heavyOriginal(posix)) return;
   const dest = path.join(out, rel);
   fs.mkdirSync(path.dirname(dest), {recursive: true});
   fs.copyFileSync(src, dest);

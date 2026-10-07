@@ -2,8 +2,11 @@
 // (inbound/Placeholder Assets, PSDs flattened to PNG by outbound/flatten-psd.py). This module loads the images, tints the
 // grey layers, and assembles paper-doll pawns (body, clothes, head, hair, headgear) for the three drawn directions.
 
+import {OPTIMISED} from './set-optimised.js';
+
 const BASE = new URL('../inbound/Placeholder%20Assets/', import.meta.url).href;
 const H = 'Things/Pawn/Humanlike/';
+const LIGHT = new URL('../assets/sprites/set/', import.meta.url).href; // WebP copies (tools/assets/optimise-set.mjs)
 
 // Every file the view uses, by short name.
 export const FILES = {
@@ -214,7 +217,8 @@ function load(path) {
         const img = new Image();
         img.onload = () => resolve(img);
         img.onerror = () => resolve(null); // a missing layer is skipped, never fatal
-        img.src = BASE + path.split('/').map(encodeURIComponent).join('/');
+        const enc = path.split('/').map(encodeURIComponent).join('/');
+        img.src = OPTIMISED.has(path) ? `${LIGHT}${enc}.webp` : BASE + enc; // the light copy where there is one
       }),
     );
   return images.get(path);
