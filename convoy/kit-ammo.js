@@ -63,7 +63,7 @@ export function attachAmmo(sim, cat, {kits = {}, seed = 1, army = false} = {}) {
     reloaded(u) {
       const k = kitOf(u),
         r = reload(cat, k, k.primary);
-      if (r.dropped) drops.push({x: u.x, z: u.z, container: pile(r.dropped)});
+      if (r.dropped) drops.push({x: u.x, z: u.z, label: 'a dropped magazine', container: pile(r.dropped)});
       return sync(u);
     },
     fired(u, wid) {

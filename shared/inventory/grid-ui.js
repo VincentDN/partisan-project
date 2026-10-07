@@ -1,16 +1,11 @@
 // The grid inventory screen (WP-S10, TAC-C-11), Tarkov-style: a fighter's kit beside what is searched (a body, a cache,
 // the armoury). Drag to move, R turns, rounds dropped on a magazine load it, a magazine dropped on the weapon goes in,
 // Shift-drop splits, U unloads, E ejects, H uses medicine. Keyboard: Enter picks up, arrows and [ ] move, Enter drops.
-import {footprint, fits, remove, placeAt, add, findSpot, contents} from './grid.js';
+import {footprint, fits, remove, placeAt, add} from './grid.js';
 import {loadMag, roundsIn, loadedRounds, chamber, unloadInto, ejectMag} from './ammo.js';
 
 const CELL = 46;
-const el = (tag, cls, text) => {
-  const e = document.createElement(tag);
-  if (cls) e.className = cls;
-  if (text !== undefined) e.textContent = text;
-  return e;
-};
+const el = (tag, cls = '', text = '') => Object.assign(document.createElement(tag), {className: cls, textContent: text});
 
 /** panels: [{title, kit}] or [{title, container}]; make(slug, count) builds items (for splits and unloads). */
 export function mountInventory(root, {cat, panels, make, onChange = () => {}, onUse = null, icon = () => null}) {
@@ -87,11 +82,10 @@ export function mountInventory(root, {cat, panels, make, onChange = () => {}, on
     return box;
   }
   function drawContainer(container, title, where = title) {
-    const sec = el('section', 'inv-box');
-    if (title) sec.append(el('h3', '', title));
-    const row = el('div', 'inv-grids');
+    const sec = el('section', 'inv-box'),
+      row = el('div', 'inv-grids');
     container.grids.forEach((_, g) => row.append(drawGrid(container, g, where)));
-    sec.append(row);
+    sec.append(...(title ? [el('h3', '', title)] : []), row);
     return sec;
   }
   function drawWeapon(kit) {
@@ -111,8 +105,8 @@ export function mountInventory(root, {cat, panels, make, onChange = () => {}, on
       ...panels.map(p => {
         const col = el('div', 'inv-panel');
         col.append(el('h2', 'inv-title', p.title));
-        if (p.kit) {
-          const k = p.kit;
+        const k = p.kit;
+        if (k) {
           col.append(drawWeapon(k));
           if (k.rig) col.append(drawContainer(k.rig, cat.def(k.rig.slug).short));
           col.append(drawContainer(k.pockets, 'Pockets'));
@@ -227,15 +221,18 @@ export function mountInventory(root, {cat, panels, make, onChange = () => {}, on
       }
     };
     const up = ev => {
-      removeEventListener('pointermove', moveTo);
-      removeEventListener('pointerup', up);
-      removeEventListener('keydown', key);
+      for (const [t, f] of on) removeEventListener(t, f);
+      if (ev.type === 'pointercancel') carry.target = null; // a cancelled drag puts the item back
       drop(ev.shiftKey);
     };
+    const on = [
+      ['pointermove', moveTo],
+      ['pointerup', up],
+      ['pointercancel', up],
+      ['keydown', key],
+    ];
     moveTo(e);
-    addEventListener('pointermove', moveTo);
-    addEventListener('pointerup', up);
-    addEventListener('keydown', key);
+    for (const [t, f] of on) addEventListener(t, f);
   }
 
   // keyboard
@@ -295,5 +292,5 @@ export function mountInventory(root, {cat, panels, make, onChange = () => {}, on
   }
 
   render();
-  return {render, findSpot: (container, item) => findSpot(cat, container, item), contents};
+  return {render};
 }

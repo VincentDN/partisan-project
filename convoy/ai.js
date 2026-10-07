@@ -180,7 +180,8 @@ function dismount(sim, u, best) {
   const since = sim.alarm ? sim.alarmAt : v.stopAt;
   if (sim.time < since + 0.4 + idx * 0.35) return; // they pile out one by one
   const side = best ? (best.z < v.z ? 1 : -1) : 1; // out of the doors away from the threat
-  u.x = v.x + (idx - (v.crew.length - 2) / 2) * 1.3;
+  const B = sim.level.bounds; // a column still driving in from beyond the map edge dismounts on the map
+  u.x = Math.max(B.minX + 1, Math.min(B.maxX - 1, v.x + (idx - (v.crew.length - 2) / 2) * 1.3));
   u.z = v.z + side * (v.d / 2 + 0.8);
   u.facing = side > 0 ? -Math.PI / 2 : Math.PI / 2;
   if (best) {
