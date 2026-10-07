@@ -153,13 +153,15 @@ export function findCover(sim, u, threat) {
       const px = b.x + ax * reach - az * lateral * (b.w / 2),
         pz = b.z + az * reach + ax * lateral * (b.d / 2);
       if (blocked(px, pz)) continue;
+      const far = Math.hypot(px - u.x, pz - u.z) * 1.2;
+      if (40 - far <= bestScore) continue; // even covered and alone it cannot beat the best: skip the sight check
       const covered = !sim.los(threat.x, threat.z, px, pz);
       const crowd = sim.units.filter(
         o => o !== u && o.alive && o.side === u.side && Math.hypot((o.moveTo || o).x - px, (o.moveTo || o).z - pz) < 1.6,
       ).length;
       const score =
         (covered ? 40 : 0) -
-        Math.hypot(px - u.x, pz - u.z) * 1.2 -
+        far -
         (Math.hypot(px - threat.x, pz - threat.z) < 10 ? 25 : 0) -
         crowd * 14 -
         ((sim.level.avoid || []).some(a => inBox(px, pz, a)) ? 4 : 0);

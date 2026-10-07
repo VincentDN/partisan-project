@@ -3723,7 +3723,7 @@
    "milestone": "QA",
    "size": "M",
    "bu": 20,
-   "status": "ready",
+   "status": "done",
    "deps": [
     "WP-QA18",
     "WP-QA2"

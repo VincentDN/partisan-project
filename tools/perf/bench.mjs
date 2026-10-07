@@ -1,6 +1,7 @@
 // Performance budgets (WP-QA2). Two measurements and a stored baseline (docs/perf-baseline.json):
 //   sim    every level, two seeds, 120 simulated seconds on Hard with the player firing: ms per step (mean, p99,
-//          worst) and the process's CPU time, so a busy machine skews it less than wall time alone
+//          worst) and the process's CPU time, so a busy machine skews it less than wall time alone; each number is
+//          the median of three runs
 //   pages  cold load of each page in headless Chromium: requests, bytes, time until the page says it is ready, and
 //          the bytes once the network is quiet (what it loads after it is ready: terrain, sounds, models)
 //   node tools/perf/bench.mjs sim|pages|all [--write] [--check]
@@ -13,7 +14,19 @@ import {LEVELS} from '../../convoy/levels/index.js';
 const BASELINE = new URL('../../docs/perf-baseline.json', import.meta.url);
 const TOLERANCE = 1.2;
 
-export function simBench({seconds = 120, seeds = [3, 4]} = {}) {
+/** The sim benchmark three times over, each number the median of the three (one run is too noisy to budget on). */
+export function simBench(opts = {}) {
+  const runs = [simRun(opts), simRun(opts), simRun(opts)];
+  const med = vs => vs.sort((a, b) => a - b)[1];
+  return Object.fromEntries(
+    Object.keys(runs[0]).map(level => [
+      level,
+      Object.fromEntries(Object.keys(runs[0][level]).map(k => [k, med(runs.map(r => r[level][k]))])),
+    ]),
+  );
+}
+
+function simRun({seconds = 120, seeds = [3, 4]} = {}) {
   const out = {};
   for (const level of Object.keys(LEVELS)) {
     const times = [];

@@ -19,10 +19,13 @@ export function coverGrid(cover) {
       }
   });
   /**
-   * Indices of the cover that may touch the rectangle x0..x1, z0..z1 (grown by up to PAD). `out` is filled and
-   * returned (pass a reused array on hot paths); `ordered` sorts it into level order (for "the first box hit").
+   * Indices of the cover that may touch the rectangle x0..x1, z0..z1 (grown by up to PAD), read-only. `out` is filled
+   * and returned (pass a reused array on hot paths); `ordered` sorts it into level order (for "the first box hit").
    */
+  const NONE = [];
   function near(x0, z0, x1, z1, out = [], ordered = false) {
+    // one cell (a point, a short ray): its list is already in level order and holds each box once; read it as it is
+    if (cell(x0) === cell(x1) && cell(z0) === cell(z1)) return cells.get(key(cell(x0), cell(z0))) || NONE;
     tick++;
     out.length = 0;
     for (let i = cell(x0); i <= cell(x1); i++)
@@ -34,5 +37,43 @@ export function coverGrid(cover) {
           }
     return ordered ? out.sort((a, b) => a - b) : out;
   }
-  return {near};
+  /**
+   * Indices of the cover that may touch the segment a->b: only the cells the segment passes through (a grid walk),
+   * not the whole rectangle around it. Read-only; `ordered` sorts into level order.
+   */
+  function along(ax, az, bx, bz, out = [], ordered = false) {
+    let i = cell(ax),
+      j = cell(az);
+    const ei = cell(bx),
+      ej = cell(bz);
+    if (i === ei && j === ej) return cells.get(key(i, j)) || NONE;
+    tick++;
+    out.length = 0;
+    const dx = bx - ax,
+      dz = bz - az,
+      si = Math.sign(dx),
+      sj = Math.sign(dz);
+    // distance along the segment (0..1) to the next vertical and horizontal cell line, and between them
+    let tx = si ? ((si > 0 ? (i + 1) * CELL : i * CELL) - ax) / dx : Infinity,
+      tz = sj ? ((sj > 0 ? (j + 1) * CELL : j * CELL) - az) / dz : Infinity;
+    const stepX = si ? (CELL / dx) * si : Infinity,
+      stepZ = sj ? (CELL / dz) * sj : Infinity;
+    for (let guard = 0; guard < 4096; guard++) {
+      for (const n of cells.get(key(i, j)) || NONE)
+        if (stamp[n] !== tick) {
+          stamp[n] = tick;
+          out.push(n);
+        }
+      if (i === ei && j === ej) break;
+      if (tx < tz) {
+        i += si;
+        tx += stepX;
+      } else {
+        j += sj;
+        tz += stepZ;
+      }
+    }
+    return ordered ? out.sort((a, b) => a - b) : out;
+  }
+  return {near, along};
 }

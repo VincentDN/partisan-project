@@ -329,6 +329,13 @@ export class Sim {
     for (const n of grid.near(x0, z0, x1, z1, (this._near ||= []))) if (test(cover[n])) return true;
     return false;
   }
+  /** Does any of the level's static cover the segment a->b passes near pass `test`? (the cells it crosses only) */
+  someCoverAlong(ax, az, bx, bz, test) {
+    const grid = (this._grid ||= coverGrid(this.level.cover)),
+      cover = this.level.cover;
+    for (const n of grid.along(ax, az, bx, bz, (this._near ||= []))) if (test(cover[n])) return true;
+    return false;
+  }
   /** The level's static cover near a rectangle, in level order. */
   coverNear(x0, z0, x1, z1) {
     const grid = (this._grid ||= coverGrid(this.level.cover));
@@ -338,7 +345,7 @@ export class Sim {
   /** Line of sight between two points (eye height is implied: every obstacle is taller than a crouching man). */
   los(ax, az, bx, bz) {
     const blocks = b => !inBox(ax, az, b) && !inBox(bx, bz, b) && segmentBox(ax, az, bx, bz, b, -0.05) < 1;
-    if (this.someCoverNear(Math.min(ax, bx), Math.min(az, bz), Math.max(ax, bx), Math.max(az, bz), blocks)) return false;
+    if (this.someCoverAlong(ax, az, bx, bz, blocks)) return false;
     for (const b of this.dynamicBoxes()) if (blocks(b)) return false;
     for (const c of this.smokes) if (this.time < c.until && segmentCircle(ax, az, bx, bz, c.x, c.z, c.r)) return false;
     return true;
@@ -559,7 +566,8 @@ export class Sim {
     const boxHits = [],
       ex = ox + dx * W.range,
       ez = oz + dz * W.range;
-    const near = [...this.coverNear(Math.min(ox, ex), Math.min(oz, ez), Math.max(ox, ex), Math.max(oz, ez)), ...this.dynamicBoxes()];
+    const grid = (this._grid ||= coverGrid(this.level.cover));
+    const near = [...grid.along(ox, oz, ex, ez, [], true).map(n => this.level.cover[n]), ...this.dynamicBoxes()];
     for (const b of near) {
       if (inBox(u.x, u.z, b, 0.1)) continue;
       const t = segmentBox(ox, oz, ox + dx * W.range, oz + dz * W.range, b);
