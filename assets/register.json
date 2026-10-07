@@ -1221,7 +1221,7 @@
    "path": "assets/models/operators/recon-pouches.glb",
    "kind": "character",
    "status": "real",
-   "notes": "CM6 mount-local magazine (264), utility (220) and radio/cable (376) templates. Repeated mounted copies are budgeted per instance; six radios plus loaded foundation/carrier total 8,940 triangles. Rebuild with assets:recon-pouches.",
+   "notes": "CM6 closed, UV-mapped magazine (264), utility (220) and owned radio/cable (376) templates, seated on the measured carrier webbing. The 1,400-triangle template allocation does not cap repeated copies: six radios allocate 2,256 and total 8,940 with foundation/carrier, leaving 6,060 under the complete-operator ceiling. Rebuild with assets:recon-pouches.",
    "budget": {"triangles": 1400},
    "triangles": 860
   }

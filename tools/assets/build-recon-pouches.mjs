@@ -14,7 +14,7 @@ execFileSync(
 execFileSync(process.execPath, ['tools/assets/optimize-pack.mjs', 'build/recon-pouches.raw.glb', output], {stdio: 'inherit'});
 const manifest = JSON.parse(fs.readFileSync(output.replace('.glb', '.manifest.json')));
 const report = JSON.parse(fs.readFileSync('build/recon-pouches-report.json'));
-if (report.some(m => m.boundaryEdges) || manifest.triangles > 1400) throw Error('Pouch topology/budget failed');
+if (report.some(m => m.boundaryEdges || m.degenerateTriangles) || manifest.triangles > 1400) throw Error('Pouch topology/budget failed');
 if (sources.some((p, i) => hash(p) !== before[i])) throw Error('Changed source geometry');
 const catalogue = manifest.meshes.map(m => ({
   id: m.node.replace('Pouch_', 'pouch.'),

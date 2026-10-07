@@ -60,7 +60,8 @@ for kind in ['magazine','utility','radio']:
         box('Pouch',(cx,.048,.024),(.065,.096,.038),fabric,.003)
         box('Strap',(cx,.067,.045),(.014,.094,.004),trim,.001)
         box('Buckle',(cx,.096,.049),(.023,.015,.005),hard,.001)
-        box('Display',(cx,.127,.040),(.030,.016,.002),metal,.001)
+        # Keep a real side wall: a half-thickness bevel collapses after quantization.
+        box('Display',(cx,.127,.040),(.030,.016,.002),metal,.0005)
         tube('Antenna',[(cx-.018,.145,.02),(cx-.018,.206,.02),(cx-.012,.247,.018)],.0025,hard)
         box('Knob',(cx+.015,.153,.02),(.01,.016,.01),hard,.001)
         tube('Owned cable',[(cx+.022,.141,.02),(cx+.03,.159,.026),(cx+.03,.181,.034),(cx+.016,.195,.04),
@@ -68,10 +69,13 @@ for kind in ['magazine','utility','radio']:
     bpy.ops.object.select_all(action='DESELECT')
     for o in objects:o.select_set(True)
     bpy.context.view_layer.objects.active=objects[0];bpy.ops.object.join();obj=objects[0];obj.name='Pouch_'+kind
+    # Seat the pouch backs within 2 mm of the measured outer webbing.
+    obj.location.y+=.0075
     bpy.ops.object.transform_apply(location=True,rotation=True,scale=True)
     bpy.ops.object.mode_set(mode='EDIT');bpy.ops.mesh.select_all(action='SELECT');bpy.ops.uv.smart_project(island_margin=.02);bpy.ops.object.mode_set(mode='OBJECT')
     bm=bmesh.new();bm.from_mesh(obj.data);bmesh.ops.triangulate(bm,faces=list(bm.faces))
-    report.append({'node':obj.name,'triangles':len(bm.faces),'boundaryEdges':sum(e.is_boundary for e in bm.edges)})
+    report.append({'node':obj.name,'triangles':len(bm.faces),'boundaryEdges':sum(e.is_boundary for e in bm.edges),
+                   'degenerateTriangles':sum(f.calc_area()<=1e-12 for f in bm.faces)})
     bm.free()
 bpy.ops.object.select_all(action='SELECT')
 bpy.ops.wm.save_as_mainfile(filepath=os.path.abspath('build/recon-pouches.blend'))

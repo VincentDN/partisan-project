@@ -1,5 +1,7 @@
 # CM6 cloud continuation — 7 October 2026
 
+> **Cloud validation update:** The radio topology, loaded pose fitting, webbing seating and keyboard fixes are implemented. Final built-site regressions run in the branch's **CM6 cloud acceptance** GitHub Actions workflow. Read [STATE.md](STATE.md) for current status and [recon-pouches.md](../engineering/recon-pouches.md) for the implementation and acceptance coverage. The remainder records the original partial checkpoint.
+
 ## Start here
 
 Repository: `VincentDN/partisan-project`. Continue branch **`codex/generated-operator-equipment`**, not main. The owner explicitly authorized committing and pushing this branch and now requests a cloud/mobile handoff. Do not merge or push main, force-push, open a PR, or start unrelated work. Read `AGENTS.md` and `docs/agent-ops/STATE.md`; no subagents. This checkpoint is **partial CM6**, not a completed milestone.

@@ -19,6 +19,7 @@ export function modularRecon(weaponSlot) {
     model: '../assets/models/operators/recon-modular.glb',
     packs: ['../assets/models/operators/recon-carrier.glb'],
     pouchModel: '../assets/models/operators/recon-pouches.glb',
+    pouchPoseProfile: 'reconPouches',
     poseProfile: 'reconFoundation',
     equippedPoseProfile: {slot: 'carrier', options: ['light', 'placard'], profile: 'reconCarrier'},
     // Measured palm targets and upward knuckle direction keep the wrist below the stock.

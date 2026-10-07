@@ -95,10 +95,12 @@ test('default look fits the triangle budget with the largest equipment on', () =
 // ---- every roster base: model + packs on the shared skeleton, parts and zones resolve ----
 const manifestOf = url => JSON.parse(fs.readFileSync(url.replace('../', '').replace('.glb', '.manifest.json'), 'utf8'));
 for (const base of Object.values(BASES)) {
-  const models = [base.model, ...base.packs].map(manifestOf);
+  const models = [base.model, ...base.packs, ...(base.pouchModel ? [base.pouchModel] : [])].map(manifestOf);
   const allNodes = new Map(models.flatMap(m => m.meshes.map(x => [x.node, x])));
   const allMaterials = new Set(models.flatMap(m => m.materials.map(x => x.name)));
-  const triangles = models.reduce((n, m) => n + m.triangles, 0);
+  const templates = base.pouchModel ? manifestOf(base.pouchModel) : null;
+  const mounted = templates ? base.slots.filter(s => s.requiresCarrier).length * Math.max(...templates.meshes.map(m => m.triangles)) : 0;
+  const triangles = models.reduce((n, m) => n + m.triangles, 0) - (templates?.triangles || 0) + mounted;
 
   test(`[${base.id}] within the triangle budget with every equipment slot on`, () =>
     assert.ok(triangles <= TRIANGLE_BUDGET, `${triangles} > ${TRIANGLE_BUDGET}`));

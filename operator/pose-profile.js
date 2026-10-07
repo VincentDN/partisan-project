@@ -5,6 +5,7 @@ export function posesForProfile(data, profileId, chain = []) {
   if (!profile) throw new Error(`Unknown pose profile: ${profileId}`);
   if (chain.includes(profileId)) throw new Error('Cyclic pose profile inheritance');
   const result = profile.extends ? posesForProfile(data, profile.extends, [...chain, profileId]) : structuredClone(data);
+  if (profile.slung) result.slung = structuredClone(profile.slung);
   result.localBones = profile.localBones || result.localBones || [];
   result.handShapes = {...result.handShapes, ...structuredClone(profile.handShapes || {})};
   for (const [id, pose] of Object.entries(result.poses)) {

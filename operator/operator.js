@@ -208,13 +208,13 @@ function applyEquipment() {
   $('#tris-bar').style.width = Math.min(100, (tris / TRIANGLE_BUDGET) * 100) + '%';
 }
 function applyAll(blendSeconds = 0) {
+  applyEquipment();
   const fit = base.equippedPoseProfile;
-  const profile = fit?.options.includes(state[fit.slot]) ? fit.profile : base.poseProfile;
+  const profile = rig.pouches?.equipped ? base.pouchPoseProfile : fit?.options.includes(state[fit.slot]) ? fit.profile : base.poseProfile;
   if (rig.profileId !== profile) {
     rig.data = posesForProfile(poseData, profile);
     rig.profileId = profile;
   }
-  applyEquipment();
   for (const zone of base.zones) paintZone(zone, state[`z.${zone.id}`]);
   rig.setPose(state.pose, blendSeconds);
   syncWeapon();
@@ -274,7 +274,7 @@ const SLUNG = {anchor: 'spine_03', hold: [0.1, -0.12, -0.2], muzzle: [-0.55, 0.8
 let carry = null; // {p, q, w}: the rifle's blended placement (turn space) and the IK weight
 function placeWeapon(dt = 0) {
   const pose = rig.data.poses[state.pose];
-  const w = pose.weapon || SLUNG; // a pose with no hands on the rifle carries it slung across the back
+  const w = pose.weapon || rig.data.slung || SLUNG; // a pose with no hands on the rifle carries it slung across the back
   pivot.visible = !!weapon;
   if (!pivot.visible) {
     carry = null;
@@ -292,7 +292,7 @@ function placeWeapon(dt = 0) {
   const k = dt > 0 && !reduceMotion ? 1 - Math.exp(-dt * 9) : 1;
   carry.p.lerp(goalP, k);
   carry.q.slerp(goalQ, k);
-  carry.w = w === SLUNG ? 0 : reduceMotion ? 1 : Math.min(1, carry.w + dt * 5); // the hands blend in again when it comes off the back
+  carry.w = !pose.weapon ? 0 : reduceMotion ? 1 : Math.min(1, carry.w + dt * 5); // the hands blend in again when it comes off the back
   pivot.position.copy(carry.p);
   pivot.quaternion.copy(carry.q);
   pivot.updateMatrixWorld(true);
@@ -365,6 +365,8 @@ const camoGradient = id => {
 };
 
 function render() {
+  const focused = document.activeElement;
+  const focusGroup = focused?.closest('[role="group"]')?.getAttribute('aria-label');
   stage.wake();
   $('#slots').replaceChildren(
     ...base.slots.map(slot => {
@@ -454,6 +456,12 @@ function render() {
   $('#base-title').innerHTML = `${base.label},<br>low-poly.`;
   $('#base-description').textContent =
     base.description || 'Choose an operator, change equipment and colours, then combine a pose with an idle style.';
+  if (focusGroup && !focused.isConnected) {
+    const group = [...document.querySelectorAll('[role="group"]')].find(g => g.getAttribute('aria-label') === focusGroup);
+    [...(group?.querySelectorAll('button') || [])]
+      .find(b => b.textContent === focused.textContent && b.getAttribute('aria-label') === focused.getAttribute('aria-label'))
+      ?.focus({preventScroll: true});
+  }
 }
 async function switchBase(id) {
   mech.setDown();

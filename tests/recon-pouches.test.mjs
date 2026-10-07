@@ -7,6 +7,7 @@ import * as T from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {MeshoptDecoder} from 'meshoptimizer';
 import {Rig} from '../operator/rig.js';
+import {posesForProfile} from '../operator/pose-profile.js';
 import {bindPack} from '../operator/bind-pack.js';
 import {mountedPouches} from '../operator/mounted-pouches.js';
 import {POUCH_POSITIONS, pouchOutfit} from '../operator/pouch-slots.js';
@@ -39,6 +40,8 @@ test('measured pouch budgets, textures, closed geometry and source hashes agree'
   const manifest = read('assets/models/operators/recon-pouches.manifest.json');
   const fit = read('assets/models/operators/recon-pouches.fit.json');
   assert.equal(manifest.triangles, 860);
+  assert.equal(createHash('sha256').update(fs.readFileSync('assets/models/operators/recon-pouches.glb')).digest('hex'), fit.modelSha256);
+  assert.ok(fit.meshes.every(m => m.boundaryEdges === 0 && m.degenerateTriangles === 0));
   assert.ok(['M_CM_Pouches', 'M_CM_PouchTrim'].every(name => manifest.materials.find(m => m.name === name)?.textured));
   for (const [i, name] of ['recon-modular', 'recon-carrier'].entries())
     assert.equal(
@@ -60,13 +63,15 @@ test('measured pouch budgets, textures, closed geometry and source hashes agree'
     );
     const edges = new Map(),
       ids = m.geometry.index.array;
-    for (let i = 0; i < ids.length; i += 3)
+    for (let i = 0; i < ids.length; i += 3) {
+      assert.equal(new Set([points[ids[i]], points[ids[i + 1]], points[ids[i + 2]]]).size, 3, m.name + ' noncollapsed triangle');
       for (let j = 0; j < 3; j++) {
         const a = points[ids[i + j]],
           b = points[ids[i + ((j + 1) % 3)]],
           key = [a, b].sort().join('|');
         edges.set(key, (edges.get(key) || 0) + 1);
       }
+    }
     assert.ok(
       [...edges.values()].every(n => n === 2),
       m.name + ' closed',
@@ -79,6 +84,7 @@ test('six independent copies resolve, occupied cells reject and owned radios det
     result = resolveAssembly(catalogue, outfit);
   assert.equal(result.ok, true);
   assert.equal(result.budget.triangles, 6684 + 6 * 376);
+  assert.ok(result.budget.triangles <= result.budget.limit);
   const bad = structuredClone(outfit);
   bad.instances.find(i => i.id === 'front2').cell = [0, 0];
   assert.ok(resolveAssembly(catalogue, bad).errors.some(e => e.code === 'overlap'));
@@ -87,8 +93,22 @@ test('six independent copies resolve, occupied cells reject and owned radios det
   assert.equal(resolveAssembly(catalogue, detached.outfit).budget.triangles, result.budget.triangles - 376);
   assert.equal(detachAssembly(outfit, 'carrier').outfit.instances.length, 1);
 });
+test('pouch fitting inherits the carrier and finger profiles without changing their data', () => {
+  const data = read('operator/poses.json'),
+    before = structuredClone(data),
+    fitted = posesForProfile(data, 'reconPouches'),
+    bareCarrier = posesForProfile(data, 'reconCarrier');
+  assert.deepEqual(fitted.localBones, bareCarrier.localBones);
+  assert.deepEqual(fitted.handShapes, bareCarrier.handShapes);
+  assert.deepEqual(fitted.slung.hands, {});
+  fitted.slung.hold[2] = 100;
+  fitted.poses.port.bones.spine_01 = [100, 0, 0];
+  assert.deepEqual(data, before, 'fits never mutate shared pose data');
+  assert.equal(bareCarrier.slung, undefined);
+});
 test('front/rear copies use distinct rest positions, normalized skinning and move with the torso', () => {
   assert.equal(controller.update(state), true);
+  assert.equal(controller.equipped, true);
   scene.updateMatrixWorld(true);
   const list = meshes();
   assert.equal(new Set(list.map(m => m.userData.pouchInstance)).size, 6);
@@ -104,6 +124,10 @@ test('front/rear copies use distinct rest positions, normalized skinning and mov
     }
     const box = new T.Box3().setFromBufferAttribute(a.position);
     assert.ok(m.userData.pouchInstance.startsWith('front') ? box.min.z > 0.23 : box.max.z < -0.21, 'surface faces outward');
+    if (m.material.name === 'M_CM_Pouches') {
+      const front = m.userData.pouchInstance.startsWith('front');
+      assert.ok(front ? box.min.z <= 0.234 : box.max.z >= -0.212, 'pouch back meets the outer carrier webbing within 2 mm');
+    }
   }
   const m = list[0],
     before = m.getVertexPosition(0, new T.Vector3());
@@ -125,6 +149,7 @@ test('switching releases obsolete geometry and carrier removal leaves no orphan 
   assert.equal(new Set(meshes().map(m => m.userData.pouchInstance)).size, 3);
   controller.update({...state, carrier: 'none'});
   assert.equal(meshes().length, 0);
+  assert.equal(controller.equipped, false);
   controller.update(state);
   assert.equal(new Set(meshes().map(m => m.userData.pouchInstance)).size, 6);
   assert.equal(controller.update(state), false, 'pose/colour updates retain mounted geometry');

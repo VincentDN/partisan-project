@@ -107,6 +107,9 @@ export function mountedPouches(scene, rig, templates, carrierData, pouchData) {
     return m;
   }
   return {
+    get equipped() {
+      return meshes.length > 0;
+    },
     update(state) {
       const outfit = pouchOutfit(state, carrierData.outfits),
         next = JSON.stringify(outfit);

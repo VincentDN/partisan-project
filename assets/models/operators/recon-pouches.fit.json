@@ -4,22 +4,25 @@
   "1064e3091fad7296ce8f857d2d39093ed76274b5e4beb28656ee5f68c5c7a750",
   "d68e8a92eb133387e8e6f12c3420c0e56a0f882c70ea955fd63ac36d78429e9f"
  ],
- "modelSha256": "2f62ecda4bb0a245b05445781c65a6db3ab0e705f0c1b910ffafd9e293d60b34",
+ "modelSha256": "80b8229fed56e7a5f4b822e33aaf1e49b0e9df2744a30259cc0979e96164b027",
  "meshes": [
   {
    "node": "Pouch_magazine",
    "triangles": 264,
-   "boundaryEdges": 0
+   "boundaryEdges": 0,
+   "degenerateTriangles": 0
   },
   {
    "node": "Pouch_utility",
    "triangles": 220,
-   "boundaryEdges": 0
+   "boundaryEdges": 0,
+   "degenerateTriangles": 0
   },
   {
    "node": "Pouch_radio",
    "triangles": 376,
-   "boundaryEdges": 0
+   "boundaryEdges": 0,
+   "degenerateTriangles": 0
   }
  ]
 }

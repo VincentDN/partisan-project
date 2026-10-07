@@ -2680,9 +2680,10 @@
     "docs/agent-ops/CM6-CLOUD-HANDOFF.md",
     "operator/mounted-pouches.js",
     "operator/recon-pouches.json",
-    "tools/assets/build-recon-pouches.py"
+    "tools/assets/build-recon-pouches.py",
+    "docs/engineering/recon-pouches.md"
    ],
-   "acceptance": "Three independent pouch modules mount, duplicate and remove with occupied-cell validation; radio/cable follows its owning pouch; UV and posed contact sheets pass."
+   "acceptance": "npm run test:pouches; three closed, textured modules with measured front/rear skin binding, duplication/removal and occupied-cell validation; owned radio/cable, 72 held and 36 slung six-copy carries, 19 motion samples, shared colours, keyboard/mobile controls and inspected contact sheet pass. Per-instance allocation stays within the 15000-triangle assembly ceiling."
   },
   {
    "id": "WP-CM7",

@@ -4,9 +4,10 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 
 ## [Unreleased]
 
-### In progress (Mounted pouches, WP-CM6)
-- Add candidate magazine, utility and owned radio/cable modules with six front/rear mounting positions, repeated instances, pouch colours and a patrol preset. Preserve selections when removing their carrier.
-- Checkpoint for cloud continuation: mounting tests pass; radio export topology and final pose/browser acceptance remain unfinished. See `docs/agent-ops/CM6-CLOUD-HANDOFF.md`.
+### Added (Mounted pouches, WP-CM6)
+- Complete independent magazine, utility and owned radio/cable modules with six measured front/rear positions, duplication/removal, pouch colours and a Patrol preset. Removing the carrier preserves its pouch selections for restoration.
+- Fix collapsed radio-display geometry, seat pouch backs against the webbing, and fit loaded armed/slung poses through an equipment-specific profile. Preserve keyboard focus when equipment or colour controls redraw.
+- Validate closed exports, skin binding, per-copy budgets, 72 held and 36 slung configurations, motion samples, saved colours and mobile controls. See `docs/engineering/recon-pouches.md` and its final contact sheet.
 
 ### Added (Lightweight plate carrier, WP-CM5)
 - Add an independent 1,116-triangle carrier with front/rear bags, straps, pads, cummerbund and removable front placard. Compare clean clothing and both carrier states in the inspector or Modder; fabric colours and carrier choices round-trip in saved links.
