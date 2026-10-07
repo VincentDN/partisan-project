@@ -105,7 +105,7 @@ try {
   assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
   await page.addScriptTag({content: fs.readFileSync(createRequire(import.meta.url).resolve('axe-core/axe.min.js'), 'utf8')});
   const violations = await page.evaluate(async () =>
-    (await window.axe.run(document, {runOnly: {type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21aa']}})).violations
+    (await window.axe.run(document, {preload: false, runOnly: {type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21aa']}})).violations
       .filter(v => ['serious', 'critical'].includes(v.impact))
       .map(v => v.id),
   );

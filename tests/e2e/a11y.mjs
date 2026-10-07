@@ -51,6 +51,7 @@ for (const [name, path, ready] of pages) {
   await page.addScriptTag({content: axeSource});
   const result = await page.evaluate(() =>
     axe.run(document, {
+      preload: false,
       runOnly: {type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice']},
       resultTypes: ['violations'],
     }),
@@ -69,4 +70,4 @@ for (const [name, path, ready] of pages) {
 }
 await browser.close();
 server.stop();
-process.exit(failures ? 1 : 0);
+process.exit(failures || process.exitCode ? 1 : 0); // exitCode: page problems browser.close() reported

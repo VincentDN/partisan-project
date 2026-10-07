@@ -96,6 +96,15 @@ found no crashes and no broken invariants, except one. That and a read of the in
 The inventory hunt (9,000 random operations) and the save hunt (2,500 damaged saves: 2,472 repaired into usable
 campaigns, 28 refused and kept aside) found nothing else.
 
+### What failing on page errors caught (QA3)
+
+With every browser suite now failing on any console error, page error, failed request or HTTP error, the first full
+run turned up: the axe-core accessibility checker fetching `<page>/tokens.css` (it resolves a stylesheet's
+`@import` against the page while preloading; the site's CSS is right, the checks now run with `preload: false`);
+the accessibility suite exiting 0 whatever was reported (it now honours the reported failure); and one more timing
+assumption in the map-travel suite (a fixed distance in a fixed time on a machine running a fraction of a frame a
+second). Aborted loads during a close, reload or navigation are teardown and not counted.
+
 ### Static checks (QA19)
 
 `node tools/qa/unused.mjs` reports exports no other file mentions: 52, nearly all used inside their own module; three

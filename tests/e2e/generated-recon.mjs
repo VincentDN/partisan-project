@@ -148,7 +148,10 @@ try {
   const axeSource = fs.readFileSync(createRequire(import.meta.url).resolve('axe-core/axe.min.js'), 'utf8');
   await page.addScriptTag({content: axeSource});
   const violations = await page.evaluate(async () => {
-    const results = await window.axe.run(document, {runOnly: {type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']}});
+    const results = await window.axe.run(document, {
+      preload: false,
+      runOnly: {type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']},
+    });
     return results.violations.filter(v => ['serious', 'critical'].includes(v.impact)).map(v => v.id);
   });
   assert.deepEqual(violations, [], 'Generated Recon accessibility');
