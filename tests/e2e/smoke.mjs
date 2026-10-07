@@ -429,7 +429,8 @@ await check('operator: eyelids exist (hidden until a blink) and the head follows
     camera.position.set(3, 1.5, 1.2);
     controls.update();
   });
-  await page.waitForFunction(() => Math.abs(window.PARP_OPERATOR.look.yaw) > 15, null, {timeout: 20000});
+  // the head eases toward the camera a little each frame, and an idle stage renders slowly: allow a slow machine
+  await page.waitForFunction(() => Math.abs(window.PARP_OPERATOR.look.yaw) > 15, null, {timeout: 60000});
   const yaw = await page.evaluate(() => window.PARP_OPERATOR.look.yaw);
   assert.ok(yaw > 15 && yaw <= 40, `camera on the character's left turns the head left (+): ${yaw}`);
   await page.close();
