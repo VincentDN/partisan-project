@@ -96,6 +96,15 @@ found no crashes and no broken invariants, except one. That and a read of the in
 The inventory hunt (9,000 random operations) and the save hunt (2,500 damaged saves: 2,472 repaired into usable
 campaigns, 28 refused and kept aside) found nothing else.
 
+### Static checks (QA19)
+
+`node tools/qa/unused.mjs` reports exports no other file mentions: 52, nearly all used inside their own module; three
+were dead outright and are gone (`CAMO_PATTERNS` in shared/camo.js, `LOOP_SECONDS` in shared/music.js,
+`savedLoadout` in workbench/apply-loadout.js, with the imports only it used). No file is unreferenced. Strict
+type-checking of `shared/` pulls in the mission modules and reports 161 errors, nearly all inference from untyped
+`null` initialisers; the two that looked like bugs (a `'dusk'` comparison, a string compared with a number) are
+the same inference and not bugs. Typing them is its own packet, QA20.
+
 ## 3. Where bugs are likely: hunts
 
 Ranked by (how likely × how bad), with the method for each.

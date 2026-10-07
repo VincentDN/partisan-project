@@ -173,7 +173,6 @@ export function scheduleBar(g, index, t) {
   drum(g, t + 3 * BEAT, 'rim');
   for (let k = 0; k < 8; k++) if (k % 2 || !firstOfPair) drum(g, t + (k * BEAT) / 2, 'hat');
 }
-export const LOOP_SECONDS = BAR * BARS;
 // Background tabs throttle timers to about once a second, so the synth schedules 3 s ahead
 // and keeps playing while the tab is out of focus.
 const LOOKAHEAD = 3;

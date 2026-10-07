@@ -3843,19 +3843,37 @@
   },
   {
    "id": "WP-QA19",
-   "title": "Static checks: unused exports and dead files report; stricter tsc on shared/",
+   "title": "Static checks: a report of unused exports and unreferenced files; dead code removed",
    "track": "Quality",
    "milestone": "QA",
    "size": "XS",
    "bu": 3,
-   "status": "ready",
+   "status": "done",
    "deps": [],
    "agent": "any",
    "needs": [],
    "inputs": [
     "docs/quality-roadmap.md"
    ],
-   "acceptance": "A script lists unused exports and unreferenced files; findings removed or justified; tsc strict for shared/ without errors."
+   "acceptance": "node tools/qa/unused.mjs lists exports no other file mentions (marking the ones dead in their own file too) and files nothing loads; every dead one removed or justified."
+  },
+  {
+   "id": "WP-QA20",
+   "title": "Strict null checks for shared/ and the modules it imports (JSDoc types where inference gives null or never)",
+   "track": "Quality",
+   "milestone": "QA",
+   "size": "M",
+   "bu": 20,
+   "status": "ready",
+   "deps": [
+    "WP-QA19"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/quality-roadmap.md"
+   ],
+   "acceptance": "tsc with strict on shared/inventory and shared/campaign (and what they import from convoy/) passes; the 161 errors of 2026-10-07 are typed, not suppressed; any real bug found is fixed with a test."
   }
  ]
 }

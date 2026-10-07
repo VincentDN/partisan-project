@@ -4,8 +4,6 @@
 import {installCamo, applyFinishState} from './rifle-finishes.js';
 import {applySlotState} from './rifle-instance.js';
 import {blockedBy} from './stats.js';
-import {decode, parseLegacy} from '../shared/loadout.js';
-import {MODELS, DEFAULT_MODEL} from './models.js';
 
 export const emptyLoadout = rifle => ({rifle, build: {}, offsets: {}, finish: {}, wear: 0});
 
@@ -40,14 +38,3 @@ export function applyLoadout(rifle, l, wearUniform = {value: 0}) {
 }
 export {installCamo};
 
-/** The loadout to show on arrival: the page's own hash, else the build saved by the Workbench, else the default rifle. */
-export function savedLoadout(hash = location.hash) {
-  let text = hash;
-  if (!text.replace('#', '')) {
-    try {
-      text = localStorage.getItem('parp-loadout') || '';
-    } catch {}
-  }
-  const l = decode(text) || parseLegacy('');
-  return MODELS[l.rifle] ? l : {...l, rifle: DEFAULT_MODEL};
-}

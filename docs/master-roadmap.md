@@ -174,7 +174,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | **S** Partisan Tactical: extraction PvE, campaign and gated online research | v0.8.0 | 15/43 | 653 BU | 35% |
 | **V** Graphics: 2.5D top-down sprites for the shooter (the overworld moved to W) | v0.9.0 | 2/20 | 251 BU | 11% |
 | **W** World campaign: the Bannerlord loop (map, missions, loot, upgrades) | v0.10.0 | 4/26 | 359 BU | 14% |
-| **QA** Bug hunt and optimisation (docs/quality-roadmap.md) | — | 6/19 | 226 BU | 32% |
+| **QA** Bug hunt and optimisation (docs/quality-roadmap.md) | — | 7/20 | 246 BU | 30% |
 
 ### M0 · Foundation
 
@@ -406,7 +406,8 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-QA15` | Overworld map budget: lazy 3-D figures, texture sizes, draw calls | S (8) | ready | — | `WP-QA2` |
 | `WP-QA16` | Test suite speed and flake: no fixed sleeps, suites in parallel | S (8) | ready | — | `WP-QA3` |
 | `WP-QA17` | Split the oversized modules along their seams (sprite-render, soundscape, sim, sprite-game, ai) | M (20) | ready | — | `WP-QA18` |
-| `WP-QA19` | Static checks: unused exports and dead files report; stricter tsc on shared/ | XS (3) | ready | — | — |
+| `WP-QA19` | Static checks: a report of unused exports and unreferenced files; dead code removed | XS (3) | done | — | — |
+| `WP-QA20` | Strict null checks for shared/ and the modules it imports (JSDoc types where inference gives null or never) | M (20) | ready | — | `WP-QA19` |
 
 ### TD · Tech debt (fill windows)
 

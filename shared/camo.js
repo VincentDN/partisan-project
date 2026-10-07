@@ -98,7 +98,6 @@ function camoTexture(spec, seed) {
 }
 
 const camoCache = new Map();
-export const CAMO_PATTERNS = Object.keys(FABRIC).filter(k => typeof FABRIC[k] !== 'string');
 export function camoFor(name) {
   if (!camoCache.has(name)) camoCache.set(name, camoTexture(FABRIC[name], name.length * 977 + FABRIC[name].base.charCodeAt(1)));
   return camoCache.get(name);
