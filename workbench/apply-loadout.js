@@ -37,4 +37,3 @@ export function applyLoadout(rifle, l, wearUniform = {value: 0}) {
   return rifle;
 }
 export {installCamo};
-
