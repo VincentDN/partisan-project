@@ -1,0 +1,112 @@
+{
+ "sim": {
+  "convoy": {
+   "steps": 14400,
+   "meanMs": 0.047,
+   "p99Ms": 0.48,
+   "worstMs": 8.744,
+   "cpuMs": 1516
+  },
+  "compound": {
+   "steps": 14400,
+   "meanMs": 0.052,
+   "p99Ms": 0.258,
+   "worstMs": 7.999,
+   "cpuMs": 1485
+  },
+  "cave": {
+   "steps": 14095,
+   "meanMs": 0.018,
+   "p99Ms": 0.12,
+   "worstMs": 3.297,
+   "cpuMs": 756
+  },
+  "forest-road": {
+   "steps": 10370,
+   "meanMs": 0.036,
+   "p99Ms": 0.206,
+   "worstMs": 4.225,
+   "cpuMs": 637
+  },
+  "checkpoint": {
+   "steps": 14400,
+   "meanMs": 0.02,
+   "p99Ms": 0.135,
+   "worstMs": 9.578,
+   "cpuMs": 584
+  },
+  "village": {
+   "steps": 14400,
+   "meanMs": 0.021,
+   "p99Ms": 0.096,
+   "worstMs": 1.808,
+   "cpuMs": 520
+  },
+  "hilltop": {
+   "steps": 14400,
+   "meanMs": 0.01,
+   "p99Ms": 0.07,
+   "worstMs": 1.904,
+   "cpuMs": 220
+  }
+ },
+ "pages": {
+  "convoy/?seed=3": {
+   "requests": 134,
+   "kb": 14429,
+   "readyMs": 1295,
+   "settledRequests": 157,
+   "settledKb": 14590
+  },
+  "map/": {
+   "requests": 92,
+   "kb": 8031,
+   "readyMs": 2414,
+   "settledRequests": 92,
+   "settledKb": 8031
+  },
+  "map25/": {
+   "requests": 178,
+   "kb": 5186,
+   "readyMs": 1827,
+   "settledRequests": 178,
+   "settledKb": 5186
+  },
+  "inventory/": {
+   "requests": 12,
+   "kb": 211,
+   "readyMs": 157,
+   "settledRequests": 12,
+   "settledKb": 211
+  },
+  "band/": {
+   "requests": 87,
+   "kb": 655,
+   "readyMs": 518,
+   "settledRequests": 137,
+   "settledKb": 957
+  },
+  "menu/": {
+   "requests": 23,
+   "kb": 916,
+   "readyMs": 2667,
+   "settledRequests": 23,
+   "settledKb": 916
+  },
+  "workbench/": {
+   "requests": 42,
+   "kb": 3182,
+   "readyMs": 2975,
+   "settledRequests": 42,
+   "settledKb": 3182
+  },
+  "operator/": {
+   "requests": 56,
+   "kb": 4618,
+   "readyMs": 6261,
+   "settledRequests": 56,
+   "settledKb": 4618
+  }
+ },
+ "measured": "2026-10-07"
+}

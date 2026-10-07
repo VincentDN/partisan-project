@@ -1,7 +1,8 @@
 // Performance budgets (WP-QA2). Two measurements and a stored baseline (docs/perf-baseline.json):
 //   sim    every level, two seeds, 120 simulated seconds on Hard with the player firing: ms per step (mean, p99,
 //          worst) and the process's CPU time, so a busy machine skews it less than wall time alone
-//   pages  cold load of each page in headless Chromium: requests, bytes, time until the page says it is ready
+//   pages  cold load of each page in headless Chromium: requests, bytes, time until the page says it is ready, and
+//          the bytes once the network is quiet (what it loads after it is ready: terrain, sounds, models)
 //   node tools/perf/bench.mjs sim|pages|all [--write] [--check]
 // --write stores the result as the new baseline; --check fails on a regression over 20 % (a mean, p99 or bytes;
 // the worst single step is reported, not checked: it is the noisiest number).
@@ -40,7 +41,19 @@ export function simBench({seconds = 120, seeds = [3, 4]} = {}) {
   return out;
 }
 
-export async function pageBench(pages = ['convoy/?seed=3', 'map/', 'map25/', 'inventory/', 'band/', 'menu/', 'workbench/', 'operator/']) {
+/** Each page and how it says it is ready. */
+const PAGES = {
+  'convoy/?seed=3': () => window.PARP_SPRITES?.ready,
+  'map/': () => window.PARP_MAP?.ready,
+  'map25/': () => window.PARP_MAP?.ready,
+  'inventory/': () => window.PARP_INV?.ready,
+  'band/': () => window.PARP_BAND?.ready,
+  'menu/': () => window.PARP_MENU?.ready,
+  'workbench/': () => !!window.PARP_WORKBENCH?.rifle,
+  'operator/': () => window.PARP_OPERATOR?.ready,
+};
+
+export async function pageBench(pages = Object.keys(PAGES)) {
   const {launch, open, startServer} = await import('../../tests/e2e/browser.mjs');
   const server = await startServer(8185),
     browser = await launch();
@@ -48,18 +61,22 @@ export async function pageBench(pages = ['convoy/?seed=3', 'map/', 'map25/', 'in
   try {
     for (const url of pages) {
       const page = await open(browser, 'about:blank');
-      let bytes = 0,
-        requests = 0;
-      page.on('response', async res => {
-        try {
-          bytes += (await res.body()).length;
-          requests++;
-        } catch {}
-      });
+      // the browser's own resource timing: every request the page made and its decoded size
+      const loaded = () =>
+        page.evaluate(() => {
+          const all = [...performance.getEntriesByType('navigation'), ...performance.getEntriesByType('resource')];
+          return {requests: all.length, kb: Math.round(all.reduce((s, e) => s + (e.decodedBodySize || 0), 0) / 1024)};
+        });
       const t = Date.now();
       await page.goto(server.url + url);
-      await page.waitForFunction(() => Object.keys(window).some(k => k.startsWith('PARP_') && window[k]?.ready), null, {timeout: 240000});
-      out[url] = {requests, kb: Math.round(bytes / 1024), readyMs: Date.now() - t};
+      await page.waitForFunction(PAGES[url], null, {timeout: 240000});
+      const readyMs = Date.now() - t,
+        ready = await loaded();
+      // and everything it goes on to load once ready (terrain, sounds, models), until the network is quiet
+      await page.waitForLoadState('networkidle', {timeout: 120000}).catch(() => {});
+      const settled = await loaded();
+      out[url] = {requests: ready.requests, kb: ready.kb, readyMs, settledRequests: settled.requests, settledKb: settled.kb};
+      console.error(`${url}: ${JSON.stringify(out[url])}`);
       await page.close();
     }
   } finally {
@@ -74,7 +91,7 @@ export function regressions(base, now) {
   const worse = [];
   for (const [kind, rows] of Object.entries(now))
     for (const [name, row] of Object.entries(rows))
-      for (const k of ['meanMs', 'p99Ms', 'cpuMs', 'kb', 'requests']) {
+      for (const k of ['meanMs', 'p99Ms', 'cpuMs', 'kb', 'requests', 'settledKb']) {
         const was = base?.[kind]?.[name]?.[k];
         if (Number.isFinite(was) && Number.isFinite(row[k]) && row[k] > was * TOLERANCE && row[k] - was > 0.05)
           worse.push(`${kind} ${name} ${k}: ${was} -> ${row[k]}`);
