@@ -57,6 +57,10 @@
   "W": {
    "name": "World campaign: the Bannerlord loop (map, missions, loot, upgrades)",
    "version": "0.10.0"
+  },
+  "QA": {
+   "name": "Bug hunt and optimisation (docs/quality-roadmap.md)",
+   "version": null
   }
  },
  "packets": [
@@ -3525,6 +3529,335 @@
     "docs/design-decisions/C-inventory-looting.md"
    ],
    "acceptance": "Every tactical weapon and band weapon resolves to a catalogue weapon, its calibre, its magazines and at least two round types; a test fails on any unmapped id."
+  },
+  {
+   "id": "WP-QA18",
+   "title": "Golden replays: recorded input streams per level; same seed and inputs give the same debrief",
+   "track": "Quality",
+   "milestone": "QA",
+   "size": "S",
+   "bu": 8,
+   "status": "ready",
+   "deps": [],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/quality-roadmap.md"
+   ],
+   "acceptance": "tests/replays: one recording per level; a unit test replays each and compares the debrief JSON; documented how to re-record on an intended change."
+  },
+  {
+   "id": "WP-QA1",
+   "title": "Fuzz harness in the repo: randomised fights over every level, variant and difficulty with invariants",
+   "track": "Quality",
+   "milestone": "QA",
+   "size": "S",
+   "bu": 8,
+   "status": "ready",
+   "deps": [],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/quality-roadmap.md"
+   ],
+   "acceptance": "npm run fuzz (seeds and duration as flags) checks finite positions and health, bounds, ammunition conservation, single ownership of items, no throws; a short run in npm test, a long one nightly in CI."
+  },
+  {
+   "id": "WP-QA2",
+   "title": "Performance budgets: sim step and page-load benchmarks with a stored baseline",
+   "track": "Quality",
+   "milestone": "QA",
+   "size": "S",
+   "bu": 8,
+   "status": "ready",
+   "deps": [],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/quality-roadmap.md"
+   ],
+   "acceptance": "tools/perf: per-level ms per step (mean, p99, worst) and per-page bytes, requests and ready time; docs/perf-baseline.json; a check fails on a regression over 20 %."
+  },
+  {
+   "id": "WP-QA3",
+   "title": "Every browser suite fails on a console error or an unhandled rejection",
+   "track": "Quality",
+   "milestone": "QA",
+   "size": "XS",
+   "bu": 3,
+   "status": "ready",
+   "deps": [],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/quality-roadmap.md"
+   ],
+   "acceptance": "The shared open() helper records page errors; every suite asserts none at the end; no suppressions without a comment."
+  },
+  {
+   "id": "WP-QA4",
+   "title": "Campaign save hunt: fuzz normalize and migrate, two tabs, crash between result and settle, quota",
+   "track": "Quality",
+   "milestone": "QA",
+   "size": "M",
+   "bu": 20,
+   "status": "ready",
+   "deps": [
+    "WP-QA1"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/quality-roadmap.md"
+   ],
+   "acceptance": "Property tests over garbage and truncated saves; settle is idempotent across a reload at every step; a second tab never loses the other tab’s writes silently (it warns or merges); quota errors are reported, not swallowed."
+  },
+  {
+   "id": "WP-QA5",
+   "title": "Inventory hunt: random operation sequences with conservation and ownership invariants",
+   "track": "Quality",
+   "milestone": "QA",
+   "size": "M",
+   "bu": 20,
+   "status": "ready",
+   "deps": [
+    "WP-QA1"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/quality-roadmap.md"
+   ],
+   "acceptance": "Thousands of random move, turn, split, merge, load, unload, reload, fire, loot, eject and use operations; rounds never created or lost; every item in one place; a random-drag browser test on the inventory page."
+  },
+  {
+   "id": "WP-QA6",
+   "title": "Sim and AI soak: 10-minute fights per level and variant; stuck units, unreachable objectives",
+   "track": "Quality",
+   "milestone": "QA",
+   "size": "M",
+   "bu": 20,
+   "status": "ready",
+   "deps": [
+    "WP-QA1"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/quality-roadmap.md"
+   ],
+   "acceptance": "Detects units stuck for 20 s, units inside cover boxes, objectives that cannot complete, missions with no outcome; each finding fixed or filed."
+  },
+  {
+   "id": "WP-QA7",
+   "title": "Campaign loop soak: 30 encounters through the pure modules with invariants",
+   "track": "Quality",
+   "milestone": "QA",
+   "size": "S",
+   "bu": 8,
+   "status": "ready",
+   "deps": [
+    "WP-QA1"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/quality-roadmap.md"
+   ],
+   "acceptance": "Deploy, result, settle, clock, healing, parties and settlements over 30 encounters: no negative stash, nobody wounded forever, the log bounded, each result settled once."
+  },
+  {
+   "id": "WP-QA8",
+   "title": "Input and focus audit across the overlays (encounter, band, kit, search)",
+   "track": "Quality",
+   "milestone": "QA",
+   "size": "S",
+   "bu": 8,
+   "status": "ready",
+   "deps": [],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/quality-roadmap.md"
+   ],
+   "acceptance": "Keyboard-only walk of every overlay; Escape closes the top one only; focus returns where it was; no held key survives a blur or an overlay; touch drag and cancel."
+  },
+  {
+   "id": "WP-QA9",
+   "title": "Firefox and WebKit smoke runs",
+   "track": "Quality",
+   "milestone": "QA",
+   "size": "S",
+   "bu": 8,
+   "status": "ready",
+   "deps": [
+    "WP-QA3"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/quality-roadmap.md"
+   ],
+   "acceptance": "The smoke suite passes in Playwright Firefox and WebKit, or each difference is fixed or documented."
+  },
+  {
+   "id": "WP-QA10",
+   "title": "Memory leak hunt: restarts, overlays, map and mission trips",
+   "track": "Quality",
+   "milestone": "QA",
+   "size": "S",
+   "bu": 8,
+   "status": "ready",
+   "deps": [],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/quality-roadmap.md"
+   ],
+   "acceptance": "50 mission restarts, 100 inventory open and close, 10 map-mission trips: heap and window-listener counts flat; three.js resources disposed."
+  },
+  {
+   "id": "WP-QA11",
+   "title": "Sim hot path: cached static boxes, a spatial grid for rays and movement, no per-step allocation",
+   "track": "Quality",
+   "milestone": "QA",
+   "size": "M",
+   "bu": 20,
+   "status": "ready",
+   "deps": [
+    "WP-QA18",
+    "WP-QA2"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/quality-roadmap.md"
+   ],
+   "acceptance": "Golden replays unchanged; worst step under 4 ms on every level; GC under 5 % of sim time; mean step 40 % lower."
+  },
+  {
+   "id": "WP-QA12",
+   "title": "Compact inventory catalogue: only the kinds the inventory uses",
+   "track": "Quality",
+   "milestone": "QA",
+   "size": "S",
+   "bu": 8,
+   "status": "ready",
+   "deps": [
+    "WP-QA2"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/quality-roadmap.md"
+   ],
+   "acceptance": "A generated inventory catalogue under 200 KB that builds in under 50 ms; missions, the map kit screen and the inventory page use it; the wiki keeps the full one."
+  },
+  {
+   "id": "WP-QA13",
+   "title": "Asset diet: mission terrain at drawn size in WebP; the site trimmed to what pages load",
+   "track": "Quality",
+   "milestone": "QA",
+   "size": "M",
+   "bu": 20,
+   "status": "ready",
+   "deps": [
+    "WP-QA2"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/quality-roadmap.md"
+   ],
+   "acceptance": "convoy/ under 4 MB cold; the published site under 120 MB; a build check lists assets no page references."
+  },
+  {
+   "id": "WP-QA14",
+   "title": "Mission renderer: fog of war at a lower rate or incremental, static layers cached",
+   "track": "Quality",
+   "milestone": "QA",
+   "size": "M",
+   "bu": 20,
+   "status": "ready",
+   "deps": [
+    "WP-QA2"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/quality-roadmap.md"
+   ],
+   "acceptance": "Draw p95 under 12 ms in the software test browser; no visible change in the contact sheet."
+  },
+  {
+   "id": "WP-QA15",
+   "title": "Overworld map budget: lazy 3-D figures, texture sizes, draw calls",
+   "track": "Quality",
+   "milestone": "QA",
+   "size": "S",
+   "bu": 8,
+   "status": "ready",
+   "deps": [
+    "WP-QA2"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/quality-roadmap.md"
+   ],
+   "acceptance": "map/ under 4 MB cold and 35 MB heap; the 2.5-D map loads no 3-D figure models."
+  },
+  {
+   "id": "WP-QA16",
+   "title": "Test suite speed and flake: no fixed sleeps, suites in parallel",
+   "track": "Quality",
+   "milestone": "QA",
+   "size": "S",
+   "bu": 8,
+   "status": "ready",
+   "deps": [
+    "WP-QA3"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/quality-roadmap.md"
+   ],
+   "acceptance": "No waitForTimeout left in tests/e2e; browser suites run in parallel on separate ports; CI browser run under 20 minutes."
+  },
+  {
+   "id": "WP-QA17",
+   "title": "Split the oversized modules along their seams (sprite-render, soundscape, sim, sprite-game, ai)",
+   "track": "Quality",
+   "milestone": "QA",
+   "size": "M",
+   "bu": 20,
+   "status": "ready",
+   "deps": [
+    "WP-QA18"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/quality-roadmap.md"
+   ],
+   "acceptance": "Each under 300 lines; golden replays and every browser suite unchanged."
+  },
+  {
+   "id": "WP-QA19",
+   "title": "Static checks: unused exports and dead files report; stricter tsc on shared/",
+   "track": "Quality",
+   "milestone": "QA",
+   "size": "XS",
+   "bu": 3,
+   "status": "ready",
+   "deps": [],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/quality-roadmap.md"
+   ],
+   "acceptance": "A script lists unused exports and unreferenced files; findings removed or justified; tsc strict for shared/ without errors."
   }
  ]
 }

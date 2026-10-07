@@ -174,6 +174,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | **S** Partisan Tactical: extraction PvE, campaign and gated online research | v0.8.0 | 15/43 | 653 BU | 35% |
 | **V** Graphics: 2.5D top-down sprites for the shooter (the overworld moved to W) | v0.9.0 | 2/20 | 251 BU | 11% |
 | **W** World campaign: the Bannerlord loop (map, missions, loot, upgrades) | v0.10.0 | 4/26 | 359 BU | 14% |
+| **QA** Bug hunt and optimisation (docs/quality-roadmap.md) | — | 0/19 | 226 BU | 0% |
 
 ### M0 · Foundation
 
@@ -382,6 +383,30 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-W24` | Campaign end-to-end tests and performance: map to mission to map, two tabs and refresh safety, map at 30 fps on a mid phone | M (20) | planned | browser | `WP-W13`, `WP-W15` |
 | `WP-W25` | First-campaign prompts, design doc campaign section, changelog and index entry | S (8) | planned | — | `WP-W21`, `WP-W24` |
 | `WP-W26` | Campaign decisions (delegated by the owner): barter at villages, auto-resolve for lopsided fights, camp overrun as a setback, the 3-D map replaces the retro overworld | XS (3) | done | — | — |
+
+### QA · Bug hunt and optimisation (docs/quality-roadmap.md)
+
+| ID | Packet | Size | Status | Needs | Depends on |
+|---|---|---|---|---|---|
+| `WP-QA18` | Golden replays: recorded input streams per level; same seed and inputs give the same debrief | S (8) | ready | — | — |
+| `WP-QA1` | Fuzz harness in the repo: randomised fights over every level, variant and difficulty with invariants | S (8) | ready | — | — |
+| `WP-QA2` | Performance budgets: sim step and page-load benchmarks with a stored baseline | S (8) | ready | — | — |
+| `WP-QA3` | Every browser suite fails on a console error or an unhandled rejection | XS (3) | ready | — | — |
+| `WP-QA4` | Campaign save hunt: fuzz normalize and migrate, two tabs, crash between result and settle, quota | M (20) | ready | — | `WP-QA1` |
+| `WP-QA5` | Inventory hunt: random operation sequences with conservation and ownership invariants | M (20) | ready | — | `WP-QA1` |
+| `WP-QA6` | Sim and AI soak: 10-minute fights per level and variant; stuck units, unreachable objectives | M (20) | ready | — | `WP-QA1` |
+| `WP-QA7` | Campaign loop soak: 30 encounters through the pure modules with invariants | S (8) | ready | — | `WP-QA1` |
+| `WP-QA8` | Input and focus audit across the overlays (encounter, band, kit, search) | S (8) | ready | — | — |
+| `WP-QA9` | Firefox and WebKit smoke runs | S (8) | ready | — | `WP-QA3` |
+| `WP-QA10` | Memory leak hunt: restarts, overlays, map and mission trips | S (8) | ready | — | — |
+| `WP-QA11` | Sim hot path: cached static boxes, a spatial grid for rays and movement, no per-step allocation | M (20) | ready | — | `WP-QA18`, `WP-QA2` |
+| `WP-QA12` | Compact inventory catalogue: only the kinds the inventory uses | S (8) | ready | — | `WP-QA2` |
+| `WP-QA13` | Asset diet: mission terrain at drawn size in WebP; the site trimmed to what pages load | M (20) | ready | — | `WP-QA2` |
+| `WP-QA14` | Mission renderer: fog of war at a lower rate or incremental, static layers cached | M (20) | ready | — | `WP-QA2` |
+| `WP-QA15` | Overworld map budget: lazy 3-D figures, texture sizes, draw calls | S (8) | ready | — | `WP-QA2` |
+| `WP-QA16` | Test suite speed and flake: no fixed sleeps, suites in parallel | S (8) | ready | — | `WP-QA3` |
+| `WP-QA17` | Split the oversized modules along their seams (sprite-render, soundscape, sim, sprite-game, ai) | M (20) | ready | — | `WP-QA18` |
+| `WP-QA19` | Static checks: unused exports and dead files report; stricter tsc on shared/ | XS (3) | ready | — | — |
 
 ### TD · Tech debt (fill windows)
 
