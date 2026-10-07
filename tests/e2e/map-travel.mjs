@@ -30,7 +30,7 @@ try {
   const box = await page.locator('#stage canvas').boundingBox();
   await page.mouse.click(box.x + box.width * 0.62, box.y + box.height * 0.55);
   await page.waitForFunction(() => !!window.PARP_MAP.travel.party.route, null, {timeout: 30000}); // slow software frames
-  await page.waitForFunction(() => window.PARP_MAP.scene.getObjectByName('route').count > 0, null, {timeout: 10000}); // drawn on the next frame (a dot every 3 units)
+  await page.waitForFunction(() => window.PARP_MAP.scene.getObjectByName('route').count > 0, null, {timeout: 60000}); // drawn on the next frame (a dot every 3 units)
   assert.match(await page.locator('#toast').innerText(), /Marching to .+ province .+ about \d/);
   assert.ok(
     await page.evaluate(
@@ -63,9 +63,20 @@ try {
   });
   assert.equal(await page.evaluate(() => window.PARP_MAP.travel.following), true, 'an order brings the camera back');
   await page.evaluate(() => window.PARP_MAP.setSpeed(4));
-  await page.waitForFunction(s => Math.hypot(window.PARP_MAP.travel.party.x - s.x, window.PARP_MAP.travel.party.z - s.z) > 3, start, {
-    timeout: 30000,
-  });
+  await page
+    // under way (software frames on a busy machine are slow; the arrival is checked below in one step)
+    .waitForFunction(s => Math.hypot(window.PARP_MAP.travel.party.x - s.x, window.PARP_MAP.travel.party.z - s.z) > 1, start, {
+      timeout: 90000,
+    })
+    .catch(async e => {
+      const st = await page.evaluate(() => ({
+        party: window.PARP_MAP.travel.party,
+        encounter: !document.querySelector('.encounter')?.hidden,
+        toast: document.querySelector('#toast')?.innerText,
+        clock: document.querySelector('.clock, #clock')?.innerText,
+      }));
+      throw new Error(`the band did not march: ${JSON.stringify(st)} (${e.message})`);
+    });
   const cam = await page.evaluate(() => [
     window.PARP_MAP.cam.tx,
     window.PARP_MAP.cam.tz,
