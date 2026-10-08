@@ -81,6 +81,7 @@ export function newCampaign({id = 'c1', seed = 1, now = 0} = {}) {
     band: {
       leader: structuredClone(LEADER),
       fighters: fightersFromSquad(squad),
+      rosterVersion: 2,
       troops: structuredClone(START_BAND),
     },
     stash: addCounts({...START_STASH}, squad.stash), // the band depot plus the squad's starting kit
@@ -120,6 +121,10 @@ export function normalize(raw) {
   const b = isObj(o.band) ? o.band : {};
   if (isObj(b.leader)) c.band.leader = {...c.band.leader, ...b.leader};
   c.band.fighters = cleanFighters(b.fighters, c.band.fighters);
+  if (!b.rosterVersion) {
+    const additions = fightersFromSquad(newSquad());
+    for (const [id, fighter] of Object.entries(additions)) c.band.fighters[id] ??= fighter;
+  }
   if (isObj(b.troops)) c.band.troops = cleanTroops(b.troops);
   if (isObj(o.stash)) c.stash = cleanStash(o.stash);
   if (isGrid(o.armoury))
@@ -208,7 +213,8 @@ export function createStore(storage, {key = CAMPAIGN_KEY, now = () => Date.now()
   };
   const write = (k, v) => {
     try {
-      storage?.setItem(k, v);
+      if (!storage) return false;
+      storage.setItem(k, v);
       return true;
     } catch {
       return false; // full or blocked storage: the campaign keeps running in memory

@@ -3,6 +3,7 @@
 // the mission page reads it, plays the level and writes one result; settling applies that result exactly once,
 // keyed on the encounter id. A mission left without a result (a refresh, a closed tab) settles as withdrawn: the
 // fighters come back wounded, their kit with them, nothing taken. Pure, no DOM. docs/campaign-roadmap.md §5.
+import {SQUAD_MAX} from '../../convoy/roster.js';
 import {GEAR} from '../../band/troops.js';
 import {logEvent} from './state.js';
 
@@ -27,6 +28,7 @@ export function deploy(
   if (typeof id !== 'string' || !id) throw new Error('an encounter needs an id');
   if (c.settled.includes(id)) throw new Error(`encounter ${id} was already fought`);
   if (!Array.isArray(fighters) || !fighters.length) throw new Error('deploy at least one fighter');
+  if (fighters.length > SQUAD_MAX || new Set(fighters).size !== fighters.length) throw new Error('deploy up to nine distinct fighters');
   for (const f of fighters) {
     if (!c.band.fighters[f]) throw new Error(`no fighter ${f}`);
     if (c.band.fighters[f].wounded) throw new Error(`${f} is wounded`);

@@ -1,0 +1,285 @@
+{
+ "version": 1,
+ "catalogue": [
+  {
+   "skeletonId": "recon-v2",
+   "fitProfile": "recon-standard",
+   "footprint": [
+    1,
+    1
+   ],
+   "excludes": [],
+   "coverage": [],
+   "materialRegions": [
+    "fabric",
+    "webbing",
+    "hardware"
+   ],
+   "mounts": [
+    {
+     "id": "chest",
+     "type": "carrier",
+     "kind": "socket",
+     "position": [
+      0,
+      0,
+      0
+     ],
+     "quaternion": [
+      0,
+      0,
+      0,
+      1
+     ],
+     "scale": 1,
+     "depthRange": [
+      0,
+      0
+     ]
+    }
+   ],
+   "depth": 0,
+   "id": "body.recon",
+   "family": "body",
+   "owner": [],
+   "mountType": null,
+   "complete": true,
+   "compatibleSkeletons": [
+    "recon-v1"
+   ],
+   "coverageRegions": [],
+   "triangleCount": 5568,
+   "geometry": {
+    "model": "recon-modular.glb"
+   }
+  },
+  {
+   "skeletonId": "recon-v1",
+   "fitProfile": "recon-standard",
+   "footprint": [
+    1,
+    1
+   ],
+   "excludes": [],
+   "coverage": [],
+   "materialRegions": [
+    "fabric",
+    "webbing",
+    "hardware"
+   ],
+   "mounts": [
+    {
+     "id": "placard",
+     "type": "light-placard",
+     "kind": "socket",
+     "position": [
+      0,
+      0,
+      0
+     ],
+     "quaternion": [
+      0,
+      0,
+      0,
+      1
+     ],
+     "scale": 1,
+     "depthRange": [
+      0,
+      0
+     ]
+    },
+    {
+     "id": "rear",
+     "type": "webbing",
+     "kind": "grid",
+     "position": [
+      0.0975,
+      1.206,
+      -0.214
+     ],
+     "quaternion": [
+      0,
+      1,
+      0,
+      0
+     ],
+     "scale": 1,
+     "depthRange": [
+      0,
+      0.01
+     ],
+     "columns": 6,
+     "rows": 3,
+     "spacing": [
+      0.039,
+      0.039
+     ]
+    }
+   ],
+   "depth": 0,
+   "id": "carrier.light",
+   "family": "carrier",
+   "owner": [
+    "body"
+   ],
+   "mountType": "carrier",
+   "triangleCount": 1116,
+   "geometry": {
+    "model": "recon-carrier.glb",
+    "nodes": [
+     "SK_LC_Buckle_L",
+     "SK_LC_Buckle_R",
+     "SK_LC_Cummerbund_L",
+     "SK_LC_Cummerbund_R",
+     "SK_LC_Front",
+     "SK_LC_Pad_L",
+     "SK_LC_Pad_R",
+     "SK_LC_Rear",
+     "SK_LC_Shoulder_L",
+     "SK_LC_Shoulder_R"
+    ],
+    "loadedTriangles": 1116
+   }
+  },
+  {
+   "skeletonId": "recon-v1",
+   "fitProfile": "recon-standard",
+   "footprint": [
+    1,
+    1
+   ],
+   "excludes": [],
+   "coverage": [],
+   "materialRegions": [
+    "fabric",
+    "webbing",
+    "hardware"
+   ],
+   "mounts": [
+    {
+     "id": "front",
+     "type": "webbing",
+     "kind": "grid",
+     "position": [
+      -0.0975,
+      1.182,
+      0.235
+     ],
+     "quaternion": [
+      0,
+      0,
+      0,
+      1
+     ],
+     "scale": 1,
+     "depthRange": [
+      0,
+      0.01
+     ],
+     "columns": 6,
+     "rows": 3,
+     "spacing": [
+      0.039,
+      0.039
+     ]
+    }
+   ],
+   "depth": 0,
+   "id": "carrier.light.placard",
+   "family": "placard",
+   "owner": [
+    "carrier"
+   ],
+   "mountType": "light-placard",
+   "triangleCount": 0,
+   "geometry": {
+    "model": "recon-carrier.glb",
+    "nodes": [
+     "SK_LC_Placard"
+    ],
+    "sharedOwnerAsset": true
+   }
+  }
+ ],
+ "outfits": {
+  "bare": {
+   "version": 1,
+   "rootId": "body",
+   "instances": [
+    {
+     "id": "body",
+     "itemId": "body.recon",
+     "parentId": null,
+     "mount": null,
+     "cell": [
+      0,
+      0
+     ]
+    }
+   ]
+  },
+  "light": {
+   "version": 1,
+   "rootId": "body",
+   "instances": [
+    {
+     "id": "body",
+     "itemId": "body.recon",
+     "parentId": null,
+     "mount": null,
+     "cell": [
+      0,
+      0
+     ]
+    },
+    {
+     "id": "carrier",
+     "itemId": "carrier.light",
+     "parentId": "body",
+     "mount": "chest",
+     "cell": [
+      0,
+      0
+     ]
+    }
+   ]
+  },
+  "placard": {
+   "version": 1,
+   "rootId": "body",
+   "instances": [
+    {
+     "id": "body",
+     "itemId": "body.recon",
+     "parentId": null,
+     "mount": null,
+     "cell": [
+      0,
+      0
+     ]
+    },
+    {
+     "id": "carrier",
+     "itemId": "carrier.light",
+     "parentId": "body",
+     "mount": "chest",
+     "cell": [
+      0,
+      0
+     ]
+    },
+    {
+     "id": "placard",
+     "itemId": "carrier.light.placard",
+     "parentId": "carrier",
+     "mount": "placard",
+     "cell": [
+      0,
+      0
+     ]
+    }
+   ]
+  }
+ }
+}

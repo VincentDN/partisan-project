@@ -34,6 +34,11 @@ const PARTISAN_SPAWNS = [
   {id: 'player', x: 6, z: -16, label: 'Lead rebel'},
   {id: 'mila', x: 15, z: -18, label: 'Mila'},
   {id: 'dragan', x: -4, z: -18, label: 'Dragan'},
+  {id: 'ivana', x: 10, z: -18, label: 'Ivana'},
+  {id: 'petar', x: 12, z: -20, label: 'Petar'},
+  {id: 'lena', x: 10, z: -22, label: 'Lena'},
+  {id: 'niko', x: 14, z: -22, label: 'Niko'},
+  {id: 'sara', x: 12, z: -24, label: 'Sara'},
 ];
 
 // Vehicles in convoy order (lead first), each with its crew: {name, role} (roles in convoy/weapons.js).

@@ -18,12 +18,13 @@ function territoryTexture(field) {
         z = (j / (H - 1) - 0.5) * field.d;
       owner[j * W + i] = provinceAt(x, z);
     }
+  const colours = Object.fromEntries(Object.entries(FACTIONS).map(([id, f]) => [id, new T.Color(f.color)]));
   const data = new Uint8Array(W * H * 4);
   for (let j = 0; j < H; j++)
     for (let i = 0; i < W; i++) {
       const k = j * W + i,
         p = owner[k];
-      const c = new T.Color(FACTIONS[p.faction].color);
+      const c = colours[p.faction];
       data.set([c.r * 255, c.g * 255, c.b * 255, 0], k * 4);
       // a border wherever a neighbour within 2 texels belongs to another province (thicker between factions)
       let edge = 0;

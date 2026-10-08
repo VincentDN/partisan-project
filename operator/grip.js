@@ -50,7 +50,7 @@ function setWorld(bone, world) {
 }
 
 export class Grip {
-  /** @param {Map<string, T.Bone>} bones  @param {Map<string, {world: T.Quaternion}>} rest */
+  /** @param {Map<string, T.Bone>} bones  @param {Map<string, {world: T.Quaternion, local: T.Quaternion}>} rest */
   constructor(bones, rest, profile = {}) {
     this.bones = bones;
     this.grips = {...GRIPS, ...profile.grips};

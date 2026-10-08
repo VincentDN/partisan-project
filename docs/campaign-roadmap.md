@@ -1,296 +1,228 @@
-# Partisan Campaign: the Bannerlord loop
+# PARTISAN campaign: playable loop and vertical-slice roadmap
 
-Written 5 October 2026. This is the plan that joins the modules into one game. It is a plan, not a claim that the
-features below exist yet; packet status in [packets.json](agent-ops/packets.json) (milestone **W**) is authoritative for
-delivery. The [master roadmap](master-roadmap.md) remains the project index, and the
-[tactical roadmap](tactical-roadmap.md) still owns the rules inside a mission (extraction, inventory, loss).
+Revised 8 October 2026 against the current source, including Claude's tactical, inventory and quality work and the
+campaign integration on main. This document defines the vertical slice and distinguishes implemented rules from
+release acceptance still to be demonstrated. [Master roadmap](master-roadmap.md) indexes the other tracks;
+[packets.json](agent-ops/packets.json) retains their full acceptance criteria. A partial implementation does not close a packet.
 
-![Concept keyframe: four low-poly rebels around a map table in a lamp-lit hideout, planning the next raid](moodboard/keyframe-3-war-room.jpg)
-*Between raids: the squad plans the next ambush over the island map. Concept art, reference only.*
+## 1. The experience
 
-## 1. The game in one paragraph
+PARTISAN is a resistance campaign on an occupied Mediterranean island. The player leads a named band, chooses
+where and when to strike, fights a tactical mission, brings people and equipment home, and uses those gains to
+prepare the next operation. Terrain, travel time, wounds, ammunition and enemy pressure should make each choice
+matter. The intended loop is **reconnoitre → travel → choose a fight → deploy → fight and extract → account for
+losses and spoils → recover, equip and promote → change the occupation → choose the next fight**.
 
-You load into the **world map** as your rebel band: one hooded figure on the island, with a nameplate showing your
-strength. You click to move. Time runs while you march. **Invader convoys** drive the roads between towns and the
-army base; reach one and you **launch the Convoy Ambush mission**. March on a **town, village or the base** and you
-**launch the Compound Assault**. Meanwhile **enemy armies hunt you**: if one touches your band, it launches the **Rebel
-Base Defence** mission (in the cave hideout when they catch you at camp, a hasty defence when they catch you in the
-open). Every mission ends with **loot**. Loot and experience **upgrade your fighters** along the class tree (Village
-Infantry to elite machine gunners, marksmen, drone operators). Stolen guns go to the **Weapon Modder**, and stolen
-kit changes how your people look in the **Operator Customiser**. Stronger bands take bigger targets, the Invader
-answers with bigger hunters, and in the end you drive them off the island. That is the full Bannerlord loop:
-**move → fight → loot → upgrade → move on, stronger**.
+The campaign uses the **2.5D island map**: sprite parties on the terrain, a long camera lens and restrained depth
+and lighting effects. `map/` is the normal map; campaign links use `map/?campaign`. The old fully 3D presentation
+is `map/3d.html`, accessible under Dev tools as a demo. Old `map25/` links redirect while preserving their query
+and fragment. The tactical game keeps its established sprite renderer. These are complementary views of one
+campaign, not competing choices the player must configure.
 
-## 2. The loop
+A comprehensive vertical slice must demonstrate this entire chain in a bounded operation. It does not require
+an entire island's worth of content, every class, or finished strategic AI. It does require the same people,
+items, consequences and save state to survive every transition, and a clear beginning, setback and conclusion.
 
-```
-                 ┌──────────────────────── WORLD MAP (map/) ─────────────────────────┐
-                 │  your band moves · time runs · convoys drive · armies hunt you    │
-                 └───────┬───────────────────────┬──────────────────────────┬────────┘
-          you reach a convoy        you march on a settlement     an army touches you
-                 ▼                       ▼                          ▼
-          ENCOUNTER PANEL: enemy strength, terrain, your fighters ── Attack / Ambush / Withdraw
-                 ▼                       ▼                          ▼
-          Convoy Ambush            Compound Assault           Rebel Base Defence
-          (convoy level)           (compound level)           (cave level / field variant)
-                 └───────────────────────┼──────────────────────────┘
-                                         ▼
-                        DEBRIEF: survivors, wounds, experience, LOOT
-                                         ▼
-          BAND SCREEN (band/)  ─ promote fighters with experience + stolen gear
-          WEAPON MODDER (workbench/) ─ fit owned attachments to owned guns
-          OPERATOR CUSTOMISER (operator/) ─ the look follows the kit
-                                         ▼
-                        back to the WORLD MAP: changed territory, more heat
-```
+## 2. What the project actually contains
 
-## 3. What each module brings today
+| Area | Implemented now | Remaining acceptance |
+| --- | --- | --- |
+| Campaign entry and travel | Shared version-1 save, legacy migration, click-to-march A* navigation, terrain costs, camera follow, pause and speed | First-session guidance, strategic sight and route persistence |
+| Default map | 2.5D parties, island terrain, settlement and party labels; 3D demo separated | Real-device visual and frame-time acceptance |
+| Encounters | Proximity contact, enemy summary, ground/time/weather/strength variants, Attack and Leave | Ambush preparation, rearguard withdrawal and strategic pursuit |
+| Deployment | Eight starting rebels; select six to nine fit fighters; explicit deployed identities reach the sim | Recruit/reserve roster expansion and broader roster UX |
+| Tactical missions | Convoy, compound, cave, forest road, checkpoint, village and hilltop; squad switching and class abilities | Mission pathfinding defects, tuning with eight rebels, extraction/loss policy audit |
+| Durability | Rebels have 180 base HP, modified by class; army base HP remains 100 | Human difficulty and pacing playtests |
+| Return | One result per encounter, XP, wounds, equipment/goods, persistent kit, abandoned-mission recovery | Concurrent-tab transaction authority and interrupted-save UX |
+| Band | Promotions cost XP and equipment; grid kit and armoury; friendly-settlement recovery and trader | Owned weapon-modder and operator appearance integration |
+| World consequences | Defeated contacts disappear; captured settlements change owner; convoy motion survives reload | Resupply, respawn, cargo-driven missions, garrison simulation and counterattacks |
+| Pressure | Heat increases after victory and decreases when resting | Heat-driven hunters, visibility, search and response tiers |
+| Slice objective | Operation Foothold: win a convoy encounter, earn three victories, liberate Fort Orion; completion in band panel | Dedicated operation summary, authored onboarding and end-to-end player acceptance |
+| Quality | Deterministic replays, simulation/inventory/campaign regression suites, build/link checks | Browser, accessibility, multi-browser, memory and reference-device performance gates |
 
-The campaign is mostly **wiring**: most of the parts exist as separate demos. The table is from the code on `main`
-(5 October 2026).
+The old roadmap described many already-connected pieces as wholly future work. Conversely, visible convoy tokens
+and a heat number are not a strategic simulation. Convoys currently follow fixed roads and turn around; patrols
+and raiders are encounter tokens, not searching armies. Troop stacks in the older Rebel Band demo are not a
+second deployable army. The named campaign roster is the authority for tactical deployment.
 
-| Module | What exists | Its job in the campaign | Missing for the campaign |
-|---|---|---|---|
-| **World map** (`map/`) | 3-D island with provinces, nine settlements, roads, three factions; the player's Recon figure, Invader patrols, convoys driving the roads, nameplates, time controls, province card. Placeholder only, nothing wired | The campaign screen: movement, time, encounters, territory | Click-to-move, a world simulation, real AI parties, encounters, save |
-| **Partisan Tactical** (`convoy/`) | Three levels as data: **Convoy ambush**, **Compound assault** (guards, alarm, armoury cache, radio mast), **Cave hideout defence** (three waves at night, hold until dawn). Squad control, orders, abilities, AI, difficulty, 2.5-D sprite view | Every fight. The three levels are the three encounter types | Parameters from the map (enemy strength, cargo, time of day), launch from and return to the map |
-| **Loot** (`convoy/loot.js`) | Seeded loot rolled from the Equipment Wiki catalogue per level; gear goes to the stash, the rest is trade goods sold for scrip; salvage from wrecks | What a mission pays | Loot driven by what you fought (convoy cargo manifest, settlement armoury) |
-| **Progression** (`convoy/progression.js`, `camp.js`) | Three rebels earn experience (kills, objectives, survival, victory) and are promoted for experience plus equipment; camp screen with stash and trader | The upgrade rules | One save shared with the band and the map |
-| **Rebel Band** (`band/`) | Bannerlord party screen: stash, selected soldier, band by class; a class tree of over 40 troop types in heavy, medium and light builds to elite tiers; each step costs experience and the kit the new class carries | The party screen you open from the map | Read and write the campaign save instead of its own; feed the deploy screen |
-| **Weapon Modder** (`workbench/`) | 11 rifles, universal attachments, stats, P1 build codes | Where stolen guns and parts are fitted | Show only what you own; assign a build to a fighter |
-| **Operator Customiser** (`operator/`) | Recon, Insurgent and Enforcer bases, equipment slots, poses, the Workbench build carried onto the character | How your fighters look, on the map and in the field | Looks from owned kit and class |
-| **Equipment Wiki** (`wiki/`) | The item catalogue the loot rolls from | The codex: what an item is and where it drops | "Where to steal it" from campaign data |
+## 3. The first complete operation
 
-Two existing plans touch this one:
+**Operation Foothold** is the bounded slice. Start with eight named rebels around the Oros camp. Learn movement,
+time controls, the Party panel and recovery. Intercept an occupation convoy for the first major gain, take a
+second target to improve the band, then assault Fort Orion. A convoy victory, at least three recorded victories,
+and Resistance ownership of Fort Orion complete the operation. These conditions are derived from persistent
+records and territory, so trimming the event log cannot remove completion.
 
-- The **tactical roadmap** plans durable inventory (unique item instances, `WP-S8`), save transactions (`WP-S29`) and
-  extraction rules (`WP-S30`). The campaign's first playable slice does **not wait** for them. It uses today's
-  stash-of-counts and scrip and adopts those packets when they land, so the two milestones meet rather than block.
-- The **graphics roadmap** planned a retro, handheld-RPG style flat overworld (`WP-V14` to `V16`). The owner has since
-  asked for the Bannerlord-style 3-D map that now exists in `map/`. Decided (TAC-K-04): the 3-D map **is** the
-  overworld, and V14 to V16 are retired into W3, W4 and W8. V17's island data format is already `map/island.js`.
+The current implementation allows any order and continued play after completion. The intended introductory
+sequence is guidance, not a hard railroad. No new campaign-wide defeat rule is implied: rebels who go down come
+home wounded. Camp overrun remains a future setback with evacuation and recovery, rather than deletion of the save.
 
-## 4. The world map, in detail
+### Start and orient
 
-### 4.1 Your band on the map
+The opening scene's campaign action loads the saved band or creates one. The main map shows the band, contacts,
+settlements, time controls and the operation checklist. Party opens the roster, promotions, kit, recovery and
+trade. New saves and migrated old three-person saves have eight rebels. Migration preserves existing wounds,
+experience, classes and kits and adds missing starters once; it does not repeatedly grant new fighters.
 
-- **Click to move.** A path is found over land on a navigation grid baked from the heightfield. Roads are fast, open
-  ground normal, forest and slopes slow, snow slower, and the sea is impassable. A dotted line previews the route.
-- **Speed** depends on the band's size, its slowest troop tier and wounded fighters carried (Bannerlord's rule:
-  small bands are fast).
-- **The clock.** Time runs only while you move or press play (Space pauses, 1–3 set speed). Day and night tint the map,
-  and night shrinks everyone's sight. Encounters and menus pause the clock.
-- **Camp.** Oros Camp is your home: there you rest (wounds heal over days) and keep the stash. Your band always
-  carries what it is wearing; the rest of the stash stays at camp.
+### Plan and travel
 
-### 4.2 The Invader moves too
+Click land to find a traversable route. Roads are faster, forest and difficult ground slower, sea is impassable.
+The camera follows until the player pans; F restores follow. Pause stops campaign movement and time, while camera
+inspection remains available. Hidden tabs do not advance the map. Encounter, band and kit panels block time and
+movement; keyboard speed shortcuts cannot resume the world behind a modal.
 
-| Party | Behaviour | What touching it means |
-|---|---|---|
-| **Supply convoy** | Spawns at Fort Orion or a town, drives a road route between settlements with a cargo manifest (ammo, weapons, fuel, radios) and an escort; arriving resupplies the garrison | You reach it → **Convoy Ambush** |
-| **Patrol** | Walks a loop near Invader settlements; small | It sees you and closes → **defence** (hasty), or you attack it (a light convoy-style fight) |
-| **Hunter column** | Spawned by **heat**; searches where you were last reported, follows tracks, gives up after a while | It touches you → **Rebel Base Defence** |
-| **Garrison** | Stays in its settlement; strength from `SETTLEMENTS` (garrison, militia) | You march on it → **Compound Assault** |
+Position and campaign state autosave during active time and on page exit. This is browser-local storage, not a
+server account. A route is not yet restored across reload. The next stage must show travel estimates, why a path
+is unavailable and the strategic implications of moving at night without exposing implementation details.
 
-- **Detection.** Every party has a sight radius on the map: smaller at night, in forest and in the mountains, larger
-  for big bands. A party that sees you remembers where (a last-seen marker, Bannerlord's "spotted"). Hunters track the
-  last-seen point, not your true position, so you can lose them.
-- **Heat** rises with every attack, and faster for attacks near Invader towns. It cools while you stay hidden.
-  Heat decides how many hunters are out and how strong they are. The camp is hidden until a hunter finds it or an
-  informant sells it; then the army comes for the cave.
+### Contact and deployment
 
-### 4.3 Encounters
+Reaching a hostile party or occupied settlement offers an encounter. The summary names the enemy, strength,
+mission, terrain and conditions. The player selects **six to nine fit rebels**; the starting roster has eight.
+Wounded fighters stay behind. Fewer than six fit fighters requires recovery before launching another fight.
+Leave suppresses that immediate contact until the band moves clear, avoiding repeated dialogs.
 
-When two parties meet, the clock stops and an **encounter panel** opens (Bannerlord's encounter menu, in the Nokia
-UI): both sides' strength and troop tiers, the ground, the time of day, and the choices.
+A deployment records the encounter ID, seed, source, selected fighter IDs, conditions and reserved kit. Saving
+must succeed before navigating away. Duplicate fighter IDs are refused. Tactical setup uses exactly those IDs;
+it must never merge the practice roster back into a campaign and silently deploy wounded companions.
 
-| Who started it | Choices |
-|---|---|
-| You reached a convoy | **Attack** (the convoy is moving: ambush on the road), **Prepare ambush** (spend an hour: you start in cover, they drive in) when you are ahead of it on its route, **Let it pass** |
-| You marched on a settlement | **Assault** (loud), **Infiltrate** at night (the stealth start of the compound level), **Leave** |
-| An army touched you | **Defend** (mission), **Withdraw** (leave a rearguard of fighters you choose, or drop supplies, and break contact), **Surrender** is not offered |
-| A lopsided fight (you are 2.5 times stronger, or it is a lone patrol) | **Auto-resolve** (TAC-K-02): odds and expected wounds shown first; a little worse than playing it (more wounds, a quarter less loot); never for the camp, a capture or the finale |
+| Contact/context | Tactical mission |
+| --- | --- |
+| Convoy in open terrain | Convoy ambush |
+| Convoy in forest or mountains | Forest-road ambush |
+| Garrison post/checkpoint | Checkpoint assault |
+| Occupied village | Village raid |
+| Occupied town or Fort Orion | Compound assault |
+| Raiders near the hideout | Cave defence |
+| Raiders away from camp | Hilltop defence |
 
-## 5. The three missions, launched from the map
+The mapping and environment variants exist. Actual strategic cargo manifests, complete garrison compositions and
+pursuit-generated defence conditions remain future work. A strength multiplier is not the same as deploying the
+exact army seen on the map.
 
-The levels exist; what is new is that the map **sets them up** and **receives the result**.
+### Fight
 
-| Encounter | Level | What the map sets | What the result changes on the map |
-|---|---|---|---|
-| Convoy | `convoy` | Vehicles and escort from the convoy party; cargo manifest = the loot table; time of day; ambush preparation = start positions | Convoy destroyed (wreck on the road) or escaped with losses; cargo captured; garrison not resupplied |
-| Settlement | `compound` | Defenders from garrison and militia; layout variant per settlement kind (village, town, the base); alarm state from heat; night if infiltrating | Settlement raided (armoury loot, garrison reduced) or **captured** (province turns green); survivors flee as a party |
-| Caught at camp | `cave` | Wave sizes from the hunter column; your camp's defenders and stash are present | Hunters broken: they retreat and heat drops. Camp overrun (TAC-K-03): half of every camp stack is lost (rounded down), the fallen are wounded, the band falls back to the nearest friendly settlement and heat halves |
-| Caught in the open | `defence` (new variant) | A hasty defence on the local ground type (forest, hill, coast) with the hunter's strength | As above, without the camp stakes |
+The player controls one rebel and can switch to another while issuing orders to companions. Classes provide
+weapons, passive modifiers and active abilities. Every mission now begins with the larger roster, with explicit
+cover-safe starting positions for the convoy and deterministic placement elsewhere. Rebels have 180 base HP;
+class bonuses and difficulty still apply. This is an intentional balance change, not a performance change.
 
-**Deployment.** Before every mission a **deploy screen** picks up to four fighters from the band (you play them all,
-switching between them as today). The rest of the band stays on the map. The fighters' classes decide their abilities
-and kit; their weapons are the builds assigned in the Weapon Modder.
+The tactical loop includes movement, cover, suppression, weapon and ammunition use, objectives, looting, and
+mission-specific completion/extraction. The inventory tracks magazines and ammunition in fighter kits. Tests
+must verify the identity of every deployed fighter and conservation of items across entry and return; a HUD
+count alone is insufficient. Human playtesting must check whether the larger squad trivializes objectives,
+blocks passages or consumes supplies too quickly.
 
-**The bridge.** The map and the missions stay separate pages (they are separate modules today, and that keeps each one
-loadable and testable on its own). The save is the source of truth:
+### Debrief and return
 
-1. The map writes a **deployment** into the campaign save: encounter id, level, seed, enemy strength and kit, ground,
-   time, the deployed fighters and their kit. The kit is **reserved**: it is on their bodies, not in the stash.
-2. It opens `convoy/?campaign=<id>&encounter=<id>`. The mission reads the deployment instead of its own mission select.
-3. The debrief's **Return to the map** writes one immutable **result** (outcome, survivors, wounds, experience, kills,
-   loot, what was destroyed or captured) and goes back to `map/`.
-4. The map **settles** the result exactly once (keyed on the encounter id), shows it as a toast and in the world (a
-   wreck, smoke over a raided compound), and saves.
-5. A refresh or closed tab mid-mission counts as **withdrawn** when the map next opens: the deployed fighters return
-   wounded, their carried loot is lost. No free retries (the tactical roadmap's rule).
+The mission writes one debrief for its encounter. Returning settles XP, fighter condition, reserved kit, recovered
+equipment and trade goods once. Grid kits return in their changed state; replaced kit goes to the armoury.
+Reloading an unfinished mission withdraws the band, wounds the deployed fighters and returns their original kit
+without new loot. Reloading a completed debrief must not award it again.
 
-## 6. Loot and the upgrade loop
+The map reports the result once, hides defeated contacts and changes captured settlements to Resistance
+ownership. Victory increases heat. A failed browser save must keep the player on the current page with their
+in-memory result instead of navigating away and losing it. Cross-tab conflict resolution still needs a single
+writer or revision-based transaction model before claiming robust multi-tab support.
 
-1. **Debrief loot** lands in the band's stash with its source ("from the Kastro convoy"). Convoy loot comes from the
-   cargo manifest; compound loot from the armoury; defence loot from the attackers' bodies.
-2. **The band screen** opens from the map (P). It is today's `band/` screen on the campaign save: promote a fighter
-   when they have the experience and the stash has the kit the new class carries. Promotions use the gear, so choosing
-   who gets the PKM is the decision.
-3. **Weapons** in the stash open in the **Weapon Modder** with only owned attachments selectable (locked ones show where
-   they drop). A finished build is assigned to a fighter and used in their next mission.
-4. **Looks** follow the kit: a fighter's class and owned wearables set their Operator Customiser look and their figure
-   on the map.
-5. **Recruits** come from villages that like you: Village Infantry, tier 1 of the class tree. Liberated villages give
-   more, and better.
-6. **Trade** (TAC-K-01): **no shop at home.** Trade goods are bartered item for item at neutral and liberated villages,
-   from a small seeded stock that refreshes weekly (liberated villages stock more and give better rates). Trade is a
-   reason to move and to free villages, never a menu at camp. The camp trader stays in practice mode.
+### Recover, trade, equip and promote
 
-## 7. Territory and escalation
+At friendly or independent settlements within the service radius, Party offers 12-, 24- or 48-hour rest. Wounded
+fighters recover in 24 hours; fighters brought down take 48. Rest advances campaign time and reduces heat. There
+is currently no strategic enemy advance during the instant rest action; its eventual risk must be integrated
+with the world simulation, not implemented as a separate timer.
 
-- **Capturing** a settlement turns its province green. It gives recruits, food and a safe place to rest, and the
-  Invader will try to take it back (a garrison defence, the compound level in reverse).
-- **The escalation director** reads the Resistance's strength (band size, tiers, territory) and raises the Invader's
-  response in tiers: patrols → hunter columns → armoured columns with an MRAP → air reconnaissance that finds the camp.
-  Mission difficulty and enemy kit follow the tier, so stolen gear stays relevant.
-- **The end.** When Fort Orion is the last Invader seat, the final mission is its assault: a multi-stage compound
-  level. **Defeat** comes only when the band is wiped out in a defence and no friendly settlement is left to fall back
-  to; until then every loss, an overrun camp included, is a setback, not a game over (TAC-K-03).
+The settlement trader sells recovered valuables for scrip and offers promotion equipment. The same campaign
+stash, goods and scrip are updated and saved. Promotions consume their class's XP and equipment requirements.
+The kit screen prepares carried weapons, magazines and rounds for the next sortie. Trading counts for promotion
+equipment and concrete inventory item instances still need a unified ownership model before modder integration.
 
-## 8. How the code fits together
+After recovery the player can deploy again with the same experienced fighters. The regression scenario explicitly
+covers a failed mission, all eight rebels wounded, save/load, safe-haven rest, and another eight-person deployment.
+This recovery path prevents a normal defeat from making the campaign unplayable.
 
-| Location | Responsibility | Notes |
-|---|---|---|
-| `shared/campaign/state.js` | One versioned campaign save: world (parties, settlements, heat, clock), band (fighters, classes, experience, wounds), stash, scrip, encounter log | Pure, no DOM. Migrates `parp-squad-v1` and the Rebel Band save |
-| `shared/campaign/world.js` | The world simulation: party movement, goals, sight, pursuit, convoys, heat, escalation | Pure and seeded; steps headless at any speed; unit-tested |
-| `shared/campaign/nav.js` | Navigation grid from `map/island.js` heights and roads; path search | Pure; shared by the band and the AI parties |
-| `shared/campaign/encounter.js` | Contact rules, the encounter options, auto-resolve, deployment and result payloads, settlement of a result | Pure; the one place the map and the missions meet |
-| `map/` | Renders the world state, input, the encounter panel, the clock, toasts | Today's demo becomes the campaign view |
-| `convoy/` | Reads a deployment, sets up the level, writes the result | Without `?campaign` it stays the practice sandbox |
-| `band/`, `workbench/`, `operator/` | Read and write the campaign's band and stash through `state.js` | Each keeps working on its own outside a campaign |
-| `tools/campaign/bench.mjs` | Runs seeded campaigns headless with auto-resolve and reports pacing | Tuning, like the tactical AI harness |
+### Finish and continue
 
-Storage starts in `localStorage` (as every module does today) behind a small adapter, so the tactical roadmap's
-IndexedDB and transaction work (`WP-S29`) can replace it without touching the rules.
+Operation Foothold completes when its three conditions are true. Show which conditions remain and acknowledge
+completion without resetting the band. The full release should add a dedicated operation debrief: time elapsed,
+missions won/lost, wounded survivors, promoted fighters, equipment gained and territory freed. Continuing into a
+larger island campaign is the next expansion, not a prerequisite for accepting this slice.
 
-## 9. Delivery: milestone W
+## 4. Vertical-slice acceptance contract
 
-Phases are in order; each ends in something playable. Sizes are the packet sizes of the agent-ops system (XS 3,
-S 8, M 20 budget units). The full packet list with acceptance criteria is in [packets.json](agent-ops/packets.json).
+A release candidate must demonstrate, from a clean save and again from a migrated save:
 
-### Phase 0 · The spine
+1. Enter the default 2.5D map; understand the objective, roster and time controls without developer tools.
+2. Travel to a convoy, select six to eight starters, fight, return, and retain fighter identity, XP and kit.
+3. Observe a persistent world consequence and no duplicate rewards after reload.
+4. Lose or abandon a sortie, recover at a safe haven and launch another mission without resetting the campaign.
+5. Sell loot, acquire required equipment, promote a fighter and see the promoted class in the next deployment.
+6. Win another target and Fort Orion, receive the operation completion acknowledgement, reload and retain it.
+7. Complete the same flow by keyboard; modal focus and reduced-motion behavior remain usable.
+8. Pass the browser/performance gates below with no console errors, missing assets or item duplication.
 
-| Packet | What | Size |
-|---|---|---|
-| `WP-W1` | Campaign save v1: one versioned state for world, band, stash and log; migrate the tactical squad and Rebel Band saves; storage adapter | S |
-| `WP-W2` | Mission bridge: deployment and result payloads, reservation on launch, settle exactly once, refresh = withdrawn | M |
+Current pure-module tests cover the state transitions and recovery. Browser tests exercise the map/mission bridge
+and promotions; they are not proof of an unaided human playthrough. The final browser run is still a release gate
+when the cloud sandbox prevents Chromium from launching. Do not mark the entire campaign or CM6 complete merely
+because unit and build checks pass.
 
-### Phase 1 · Moving on the map
+## 5. Performance plan and completed code review
 
-| Packet | What | Size |
-|---|---|---|
-| `WP-W3` | The band on the map: navigation grid, click to move, route preview, terrain speeds, follow camera | M |
-| `WP-W4` | Campaign clock: pause and speeds, day and night, pause on encounters and menus | S |
-| `WP-W5` | World simulation core: seeded headless parties with goals, speeds and sight; save and restore; determinism tests | M |
+The review found unnecessary work in both CPU and GPU paths. The default now avoids the operator/weapon/GLB
+module graph by loading it only for the 3D demo. The post-process uses nine texture reads instead of 39 and drops
+4× multisampling on the HDR render target. The drawing buffer is capped at approximately 1.2 million pixels and
+1.25 device pixel ratio; shadows use a 1024 map refreshed at most ten times a second. This keeps the miniature
+look while substantially reducing the work requested of the GPU.
 
-### Phase 2 · The Invader moves
+Terrain picking now samples the baked field instead of testing 86,400 triangles. Route dots update after movement
+at a bounded cadence and reuse their instance transforms while paused; date text only changes when needed;
+town-label projection is throttled; sprite frame changes no longer request shader recompilation. Hidden tabs
+skip the update/render work. Convoy positions persist without a new randomized starting point on every load.
 
-| Packet | What | Size |
-|---|---|---|
-| `WP-W6` | Convoys: spawn, road routes, cargo manifest and escort on the nameplate, resupply on arrival | S |
-| `WP-W7` | Hunters and heat: patrols, hunter columns, map sight (night, forest, band size), last-seen tracking, losing them | M |
-| `WP-W8` | Encounters: contact rules and the encounter panel (Attack, Prepare ambush, Withdraw with a rearguard) | S |
+[Performance review](engineering/campaign-performance.md) records the reproducible CPU measurement and remaining
+bottlenecks. CPU microbenchmarks are not browser FPS measurements. Reference acceptance is sustained 30 FPS or
+better on a midrange phone and 60 FPS on a normal laptop at the balanced default, with p95 frame-time reporting,
+responsiveness during routing, and no steady memory growth across ten map/mission trips. Record device, browser,
+resolution and hardware acceleration; software-rendered cloud Chromium is a correctness check, not a consumer
+GPU benchmark. Next profiling targets are terrain texture bandwidth, props/draw calls, map startup, party label
+updates, and navigation baking. Do not cut art or claim achieved FPS without measurements.
 
-### Phase 3 · Missions from the map (**the first playable loop ends here**)
+## 6. Revised delivery order
 
-| Packet | What | Size |
-|---|---|---|
-| `WP-W12` | Deploy screen: pick up to four fighters from the band; one squad model for the band and the missions | S |
-| `WP-W9` | Convoy encounter → Convoy Ambush, set up from the convoy party; result back to the map | M |
-| `WP-W11` | Caught by an army → Rebel Base Defence (cave at camp, new hasty-defence variant in the open) | M |
-| `WP-W13` | Return to the map: settle casualties, wounds, experience, kills and aftermath; autosave | S |
-| `WP-W14` | Loot into the band: cargo manifest and level loot into the stash, with its source | S |
-| `WP-W15` | The band screen on the campaign save, opened from the map; promotions with experience and stolen kit | M |
+| Order | Work | Exit evidence |
+| --- | --- | --- |
+| A: stabilize this operation | Map default, roster/HP balance, recovery/trader, durable deployment, operation checklist | All unit/replay/build checks plus browser loop, keyboard and screenshot review |
+| B: reliable world simulation | W4/W5 fixed-step clock and seeded parties; convoy route/cargo/resupply; save/restore mid-route | Headless equivalence at different render rates; interrupted-save and reload tests |
+| C: meaningful pressure | W7 hunters and sight; heat-driven response; escape and rest risk | Explainable pursuit, lost-contact behavior, defence encounters and fair recovery |
+| D: economy and territory | W14/W18/W19 ownership unification, recruits/reserves, service stocks, garrisons and counterattacks | No duplication; repeated operations sustain a band; captured places matter |
+| E: owned customisation | W16/W17 and CM19/CM20 connect real owned items to modder and appearance | Preview cannot grant equipment; visuals match the deployed kit |
+| F: slice release | W21/W24/W25 operation debrief, onboarding, browser/device budgets, accessibility and pacing | Recorded complete player journey and acceptance contract above |
+| Later expansion | Auto-resolve, 50-campaign tuning harness, additional regions, larger war and vehicle escalation | Build only after the core loop is stable and understandable |
 
-**Gate W-A (first loop):** start a campaign, march to a convoy, win the ambush, bring loot home, promote a fighter
-with it, get caught by a hunter column, survive the cave defence, all in one save that survives a reload.
+Do not restart Claude's completed tactical systems. Continue from the working inventory, squad control, mission
+variants, simulation spatial cache, replays and quality harnesses. The next engineering priority is the strategic
+simulation and save authority; additional showcase assets are secondary to those campaign dependencies.
 
-### Phase 4 · Settlements, guns and looks
+## 7. Packet reconciliation
 
-| Packet | What | Size |
-|---|---|---|
-| `WP-W10` | Settlement → Compound Assault, defenders from garrison and militia, variants per settlement kind, infiltrate at night | M |
-| `WP-W16` | Owned guns in the Weapon Modder; assign a build to a fighter for the next mission | M |
-| `WP-W17` | Looks from owned kit and class, in the customiser and on the map figure | S |
-| `WP-W18` | Recruits and barter at friendly villages | S |
+W1–W3 provide the save, bridge and travel foundation. W8–W11, W13–W15 and W19 have meaningful playable subsets but
+retain unfinished acceptance (ambush choices, exact enemy/cargo composition, aftermath, territory simulation).
+W12 now targets six-to-nine-person deployment rather than the obsolete four-person plan. W18 has recovery/trade
+but not recruitment. W21 has a bounded objective, not the complete endgame/defeat presentation. W24 retains the
+real-device budget and final browser gate. W26's visual decision is superseded by the owner's 2.5D-default request.
 
-### Phase 5 · Territory, escalation, the end
+Packet notes record these distinctions and the generated master table remains synchronized. A ready packet means
+work can proceed; it is not a claim that its entire acceptance criterion has shipped.
 
-| Packet | What | Size |
-|---|---|---|
-| `WP-W19` | Territory: capture settlements, what they give, Invader counter-attacks | M |
-| `WP-W20` | Escalation director: response tiers drive hunters, mission difficulty and enemy kit | M |
-| `WP-W21` | Endgame and defeat: the Fort Orion assault, the camp-overrun defeat, campaign summary | M |
+## 8. Save and integration boundaries
 
-### Phase 6 · Quality
+`shared/campaign/state.js` owns normalization/migration and storage; `encounter.js` owns deployment/result/settlement;
+`contacts.js` owns source mapping and world consequences; `operations.js` owns recovery and the bounded operation.
+`map/campaign-ui.js` presents these rules. `convoy/campaign-mode.js` bridges a mission without using the standalone
+practice save. `convoy/roster.js` centralizes starting identities, health, size and safe insertion placement.
 
-| Packet | What | Size |
-|---|---|---|
-| `WP-W22` | Auto-resolve for lopsided fights, odds shown first, never better than playing (TAC-K-02) | S |
-| `WP-W23` | Campaign harness: fifty seeded headless campaigns, pacing report, tuning pass | S |
-| `WP-W24` | Campaign end-to-end tests (map → mission → map), two-tab and refresh safety, map performance on a phone | M |
-| `WP-W25` | First-campaign prompts, design doc campaign section, changelog, index entry | S |
-
-**Decisions** (`WP-W26`, done 5 October 2026, delegated by the owner; reasoning in
-[design-decisions/K-campaign.md](design-decisions/K-campaign.md)):
-
-| Question | Decision |
-|---|---|
-| Trade | No shop at home; barter at neutral and liberated villages only (TAC-K-01) |
-| Auto-resolve | Only for lopsided fights, never for the camp, a capture or the finale, and always a little worse than playing (TAC-K-02) |
-| Camp overrun | Half of each camp stack lost, the fallen wounded, fall back to a friendly settlement, heat halved; game over only with no settlement left (TAC-K-03) |
-| Overworld | The 3-D map in `map/` is the overworld; retro packets WP-V14 to V16 retired (TAC-K-04) |
-
-## 10. Pacing targets
-
-These are starting points for the harness to test, not measurements.
-
-| Measure | Target |
-|---|---|
-| First encounter after starting a campaign | Under 2 minutes |
-| A mission | 5–12 minutes (the tactical roadmap's session length) |
-| Map time between missions | 1–3 minutes of marching, choosing, upgrading |
-| First promotion | After the first or second mission |
-| First hunter contact | Within the first three missions |
-| A full campaign | 6–10 hours |
-
-## 11. Acceptance
-
-| Area | The campaign is right when |
-|---|---|
-| State | One save holds everything; reloading at any point (map, deploy, mid-mission, debrief) resumes or settles correctly and never duplicates loot |
-| Determinism | The same seed and the same orders give the same world, in headless tests |
-| Bridge | Every mission can be played on its own (practice) and from the map (campaign) |
-| Fairness | Odds are shown before every fight; hunters are visible before they touch you, unless at night or in forest |
-| Loop | Loot from a mission can be used for a promotion, a gun build or a look before the next mission |
-| Performance | The map at 60 fps on a desktop and 30 fps on a mid-range phone with every party moving |
-| Accessibility | The map, encounter panel and band screen work by keyboard and with reduced motion |
-
-## 12. Risks
-
-| Risk | Mitigation |
-|---|---|
-| Wiring four demos means changing four saves | One state module and migrations first (W1); each module keeps a standalone mode |
-| The world sim becomes a second game to balance | Headless harness (W23) from the start; few party types until the loop is fun |
-| Being hunted feels unfair | Visible sight radii, last-seen markers, withdraw with a rearguard, odds before every fight |
-| Missions get repetitive | Parameters from the map (cargo, garrison, ground, time of day) before new levels |
-| Overlap with the tactical extraction packets | The slice uses today's stash; S8 and S29 replace the internals later without changing the loop |
+Keep encounter settlement idempotent, campaign IDs checked, invalid rosters rejected before removing kit, and
+failed writes explicit. Preserve old saves where possible. Strategic party motion is stored in world party
+records, while destroyed-state records retain their historical effect. Future save version changes need migration
+fixtures, corruption recovery, conflict tests and a documented rollback path. No backend, multiplayer authority,
+cloud save or final persistent-war guarantee is implied by the current browser-local slice.

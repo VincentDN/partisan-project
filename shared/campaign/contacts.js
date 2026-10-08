@@ -39,7 +39,8 @@ export function levelFor(source, {ground = 'plain', nearCamp = false} = {}) {
 /** The ground of the fight from the map's ground under the band (shared/campaign/nav.js names). */
 const GROUND_LOOK = {plain: 'plain', road: 'plain', forest: 'forest', mountain: 'mountain', steep: 'mountain', snow: 'snow', sea: 'coast'};
 /** The most fighters a mission takes (the levels have three rebel slots). */
-export const SQUAD_MAX = 3;
+import {SQUAD_MAX} from '../../convoy/roster.js';
+export {SQUAD_MAX};
 
 /** A settlement as a contact: Invader settlements can be raided; their garrison is the enemy's strength. */
 export const settlementSource = s => ({
@@ -105,6 +106,7 @@ export function readResults(c, names = {}) {
     const src = SOURCES[e.source];
     const name = src?.name || names[e.source] || e.source || 'the enemy';
     if (e.outcome === 'won' && e.source) {
+      c.world.heat = Math.min(100, c.world.heat + 10);
       if (!isGone(c, e.source)) c.world.parties.push({id: e.source, state: 'destroyed', day: e.day});
       if (!src) c.world.settlements[e.source] = {...c.world.settlements[e.source], owner: 'resistance', taken: e.day};
     }

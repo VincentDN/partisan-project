@@ -44,7 +44,7 @@ try {
   await page.locator('.encounter:not([hidden])').waitFor({timeout: 10000});
   assert.equal(await page.locator('#enc-title').innerText(), 'SUPPLY CONVOY');
   assert.match(await page.locator('.enc-mission').innerText(), /(Convoy|Forest road) ambush · 14 enemy/);
-  assert.equal(await page.locator('.enc-fighters li').count(), 3, 'three fighters going in');
+  assert.equal(await page.locator('.enc-fighters li').count(), 8, 'eight fighters going in');
   assert.equal(await page.evaluate(() => document.activeElement.id), 'enc-attack', 'Attack has the focus');
 
   // 2. Attack: into the Convoy Ambush with the deployment
@@ -99,7 +99,7 @@ try {
   });
   await page.keyboard.press('p');
   await page.locator('.band-panel:not([hidden])').waitFor();
-  assert.equal(await page.locator('.band-panel .squad-card').count(), 3);
+  assert.equal(await page.locator('.band-panel .squad-card').count(), 8);
   await page.locator('.band-panel .path.ready button', {hasText: plan.label}).first().click();
   c = await saved(page);
   assert.equal(c.band.fighters.player.class, plan.to, 'promoted');

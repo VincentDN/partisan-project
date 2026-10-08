@@ -4,6 +4,8 @@
 // State is one flat object {base, slot ids, 'z.<zone>' colours, pose, idle} serialised to the URL hash
 // (only values that differ from the base's defaults), so every look is a shareable link.
 import * as T from 'three';
+import {bindPack} from './bind-pack.js';
+import {mountedPouches} from './mounted-pouches.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
 import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
@@ -166,40 +168,11 @@ const baseCache = new Map(); // id -> {scene, rig}: switching back is instant
 const triangles = mesh => (mesh.geometry.index ? mesh.geometry.index.count : mesh.geometry.attributes.position.count) / 3;
 // Multi-primitive nodes load as Group(SK_x) > SkinnedMesh(SK_x_2): the outermost SK_ ancestor is the node.
 const nodeOf = mesh => {
+  if (mesh.userData.packPart) return mesh.userData.packPart;
   let name = null;
   for (let o = mesh; o; o = o.parent) if (o.name?.startsWith('SK_')) name = o.name;
   return name;
 };
-
-// An extension pack ships the shared armature plus new skinned meshes. Re-bind each mesh to the base's own
-// bones by name (same rest pose, so the pack's inverse bind matrices stay valid) and parent it to the base's
-// Armature node, so posing, idle and visibility treat pack meshes exactly like the original ones.
-function bindPack(packScene, scene, baseRig) {
-  const armature = scene.getObjectByName('Armature') || scene;
-  const baseMaterials = new Map();
-  scene.traverse(o => {
-    if (o.isMesh && !baseMaterials.has(o.material.name)) baseMaterials.set(o.material.name, o.material);
-  });
-  const skinned = [];
-  packScene.traverse(o => {
-    if (o.isSkinnedMesh) skinned.push(o);
-  });
-  for (const mesh of skinned) {
-    const bones = mesh.skeleton.bones.map(b => baseRig.bones.get(b.name));
-    if (bones.some(b => !b)) throw new Error(`pack mesh ${mesh.name} uses bones the base does not have`);
-    // A pack material named like one of the base's shares the base instance, so colour zones paint both.
-    const shared = baseMaterials.get(mesh.material.name);
-    if (shared) mesh.material = shared;
-    else baseMaterials.set(mesh.material.name, mesh.material); // also share between pack meshes (e.g. hair, moustache, beard)
-    mesh.bind(new T.Skeleton(bones, mesh.skeleton.boneInverses), mesh.bindMatrix);
-    // The base's skin material uses vertex colours; a pack mesh without a colour attribute would render black.
-    if (mesh.material.vertexColors && !mesh.geometry.attributes.color) {
-      const n = mesh.geometry.attributes.position.count;
-      mesh.geometry.setAttribute('color', new T.BufferAttribute(new Float32Array(n * 3).fill(1), 3));
-    }
-    armature.add(mesh);
-  }
-}
 
 async function loadBase(id) {
   const next = BASES[id] || BASES[DEFAULT_BASE];
@@ -210,6 +183,14 @@ async function loadBase(id) {
     const newRig = new Rig(gltf.scene, posesForProfile(poseData, next.poseProfile));
     newRig.grip = new Grip(newRig.bones, newRig.rest, next.grip);
     for (const url of next.packs || []) bindPack((await loader.loadAsync(url)).scene, gltf.scene, newRig);
+    if (next.pouchModel) {
+      const [templates, carrier, pouches] = await Promise.all([
+        loader.loadAsync(next.pouchModel),
+        fetch('recon-carrier.json').then(r => r.json()),
+        fetch('recon-pouches.json').then(r => r.json()),
+      ]);
+      newRig.pouches = mountedPouches(gltf.scene, newRig, templates.scene, carrier, pouches);
+    }
     gltf.scene.traverse(o => {
       if (o.isMesh) {
         o.castShadow = o.receiveShadow = true;
@@ -223,6 +204,10 @@ async function loadBase(id) {
   DEFAULTS = defaultsFor(base);
   ({scene: operator, rig} = baseCache.get(base.id));
   turn.add(operator);
+  indexMeshes();
+  status.hidden = true;
+}
+function indexMeshes() {
   meshes = [];
   meshPart = new Map();
   zoneMaterials = new Map();
@@ -241,7 +226,6 @@ async function loadBase(id) {
     m.userData.orig ??= {color: m.color.clone(), map: m.map};
     if (!zoneMaterials.has(m.name)) zoneMaterials.set(m.name, m);
   }
-  status.hidden = true;
 }
 
 // ---------- Hash <-> state ----------
@@ -312,6 +296,7 @@ function visibleParts(b = base, st = state) {
   return set;
 }
 function applyEquipment() {
+  if (rig.pouches?.update(state)) indexMeshes();
   const show = visibleParts();
   let tris = 0,
     calls = 0;
@@ -332,6 +317,12 @@ function applyEquipment() {
 }
 function applyAll(blendSeconds = 0) {
   applyEquipment();
+  const fit = base.equippedPoseProfile;
+  const profile = rig.pouches?.equipped ? base.pouchPoseProfile : fit?.options.includes(state[fit.slot]) ? fit.profile : base.poseProfile;
+  if (rig.profileId !== profile) {
+    rig.data = posesForProfile(poseData, profile);
+    rig.profileId = profile;
+  }
   for (const zone of base.zones) paintZone(zone, state[`z.${zone.id}`]);
   rig.setPose(state.pose, blendSeconds);
   syncWeapon();
@@ -392,7 +383,7 @@ const SLUNG = {anchor: 'spine_03', hold: [0.1, -0.12, -0.2], muzzle: [-0.55, 0.8
 let carry = null; // {p, q, w}: the rifle's blended placement (turn space) and the IK weight
 function placeWeapon(dt = 0) {
   const pose = rig.data.poses[state.pose];
-  const w = pose.weapon || SLUNG; // a pose with no hands on the rifle carries it slung across the back
+  const w = pose.weapon || rig.data.slung || SLUNG; // a pose with no hands on the rifle carries it slung across the back
   pivot.visible = !!weapon;
   if (!pivot.visible) {
     carry = null;
@@ -410,7 +401,7 @@ function placeWeapon(dt = 0) {
   const k = dt > 0 && !reduceMotion ? 1 - Math.exp(-dt * 9) : 1;
   carry.p.lerp(goalP, k);
   carry.q.slerp(goalQ, k);
-  carry.w = w === SLUNG ? 0 : reduceMotion ? 1 : Math.min(1, carry.w + dt * 5); // the hands blend in again when it comes off the back
+  carry.w = !pose.weapon ? 0 : reduceMotion ? 1 : Math.min(1, carry.w + dt * 5); // the hands blend in again when it comes off the back
   pivot.position.copy(carry.p);
   pivot.quaternion.copy(carry.q);
   pivot.updateMatrixWorld(true);
@@ -483,6 +474,8 @@ const camoGradient = id => {
 };
 
 function render() {
+  const focused = document.activeElement;
+  const focusGroup = focused?.closest('[role="group"]')?.getAttribute('aria-label');
   stage.wake();
   $('#slots').replaceChildren(
     ...base.slots.map(slot => {
@@ -496,7 +489,15 @@ function render() {
       chips.className = 'chips';
       chips.role = 'group';
       chips.setAttribute('aria-label', slot.label);
-      for (const o of slot.options) chips.append(chip(o.label, state[slot.id] === o.id, () => set(slot.id, o.id, slot.camera)));
+      const unavailable =
+        slot.requiresCarrier && (state.carrier === 'none' || (slot.requiresCarrier === 'placard' && state.carrier !== 'placard'));
+      for (const o of slot.options) {
+        const button = chip(o.label, state[slot.id] === o.id, () => set(slot.id, o.id, slot.camera));
+        button.disabled = !!unavailable;
+        chips.append(button);
+      }
+      if (unavailable)
+        head.firstChild.textContent += slot.requiresCarrier === 'placard' ? ' · requires front placard' : ' · requires carrier';
       row.append(head, chips);
       return row;
     }),
@@ -564,6 +565,12 @@ function render() {
   $('#base-title').innerHTML = `${base.label},<br>low-poly.`;
   $('#base-description').textContent =
     base.description || 'Choose an operator, change equipment and colours, then combine a pose with an idle style.';
+  if (focusGroup && !focused.isConnected) {
+    const group = [...document.querySelectorAll('[role="group"]')].find(g => g.getAttribute('aria-label') === focusGroup);
+    [...(group?.querySelectorAll('button') || [])]
+      .find(b => b.textContent === focused.textContent && b.getAttribute('aria-label') === focused.getAttribute('aria-label'))
+      ?.focus({preventScroll: true});
+  }
 }
 async function switchBase(id) {
   mech.setDown();

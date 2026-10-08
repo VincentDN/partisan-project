@@ -1,6 +1,6 @@
 # Partisan Project master roadmap
 
-**Partisan Project** · version 0.3.1 · consolidated 5 October 2026 · master index and generated work queue
+**Partisan Project** · version 0.3.1 · reconciled 8 October 2026 · master index and generated work queue
 
 This is the one index for every plan. The detailed plans live beside it and are linked from their tracks in §5:
 [campaign](campaign-roadmap.md) (how the modules become one game), [tactical](tactical-roadmap.md) (inside a
@@ -14,6 +14,20 @@ the tables in §6 are generated from it.
 > Links: [Design document](game-design-master-doc.html) · [Index](../) · [Campaign roadmap](campaign-roadmap.md) ·
 > [Art direction](art-direction.md) · [Engineering standards](engineering/standards.md) · [Decisions (ADRs)](adr/README.md) ·
 > [Design decisions](design-decisions/README.md)
+
+## Current delivery priority — 8 October 2026
+
+Finish and validate the **Operation Foothold vertical slice** before expanding the strategic war. The
+[campaign roadmap](campaign-roadmap.md) now documents the complete player journey, implemented state,
+recovery/failure paths, save contracts, performance tradeoffs and release gates. Existing tactical, inventory and
+quality work is the foundation; it should not be rebuilt. Current integration adds the 2.5D default, eight-person
+starting roster, 180 base rebel HP, safe-haven rest/trade and an operation completion checklist.
+
+The next order is: browser and balance acceptance → seeded strategic simulation and save authority → hunters
+and response → economy/territory → owned customisation → onboarding and operation debrief. Partial campaign
+packets remain open where their full acceptance includes unbuilt strategy or unverified device performance.
+The map CPU picking benchmark improves from 3.686 ms to 0.0063 ms median; actual browser FPS remains unmeasured.
+See [the performance review](engineering/campaign-performance.md). CM6's final motion/browser gate also remains open.
 
 ## 1. What Partisan Project is
 
@@ -36,9 +50,9 @@ loop of world map, three missions, loot and upgrades.
 |---|---|
 | **Weapon Modder** (`workbench/`) | **Live.** Eleven rifles from cleared sources: AK-74M, AK-15K, G3, M16A1, Mk 14 EBR, modernised RPK, SIG MCX Spear (plus a retro-textured variant), StG 44, PPSh-41, Bren, Chauchat. Real attachment parts, every rifle takes every attachment, a CNC furniture kit for the older rifles, rails that cannot overlap, stats and hover deltas, presets, finishes, camo, wear. Studio light over a baked warehouse panorama, warehouse ambience, handling sounds |
 | **Operator Modder** (`operator/`) | **Live.** Generated Recon by default plus Base, Insurgent and Enforcer; modular kit, colour zones, patches; three poses (Hero rifle-up, Relaxed, Low ready) with idles and hands solved onto any of the eleven rifles; the Workbench build carried onto the character; a warehouse with an idle crew, dirty-lens flares and room sound, drawn sharp at native antialiasing (TAC-J-54); share card, P1 loadout codes |
-| **Partisan Tactical** (`convoy/`) | **Playable prototype.** Three missions: Convoy ambush, Compound assault, Cave hideout defence. RimWorld-style 2.5-D sprite view (the 3-D view is retired), rounds in flight, fog of war with the same 30 m sight for both sides, squad orders and tactical pause, play every rebel with a slow-motion swap, class abilities, grenades, sprint, difficulty, recorded sound. After a mission: XP, loot rolled from the Equipment Wiki catalogue, a stash, a trader and equipment-gated promotions (camp screen) |
+| **Partisan Tactical** (`convoy/`) | **Playable prototype.** Seven missions: convoy, compound, cave, forest road, checkpoint, village and hilltop. Eight starting rebels with 180 base HP. RimWorld-style 2.5-D sprite view (the 3-D view is retired), rounds in flight, fog of war with the same 30 m sight for both sides, squad orders and tactical pause, play every rebel with a slow-motion swap, class abilities, grenades, sprint, difficulty, recorded sound. After a mission: XP, loot rolled from the Equipment Wiki catalogue, a stash, a trader and equipment-gated promotions (camp screen) |
 | **Rebel Band** (`band/`) | **Playable demo.** Bannerlord-style party screen: 44 classes in 7 tiers (heavy, medium, light), each promotion costs experience and the kit the new class carries; class tree view |
-| **Overworld Map** (`map/`) | **Test.** Bannerlord-style 3-D map of the island: provinces, nine settlements, roads, the Recon as your party, Invader patrols and convoys with nameplates, time controls. Not yet wired to anything; it becomes the campaign screen (§5.8) |
+| **Overworld Map** (`map/`) | **Playable campaign prototype.** Default 2.5D map: travel, encounters, six-to-nine-person deployment, mission return, wounds, loot, promotions, safe-haven rest/trade and Operation Foothold. Strategic hunters/resupply and browser/device acceptance remain. Fully 3D style is a Dev tools demo |
 | **Equipment Wiki** (`wiki/`) | **Live.** 4,227 lootable items (placeholder data) in a searchable catalogue; the loot tables roll from it |
 | **Shell** | Opening scene and boot, Nokia index on the table, shared top bar and music, Art Style Lab, Bench Lab, Asset Viewer, design document, this roadmap, the *Walking Through* podcast scripts |
 | **Engineering** | Buildless ES modules, vendored three.js, allowlist site build, GitHub Pages; 274 unit tests, Playwright smoke, Recon acceptance and axe-core accessibility runs in CI; models parsed once per page and cloned, prefetched after load; one campaign save (`shared/campaign/state.js`, WP-W1) |
@@ -142,7 +156,7 @@ kit, search bodies and cargo, survive a timed exit, bank once. The campaign laun
 The shooter is RimWorld-style 2.5-D sprites and already runs that way on placeholder art (`WP-V2`, `V3` done).
 Remaining: the art bible (`V1`), paper-doll people, equipment layers, animation states, terrain, structures,
 vehicles, effects, lighting, world-space UI, parity sheets and phone performance. The overworld is no longer part of
-this milestone: the 3-D map is the overworld (TAC-K-04), so `V14` to `V16` are retired. Plan:
+this milestone: the owner now selects the 2.5D map as default (8 October, superseding TAC-K-04's presentation choice), so `V14` to `V16` are retired. Plan:
 [graphics-roadmap.md](graphics-roadmap.md). Reasoning: [design-decisions/J-graphics.md](design-decisions/J-graphics.md).
 
 ### 5.8 The campaign: the Bannerlord loop
@@ -164,7 +178,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 |---|---|---|---|---|
 | **M0** Foundation | v0.3.0 | 10/10 | 130 BU | 100% |
 | **M1** Gun modder: real parts, three weapons | v0.4.0 | 9/11 | 143 BU | 89% |
-| **M2** Operator roster: Recon, Insurgent, Enforcer | v0.5.0 | 17/33 | 552 BU | 46% |
+| **M2** Operator roster: Recon, Insurgent, Enforcer | v0.5.0 | 18/33 | 552 BU | 50% |
 | **M3** Integration and sharing | v0.6.0 | 4/8 | 124 BU | 45% |
 | **M4** Weapon roster 2: modern and WW2 | v0.7.0 | 7/7 | 111 BU | 100% |
 | **M5** Production acceptance | v1.0.0 | 3/5 | 59 BU | 61% |
@@ -229,8 +243,8 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-CM2` | Rebuild the clean Recon torso and clothing underneath equipment | M (20) | done | bpy, browser | `WP-CM1` |
 | `WP-CM3` | Separate Recon headwear and rebuild articulated hands | M (20) | done | bpy, browser | `WP-CM2` |
 | `WP-CM4` | Define item instances, assembly hierarchy and compatibility resolver | S (8) | done | — | `WP-CM1` |
-| `WP-CM5` | Model the lightweight modular plate carrier | M (20) | ready | bpy, browser | `WP-CM2`, `WP-CM4` |
-| `WP-CM6` | Model magazine, utility and radio attachment modules | M (20) | planned | bpy, browser | `WP-CM5` |
+| `WP-CM5` | Model the lightweight modular plate carrier | M (20) | done | bpy, browser | `WP-CM2`, `WP-CM4` |
+| `WP-CM6` | Model magazine, utility and radio attachment modules | M (20) | ready | bpy, browser | `WP-CM5` |
 | `WP-CM7` | Model the equipment belt and small daypack | M (20) | planned | bpy, browser | `WP-CM3`, `WP-CM5` |
 | `WP-CM8` | Build the assembly editor, undo/redo and versioned outfit saves | M (20) | planned | browser | `WP-CM4`, `WP-CM6`, `WP-CM7` |
 | `WP-CM9` | Validate the first modular character milestone | M (20) | planned | browser | `WP-CM3`, `WP-CM8` |
@@ -368,7 +382,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-W9` | Convoy encounter launches the Convoy Ambush, set up from the convoy party (vehicles, escort, cargo, time, ambush start); result back to the map | M (20) | planned | browser | `WP-W8` |
 | `WP-W10` | Settlement encounter launches the Compound Assault: defenders from garrison and militia, variants per settlement kind, night infiltration | M (20) | planned | browser | `WP-W8`, `WP-W13` |
 | `WP-W11` | Caught by an army launches the Rebel Base Defence: cave level at camp, new hasty-defence variant in the open | M (20) | planned | browser | `WP-W8` |
-| `WP-W12` | Deploy screen: pick up to four fighters from the band; one squad model shared by the band and the missions | S (8) | ready | — | `WP-W1`, `WP-W2` |
+| `WP-W12` | Deployment: select six to nine fit fighters, eight starters, one roster shared by campaign and missions | S (8) | ready | — | `WP-W1`, `WP-W2` |
 | `WP-W13` | Return to the map: settle casualties, wounds, experience, kills and aftermath (wreck, smoke); autosave and result toast | S (8) | planned | — | `WP-W9`, `WP-W11`, `WP-W12` |
 | `WP-W14` | Loot into the band: cargo manifest and level loot into the campaign stash, with its source | S (8) | planned | — | `WP-W13` |
 | `WP-W15` | The band screen on the campaign save, opened from the map (P); promotions with experience and stolen kit | M (20) | planned | browser | `WP-W14` |
@@ -382,7 +396,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-W23` | Campaign harness: fifty seeded headless campaigns with auto-resolve, pacing report and a tuning pass | S (8) | planned | — | `WP-W20`, `WP-W22` |
 | `WP-W24` | Campaign end-to-end tests and performance: map to mission to map, two tabs and refresh safety, map at 30 fps on a mid phone | M (20) | planned | browser | `WP-W13`, `WP-W15` |
 | `WP-W25` | First-campaign prompts, design doc campaign section, changelog and index entry | S (8) | planned | — | `WP-W21`, `WP-W24` |
-| `WP-W26` | Campaign decisions (delegated by the owner): barter at villages, auto-resolve for lopsided fights, camp overrun as a setback, the 3-D map replaces the retro overworld | XS (3) | done | — | — |
+| `WP-W26` | Campaign decisions: 2.5D default overworld, 3D dev demo, village trade and camp overrun as setback | XS (3) | done | — | — |
 
 ### QA · Bug hunt and optimisation (docs/quality-roadmap.md)
 
@@ -463,7 +477,7 @@ A passing test certifies mechanics, never art quality.
 |---|---|
 | The demos never become a game | The campaign spine and gate W-A come first (§4 order of work) |
 | Wiring four modules means four saves to merge | One state module and migrations first (WP-W1); each module keeps a standalone mode |
-| Two upgrade models (the shooter's three rebels, the band's troop tree) | One squad model shared by the band and the missions (WP-W12) |
+| Two upgrade models (the named tactical roster, the band's troop tree) | One squad model shared by the band and the missions (WP-W12) |
 | Concept images are AI-assisted and reference commercial games | Documentary use only; never shipped as assets |
 | Placeholder data (Equipment Wiki, sprite art) is mistaken for final | Labelled as placeholder on every page; replaced through the V and W packets |
 | Plan limits change under us | Calibration loop; BU is relative; packets never exceed M |
@@ -481,7 +495,7 @@ A passing test certifies mechanics, never art quality.
 4. **Online play:** local PvE only, or funded live co-op (`WP-S36`, after the tactical tests).
 5. **Budget calibration:** which plan meters to read, and the weekly window count.
 
-**Settled recently:** the shooter is 2.5-D sprites (TAC-J-01); the 3-D map is the overworld and trade is barter at
+**Settled recently:** the shooter is 2.5-D sprites (TAC-J-01); the 2.5D map is the default overworld (3D retained as a dev demo) and trade is barter at
 friendly villages, auto-resolve only for lopsided fights, an overrun camp a setback (TAC-K-01 to K-04, delegated by
 the owner on 5 October); credits and licences stay out of the tooling (the pages point to the GitHub documentation).
 

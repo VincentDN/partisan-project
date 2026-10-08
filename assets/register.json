@@ -1203,6 +1203,27 @@
    "budget": {
     "triangles": 8000
    }
+  },
+  {
+   "id": "recon-carrier",
+   "label": "Recon lightweight plate carrier",
+   "path": "assets/models/operators/recon-carrier.glb",
+   "kind": "character",
+   "status": "real",
+   "notes": "CM5 independent 1,116-triangle pack: closed front/rear bags, shoulder straps/pads, buckles, fitted cummerbund and removable placard. Combined loaded foundation and carrier: 6,684 triangles. Rebuild with assets:recon-carrier.",
+   "budget": {
+    "triangles": 1700
+   }
+  },
+  {
+   "id": "recon-pouches",
+   "label": "Recon modular pouch templates",
+   "path": "assets/models/operators/recon-pouches.glb",
+   "kind": "character",
+   "status": "real",
+   "notes": "CM6 closed, UV-mapped magazine (264), utility (220) and owned radio/cable (376) templates, seated on the measured carrier webbing. The 1,400-triangle template allocation does not cap repeated copies: six radios allocate 2,256 and total 8,940 with foundation/carrier, leaving 6,060 under the complete-operator ceiling. Rebuild with assets:recon-pouches.",
+   "budget": {"triangles": 1400},
+   "triangles": 860
   }
  ],
  "pipeline": [

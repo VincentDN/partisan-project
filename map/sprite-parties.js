@@ -148,7 +148,6 @@ export async function createSpriteLayer() {
         m.mesh.scale.x = (dir === 'east' || c.kind === 'vehicle' ? flip : 1) * Math.abs(m.mesh.scale.x || 1);
         if (m.frames && m.mesh.material.map !== m.frames[dir]) {
           m.mesh.material.map = m.frames[dir];
-          m.mesh.material.needsUpdate = true;
         }
         // walkers bob a step; idlers breathe
         const k = c.moving;

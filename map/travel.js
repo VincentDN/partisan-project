@@ -3,6 +3,7 @@
 // marker; the camera follows it until you pan away (F brings it back). It moves on the map clock, so pause stops it.
 // In a campaign (?campaign) its position lives in the campaign save, and the map settles a mission left unfinished.
 import * as T from 'three';
+import {pickGround} from './picking.js';
 import {buildNav, findPath, advance, groundAt} from '../shared/campaign/nav.js';
 import {createStore} from '../shared/campaign/state.js';
 import {settleAbandoned} from '../shared/campaign/encounter.js';
@@ -12,7 +13,7 @@ import {sample, PARTY_SPOTS, provinceAt} from './island.js';
 const HOURS_PER_SECOND = 0.6;
 const GROUND_NAMES = {road: 'road', plain: 'open country', forest: 'forest', mountain: 'mountains', steep: 'steep ground', snow: 'snow'};
 
-export function mountTravel({scene, camera, field, terrain, stageEl, hero, cam, toast, reduceMotion, params}) {
+export function mountTravel({scene, camera, field, stageEl, hero, cam, toast, reduceMotion, params}) {
   const nav = buildNav();
   // ---------- the campaign save ----------
   let store = null,
@@ -37,6 +38,7 @@ export function mountTravel({scene, camera, field, terrain, stageEl, hero, cam, 
     const ok = store.save(campaign);
     if (!ok && !unsaved) toast('The campaign cannot be saved: browser storage is full or blocked. Progress lasts until the tab closes.');
     unsaved = !ok;
+    return ok;
   };
   if (campaign && !campaign.world.party) save();
   if (note) toast(note);
@@ -59,12 +61,15 @@ export function mountTravel({scene, camera, field, terrain, stageEl, hero, cam, 
   marker.renderOrder = 5;
   marker.visible = false;
   scene.add(dots, marker);
+  let routeDirty = true,
+    lastScale = 0;
   let trail = []; // the dots' ground positions
   const m4 = new T.Matrix4(),
     q = new T.Quaternion(),
     sc = new T.Vector3(),
     at = new T.Vector3();
   function drawRoute() {
+    routeDirty = true;
     trail = [];
     if (!party.route) {
       dots.count = 0;
@@ -91,10 +96,14 @@ export function mountTravel({scene, camera, field, terrain, stageEl, hero, cam, 
   /** Size the dots and the marker for the camera's distance: a few pixels across whatever the zoom. */
   function sizeRoute() {
     const k = T.MathUtils.clamp(cam.d / 95, 0.6, 5);
-    dots.count = trail.length;
-    for (let i = 0; i < trail.length; i++) dots.setMatrixAt(i, m4.compose(at.copy(trail[i]), q, sc.setScalar(k)));
-    dots.instanceMatrix.needsUpdate = true;
-    marker.scale.setScalar(k * (1 + 0.08 * Math.sin(performance.now() / 260)));
+    if (routeDirty || Math.abs(k - lastScale) > 0.01) {
+      dots.count = trail.length;
+      for (let i = 0; i < trail.length; i++) dots.setMatrixAt(i, m4.compose(at.copy(trail[i]), q, sc.setScalar(k)));
+      dots.instanceMatrix.needsUpdate = true;
+      lastScale = k;
+      routeDirty = false;
+    }
+    marker.scale.setScalar(k * (1 + (reduceMotion ? 0 : 0.08 * Math.sin(performance.now() / 260))));
   }
 
   // ---------- orders: a click (not a drag) on land ----------
@@ -133,7 +142,7 @@ export function mountTravel({scene, camera, field, terrain, stageEl, hero, cam, 
     const r = stageEl.getBoundingClientRect();
     mouse.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
     ray.setFromCamera(mouse, camera);
-    const hit = ray.intersectObject(terrain.mesh, false)[0];
+    const hit = pickGround(field, ray.ray);
     if (hit) moveTo(hit.point.x, hit.point.z);
   });
   addEventListener('keydown', e => {
@@ -146,7 +155,8 @@ export function mountTravel({scene, camera, field, terrain, stageEl, hero, cam, 
 
   // ---------- each frame ----------
   let sinceSave = 0,
-    walk = 0;
+    walk = 0,
+    sinceRoute = 0;
   function place() {
     hero.root.position.set(party.x, sample(field, party.x, party.z), party.z);
     hero.root.rotation.y = party.heading;
@@ -155,13 +165,21 @@ export function mountTravel({scene, camera, field, terrain, stageEl, hero, cam, 
   cam.tx = cam.x = party.x + 32;
   cam.tz = cam.z = party.z - 2;
   function update(dt) {
-    if (party.route) {
+    sinceSave += dt;
+    if (sinceSave > 5) {
+      sinceSave = 0;
+      save();
+    }
+    if (party.route && dt > 0) {
       const arrived = advance(nav, party, dt);
       walk += dt;
       place();
       if (!reduceMotion) hero.root.position.y += Math.abs(Math.sin(walk * 9)) * 0.25; // the march
-      drawRoute();
-      sinceSave += dt;
+      sinceRoute += dt;
+      if (arrived || sinceRoute > 0.2) {
+        drawRoute();
+        sinceRoute = 0;
+      }
       if (arrived || sinceSave > 5) {
         sinceSave = 0;
         save();

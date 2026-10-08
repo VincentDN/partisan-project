@@ -4,6 +4,7 @@
 // Click land to march the band there (map/travel.js, WP-W3); with ?campaign its position is kept in the campaign save.
 // The other parties, the menus and the clock are still placeholders.
 import * as T from 'three';
+import {pickGround} from './picking.js';
 import {mountTopBar} from '../shared/topbar.js';
 import {bakeHeights, sample, SETTLEMENTS, FACTIONS, provinceAt} from './island.js';
 import {buildTerrain} from './terrain.js';
@@ -19,7 +20,7 @@ import {createHD2D} from './hd2d.js';
 // longer lens, warmer light and the tilt-shift frame (map/hd2d.js). Its page sets <html data-map-style="hd2d">.
 const HD2D = document.documentElement.dataset.mapStyle === 'hd2d';
 
-mountTopBar({title: HD2D ? 'Overworld 2.5-D test' : 'Overworld map', scene: 'viewer', overlay: true});
+mountTopBar({title: HD2D ? 'Campaign map' : '3-D overworld demo', scene: 'viewer', overlay: true});
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const $ = s => document.querySelector(s);
 const stageEl = $('#stage'),
@@ -27,7 +28,8 @@ const stageEl = $('#stage'),
 
 // ---------- renderer, scene, light ----------
 const renderer = new T.WebGLRenderer({antialias: true});
-renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setPixelRatio(Math.min(devicePixelRatio, 1.25));
+renderer.shadowMap.autoUpdate = false;
 renderer.toneMapping = T.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.05;
 renderer.shadowMap.enabled = true;
@@ -42,7 +44,7 @@ const camera = new T.PerspectiveCamera(HD2D ? 28 : 40, 1, 1, 4000); // HD-2D: a 
 const sunDir = new T.Vector3(0.55, 0.75, 0.35).normalize();
 const sun = new T.DirectionalLight(HD2D ? '#ffe0b0' : '#fff1d8', HD2D ? 3.1 : 2.7);
 sun.castShadow = true;
-sun.shadow.mapSize.setScalar(2048);
+sun.shadow.mapSize.setScalar(1024);
 sun.shadow.bias = -0.0004;
 sun.shadow.normalBias = 0.4;
 scene.add(sun, sun.target, new T.HemisphereLight('#bcd6f0', '#6b5a3e', 1.1));
@@ -158,7 +160,7 @@ function hover(e) {
   const r = stageEl.getBoundingClientRect();
   mouse.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
   ray.setFromCamera(mouse, camera);
-  const hit = ray.intersectObject(terrain.mesh, false)[0];
+  const hit = pickGround(field, ray.ray);
   const card = $('#province');
   if (!hit || hit.point.y < 0.2) return void (card.hidden = true);
   const s = provinceAt(hit.point.x, hit.point.z),
@@ -179,11 +181,13 @@ function hover(e) {
 }
 
 // ---------- time ----------
-let speed = 1;
+let speed = 1,
+  campaignUi = null;
 const day = {n: 14, season: 'Spring', year: 3, hours: 9};
 function setSpeed(s) {
-  speed = s;
-  for (const b of document.querySelectorAll('[data-speed]')) b.setAttribute('aria-pressed', String(Number(b.dataset.speed) === s));
+  speed = campaignUi?.blocked && s ? 0 : s;
+  if (window.PARP_MAP?.travel.campaign) window.PARP_MAP.travel.campaign.world.clock.speed = speed;
+  for (const b of document.querySelectorAll('[data-speed]')) b.setAttribute('aria-pressed', String(Number(b.dataset.speed) === speed));
 }
 for (const b of document.querySelectorAll('[data-speed]')) b.onclick = () => setSpeed(Number(b.dataset.speed));
 setSpeed(1);
@@ -201,6 +205,7 @@ for (const b of document.querySelectorAll('.menu-bar button'))
 const resize = () => {
   const w = stageEl.clientWidth,
     h = stageEl.clientHeight;
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.25, Math.sqrt(1200000 / (w * h))));
   renderer.setSize(w, h);
   camera.aspect = w / h;
   camera.updateProjectionMatrix();
@@ -224,15 +229,23 @@ const travel = mountTravel({
   reduceMotion,
   params: new URLSearchParams(location.search),
 });
-const campaignUi = mountCampaign({travel, parties, townLabels, setSpeed, toast});
+campaignUi = mountCampaign({travel, parties, townLabels, setSpeed, toast});
 $('#loading').hidden = true;
 
 const clock = new T.Clock();
-let worldT = 0;
+let worldT = 0,
+  shadowAt = 0,
+  labelAt = 0,
+  lastDate = '';
+const performanceStats = {frames: 0, cpuMs: 0, frameMs: 0};
+addEventListener('blur', () => keys.clear());
 const v = new T.Vector3();
 renderer.setAnimationLoop(() => {
-  const real = Math.min(clock.getDelta(), 0.1);
-  const dt = real * (reduceMotion ? Math.min(speed, 1) : speed); // the world runs at the chosen speed; the camera never pauses
+  const elapsed = clock.getDelta();
+  if (document.hidden) return;
+  const frameStart = performance.now();
+  const real = Math.min(elapsed, 0.1);
+  const dt = real * (campaignUi?.blocked ? 0 : speed); // the world runs at the chosen speed; the camera never pauses
   worldT += dt;
   keyPan(real);
   placeCamera(real);
@@ -245,11 +258,14 @@ renderer.setAnimationLoop(() => {
   const w = stageEl.clientWidth,
     h = stageEl.clientHeight;
   parties.update(dt, worldT, camera, w, h);
-  for (const l of townLabels) {
-    v.copy(l.p).project(camera);
-    const on = v.z < 1 && Math.abs(v.x) < 1.1 && Math.abs(v.y) < 1.1;
-    l.el.style.display = on ? '' : 'none';
-    if (on) l.el.style.transform = `translate(${((v.x + 1) / 2) * w}px, ${((1 - v.y) / 2) * h}px) translate(-50%, -100%)`;
+  if (frameStart - labelAt >= 80) {
+    labelAt = frameStart;
+    for (const l of townLabels) {
+      v.copy(l.p).project(camera);
+      const on = v.z < 1 && Math.abs(v.x) < 1.1 && Math.abs(v.y) < 1.1;
+      l.el.style.display = on ? '' : 'none';
+      if (on) l.el.style.transform = `translate(${((v.x + 1) / 2) * w}px, ${((1 - v.y) / 2) * h}px) translate(-50%, -100%)`;
+    }
   }
   // the clock: a day passes every 40 s at normal speed
   day.hours += dt * 0.6;
@@ -257,12 +273,23 @@ renderer.setAnimationLoop(() => {
     day.hours -= 24;
     day.n++;
   }
-  $('#date').textContent = campaignUi
+  const dateText = campaignUi
     ? campaignUi.clockText()
     : `${day.season} ${day.n}, Year ${day.year} of the Occupation · ${String(Math.floor(day.hours)).padStart(2, '0')}:00`;
-  sprites?.update(camera, worldT);
+  if (dateText !== lastDate) {
+    $('#date').textContent = dateText;
+    lastDate = dateText;
+  }
+  sprites?.update(camera, reduceMotion ? 0 : worldT);
+  if (frameStart - shadowAt >= 100) {
+    renderer.shadowMap.needsUpdate = true;
+    shadowAt = frameStart;
+  }
   if (hd2d) hd2d.render(scene, camera, worldT);
   else renderer.render(scene, camera);
+  performanceStats.frames++;
+  performanceStats.cpuMs = performance.now() - frameStart;
+  performanceStats.frameMs = elapsed * 1000;
 });
 
 window.PARP_MAP = {
@@ -280,5 +307,6 @@ window.PARP_MAP = {
   campaign: campaignUi,
   sprites,
   hd2d,
+  performance: performanceStats,
   ready: true,
 };

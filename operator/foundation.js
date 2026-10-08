@@ -6,17 +6,30 @@ import {createStage} from '../shared/stage.js';
 import {mountTopBar} from '../shared/topbar.js';
 import {Rig} from './rig.js';
 import {posesForProfile} from './pose-profile.js';
+import {bindPack} from './bind-pack.js';
+import {resolveAssembly} from './assembly.js';
+import {Grip} from './grip.js';
+import {modularRecon} from './recon-modular.js';
+import {referenceGrip} from './reference-grip.js';
 mountTopBar({title: 'Recon clothing foundation', scene: 'viewer'});
 const $ = s => document.querySelector(s);
 try {
   const stage = await createStage($('#foundation-stage'), {environment: 'outdoor', backdrop: true, lightOffset: 255});
   const response = await fetch('poses.json');
   if (!response.ok) throw Error('Poses unavailable');
-  const data = posesForProfile(await response.json(), 'reconFoundation');
+  const poseSource = await response.json();
+  const data = posesForProfile(poseSource, 'reconFoundation');
   const gltf = await new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).loadAsync('../assets/models/operators/recon-modular.glb');
   stage.scene.add(gltf.scene);
   const rig = new Rig(gltf.scene, data),
     meshes = [];
+  rig.grip = new Grip(rig.bones, rig.rest, modularRecon(null).grip);
+  const carrierData = await fetch('recon-carrier.json').then(r => {
+    if (!r.ok) throw Error('Carrier definitions unavailable');
+    return r.json();
+  });
+  const carrierPack = await new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).loadAsync('../assets/models/operators/recon-carrier.glb');
+  bindPack(carrierPack.scene, gltf.scene, rig);
   gltf.scene.traverse(m => {
     if (m.isMesh) {
       meshes.push(m);
@@ -46,7 +59,20 @@ try {
     meshes.filter(m => m.name === 'SK_CM_HeadCap').forEach(m => (m.visible = value === 'cap' || value === 'both'));
     stage.wake();
   }
+  function carrier() {
+    const result = resolveAssembly(carrierData.catalogue, carrierData.outfits[$('#carrier').value]);
+    if (!result.ok) throw Error(result.errors.map(e => e.message).join(' '));
+    const nodes = new Set(result.active.flatMap(i => carrierData.catalogue.find(d => d.id === i.itemId).geometry.nodes || []));
+    meshes
+      .filter(m => m.name.startsWith('SK_LC_') || m.parent?.name.startsWith('SK_LC_'))
+      .forEach(m => {
+        const node = m.userData.packPart || m.name;
+        m.visible = nodes.has(node);
+      });
+    stage.wake();
+  }
   function setPose(id) {
+    rig.data = posesForProfile(poseSource, $('#carrier').value === 'bare' ? 'reconFoundation' : 'reconCarrier');
     pose = id;
     $('#pose').value = id;
     $('#idle').disabled = id === 'rest';
@@ -58,6 +84,8 @@ try {
       rig.update(0, 0, null, 0);
     }
     if (id !== 'rest') gltf.scene.position.y = -rig.lower;
+    gltf.scene.updateMatrixWorld(true);
+    if (id !== 'rest') referenceGrip(rig);
     handShape();
     gltf.scene.updateMatrixWorld(true);
     stage.wake();
@@ -79,6 +107,10 @@ try {
   $('#pose').onchange = e => setPose(e.target.value);
   $('#hands').onchange = () => setPose(pose);
   $('#headwear').onchange = headwear;
+  $('#carrier').onchange = () => {
+    carrier();
+    setPose(pose);
+  };
   $('#idle').onchange = () => stage.wake();
   $('#wire').onclick = () => {
     const wire = $('#wire').getAttribute('aria-pressed') !== 'true';
@@ -89,15 +121,17 @@ try {
   stage.setAnimated(() => pose !== 'rest' && $('#idle').value !== 'off' && !reduced.matches);
   stage.onFrame((dt, t) => {
     if (pose !== 'rest') rig.update(dt, t, $('#idle').value === 'off' ? null : $('#idle').value, reduced.matches ? 0 : 1);
+    if (pose !== 'rest') referenceGrip(rig);
     handShape();
   });
   const triangles = meshes.reduce((n, m) => n + m.geometry.index.count / 3, 0);
-  $('#stats').textContent = `${triangles.toLocaleString()} triangles · 56 bones · removable mask and cap`;
+  $('#stats').textContent = `${triangles.toLocaleString()} loaded triangles · 56 bones · removable carrier, mask and cap`;
   headwear();
+  carrier();
   setPose('rest');
   frame('front');
   $('#status').textContent = '';
-  window.PARP_RECON_FOUNDATION = {ready: true, stage, scene: gltf.scene, rig, meshes, setPose, frame};
+  window.PARP_RECON_FOUNDATION = {ready: true, stage, scene: gltf.scene, rig, meshes, setPose, frame, carrierData};
 } catch (error) {
   $('#status').textContent = 'The clothing preview could not load. Reload in a browser with WebGL enabled.';
   console.error(error);

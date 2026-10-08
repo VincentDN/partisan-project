@@ -1,25 +1,28 @@
 # Agent state
 
-Read `AGENTS.md` first. Work queue: [packets.json](packets.json); full plan: [tactical roadmap](../tactical-roadmap.md).
+Read `AGENTS.md` first. Work queue: [packets.json](packets.json).
 
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-06 18:26 UTC · claude · WP-S10 · partial**
+**2026-10-08 · codex · campaign vertical-slice milestone on main**
 
-- Branch `claude/friendly-dijkstra-4ky9w6` at `bfe9b34`; working tree clean.
-- Last commits: bfe9b34 style: format the inventory preview scene · 1b9a64e feat(WP-S9, S11): search the dead in missions; rebels fire the real rounds in their kits · 47ee0a0 feat(WP-S10): grid inventory screen: drag, turn, load rounds into magazines, swap magazines, loot a body and a cache
-- What happened: Grid inventory: shared/inventory/ core (S8, S43), test page inventory/ (S10 first cut), searching bodies and wrecks in missions with hold E (convoy/field-search.js, S9 first cut), rebels fire the real rounds in their kits (convoy/kit-ammo.js, sim.ammo hooks, S11 first cut). Unit tests (kit-ammo, inventory) and tests/e2e/inventory.mjs pass.
-- Next step: Carry the mission kits home: debrief writes each fighter's kit to the campaign save and the stash (S10 stash screen, S12). Then the army spends and loots ammunition (S11), level caches and convoy cargo as searchable objects, order a teammate to loot (S9).
+- Merged equipment with Claude's main baseline `9539df0` in local merge `11daa61`; owner explicitly authorizes commits and push to main.
+- Default overworld is now 2.5D (`map/`); old 3D style is `map/3d.html` under Dev tools. `map25/` redirects.
+- Reviewed and reduced rendering/picking/route/DOM work. Reproducible terrain picking benchmark: 3.686 ms → 0.0063 ms median (400 rays); not a browser FPS claim.
+- All seven missions start with eight rebels at 180 base HP. Campaign selects six to nine fit fighters and passes their exact roster. Legacy three-person saves expand once without resetting progression or wounds.
+- Added friendly-settlement rest/trade, persistent convoy motion and Operation Foothold (convoy victory, three victories, Fort Orion liberated). Campaign save failures block navigation; duplicate deployments are rejected.
+- Revised campaign/master roadmap against implemented code, partial strategic systems and explicit vertical-slice acceptance. See `docs/campaign-roadmap.md` and `docs/engineering/campaign-performance.md`.
+- Validation: 394/397 unit assertions pass; the remaining three are sandbox `spawnSync EPERM` in CLI/asset/site harnesses. Direct site build/link check, lint, typecheck, formatting and roadmap checks pass. Sixteen combat replay fixtures intentionally updated for roster/health tuning.
+- Chromium launch is blocked by sandbox socket restrictions; the elevated request was interrupted. Browser loop, accessibility, hardware FPS and CM6's final motion gate remain pending. Do not label them passed.
 <!-- handoff:end -->
 
 ## Resume here
 
-1. CM4 is complete. Read docs/engineering/operator-assembly.md, operator/assembly.js and operator/assembly-schema.js. Pure-data resolution validates ownership, repeated copies, mounted footprints, fit/skeleton versions, exclusions, coverage and full geometry cost. Detachment returns a recoverable subtree draft. The current Modder interface is unchanged.
-2. Next packet is CM5: model the lightweight plate carrier against the CM3 foundation. Author separate front/rear plate bags, shoulders, cummerbund and placard, then measured asset-backed definitions/mounts. Test empty/loaded poses and clean removal. Synthetic tests/fixtures/operator-assembly.mjs dimensions are examples, not production fits.
-3. The opt-in foundation stays 5,568 triangles: hood-free, broader chest/neck, complete stylized head, removable mask/cap and articulated gloves. Inspect http://localhost:8132/operator/foundation.html or operator/#base=recon-modular. The original/current comparison remains available.
-4. Preserve recon-v2's 26 canonical body frames plus 30 finger joints, local finger rotations, measured palm targets and CM2 collar/wrist constraints. Rebuild with assets:recon-foundation and BLENDER set; generated .blend stays ignored.
-5. Keep CM5 definitions compatible with the version 1 assembly contract. CM8 will connect the renderer/editor, undo and URL/save migration; do not replace existing saves prematurely. Work remains on codex/generated-operator-equipment; no main merge/push under the protection rule.
+1. Run browser map travel, campaign bridge/loop, smoke and accessibility in a working browser environment; validate six/eight-person selection and safe-haven services. Keep the owner-requested main target.
+2. Run CM6 pouch motion/full browser acceptance before closing CM6. Current inspected final contact sheet is committed at `outbound/wip-images/2026-10-07_214712.png`; retain the canonical body/carrier geometry.
+3. Follow the campaign roadmap's revised order: strategic seeded simulation/save authority, hunters/response, economy/territory, owned customisation, operation debrief/onboarding.
+4. Do not call simple persisted convoy tokens a finished W5/W6 strategic simulation, or the heat counter a working hunter director. The roadmap lists these limitations explicitly.
 
 Earlier tactical handoff (still open):
 
@@ -39,8 +42,8 @@ Earlier tactical handoff (still open):
 
 ## Known limits
 
-- CM4 has no asset-backed equipment catalogue or visible new carrier. It validates authored data; it cannot prove animation clearance, repair missing clothing, apply material finishes or perform gameplay inventory transactions. Unknown items remain in the caller's draft for recovery.
-- CM3 face/eyes are stylized flat materials without facial animation. Prior geometry/browser checks cover 24 foundation and 88 existing-Recon rifle carries, not all attachments or transition frames. CM4 changes no geometry or pose code.
-- Full-suite and build results are recorded in the latest handoff. Two prior downloader failures are unrelated to CM4: standalone generated-file mismatch and missing python3 on Windows PATH.
-- Built site remains above the inherited 90 MB target (approximately 245.8 MB). Inspection reference models contribute to this total.
-- No usage-meter values were available; no budget calibration was invented.
+- The cloud sandbox can run direct Node checks, but default isolated test workers and Chromium need runtime permissions. GitHub Actions provides the complete regression runner.
+- Prior Windows downloader failures did not reproduce in Linux: the full suite passed 244/244 before final documentation/seating updates.
+- The inherited site is about 246.2 MB against the 90 MB target. No unrelated asset cleanup is included.
+- Per-vertex clearance samples cover three rifles and selected motion frames, not every triangle crossing, transition or future loadout. CM9 expands coverage.
+- No usage-meter calibration was invented.

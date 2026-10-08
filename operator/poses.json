@@ -4,7 +4,7 @@
  "note": "Rotations are degrees in CHARACTER space [x pitch, y turn, z roll] applied on top of the A-pose rest. Character faces +Z, its left is +X. Hanging limbs: x<0 swings forward, z>0 (right side) / z<0 (left side) brings the arm toward the body.",
  "poses": {
   "hero": {
-   "label": "Hero · rifle up",
+   "label": "Hero \u00b7 rifle up",
    "detail": "The moodboard hero pose: rifle upright at the right side, gripped one-handed at chest height, weight on the back foot.",
    "bones": {
     "upperarm_r": [
@@ -325,7 +325,7 @@
    ]
   },
   "alert": {
-   "label": "Alert · scanning",
+   "label": "Alert \u00b7 scanning",
    "layers": [
     {
      "bone": "spine_02",
@@ -391,7 +391,7 @@
    ]
   },
   "weary": {
-   "label": "Weary · heavy breath",
+   "label": "Weary \u00b7 heavy breath",
    "layers": [
     {
      "bone": "spine_02",
@@ -1221,6 +1221,236 @@
        0
       ]
      ]
+    }
+   }
+  },
+  "reconCarrier": {
+   "extends": "reconFoundation",
+   "poses": {
+    "hero": {
+     "weapon": {
+      "hold": [
+       -0.35,
+       0.18,
+       0.12
+      ],
+      "pole": {
+       "r": [
+        -1,
+        -1,
+        1
+       ],
+       "l": [
+        0.9,
+        -0.5,
+        0.6
+       ]
+      }
+     }
+    },
+    "ready": {
+     "weapon": {
+      "hold": [
+       -0.13,
+       0.04,
+       0.37
+      ]
+     }
+    },
+    "crouch": {
+     "weapon": {
+      "hold": [
+       -0.14,
+       -0.03,
+       0.34
+      ]
+     }
+    },
+    "kneel": {
+     "weapon": {
+      "hold": [
+       -0.12,
+       -0.03,
+       0.34
+      ]
+     }
+    },
+    "highready": {
+     "weapon": {
+      "hold": [
+       -0.17,
+       0.08,
+       0.35
+      ]
+     }
+    },
+    "port": {
+     "weapon": {
+      "hold": [
+       -0.12,
+       0.02,
+       0.28
+      ],
+      "pole": {
+       "r": [
+        -1,
+        -1,
+        -1
+       ],
+       "l": [
+        0.5,
+        -1,
+        1
+       ]
+      }
+     }
+    },
+    "gunner": {
+     "weapon": {
+      "hold": [
+       -0.15,
+       0.02,
+       0.32
+      ],
+      "pole": {
+       "r": [
+        -0.9,
+        -0.5,
+        0.6
+       ],
+       "l": [
+        0.5,
+        -1,
+        1
+       ]
+      }
+     }
+    },
+    "herotwo": {
+     "weapon": {
+      "hold": [
+       -0.2,
+       0.07,
+       0.34
+      ],
+      "pole": {
+       "r": [
+        -0.9,
+        -0.5,
+        0.6
+       ],
+       "l": [
+        0.9,
+        -0.5,
+        0.6
+       ]
+      }
+     }
+    },
+    "relaxed": {
+     "bones": {
+      "upperarm_r": [
+       -4,
+       0,
+       -5
+      ]
+     },
+     "weapon": {
+      "hold": [
+       -0.34,
+       -0.16,
+       0.14
+      ]
+     }
+    },
+    "salute": {
+     "bones": {
+      "upperarm_r": [
+       -55,
+       70,
+       -25
+      ]
+     }
+    }
+   }
+  },
+  "reconPouches": {
+   "extends": "reconCarrier",
+   "slung": {
+    "anchor": "spine_03",
+    "hold": [
+     0.3,
+     -0.12,
+     -0.32
+    ],
+    "muzzle": [
+     -0.55,
+     0.83,
+     0
+    ],
+    "up": [
+     0,
+     0,
+     -1
+    ],
+    "hands": {}
+   },
+   "poses": {
+    "port": {
+     "weapon": {
+      "hold": [
+       -0.2,
+       0.14,
+       0.32
+      ],
+      "pole": {
+       "r": [
+        -1,
+        -1,
+        0
+       ],
+       "l": [
+        0.5,
+        -1,
+        1
+       ]
+      }
+     }
+    },
+    "gunner": {
+     "weapon": {
+      "hold": [
+       -0.2,
+       0.14,
+       0.32
+      ],
+      "pole": {
+       "r": [
+        -1,
+        -1,
+        0
+       ],
+       "l": [
+        0.5,
+        -1,
+        1
+       ]
+      }
+     }
+    },
+    "overwatch": {
+     "bones": {
+      "upperarm_r": [
+       4,
+       0,
+       -10
+      ],
+      "upperarm_l": [
+       4,
+       0,
+       10
+      ]
+     }
     }
    }
   }

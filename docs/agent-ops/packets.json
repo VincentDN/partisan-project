@@ -2630,7 +2630,7 @@
    "milestone": "M2",
    "size": "M",
    "bu": 20,
-   "status": "ready",
+   "status": "done",
    "deps": [
     "WP-CM2",
     "WP-CM4"
@@ -2648,7 +2648,7 @@
     "tools/assets/recon-modular-contract.json",
     "docs/engineering/recon-head-hands.md"
    ],
-   "acceptance": "Front/rear bags, straps, cummerbund and placard are independently authored; empty/loaded fits pass torso poses and complete removal restores the clean jacket."
+   "acceptance": "npm run test:carrier; closed independently authored front/rear bags, shoulders, cummerbund and removable placard; real catalogue budgets, canonical binding, ten reference poses, 24 equipped rifle carries, removal/share reload and committed contact sheet pass. Loaded pack remains within 1,700 triangles."
   },
   {
    "id": "WP-CM6",
@@ -2657,7 +2657,7 @@
    "milestone": "M2",
    "size": "M",
    "bu": 20,
-   "status": "planned",
+   "status": "ready",
    "deps": [
     "WP-CM5"
    ],
@@ -2668,9 +2668,18 @@
    ],
    "inputs": [
     "docs/character-customisation-roadmap.md",
-    "docs/engineering/generated-recon.md"
+    "docs/engineering/generated-recon.md",
+    "docs/engineering/recon-carrier.md",
+    "operator/recon-carrier.json",
+    "operator/assembly.js",
+    "tools/assets/build-recon-carrier.py",
+    "docs/agent-ops/CM6-CLOUD-HANDOFF.md",
+    "operator/mounted-pouches.js",
+    "operator/recon-pouches.json",
+    "tools/assets/build-recon-pouches.py",
+    "docs/engineering/recon-pouches.md"
    ],
-   "acceptance": "Three independent pouch modules mount, duplicate and remove with occupied-cell validation; radio/cable follows its owning pouch; UV and posed contact sheets pass."
+   "acceptance": "npm run test:pouches; three closed, textured modules with measured front/rear skin binding, duplication/removal and occupied-cell validation; owned radio/cable, 27 six-copy carries across the three current poses, 19 motion samples, shared colours, keyboard/mobile controls and inspected contact sheet pass. Per-instance allocation stays within the 15000-triangle assembly ceiling."
   },
   {
    "id": "WP-CM7",
@@ -3086,7 +3095,8 @@
    "inputs": [
     "docs/campaign-roadmap.md"
    ],
-   "acceptance": "Space pauses, 1-3 set speed; night tint and reduced sight; opening a menu or encounter stops time; reduced motion respected."
+   "acceptance": "Space pauses, 1-3 set speed; night tint and reduced sight; opening a menu or encounter stops time; reduced motion respected.",
+   "progress_note": "2026-10-08: Clock, pause and modal blocking implemented; fixed-step strategic simulation remains."
   },
   {
    "id": "WP-W5",
@@ -3105,7 +3115,8 @@
    "inputs": [
     "docs/campaign-roadmap.md"
    ],
-   "acceptance": "shared/campaign/world.js steps without a renderer; same seed and orders give the same world; state round-trips through the save."
+   "acceptance": "shared/campaign/world.js steps without a renderer; same seed and orders give the same world; state round-trips through the save.",
+   "progress_note": "2026-10-08: Convoy motion now survives save/load with deterministic initial phase; seeded headless strategic party simulation remains."
   },
   {
    "id": "WP-W6",
@@ -3123,7 +3134,8 @@
    "inputs": [
     "docs/campaign-roadmap.md"
    ],
-   "acceptance": "Convoys follow ROADS between settlements; their manifest and escort are visible; an arrival raises the garrison; unit tests."
+   "acceptance": "Convoys follow ROADS between settlements; their manifest and escort are visible; an arrival raises the garrison; unit tests.",
+   "progress_note": "2026-10-08: Visible road convoys persist; cargo manifests, resupply and respawn remain."
   },
   {
    "id": "WP-W7",
@@ -3161,7 +3173,8 @@
    "inputs": [
     "docs/campaign-roadmap.md"
    ],
-   "acceptance": "Contact pauses time and opens a keyboard-operable panel with both sides' strength and the ground; each option leads to a mission or a map outcome."
+   "acceptance": "Contact pauses time and opens a keyboard-operable panel with both sides' strength and the ground; each option leads to a mission or a map outcome.",
+   "progress_note": "2026-10-08: Contact panel, attack/leave and six-to-nine-person selection implemented; prepare ambush/rearguard choices remain."
   },
   {
    "id": "WP-W9",
@@ -3181,7 +3194,8 @@
    "inputs": [
     "docs/campaign-roadmap.md"
    ],
-   "acceptance": "A map convoy opens the convoy level with its escort and vehicles; win leaves a wreck and captures cargo; loss lets it pass; e2e map to mission to map."
+   "acceptance": "A map convoy opens the convoy level with its escort and vehicles; win leaves a wreck and captures cargo; loss lets it pass; e2e map to mission to map.",
+   "progress_note": "2026-10-08: Convoy/forest-road bridge and conditions implemented; exact cargo/escort-driven generation remains."
   },
   {
    "id": "WP-W10",
@@ -3202,7 +3216,8 @@
    "inputs": [
     "docs/campaign-roadmap.md"
    ],
-   "acceptance": "Marching on an Invader settlement opens the compound level scaled to its garrison; success raids or captures it on the map."
+   "acceptance": "Marching on an Invader settlement opens the compound level scaled to its garrison; success raids or captures it on the map.",
+   "progress_note": "2026-10-08: Village/compound bridge, conditions and captured ownership implemented; full garrison simulation remains."
   },
   {
    "id": "WP-W11",
@@ -3222,11 +3237,12 @@
    "inputs": [
     "docs/campaign-roadmap.md"
    ],
-   "acceptance": "A hunter touching the band at Oros Camp opens the cave defence with waves from its strength; in the open, a field defence level; overrun and victory both change the map. An overrun follows TAC-K-03: half of each camp stack lost (rounded down), fallen fighters wounded, fall back to the nearest friendly settlement, heat halved."
+   "acceptance": "A hunter touching the band at Oros Camp opens the cave defence with waves from its strength; in the open, a field defence level; overrun and victory both change the map. An overrun follows TAC-K-03: half of each camp stack lost (rounded down), fallen fighters wounded, fall back to the nearest friendly settlement, heat halved.",
+   "progress_note": "2026-10-08: Cave/hilltop defence mapping implemented; active strategic pursuit remains."
   },
   {
    "id": "WP-W12",
-   "title": "Deploy screen: pick up to four fighters from the band; one squad model shared by the band and the missions",
+   "title": "Deployment: select six to nine fit fighters, eight starters, one roster shared by campaign and missions",
    "track": "Campaign",
    "milestone": "W",
    "size": "S",
@@ -3241,7 +3257,8 @@
    "inputs": [
     "docs/campaign-roadmap.md"
    ],
-   "acceptance": "Before a mission the player picks fighters from the band; their classes, abilities and kit appear in the mission; the rest stay on the map."
+   "acceptance": "Select six to nine fit fighters; all seven mission types preserve selected identities, classes and kit; wounded/reserves stay behind; eight starters and legacy migration; keyboard/browser validation.",
+   "progress_note": "2026-10-08: Eight starters, select six to nine fit fighters, 180 base HP, preserved identities/classes/kits and legacy roster migration implemented; browser acceptance pending."
   },
   {
    "id": "WP-W13",
@@ -3261,7 +3278,8 @@
    "inputs": [
     "docs/campaign-roadmap.md"
    ],
-   "acceptance": "The debrief returns to the map, which applies the result once and shows it in the world and a toast; reload-safe."
+   "acceptance": "The debrief returns to the map, which applies the result once and shows it in the world and a toast; reload-safe.",
+   "progress_note": "2026-10-08: Idempotent result, wounds/healing, XP and autosave implemented; visible aftermath and final browser gate remain."
   },
   {
    "id": "WP-W14",
@@ -3279,7 +3297,8 @@
    "inputs": [
     "docs/campaign-roadmap.md"
    ],
-   "acceptance": "Debrief loot appears in the band stash labelled with where it came from; convoy loot follows the manifest."
+   "acceptance": "Debrief loot appears in the band stash labelled with where it came from; convoy loot follows the manifest.",
+   "progress_note": "2026-10-08: Loot and grid kits return to campaign; strategic cargo and unified item ownership remain."
   },
   {
    "id": "WP-W15",
@@ -3299,7 +3318,8 @@
    "inputs": [
     "docs/campaign-roadmap.md"
    ],
-   "acceptance": "band/ reads and writes the campaign state; promoting consumes the stash kit; standalone Rebel Band demo still works."
+   "acceptance": "band/ reads and writes the campaign state; promoting consumes the stash kit; standalone Rebel Band demo still works.",
+   "progress_note": "2026-10-08: Map band screen, promotions and kit persistence implemented; complete acceptance still needs browser validation."
   },
   {
    "id": "WP-W16",
@@ -3357,7 +3377,8 @@
    "inputs": [
     "docs/campaign-roadmap.md"
    ],
-   "acceptance": "Neutral and liberated villages barter item for item from a seeded weekly stock (TAC-K-01); liberated villages offer tier-1 recruits; no trader at camp in a campaign."
+   "acceptance": "Neutral and liberated villages barter item for item from a seeded weekly stock (TAC-K-01); liberated villages offer tier-1 recruits; no trader at camp in a campaign.",
+   "progress_note": "2026-10-08: Friendly/independent settlement rest and existing trader integrated; recruits and service stock remain."
   },
   {
    "id": "WP-W19",
@@ -3376,7 +3397,8 @@
    "inputs": [
     "docs/campaign-roadmap.md"
    ],
-   "acceptance": "A captured settlement turns its province to the Resistance and gives its benefits; the Invader sends a party to retake it."
+   "acceptance": "A captured settlement turns its province to the Resistance and gives its benefits; the Invader sends a party to retake it.",
+   "progress_note": "2026-10-08: Captured owner and safe-haven access implemented; garrison economy/counterattack simulation remains."
   },
   {
    "id": "WP-W20",
@@ -3415,7 +3437,8 @@
    "inputs": [
     "docs/campaign-roadmap.md"
    ],
-   "acceptance": "Taking the last Invader seat opens the final assault; winning or losing the campaign ends in a summary screen; a new campaign can start."
+   "acceptance": "Taking the last Invader seat opens the final assault; winning or losing the campaign ends in a summary screen; a new campaign can start.",
+   "progress_note": "2026-10-08: Operation Foothold checklist/completion implemented; full summary and camp-overrun recovery remain."
   },
   {
    "id": "WP-W22",
@@ -3473,7 +3496,8 @@
    "inputs": [
     "docs/campaign-roadmap.md"
    ],
-   "acceptance": "Smoke covers a full campaign round trip; double settlement impossible across tabs; map frame budget measured."
+   "acceptance": "Smoke covers a full campaign round trip; double settlement impossible across tabs; map frame budget measured.",
+   "progress_note": "2026-10-08: Loop tests expanded and CPU/GPU work reduced; actual browser/device performance, concurrency and full acceptance remain."
   },
   {
    "id": "WP-W25",
@@ -3496,7 +3520,7 @@
   },
   {
    "id": "WP-W26",
-   "title": "Campaign decisions (delegated by the owner): barter at villages, auto-resolve for lopsided fights, camp overrun as a setback, the 3-D map replaces the retro overworld",
+   "title": "Campaign decisions: 2.5D default overworld, 3D dev demo, village trade and camp overrun as setback",
    "track": "Campaign",
    "milestone": "W",
    "size": "XS",
@@ -3509,7 +3533,8 @@
     "docs/campaign-roadmap.md",
     "docs/design-decisions/K-campaign.md"
    ],
-   "acceptance": "TAC-K-01 to K-04 in docs/design-decisions/K-campaign.md; campaign roadmap updated; WP-V14 to V16 retired."
+   "acceptance": "TAC-K-01 to K-04 in docs/design-decisions/K-campaign.md; campaign roadmap updated; WP-V14 to V16 retired.",
+   "progress_note": "2026-10-08: Owner superseded original 3D presentation decision on 8 October: 2.5D default, 3D demo under Dev tools."
   },
   {
    "id": "WP-S43",
@@ -3610,7 +3635,7 @@
    "inputs": [
     "docs/quality-roadmap.md"
    ],
-   "acceptance": "Property tests over garbage and truncated saves; settle is idempotent across a reload at every step; a second tab never loses the other tab’s writes silently (it warns or merges); quota errors are reported, not swallowed."
+   "acceptance": "Property tests over garbage and truncated saves; settle is idempotent across a reload at every step; a second tab never loses the other tab\u2019s writes silently (it warns or merges); quota errors are reported, not swallowed."
   },
   {
    "id": "WP-QA5",

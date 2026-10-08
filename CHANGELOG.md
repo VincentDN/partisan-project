@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-10-08 — campaign vertical-slice integration
+
+- Make the 2.5D island the default campaign map; retain the fully 3D map as a Dev tools demo and redirect old map25 links.
+- Reduce map render resolution, post-process sampling and shadow cost; lazy-load 3D models, replace terrain triangle picking, throttle route/label updates and skip hidden tabs. CPU picking benchmark: 3.686 → 0.0063 ms median; browser FPS remains to be measured.
+- Start all seven mission types with eight rebels and 180 base HP; deploy six to nine fit fighters with exact identities, preserve old-save progression, and keep wounded fighters out.
+- Add safe-haven rest and trade, persistent convoy movement and Operation Foothold's convoy/three-victory/Fort Orion objective. Prevent duplicate deployments and navigation after failed campaign saves.
+- Reconcile the master/campaign roadmaps with implemented systems, remaining strategic work and explicit vertical-slice acceptance. Updated combat replay fixtures reflect the intentional roster/health change.
+- Browser/device validation remains pending because this cloud sandbox blocks Chromium sockets; no achieved frame-rate claim is made.
+
+
 Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer; `VERSION` and `index.html` change together.
 
 ## [Unreleased]
@@ -127,6 +137,14 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versions follow SemVer;
 - **Partisan Tactical**: no aim wait for the player any more. The magazine, reserve and reload now show on the map, with a reload ring at the cursor. TAC-J-41.
 - **Opening scene**: the Nokia is at real size, and its LCD loops a dithered lambda and a console log. The scene now loads in with a Nokia-green ordered dither. TAC-J-42.
 - **Recon** now wears its generated colours: the textured model's look is baked onto the runtime model (`tools/assets/bake-generated-recon.mjs`). TAC-J-43.
+### Added (Mounted pouches, WP-CM6)
+- Complete independent magazine, utility and owned radio/cable modules with six measured front/rear positions, duplication/removal, pouch colours and a Patrol preset. Removing the carrier preserves its pouch selections for restoration.
+- Fix collapsed radio-display geometry, seat pouch backs against the webbing, and fit loaded poses through an equipment-specific profile, including main's newer Relaxed carry. Preserve keyboard focus when equipment or colour controls redraw.
+- Validate closed exports, skin binding, per-copy budgets, 27 configurations across main's three current poses, motion samples, saved colours and mobile controls. See `docs/engineering/recon-pouches.md` and its final contact sheet.
+
+### Added (Lightweight plate carrier, WP-CM5)
+- Add an independent 1,116-triangle carrier with front/rear bags, straps, pads, cummerbund and removable front placard. Compare clean clothing and both carrier states in the inspector or Modder; fabric colours and carrier choices round-trip in saved links.
+- Fit carrier-only carry poses, preserve the existing body, and add asset-backed assembly definitions, closed-surface checks and real rifle clearance tests.
 
 ### Added (Equipment assembly rules, WP-CM4)
 - Add a renderer-independent equipment resolver with repeated item instances, parent-owned attachments, recoverable subtree removal, socket/grid footprints and explicit compatibility reasons. Coverage restores on removal and budgets include every loaded copy.

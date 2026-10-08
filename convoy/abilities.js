@@ -9,7 +9,7 @@ import {TROOPS, abilitiesOf} from '../band/troops.js';
 import {addBelief} from './ai.js';
 
 /** The classes the three rebels start with (the squad is saved in the browser and levels up between missions). */
-export const DEFAULT_SQUAD = {player: 'insurgent', mila: 'marksman', dragan: 'machinegunner'};
+export {DEFAULT_SQUAD} from './roster.js';
 
 // ---------- kits ----------
 const KIT_LINES = [

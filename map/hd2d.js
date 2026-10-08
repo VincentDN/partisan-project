@@ -1,5 +1,5 @@
 // The 2.5-D overworld's look (map25/): an HD-2D frame in the manner of Octopath Traveler. The scene draws into a
-// multisampled buffer; one full-screen pass then blurs the top and bottom of the frame (tilt-shift: the island reads
+// single-sample HDR buffer; one full-screen pass then blurs the top and bottom of the frame (tilt-shift: the island reads
 // as a miniature diorama), lets the highlights bloom a little, warms and lifts the colour, darkens the corners and
 // adds a faint grain, before tone mapping to the screen. The blur depends only on where a pixel is on screen, not on
 // depth, so sprite and model edges stay clean.
@@ -7,7 +7,7 @@ import * as T from 'three';
 
 export function createHD2D(renderer, {focus = 0.46, band = 0.15, blur = 7} = {}) {
   const size = new T.Vector2();
-  const target = new T.WebGLRenderTarget(1, 1, {type: T.HalfFloatType, samples: 4});
+  const target = new T.WebGLRenderTarget(1, 1, {type: T.HalfFloatType, samples: 0});
   const material = new T.ShaderMaterial({
     uniforms: {
       tColor: {value: target.texture},
@@ -31,18 +31,18 @@ void main() {
   vec3 sum = texture2D(tColor, vUv).rgb;
   vec3 glow = vec3(0.0);
   float total = 1.0;
-  for (int i = 1; i < 20; i++) {
+  for (int i = 1; i < 5; i++) {
     float fi = float(i);
     float a = fi * 2.39996323;
     vec2 dir = vec2(cos(a), sin(a));
-    vec3 c = texture2D(tColor, vUv + dir * sqrt(fi / 20.0) * r * uTexel).rgb;
+    vec3 c = texture2D(tColor, vUv + dir * sqrt(fi / 5.0) * r * uTexel).rgb;
     sum += c;
     total += 1.0;
     // bloom: the bright parts of a wider ring, everywhere
     vec3 g = texture2D(tColor, vUv + dir * (4.0 + fi * 0.9) * uTexel).rgb;
     glow += max(g - vec3(0.9), 0.0);
   }
-  vec3 col = sum / total + glow / 19.0 * 0.6 * uAmount;
+  vec3 col = sum / total + glow / 4.0 * 0.6 * uAmount;
   // grade: warm light, a touch more colour, shadows nudged toward teal (the HD-2D palette)
   float luma = dot(col, vec3(0.2126, 0.7152, 0.0722));
   vec3 graded = mix(vec3(luma), col, 1.18) * vec3(1.05, 1.0, 0.9);

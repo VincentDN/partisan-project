@@ -100,7 +100,7 @@ test('difficulty scales the damage rebels take and the army aim', () => {
   const hit = s => {
     const foe = s.units.find(u => u.side === 'army');
     s.damage(s.player, foe, 34);
-    return 100 - s.player.hp;
+    return s.player.maxHp - s.player.hp;
   };
   assert.ok(hit(easy) < 34 && hit(brutal) > 34);
   for (const d of Object.values(DIFFICULTY)) assert.ok(d.label && d.taken > 0 && d.spread > 0 && d.react > 0 && d.xp > 0);
