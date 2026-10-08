@@ -38,7 +38,7 @@ export function levelFor(source, {ground = 'plain', nearCamp = false} = {}) {
 }
 /** The ground of the fight from the map's ground under the band (shared/campaign/nav.js names). */
 const GROUND_LOOK = {plain: 'plain', road: 'plain', forest: 'forest', mountain: 'mountain', steep: 'mountain', snow: 'snow', sea: 'coast'};
-/** The most fighters a mission takes (the levels have three rebel slots). */
+/** The maximum deployed roster; each mission places these identities at its insertion. */
 import {SQUAD_MAX} from '../../convoy/roster.js';
 export {SQUAD_MAX};
 

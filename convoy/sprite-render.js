@@ -399,12 +399,13 @@ export async function createSpriteRenderer(view) {
       ctx.fillStyle = u.side === 'partisan' ? '#f2f2e6' : '#f2c9a0';
       ctx.fillText(name, x, y + 1);
     }
-    if (u.hp < 100) {
+    const maxHp = u.maxHp ?? 100;
+    if (u.hp < maxHp) {
       const w = 0.9 * ppm;
       ctx.fillStyle = 'rgba(0,0,0,.6)';
       ctx.fillRect(x - w / 2, y + (name ? 15 : 0), w, 3);
-      ctx.fillStyle = u.hp > 50 ? '#8fc35a' : '#d9673c';
-      ctx.fillRect(x - w / 2, y + (name ? 15 : 0), (w * Math.max(0, u.hp)) / 100, 3);
+      ctx.fillStyle = u.hp > maxHp / 2 ? '#8fc35a' : '#d9673c';
+      ctx.fillRect(x - w / 2, y + (name ? 15 : 0), (w * Math.max(0, u.hp)) / maxHp, 3);
     }
     if (active || selected) brackets(u.x, u.z - 0.45, 0.85, active ? '#ffffff' : '#ffd36b');
   }

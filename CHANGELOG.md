@@ -4,6 +4,7 @@
 
 - Make the 2.5D island the default campaign map; retain the fully 3D map as a Dev tools demo and redirect old map25 links.
 - Reduce map render resolution, post-process sampling and shadow cost; lazy-load 3D models, replace terrain triangle picking, throttle route/label updates and skip hidden tabs. CPU picking benchmark: 3.686 → 0.0063 ms median; browser FPS remains to be measured.
+- Scale tactical health bars and returned wound classification against each fighter’s maximum HP.
 - Start all seven mission types with eight rebels and 180 base HP; deploy six to nine fit fighters with exact identities, preserve old-save progression, and keep wounded fighters out.
 - Add safe-haven rest and trade, persistent convoy movement and Operation Foothold's convoy/three-victory/Fort Orion objective. Prevent duplicate deployments and navigation after failed campaign saves.
 - Reconcile the master/campaign roadmaps with implemented systems, remaining strategic work and explicit vertical-slice acceptance. Updated combat replay fixtures reflect the intentional roster/health change.

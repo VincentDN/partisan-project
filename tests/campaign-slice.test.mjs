@@ -86,3 +86,12 @@ test('blocked storage and duplicate deployments fail explicitly without losing k
   assert.throws(() => deploy(c, {id: 'duplicate', level: 'convoy', fighters: ['player', 'player']}), /distinct/);
   assert.equal(c.deployment, null);
 });
+
+test('a hurt rebel above 100 HP still comes home wounded under the new health scale', () => {
+  const sim = new Sim({squad: DEFAULT_SQUAD});
+  sim.player.hp = sim.player.maxHp - 10;
+  assert.ok(sim.player.hp > 100);
+  assert.equal(sim.debrief().byPartisan.find(u => u.id === 'player').state, 'wounded');
+  sim.player.hp = sim.player.maxHp;
+  assert.equal(sim.debrief().byPartisan.find(u => u.id === 'player').state, 'fit');
+});

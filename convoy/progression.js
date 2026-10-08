@@ -1,4 +1,4 @@
-// Partisan Tactical campaign: the squad's three rebels earn experience and loot in missions and are promoted along the
+// Partisan Tactical campaign: the squad's named rebels earn experience and loot in missions and are promoted along the
 // Rebel Band class tree (band/troops.js). A promotion costs the experience of the class it leaves (`xp`) and the
 // equipment the new class carries (`needs`, from the stash). The loot (convoy/loot.js) fills the stash; trade goods are
 // sold for scrip and scrip buys equipment. Pure (no DOM): the page keeps the campaign in localStorage (SQUAD_KEY).

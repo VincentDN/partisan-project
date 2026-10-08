@@ -8,7 +8,7 @@
 import {TROOPS, abilitiesOf} from '../band/troops.js';
 import {addBelief} from './ai.js';
 
-/** The classes the three rebels start with (the squad is saved in the browser and levels up between missions). */
+/** The classes the starting rebels start with (the squad is saved in the browser and levels up between missions). */
 export {DEFAULT_SQUAD} from './roster.js';
 
 // ---------- kits ----------

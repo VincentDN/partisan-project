@@ -989,7 +989,7 @@ export class Sim {
         id: u.id,
         name: u.name,
         kills: this.kills[u.id] || 0,
-        state: !u.alive ? 'down' : u.hp < 100 ? 'wounded' : 'fit',
+        state: !u.alive ? 'down' : u.hp < (u.maxHp ?? 100) ? 'wounded' : 'fit',
       })),
       taken: this.items.filter(i => i.taken).map(i => i.label),
       ...s,

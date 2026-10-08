@@ -32,7 +32,7 @@ function cleanTroops(o) {
   return out;
 }
 
-/** The named fighters you deploy and play: {id: {class, xp, wounded}}. Starts as the three tactical rebels. */
+/** The named fighters you deploy and play: {id: {class, xp, wounded}}. Starts as eight tactical rebels. */
 function cleanFighters(o, fallback) {
   const out = {};
   if (isObj(o))
