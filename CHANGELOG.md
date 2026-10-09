@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-10-09 — paused-map performance and campaign fixes
+
+- Stop continuous GPU submissions for a paused, settled map; camera input, resizing and ground clicks wake it immediately.
+- Reuse convoy interpolation vectors, skip unchanged paused transforms and party-card DOM, and synchronize shadow-camera work with shadow refresh.
+- Preserve saved speed and pause after leaving an encounter; show the actual fit roster on the map token, refresh trade summaries immediately and restore convoy orientation correctly.
+- Fix the hosted operator reload timeout by waiting for DOM readiness before the existing model-readiness assertions.
+- Hosted main passed build/unit/deploy, general smoke, campaign bridge/travel/loop and inventory; later character tests and accessibility remain pending.
+
+
 ## 2026-10-08 — campaign vertical-slice integration
 
 - Make the 2.5D island the default campaign map; retain the fully 3D map as a Dev tools demo and redirect old map25 links.

@@ -34,6 +34,8 @@ try {
   assert.deepEqual(before.settled, []);
   assert.match(await page.locator('#date').innerText(), /Spring 1, Year 3 .* 08:00/, 'the campaign clock');
 
+  assert.equal(await page.locator('.plate-party.player .pcount').innerText(), '8', 'map strength matches the starting roster');
+
   // 1. meet the supply convoy: the encounter panel, the fit fighters, Attack
   const convoy = await page.evaluate(() => {
     const p = window.PARP_MAP.parties.parties.find(p => p.id === 'supply-convoy');

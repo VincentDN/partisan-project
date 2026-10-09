@@ -121,15 +121,17 @@ export async function buildParties(field, roads, layer, makers = {}) {
     const cum = [0];
     for (let i = 1; i < pts.length; i++) cum.push(cum[i - 1] + pts[i].distanceTo(pts[i - 1]));
     const total = cum[cum.length - 1];
+    const sampledPosition = new T.Vector3(),
+      sampledDirection = new T.Vector3();
     const at = s => {
       s = Math.max(0, Math.min(total, s));
       let i = cum.findIndex(d => d >= s);
       i = Math.max(1, i);
       const k = (s - cum[i - 1]) / (cum[i] - cum[i - 1] || 1);
       return {
-        p: pts[i - 1].clone().lerp(pts[i], k),
-        d: pts[i]
-          .clone()
+        p: sampledPosition.copy(pts[i - 1]).lerp(pts[i], k),
+        d: sampledDirection
+          .copy(pts[i])
           .sub(pts[i - 1])
           .normalize(),
       };
@@ -142,7 +144,11 @@ export async function buildParties(field, roads, layer, makers = {}) {
     }
     const gap = 10;
     const state = {s: total * 0.35, dir: 1, wait: 0, speed: 9};
+    let placed = false,
+      lastS = NaN,
+      lastDir = 0;
     const update = dt => {
+      if (!dt && placed && state.s === lastS && state.dir === lastDir) return;
       if (state.wait > 0) state.wait -= dt;
       else {
         state.s += state.dir * state.speed * dt;
@@ -160,8 +166,11 @@ export async function buildParties(field, roads, layer, makers = {}) {
         const want = Math.atan2(-d.z * state.dir, d.x * state.dir);
         let da = want - v.rotation.y;
         da = Math.atan2(Math.sin(da), Math.cos(da));
-        v.rotation.y += da * Math.min(1, dt * 4); // turn smoothly, also at the turn-round
+        v.rotation.y += da * (placed && dt ? Math.min(1, dt * 4) : 1); // turn smoothly, also at the turn-round
       });
+      placed = true;
+      lastS = state.s;
+      lastDir = state.dir;
     };
     update(0);
     parties.push({

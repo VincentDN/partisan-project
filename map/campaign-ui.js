@@ -42,7 +42,7 @@ const el = (tag, attrs = {}, ...kids) => {
   return e;
 };
 
-export function mountCampaign({travel, parties, townLabels, setSpeed, toast}) {
+export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed = () => 1, toast}) {
   const campaign = travel.campaign;
   if (!campaign) return null;
   const save = () => travel.save();
@@ -77,8 +77,11 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, toast}) {
   const panel = el('div', {class: 'encounter hud', role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': 'enc-title', hidden: true});
   document.body.append(panel);
   let open = null, // {id, source, at: {x, z}}
-    ignored = null; // the contact the player chose to leave
+    ignored = null,
+    resumeSpeed = 1; // the contact the player chose to leave
   function showEncounter(c) {
+    if (open) return;
+    resumeSpeed = getSpeed();
     open = c;
     travel.party.route = null;
     travel.drawRoute();
@@ -149,7 +152,7 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, toast}) {
     ignored = open;
     open = null;
     panel.hidden = true;
-    setSpeed(1);
+    setSpeed(resumeSpeed);
   }
   function attack(e) {
     try {
@@ -224,6 +227,7 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, toast}) {
       save();
       if (why) toast(why);
       renderBand();
+      renderCard();
       bandPanel.querySelector('.path.ready button, button')?.focus();
     },
   });
@@ -322,21 +326,26 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, toast}) {
   if (partyButton) partyButton.onclick = () => toggleBand(true);
 
   // the party card: the band's real numbers
+  let lastCard = '';
   function renderCard() {
     const f = Object.values(campaign.band.fighters);
     const troops = Object.values(campaign.band.troops).reduce((a, t) => a + t.count, 0);
     const card = document.querySelector('.party-card dl');
     if (!card) return;
-    card.replaceChildren(
-      ...[
-        ['Fighters', `${f.filter(x => !x.wounded).length} / ${f.length}`],
-        ['Wounded', f.filter(x => x.wounded).length],
-        ['Troops', troops],
-        ['Stash', Object.values(campaign.stash).reduce((a, n) => a + n, 0)],
-        ['Scrip', campaign.scrip.toLocaleString('en')],
-        ['Fought', campaign.settled.length],
-      ].flatMap(([k, v]) => [el('dt', {}, k), el('dd', {}, String(v))]),
-    );
+    const rows = [
+      ['Fighters', `${f.filter(x => !x.wounded).length} / ${f.length}`],
+      ['Wounded', f.filter(x => x.wounded).length],
+      ['Troops', troops],
+      ['Stash', Object.values(campaign.stash).reduce((a, n) => a + n, 0)],
+      ['Scrip', campaign.scrip.toLocaleString('en')],
+      ['Fought', campaign.settled.length],
+    ];
+    const signature = JSON.stringify(rows);
+    if (signature === lastCard) return;
+    lastCard = signature;
+    const count = parties.parties.find(p => p.kind === 'player')?.plate.querySelector('.pcount');
+    if (count) count.textContent = String(f.filter(x => !x.wounded).length);
+    card.replaceChildren(...rows.flatMap(([k, v]) => [el('dt', {}, k), el('dd', {}, String(v))]));
   }
   renderCard();
   document.querySelector('.party-card')?.append(el('p', {class: 'note'}, operation(campaign).text));

@@ -5,6 +5,7 @@
 // The other parties, the menus and the clock are still placeholders.
 import * as T from 'three';
 import {pickGround} from './picking.js';
+import {createRenderBudget} from './render-budget.js';
 import {mountTopBar} from '../shared/topbar.js';
 import {bakeHeights, sample, SETTLEMENTS, FACTIONS, provinceAt} from './island.js';
 import {buildTerrain} from './terrain.js';
@@ -91,11 +92,18 @@ function placeCamera(dt) {
   scene.fog.near = cam.d * 1.6;
   scene.fog.far = cam.d * 6 + 500;
   terrain.uniforms.uPolitical.value = T.MathUtils.smoothstep(cam.d, 90, 380);
+}
+let shadowSpan = 0;
+function placeShadow() {
+  const gy = Math.max(0, sample(field, cam.x, cam.z));
   const span = Math.min(260, cam.d * 1.3);
   sun.target.position.set(cam.x, gy, cam.z);
   sun.position.copy(sun.target.position).addScaledVector(sunDir, 400);
-  Object.assign(sun.shadow.camera, {left: -span, right: span, top: span, bottom: -span, near: 100, far: 800});
-  sun.shadow.camera.updateProjectionMatrix();
+  if (Math.abs(span - shadowSpan) > 0.01) {
+    Object.assign(sun.shadow.camera, {left: -span, right: span, top: span, bottom: -span, near: 100, far: 800});
+    sun.shadow.camera.updateProjectionMatrix();
+    shadowSpan = span;
+  }
 }
 const pan = (dx, dz) => {
   const c = Math.cos(cam.tyaw),
@@ -118,7 +126,10 @@ stageEl.addEventListener('pointermove', e => {
   if (drag.button === 2 || e.shiftKey) cam.tyaw -= dx * 0.005;
   else pan((-dx * cam.d) / 700, (-dy * cam.d) / 700);
 });
-stageEl.addEventListener('pointerup', () => (drag = null));
+stageEl.addEventListener('pointerup', () => {
+  drag = null;
+  renderDirty = true;
+});
 stageEl.addEventListener('contextmenu', e => e.preventDefault());
 stageEl.addEventListener(
   'wheel',
@@ -202,7 +213,9 @@ for (const b of document.querySelectorAll('.menu-bar button'))
   b.onclick = () => toast(`${b.dataset.label}: placeholder, not built yet.`, 1800);
 
 // ---------- loop ----------
+let renderDirty = true;
 const resize = () => {
+  renderDirty = true;
   const w = stageEl.clientWidth,
     h = stageEl.clientHeight;
   renderer.setPixelRatio(Math.min(devicePixelRatio, 1.25, Math.sqrt(1200000 / (w * h))));
@@ -229,7 +242,7 @@ const travel = mountTravel({
   reduceMotion,
   params: new URLSearchParams(location.search),
 });
-campaignUi = mountCampaign({travel, parties, townLabels, setSpeed, toast});
+campaignUi = mountCampaign({travel, parties, townLabels, setSpeed, getSpeed: () => speed, toast});
 $('#loading').hidden = true;
 
 const clock = new T.Clock();
@@ -237,7 +250,8 @@ let worldT = 0,
   shadowAt = 0,
   labelAt = 0,
   lastDate = '';
-const performanceStats = {frames: 0, cpuMs: 0, frameMs: 0};
+const performanceStats = {frames: 0, skipped: 0, cpuMs: 0, frameMs: 0};
+const needsFrame = createRenderBudget();
 addEventListener('blur', () => keys.clear());
 const v = new T.Vector3();
 renderer.setAnimationLoop(() => {
@@ -248,13 +262,20 @@ renderer.setAnimationLoop(() => {
   const dt = real * (campaignUi?.blocked ? 0 : speed); // the world runs at the chosen speed; the camera never pauses
   worldT += dt;
   keyPan(real);
+  travel.update(dt);
+  campaignUi?.update(dt);
+  const cameraMoving =
+    Math.abs(cam.tx - cam.x) + Math.abs(cam.tz - cam.z) + Math.abs(cam.td - cam.d) + Math.abs(cam.tyaw - cam.yaw) > 0.001;
+  if (!needsFrame(frameStart, {active: dt > 0, cameraMoving, dirty: renderDirty})) {
+    performanceStats.skipped++;
+    return;
+  }
+  renderDirty = false;
   placeCamera(real);
   camera.updateMatrixWorld(); // labels below project with this frame's camera, not the last one's
   terrain.uniforms.uTime.value = worldT;
   water.uniforms.uTime.value = worldT;
-  props.update(dt, worldT, camera);
-  travel.update(dt);
-  campaignUi?.update(dt);
+  props.update(reduceMotion ? 0 : dt, reduceMotion ? 0 : worldT, camera);
   const w = stageEl.clientWidth,
     h = stageEl.clientHeight;
   parties.update(dt, worldT, camera, w, h);
@@ -282,6 +303,7 @@ renderer.setAnimationLoop(() => {
   }
   sprites?.update(camera, reduceMotion ? 0 : worldT);
   if (frameStart - shadowAt >= 100) {
+    placeShadow();
     renderer.shadowMap.needsUpdate = true;
     shadowAt = frameStart;
   }
@@ -310,3 +332,5 @@ window.PARP_MAP = {
   performance: performanceStats,
   ready: true,
 };
+
+setSpeed(travel.campaign?.world.clock.speed ?? 1);

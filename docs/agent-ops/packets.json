@@ -3828,7 +3828,8 @@
    "inputs": [
     "docs/quality-roadmap.md"
    ],
-   "acceptance": "map/ under 4 MB cold and 35 MB heap; the 2.5-D map loads no 3-D figure models."
+   "acceptance": "map/ under 4 MB cold and 35 MB heap; the 2.5-D map loads no 3-D figure models.",
+   "progress_note": "2026-10-09: lazy 3D imports, bounded drawing buffer/postprocess/shadows, fast picking, paused render budget, convoy allocation reuse and DOM caching implemented. Campaign browser suites pass hosted CI; reference-device FPS and visual acceptance remain."
   },
   {
    "id": "WP-QA16",

@@ -58,3 +58,23 @@ a visible encounter modal, and ten mission round trips. Report p50/p95 frame tim
 triangles, texture allocation and memory after returning. Target 60 FPS laptop / 30 FPS midrange phone; retain
 visual comparisons in the owner image log when shared. The earlier 3D demo is not the performance baseline for
 HD2D; use pre-change `map25/` for a like-for-like comparison.
+
+
+## 9 October follow-up
+
+Hosted run [37818182112](https://github.com/VincentDN/partisan-project/actions/runs/37818182112) passed the full build,
+unit checks and deployment, all general smoke checks, campaign bridge, map travel, campaign loop and inventory.
+Its failure occurred later: generated-Recon reload exceeded the generic 30-second navigation timeout. That test
+now waits for DOM readiness with a bounded 120-second navigation window and retains the existing operator/weapon
+readiness assertions. The remaining character suites and accessibility still require a completed hosted run.
+
+A settled paused map now submits a frame at most twice a second, waking immediately for camera movement, resize
+or a ground click. Active travel remains frame-driven. Shadow-camera projection changes only when its extent
+changes, and shadow camera movement is synchronized with shadow refresh. Convoy interpolation reuses two vectors
+instead of allocating per vehicle/frame, paused convoys skip unchanged transforms, and unchanged party-card rows
+are not rebuilt. Decorative motion freezes under reduced-motion preferences. These are work-count reductions;
+reference-device FPS and visual acceptance are still pending. Render-budget tests cover pause and immediate wake.
+
+Correctness fixes also restore the saved map speed, retain pause after leaving an encounter, snap restored convoy
+orientation, and show the real number of fit named fighters on the map token. Trade/promotion updates immediately
+refresh the summary even while paused.

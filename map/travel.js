@@ -180,7 +180,7 @@ export function mountTravel({scene, camera, field, stageEl, hero, cam, toast, re
         drawRoute();
         sinceRoute = 0;
       }
-      if (arrived || sinceSave > 5) {
+      if (arrived) {
         sinceSave = 0;
         save();
       }

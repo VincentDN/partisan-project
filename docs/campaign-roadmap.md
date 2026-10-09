@@ -162,8 +162,7 @@ A release candidate must demonstrate, from a clean save and again from a migrate
 8. Pass the browser/performance gates below with no console errors, missing assets or item duplication.
 
 Current pure-module tests cover the state transitions and recovery. Browser tests exercise the map/mission bridge
-and promotions; they are not proof of an unaided human playthrough. The final browser run is still a release gate
-when the cloud sandbox prevents Chromium from launching. Do not mark the entire campaign or CM6 complete merely
+and promotions; they are not proof of an unaided human playthrough. Hosted CI now passes the campaign bridge, travel and loop. The complete browser run is still a release gate: an operator reload timeout interrupted later character suites and accessibility. Do not mark the entire campaign or CM6 complete merely
 because unit and build checks pass.
 
 ## 5. Performance plan and completed code review

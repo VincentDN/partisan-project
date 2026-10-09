@@ -5,16 +5,14 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json).
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-08 · codex · campaign vertical-slice milestone on main**
+**2026-10-09 · codex · map optimization and correctness follow-up**
 
-- Merged equipment with Claude's main baseline `9539df0` in local merge `11daa61`; owner explicitly authorizes commits and push to main.
-- Default overworld is now 2.5D (`map/`); old 3D style is `map/3d.html` under Dev tools. `map25/` redirects.
-- Reviewed and reduced rendering/picking/route/DOM work. Reproducible terrain picking benchmark: 3.686 ms → 0.0063 ms median (400 rays); not a browser FPS claim.
-- All seven missions start with eight rebels at 180 base HP. Campaign selects six to nine fit fighters and passes their exact roster. Legacy three-person saves expand once without resetting progression or wounds.
-- Added friendly-settlement rest/trade, persistent convoy motion and Operation Foothold (convoy victory, three victories, Fort Orion liberated). Campaign save failures block navigation; duplicate deployments are rejected.
-- Revised campaign/master roadmap against implemented code, partial strategic systems and explicit vertical-slice acceptance. See `docs/campaign-roadmap.md` and `docs/engineering/campaign-performance.md`.
-- Validation: 394/397 unit assertions pass; the remaining three are sandbox `spawnSync EPERM` in CLI/asset/site harnesses. Direct site build/link check, lint, typecheck, formatting and roadmap checks pass. Sixteen combat replay fixtures intentionally updated for roster/health tuning.
-- Chromium launch is blocked by sandbox socket restrictions; the elevated request was interrupted. Browser loop, accessibility, hardware FPS and CM6's final motion gate remain pending. Do not label them passed.
+- Prior campaign/equipment integration is published and deployed on main: `4a916e7` then `043bb9c`. Local main was aligned to the exact remote commits after verifying identical trees.
+- Hosted run `37818182112` passed build/unit/deployment, general browser smoke, campaign bridge, map travel, campaign loop and inventory. It failed later at generated-Recon reload's generic 30-second navigation timeout; subsequent character suites and accessibility did not run.
+- Follow-up: paused settled map renders at most twice per second, with immediate camera/resize/click wake; shadow projection is cached and updated with shadows; convoy vectors reused; unchanged paused convoy transforms and party summary DOM skipped; reduced-motion decorative animation frozen.
+- Fixes preserve saved speed and pre-encounter pause, display actual fit fighter count, refresh trade summaries while paused and restore convoy heading. Operator reload now waits for DOM readiness with a bounded navigation timeout, retaining model/weapon readiness assertions.
+- Validation: all 45 focused campaign/picking/render-budget/replay checks pass, as do lint, types and direct site build/link checks. New render-budget tests cover idle cadence and immediate wake. Reference-device FPS and final browser/CM6 acceptance remain open.
+- Roadmap and detailed vertical-slice write-up are in `docs/campaign-roadmap.md`; performance evidence and limitations are in `docs/engineering/campaign-performance.md`. Keep working on main as explicitly authorized.
 <!-- handoff:end -->
 
 ## Resume here
