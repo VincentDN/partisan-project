@@ -1,7 +1,7 @@
-// Lazy-loaded figures and vehicles for the optional fully 3-D overworld demo.
+// Lazy-loaded figures for the optional fully 3-D overworld demo.
 import * as T from 'three';
 import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
-import {loadTemplate, loadModel} from '../shared/model-cache.js';
+import {loadTemplate} from '../shared/model-cache.js';
 import {Rig} from '../operator/rig.js';
 import {Grip, GRIPS} from '../operator/grip.js';
 import {posesForProfile} from '../operator/pose-profile.js';
@@ -10,7 +10,6 @@ import {loadRifle} from '../workbench/rifle-instance.js';
 import {applyLoadout, emptyLoadout} from '../workbench/apply-loadout.js';
 
 const FIGURE_SCALE = 3.2; // map units per metre for people (token scale: a party reads at a glance)
-const VEHICLE_SCALE = 1.3; // and for vehicles (a little under the people, so a column is not larger than a village)
 const POLES = {r: [-0.5, -1, -0.45], l: [0.6, -1, -0.3]};
 const recon = BASES['generated-recon'];
 let poseData = null;
@@ -74,32 +73,4 @@ export async function figure3d({pose, idle, rifle = 'ak74m', paint = null}) {
       }
     },
   };
-}
-
-// ---------- vehicles ----------
-const VEHICLES = {
-  matv: {file: 'matv.glb', length: 6.3},
-  truck: {file: 'army-truck.glb', length: 8},
-  humvee: {file: 'humvee.glb', length: 4.9},
-};
-/** A vehicle laid along +x (its front), wheels on y = 0, at token scale. */
-export async function vehicle3d(id) {
-  const v = VEHICLES[id];
-  const model = await loadModel(new URL(`../assets/models/vehicles/${v.file}`, import.meta.url).href);
-  const holder = new T.Group();
-  holder.add(model);
-  model.updateMatrixWorld(true);
-  let box = new T.Box3().setFromObject(model);
-  const size = box.getSize(new T.Vector3());
-  if (size.z > size.x) model.rotation.y = Math.PI / 2; // the long side along x
-  model.updateMatrixWorld(true);
-  box = new T.Box3().setFromObject(model);
-  const s = (v.length * VEHICLE_SCALE) / box.getSize(new T.Vector3()).x;
-  model.scale.multiplyScalar(s);
-  model.updateMatrixWorld(true);
-  box = new T.Box3().setFromObject(model);
-  const c = box.getCenter(new T.Vector3());
-  model.position.sub(new T.Vector3(c.x, box.min.y, c.z));
-  holder.traverse(o => o.isMesh && (o.castShadow = true));
-  return holder;
 }

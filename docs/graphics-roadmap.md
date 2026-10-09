@@ -1,9 +1,21 @@
-# Partisan Tactical: graphics roadmap (2.5D top-down sprites and a retro overworld)
+# Partisan graphics roadmap: 2.5D tactical and campaign presentation
 
-The shooter stops being 3-D. It becomes a **RimWorld-style 2.5-D top-down game made of 2-D sprites**: thick dark
-outlines, flat fills with a shade or two, layered paper-doll people, long sun shadows, walls you see the front of.
-The campaign map becomes a **retro handheld-RPG island map** (the Pokémon region-map look): a low-resolution green
-landmass shaded in height bands, flat blue sea, yellow routes, red-roofed towns.
+The tactical game uses its established 2D sprite renderer. The default campaign uses the 2.5D island with sprite
+people and 3D convoy vehicles. This supersedes the earlier retro-overworld proposal; historical packet details
+below remain for traceability.
+
+## Faction readability — owner direction, 9 October 2026
+
+Occupiers and insurgents must read as different factions through headgear, face covering, clothing and silhouette,
+including at normal tactical zoom and on overworld party tokens.
+
+- **Occupiers:** olive-drab army clothing and equipment; army helmets and covered faces wherever the available art supports them. Missing compatible helmet or face-covering assets are explicit art backlog items.
+- **Default insurgents:** varied civilian clothing and distinctive hood/shemagh silhouettes, with face coverings supplied only by hoods or shemaghs. Never use army helmets for the default insurgent appearance. Clothing and equipment differences must go beyond a faction colour swap.
+- Apply the same direction to tactical paper dolls, overworld people and future owned-equipment/operator appearances. Preserve class and role readability within each faction.
+- Acceptance: mixed-faction contact sheets at normal play scale, showing front/side/back views, covered faces and the helmet-versus-hood/shemagh distinction. Verify that default insurgent generation never selects a helmet; do not mark complete while the assets or implementation are missing.
+
+The campaign presentation is **2.5D terrain and sprite people with the earlier 3D convoy vehicles**. The fully 3D
+people/map style remains a Dev tools demo. Tactical vehicle sprite rendering is unchanged by the overworld choice.
 
 Milestone **V** in `docs/agent-ops/packets.json`; packets `WP-V1` to `WP-V20`, none bigger than M (20 BU), about 250 BU in
 total. Every decision and its reasoning is in [design-decisions/J-graphics.md](design-decisions/J-graphics.md)

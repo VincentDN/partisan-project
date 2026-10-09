@@ -816,17 +816,38 @@ await check('rebel band: the band idles, the stash, an upgrade that plays a prom
   await page.close();
 });
 
-await check('overworld 2.5-D: every party a sprite on the 3-D island, the HD-2D frame, click to march', async () => {
+await check('overworld 2.5-D: sprite people and 3-D convoy vehicles on the island, the HD-2D frame, click to march', async () => {
   const page = await open(browser, server.url + 'map25/');
   await page.waitForFunction(() => window.PARP_MAP?.ready, null, {timeout: 180000});
   const info = await page.evaluate(() => {
     const m = window.PARP_MAP;
     let meshes3d = 0;
     m.parties.group.traverse(o => o.isSkinnedMesh && meshes3d++);
-    return {cards: m.sprites.cards.length, hd2d: !!m.hd2d, meshes3d, fov: m.camera.fov};
+    const convoys = m.parties.parties.filter(p => p.kind === 'convoy');
+    const vehicles = convoys.map(p => {
+      let solid = 0;
+      p.root.traverse(o => {
+        if (o.isMesh && o.geometry.attributes.position.count > 4) solid++;
+      });
+      return solid;
+    });
+    return {
+      cards: m.sprites.cards.length,
+      onlyPeople: m.sprites.cards.every(c => c.kind === 'person'),
+      vehicles,
+      hd2d: !!m.hd2d,
+      meshes3d,
+      fov: m.camera.fov,
+    };
   });
-  assert.ok(info.cards >= 10, `sprite cards: ${info.cards}`);
+  assert.ok(info.cards >= 4, `sprite cards: ${info.cards}`);
   assert.equal(info.meshes3d, 0, 'no 3-D figures among the parties');
+  assert.equal(info.onlyPeople, true, 'only people use billboard sprites');
+  assert.equal(info.vehicles.length, 3, 'all three convoy columns exist');
+  assert.ok(
+    info.vehicles.every(n => n > 0),
+    'each convoy has solid 3-D vehicle geometry',
+  );
   assert.equal(info.hd2d, true, 'the HD-2D frame');
   assert.ok(info.fov < 35, 'the longer lens');
   // the cards turn to the camera

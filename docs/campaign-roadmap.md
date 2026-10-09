@@ -13,7 +13,7 @@ prepare the next operation. Terrain, travel time, wounds, ammunition and enemy p
 matter. The intended loop is **reconnoitre → travel → choose a fight → deploy → fight and extract → account for
 losses and spoils → recover, equip and promote → change the occupation → choose the next fight**.
 
-The campaign uses the **2.5D island map**: sprite parties on the terrain, a long camera lens and restrained depth
+The campaign uses the **2.5D island map**: sprite people and 3D convoy vehicles on the terrain, a long camera lens and restrained depth
 and lighting effects. `map/` is the normal map; campaign links use `map/?campaign`. The old fully 3D presentation
 is `map/3d.html`, accessible under Dev tools as a demo. Old `map25/` links redirect while preserving their query
 and fragment. The tactical game keeps its established sprite renderer. These are complementary views of one
@@ -22,6 +22,18 @@ campaign, not competing choices the player must configure.
 A comprehensive vertical slice must demonstrate this entire chain in a bounded operation. It does not require
 an entire island's worth of content, every class, or finished strategic AI. It does require the same people,
 items, consequences and save state to survive every transition, and a clear beginning, setback and conclusion.
+
+### Faction appearance backlog
+
+Occupiers and insurgents must read as different factions through headgear, face covering, clothing and silhouette,
+including at normal tactical zoom and on overworld party tokens.
+
+- **Occupiers:** olive-drab army clothing and equipment; army helmets and covered faces wherever the available art supports them. Missing compatible helmet or face-covering assets are explicit art backlog items.
+- **Default insurgents:** varied civilian clothing and distinctive hood/shemagh silhouettes, with face coverings supplied only by hoods or shemaghs. Never use army helmets for the default insurgent appearance. Clothing and equipment differences must go beyond a faction colour swap.
+- Apply the same direction to tactical paper dolls, overworld people and future owned-equipment/operator appearances. Preserve class and role readability within each faction.
+- Acceptance: mixed-faction contact sheets at normal play scale, showing front/side/back views, covered faces and the helmet-versus-hood/shemagh distinction. Verify that default insurgent generation never selects a helmet; do not mark complete while the assets or implementation are missing.
+
+See [graphics roadmap](graphics-roadmap.md) for the shared appearance acceptance. This is planned art/implementation work, not a claim that current faction sprites already comply.
 
 ## 2. What the project actually contains
 

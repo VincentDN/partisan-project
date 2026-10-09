@@ -5,6 +5,14 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json).
 ## Latest handoff
 
 <!-- handoff:start -->
+**2026-10-09 · 3D convoy restoration and faction roadmap**
+
+- Owner requested original 3D convoy vehicles on the default 2.5D map. Shared `map/vehicles.js` now supplies truck/M-ATV/Humvee models to both styles; people stay sprites in the default map and operator rigs remain lazy.
+- Focused Chromium validation passed: all three convoy columns use solid model geometry and move; HD2D/sprite people retained; no operator-rig request. Map travel browser regression also passes (routing, pause, arrival/save/reload). Lint, formatting, types and build/link checks pass.
+- Graphics/campaign/master roadmaps and V5/CM20 acceptance now require distinct faction silhouettes: occupiers olive drab with helmets and covered faces where supported; default insurgents civilian clothing, hood/shemagh coverings only, never helmets. This art requirement is planned, not implemented in this change.
+
+Previous milestone:
+
 **2026-10-09 · codex · map optimization and correctness follow-up**
 
 - Prior campaign/equipment integration is published and deployed on main: `4a916e7` then `043bb9c`. Local main was aligned to the exact remote commits after verifying identical trees.

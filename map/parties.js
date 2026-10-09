@@ -4,6 +4,7 @@
 // stand off in the distance; convoys drive the roads back and forth. Figures are drawn at "token" scale, larger than
 // the towns, as on Bannerlord's campaign map.
 import * as T from 'three';
+import {vehicle3d} from './vehicles.js';
 import {FACTIONS, PARTY_SPOTS, sample} from './island.js';
 const FIGURE_SCALE = 3.2;
 
@@ -22,12 +23,12 @@ function nameplate(layer, {name, count, faction, kind}) {
 
 /**
  * Build the parties. `makers` swaps how they look: {figure(opts), vehicle(id)} (map/sprite-parties.js draws them as
- * sprites for the 2.5-D overworld); by default they are the 3-D figures and vehicle models above.
+ * sprites for people in the 2.5-D overworld); both map styles use the original 3-D convoy vehicles.
  */
 export async function buildParties(field, roads, layer, makers = {}) {
-  const models = makers.figure && makers.vehicle ? null : await import('./models.js');
+  const models = makers.figure ? null : await import('./models.js');
   const figure = makers.figure || models.figure3d,
-    vehicle = makers.vehicle || models.vehicle3d;
+    vehicle = makers.vehicle || vehicle3d;
   const group = new T.Group();
   group.name = 'parties';
   const parties = [];

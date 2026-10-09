@@ -29,6 +29,13 @@ packets remain open where their full acceptance includes unbuilt strategy or unv
 The map CPU picking benchmark improves from 3.686 ms to 0.0063 ms median; actual browser FPS remains unmeasured.
 See [the performance review](engineering/campaign-performance.md). CM6's final motion/browser gate also remains open.
 
+### Faction appearance priority
+
+Occupiers: olive-drab army silhouettes, helmets and covered faces wherever supported. Default insurgents: varied
+civilian clothing, hoods/shemaghs for face covering and no helmets. Track shared tactical/map/operator acceptance
+in the [graphics roadmap](graphics-roadmap.md). Campaign convoy vehicles use the earlier 3D models within the
+default 2.5D presentation.
+
 ## 1. What Partisan Project is
 
 *Escape from Tarkov meets Mount and Blade with guns.* A squad-based PvE game: you lead a resistance band across an

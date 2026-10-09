@@ -1,15 +1,9 @@
-// The 2.5-D overworld's people and vehicles (map25/, HD-2D style): the RimWorld paper-doll sprites of Partisan
-// Tactical (convoy/sprite-art.js) and its vehicle sprites, stood upright on the 3-D island. Each is a pixel-crisp
-// card that always turns to face the camera, chooses its front, side or back drawing from where it heads relative to
-// the camera, casts a real (pixel) shadow and bobs as it walks. These are the "makers" map/parties.js builds
-// parties with, in place of its 3-D figures and vehicle models.
+// Billboard people for the 2.5D campaign map; convoy vehicles remain the original 3-D models.
 import * as T from 'three';
-import {buildPawn, loadGuns, lookFor, loadSet, FILES} from '../convoy/sprite-art.js';
+import {buildPawn, loadGuns, lookFor} from '../convoy/sprite-art.js';
 
 const PERSON = 9; // map units: a person card's height (token scale, like the 3-D figures)
 const FEET = 0.2; // the doll's feet sit this far up its card
-const VEHICLE_LENGTH = {matv: 9.5, truck: 11, humvee: 7.5};
-const VEHICLE_ART = {matv: 'truck', truck: 'truck', humvee: 'jeep'};
 const RIFLES = ['ak74m', 'ak15k', 'rpk', 'set-assault', 'set-lmg'];
 const SPRITE_LIGHT = 0xf4e6cf; // the sun's warmth on the sprites
 
@@ -90,34 +84,6 @@ export async function createSpriteLayer() {
     return {root, update() {}};
   }
 
-  /** A vehicle: its side-view sprite (the set's are drawn facing east), length along the road. */
-  async function vehicle(id) {
-    const img = await loadSet(FILES[VEHICLE_ART[id] || 'truck']);
-    const root = new T.Group();
-    if (!img) return root;
-    const c = document.createElement('canvas');
-    c.width = img.width;
-    c.height = img.height;
-    const g = c.getContext('2d');
-    // the set only has rusted ruins: drain the rust to grey, then paint them Invader drab
-    g.filter = 'grayscale(1) contrast(1.15) brightness(1.15)';
-    g.drawImage(img, 0, 0);
-    g.filter = 'none';
-    g.globalCompositeOperation = 'multiply';
-    g.fillStyle = '#8e9a7a';
-    g.fillRect(0, 0, c.width, c.height);
-    g.globalCompositeOperation = 'destination-in'; // keep the sprite's own outline
-    g.drawImage(img, 0, 0);
-    const len = VEHICLE_LENGTH[id] || 9,
-      h = (len * img.height) / img.width;
-    const mesh = card(crisp(c), len, h, 0.08);
-    const holder = new T.Group();
-    holder.add(mesh);
-    root.add(holder);
-    cards.push({root, members: [{mesh, phase: 0}], kind: 'vehicle', last: new T.Vector3(), moving: 0});
-    return root;
-  }
-
   const fwd = new T.Vector3(),
     right = new T.Vector3(),
     toCam = new T.Vector3(),
@@ -134,27 +100,25 @@ export async function createSpriteLayer() {
       const speed = c.last.distanceTo(pos);
       c.moving += ((speed > 0.01 ? 1 : 0) - c.moving) * 0.2;
       c.last.copy(pos);
-      // the party's heading: its root's rotation (vehicles: local +x is the front; figures: +z)
+      // People face local +z; convert the party's heading to the camera-relative sprite view.
       const ry = c.root.rotation.y;
-      if (c.kind === 'vehicle') heading.set(Math.cos(ry), 0, -Math.sin(ry));
-      else heading.set(Math.sin(ry), 0, Math.cos(ry));
+      heading.set(Math.sin(ry), 0, Math.cos(ry));
       toCam.copy(camera.position).sub(pos).setY(0).normalize();
       const along = heading.dot(toCam),
         across = heading.dot(right);
-      const dir = c.kind === 'vehicle' ? 'east' : Math.abs(along) > Math.abs(across) ? (along > 0 ? 'south' : 'north') : 'east';
+      const dir = Math.abs(along) > Math.abs(across) ? (along > 0 ? 'south' : 'north') : 'east';
       const flip = across < 0 ? -1 : 1;
       for (const m of c.members) {
         m.mesh.rotation.y = yaw - ry; // undo the root's turn: the card faces the camera
-        m.mesh.scale.x = (dir === 'east' || c.kind === 'vehicle' ? flip : 1) * Math.abs(m.mesh.scale.x || 1);
+        m.mesh.scale.x = (dir === 'east' ? flip : 1) * Math.abs(m.mesh.scale.x || 1);
         if (m.frames && m.mesh.material.map !== m.frames[dir]) {
           m.mesh.material.map = m.frames[dir];
         }
         // walkers bob a step; idlers breathe
         const k = c.moving;
-        m.mesh.position.y =
-          c.kind === 'person' ? k * Math.abs(Math.sin(t * 9 + m.phase * 6)) * 0.45 + (1 - k) * Math.sin(t * 2 + m.phase * 5) * 0.06 : 0;
+        m.mesh.position.y = k * Math.abs(Math.sin(t * 9 + m.phase * 6)) * 0.45 + (1 - k) * Math.sin(t * 2 + m.phase * 5) * 0.06;
       }
     }
   }
-  return {makers: {figure, vehicle}, update, cards};
+  return {makers: {figure}, update, cards};
 }

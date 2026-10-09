@@ -23,7 +23,7 @@ misses and rays pointing away. This is interactive ground picking, not collision
 
 | Path | Previous work | Current work / tradeoff |
 | --- | --- | --- |
-| Party startup | Imported operator rig, models and weapon modules for both styles | 3D dependencies load only for the 3D demo |
+| Party startup | Imported operator rig, models and weapon modules for both styles | Operator/weapon dependencies load only for the 3D demo; shared convoy models also load on the default map |
 | HDR post-processing | 4× MSAA, 39 texture samples per pixel | Single sample, nine texture reads; slightly softer fine edges and less dense blur |
 | Drawing buffer | Device pixel ratio up to 2, no pixel-area cap | DPR at most 1.25 and approximately 1.2M pixels; lower sharpness on large/high-DPI displays |
 | Sun shadows | 2048², every render frame | 1024², at most 10 updates/second; softer detail and possible stepping during rapid camera moves |
@@ -78,3 +78,11 @@ reference-device FPS and visual acceptance are still pending. Render-budget test
 Correctness fixes also restore the saved map speed, retain pause after leaving an encounter, snap restored convoy
 orientation, and show the real number of fit named fighters on the map token. Trade/promotion updates immediately
 refresh the summary even while paused.
+
+
+## 3D convoy restoration — 9 October owner direction
+
+The default map now uses the original truck, M-ATV and Humvee models with sprite people. `map/vehicles.js` loads
+those models independently of the optional operator rigs; shared model caching still parses each vehicle asset
+once per page. A focused Chromium check passed for all three convoy columns, movement, retained HD2D and sprite
+people, and absence of the heavy operator-rig request. The tactical vehicle sprite renderer is unaffected.

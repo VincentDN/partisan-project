@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-10-09 — 3D campaign convoys and faction art direction
+
+- Restore the original truck, M-ATV and Humvee models on the default 2.5D campaign map while keeping sprite people. Vehicle loading is separate from the optional 3D operator/weapon modules.
+- Add occupier/insurgent silhouette, clothing and face-covering rules to the graphics, campaign and master roadmaps and character work packets. Faction appearance changes remain planned work.
+
+
 ## 2026-10-09 — paused-map performance and campaign fixes
 
 - Stop continuous GPU submissions for a paused, settled map; camera input, resizing and ground clicks wake it immediately.

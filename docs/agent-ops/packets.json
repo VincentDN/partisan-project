@@ -2164,7 +2164,8 @@
     "docs/moodboard/ref-2d-topdown-map.jpg",
     "docs/moodboard/ref-retro-overworld-map.jpg"
    ],
-   "acceptance": "Every role and rebel renders; contact sheet reviewed against the references."
+   "acceptance": "Every role and rebel renders; contact sheet reviewed against the references. Faction readability: occupiers olive drab with army helmets and covered faces wherever assets support; default insurgents varied civilian clothing, hood/shemagh face coverings only, never helmets. Review mixed-faction silhouettes at normal play scale.",
+   "progress_note": "2026-10-09 owner direction added to graphics/campaign roadmap; faction art implementation and contact-sheet acceptance remain outstanding."
   },
   {
    "id": "WP-V6",
@@ -2995,7 +2996,8 @@
     "docs/character-customisation-roadmap.md",
     "docs/engineering/generated-recon.md"
    ],
-   "acceptance": "Carrier/pack/headgear silhouettes resolve through existing paper-doll layers; 3D assets do not replace the established tactical renderer."
+   "acceptance": "Carrier/pack/headgear silhouettes resolve through existing paper-doll layers; 3D assets do not replace the established tactical renderer. Faction readability: occupiers olive drab with army helmets and covered faces wherever assets support; default insurgents varied civilian clothing, hood/shemagh face coverings only, never helmets. Review mixed-faction silhouettes at normal play scale.",
+   "progress_note": "2026-10-09 owner direction added to graphics/campaign roadmap; faction art implementation and contact-sheet acceptance remain outstanding."
   },
   {
    "id": "WP-CM21",
