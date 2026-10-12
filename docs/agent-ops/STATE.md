@@ -5,12 +5,12 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json).
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-12 15:28 UTC · claude · (owner request) · done**
+**2026-10-12 16:19 UTC · claude · WP-W15 · done**
 
-- Branch `claude/friendly-dijkstra-4ky9w6` at `5b27cab`; working tree clean.
-- Last commits: 5b27cab One Nokia LCD loader on every page · 8890795 docs: handoff for WP-QA17 · 379b873 QA17: split sim.js and ai.js along their seams (all modules under 300 lines)
-- What happened: Unified Nokia LCD loader (shared/loader.css + loader.js) on every loading page; tests/loader.test.mjs; all browser suites pass.
-- Next step: QA23 (browser module splits behind new checks), QA20; QA9/QA14/QA15 need other machines. Owner asked about linking the Rebel Band screen to the campaign: that is WP-W15.
+- Branch `claude/friendly-dijkstra-4ky9w6` at `f4f3c00`; working tree clean.
+- Last commits: f4f3c00 WP-W15: the Rebel Band screen on the campaign save, linked from the map · cd1bc63 docs: handoff after the unified loader · 5b27cab One Nokia LCD loader on every page
+- What happened: W15 done: band/?campaign=<id> on the campaign save (band-state.js), named fighters promoted in the band screen (fighters.js), linked from the map band panel and back; standalone demo unchanged. Fixed a stray 'null' in the map band panel.
+- Next step: Campaign: W14 (loot source labels, convoy manifests) or W13. QA: QA23 (browser module splits behind new checks), QA20; QA9/QA14/QA15 need other machines.
 <!-- handoff:end -->
 
 ## Resume here
