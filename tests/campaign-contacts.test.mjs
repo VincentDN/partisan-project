@@ -62,7 +62,8 @@ test('a won fight destroys the party; a won raid takes the settlement; the map r
   fight(c, 'raiders', {outcome: 'lost'});
   const lines = readResults(c, {myrtia: 'Myrtia'});
   assert.equal(lines.length, 3);
-  assert.match(lines[0], /Supply convoy: destroyed, 2 items taken, 1 wounded/);
+  // the two rifles picked up and the convoy's whole cargo (no vehicle burnt): 2 + 15 (shared/campaign/cargo.js)
+  assert.match(lines[0], /Supply convoy: destroyed, 17 items taken, 1 wounded/);
   assert.match(lines[1], /Myrtia: taken for the Resistance/);
   assert.match(lines[2], /Raiding party: the attack failed/);
   assert.equal(isGone(c, 'supply-convoy'), true);

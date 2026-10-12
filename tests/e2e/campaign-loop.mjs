@@ -47,6 +47,7 @@ try {
   assert.equal(await page.locator('#enc-title').innerText(), 'SUPPLY CONVOY');
   assert.match(await page.locator('.enc-mission').innerText(), /(Convoy|Forest road) ambush · 14 enemy/);
   assert.equal(await page.locator('.enc-fighters li').count(), 8, 'eight fighters going in');
+  assert.match(await page.locator('.enc-cargo').innerText(), /^Cargo: 4 AK-74, 2 AK-74M, /, 'the convoy shows its manifest (WP-W14)');
   assert.equal(await page.evaluate(() => document.activeElement.id), 'enc-attack', 'Attack has the focus');
 
   // 2. Attack: into the Convoy Ambush with the deployment
@@ -62,6 +63,8 @@ try {
   await page.waitForFunction(() => !document.querySelector('#card').hidden, null, {timeout: 10000});
   const result = (await saved(page)).deployment.result;
   assert.equal(result.outcome, 'won');
+  assert.ok(Object.keys(result.cargo).length, 'the cargo comes home with a win');
+  assert.match(await page.locator('#card-text').innerText(), /from the convoy's cargo/);
 
   // 3. back on the map: the result reported, the convoy gone, experience and loot in the save
   await Promise.all([page.waitForURL(/map\/\?campaign=c1$/), page.locator('#start').click()]);
@@ -72,9 +75,9 @@ try {
   assert.deepEqual(c.record[fought], {played: 1, won: 1});
   const xp = c.band.fighters.player.xp;
   assert.ok(xp > before.band.fighters.player.xp, 'experience earned');
-  const loot = Object.values(result.loot).reduce((a, b) => a + b, 0);
+  const loot = [result.loot, result.cargo].flatMap(Object.values).reduce((a, b) => a + b, 0);
   const stashCount = s => Object.values(s).reduce((a, b) => a + b, 0);
-  assert.equal(stashCount(c.stash), stashCount(before.stash) + loot, 'the loot is in the stash');
+  assert.equal(stashCount(c.stash), stashCount(before.stash) + loot, 'the loot and the cargo are in the stash');
   assert.equal(c.world.seen, c.log.length, 'the result is reported once');
   await page.reload();
   await mapReady(page);
@@ -102,6 +105,11 @@ try {
   await page.keyboard.press('p');
   await page.locator('.band-panel:not([hidden])').waitFor();
   assert.equal(await page.locator('.band-panel .squad-card').count(), 8);
+  assert.match(
+    await page.locator('.band-panel .stash-list').innerText(),
+    /from Supply convoy’s cargo \(day \d+\)/,
+    'the stash says where it came from',
+  );
   await page.locator('.band-panel .path.ready button', {hasText: plan.label}).first().click();
   c = await saved(page);
   assert.equal(c.band.fighters.player.class, plan.to, 'promoted');

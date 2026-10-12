@@ -5,6 +5,7 @@
 import {logEvent} from './state.js';
 import {LEVELS} from '../../convoy/levels/index.js';
 import {enemyCount} from '../../convoy/levels/variants.js';
+import {manifestFor} from './cargo.js';
 
 /** The enemies on the map: id -> what they are, and the mission meeting them starts. */
 export const SOURCES = {
@@ -91,6 +92,7 @@ export function encounterFor(c, sourceId, source = SOURCES[sourceId], {ground = 
     ground,
     time,
     variant: {time, weather, ground: GROUND_LOOK[ground] || 'plain', strength},
+    cargo: manifestFor(sourceId), // a convoy's manifest (shared/campaign/cargo.js); null for anything else
   };
 }
 

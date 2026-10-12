@@ -194,7 +194,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | **H27** 2027 horizon | — | 0/3 | 48 BU | 0% |
 | **S** Partisan Tactical: extraction PvE, campaign and gated online research | v0.8.0 | 15/44 | 673 BU | 34% |
 | **V** Graphics: 2.5D top-down sprites for the shooter (the overworld moved to W) | v0.9.0 | 2/20 | 251 BU | 11% |
-| **W** World campaign: the Bannerlord loop (map, missions, loot, upgrades) | v0.10.0 | 5/26 | 359 BU | 20% |
+| **W** World campaign: the Bannerlord loop (map, missions, loot, upgrades) | v0.10.0 | 6/26 | 359 BU | 22% |
 | **QA** Bug hunt and optimisation (docs/quality-roadmap.md) | — | 18/23 | 294 BU | 74% |
 
 ### M0 · Foundation
@@ -392,7 +392,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-W11` | Caught by an army launches the Rebel Base Defence: cave level at camp, new hasty-defence variant in the open | M (20) | planned | browser | `WP-W8` |
 | `WP-W12` | Deployment: select six to nine fit fighters, eight starters, one roster shared by campaign and missions | S (8) | ready | — | `WP-W1`, `WP-W2` |
 | `WP-W13` | Return to the map: settle casualties, wounds, experience, kills and aftermath (wreck, smoke); autosave and result toast | S (8) | planned | — | `WP-W9`, `WP-W11`, `WP-W12` |
-| `WP-W14` | Loot into the band: cargo manifest and level loot into the campaign stash, with its source | S (8) | planned | — | `WP-W13` |
+| `WP-W14` | Loot into the band: cargo manifest and level loot into the campaign stash, with its source | S (8) | done | — | — |
 | `WP-W15` | The band screen on the campaign save, opened from the map (P); promotions with experience and stolen kit | M (20) | done | browser | — |
 | `WP-W16` | Owned guns in the Weapon Modder: only owned attachments selectable, locked ones say where they drop; assign a build to a fighter | M (20) | planned | browser | `WP-W15` |
 | `WP-W17` | Looks from kit: a fighter's class and owned wearables set the Operator Customiser look and the map figure | S (8) | planned | browser | `WP-W15` |

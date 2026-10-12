@@ -24,6 +24,7 @@ import {SETTLEMENTS, byId} from './island.js';
 import {groundAt} from '../shared/campaign/nav.js';
 import {createKitScreen} from './kit-screen.js';
 import {rememberFocus, trapTab} from '../shared/modal.js';
+import {describeManifest, describeProvenance, provenance, recordIn, FIRST_CACHE} from '../shared/campaign/cargo.js';
 
 const CONTACT = 12, // map units: close enough to fight
   RAID = 22, // around a settlement's centre
@@ -42,6 +43,9 @@ const el = (tag, attrs = {}, ...kids) => {
   e.append(...kids.flat().filter(k => k !== null && k !== undefined && k !== false));
   return e;
 };
+
+/** Replace a panel's content; empty parts (a null for "nothing to show") are left out instead of printed. */
+const fill = (node, ...kids) => node.replaceChildren(...kids.flat().filter(k => k !== null && k !== undefined && k !== false && k !== ''));
 
 export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed = () => 1, toast}) {
   const campaign = travel.campaign;
@@ -109,9 +113,12 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
       e.fighters = [...selected];
       panel.querySelector('#enc-attack').disabled = selected.size < SQUAD_MIN || selected.size > 9;
     };
-    panel.replaceChildren(
+    fill(
+      panel,
       el('h2', {id: 'enc-title', class: 'plate'}, src.name),
       el('p', {class: 'enc-mission'}, `${missionName(e.level)} · ${src.strength} enemy · ${cond}`),
+      // a convoy's manifest: what a won ambush brings home, less what burns (shared/campaign/cargo.js, WP-W14)
+      e.cargo ? el('p', {class: 'enc-cargo'}, `Cargo: ${describeManifest(e.cargo)}.`) : null,
       el('h3', {}, fit.length >= SQUAD_MIN ? 'Going in' : 'The band needs to recover'),
       el(
         'ul',
@@ -233,7 +240,14 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
         f.class = next.classes[id] ?? f.class;
         f.xp = next.xp[id] ?? f.xp;
       }
+      // what the trader sold the band is labelled as such (WP-W14)
+      const bought = Object.fromEntries(
+        Object.entries(next.stash)
+          .map(([g, n]) => [g, n - (campaign.stash[g] || 0)])
+          .filter(([, d]) => d > 0),
+      );
       campaign.stash = next.stash;
+      recordIn(campaign, bought, 'the trader');
       campaign.goods = next.goods;
       campaign.scrip = next.scrip;
       save();
@@ -246,7 +260,8 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
   function renderBand() {
     const hurt = Object.entries(campaign.band.fighters).filter(([, f]) => f.wounded);
     const gear = Object.entries(campaign.stash).filter(([g]) => GEAR[g]);
-    bandPanel.replaceChildren(
+    fill(
+      bandPanel,
       el('h2', {id: 'band-title', class: 'plate'}, 'The band: fighters and stash'),
       el('p', {}, operation(campaign).text),
       operation(campaign).complete
@@ -255,7 +270,7 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
             {class: 'note'},
             'Foothold secured. Your band has broken the local supply route and liberated Fort Orion. Continue the campaign with your survivors and equipment.',
           )
-        : '', // replaceChildren would print null
+        : null,
       el(
         'p',
         {class: 'note'},
@@ -309,7 +324,15 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
       el(
         'ul',
         {class: 'stash-list'},
-        gear.map(([g, n]) => el('li', {}, `${GEAR[g].label}${n > 1 ? ` × ${n}` : ''}`)),
+        // each with where it came from (WP-W14)
+        gear.map(([g, n]) =>
+          el(
+            'li',
+            {},
+            `${GEAR[g].label}${n > 1 ? ` × ${n}` : ''}`,
+            el('small', {class: 'from'}, describeProvenance(provenance(campaign, g).filter(p => p.from !== FIRST_CACHE))),
+          ),
+        ),
       ),
       el('div', {class: 'enc-actions'}, el('button', {onclick: () => toggleBand(false)}, 'Close')),
     );

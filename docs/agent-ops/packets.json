@@ -3290,17 +3290,15 @@
    "milestone": "W",
    "size": "S",
    "bu": 8,
-   "status": "planned",
-   "deps": [
-    "WP-W13"
-   ],
+   "status": "done",
+   "deps": [],
    "agent": "any",
    "needs": [],
    "inputs": [
     "docs/campaign-roadmap.md"
    ],
    "acceptance": "Debrief loot appears in the band stash labelled with where it came from; convoy loot follows the manifest.",
-   "progress_note": "2026-10-08: Loot and grid kits return to campaign; strategic cargo and unified item ownership remain."
+   "progress_note": "2026-10-12: done. Convoys carry fixed manifests (shared/campaign/cargo.js), shown on the encounter panel and carried by the deployment; a won ambush takes the cargo home, each burnt vehicle losing half its share; every stash addition (loot, cargo, trader) is written to a ledger with its source and day, and the map band panel and band screen show where the items held came from. Its dependency on WP-W13 was dropped: W13 still owes visible aftermath, which loot and cargo do not need. tests/campaign-cargo.test.mjs; campaign-loop e2e checks the manifest, debrief and labels."
   },
   {
    "id": "WP-W15",

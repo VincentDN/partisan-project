@@ -39,9 +39,10 @@ export function openCampaign(params, storage) {
     kits: () => structuredClone(Object.fromEntries(Object.entries(deployment?.kits || {}).filter(([, k]) => k))),
     /**
      * Write the debrief as the mission's result (once). loot: the rolled entries ({gear} or trade goods); kits: the
-     * fighters' grid kits as they are now (convoy/kit-ammo.js).
+     * fighters' grid kits as they are now (convoy/kit-ammo.js); vehicles: how many the level fielded (a convoy's cargo
+     * is shared between them, shared/campaign/cargo.js).
      */
-    finish(d, diffId, loot = [], kits = {}) {
+    finish(d, diffId, loot = [], kits = {}, vehicles = 0) {
       const earned = missionXp(d, diffId);
       const fighters = {};
       for (const u of d.byPartisan)
@@ -59,6 +60,7 @@ export function openCampaign(params, storage) {
         kills: d.kills,
         time: d.time,
         destroyed: d.vehiclesDestroyed,
+        vehicles,
         kits: Object.fromEntries(deployment.fighters.filter(f => kits[f]).map(f => [f, structuredClone(kits[f])])),
       });
       store.save(campaign);
@@ -83,8 +85,10 @@ export function openCampaign(params, storage) {
 export function describe(r) {
   if (!r) return '';
   const hurt = Object.entries(r.fighters).filter(([, x]) => x.state !== 'fit').length;
-  const taken = Object.values(r.loot).reduce((a, b) => a + b, 0) + r.goods.length;
+  const cargo = Object.values(r.cargo || {}).reduce((a, b) => a + b, 0);
+  const taken = Object.values(r.loot).reduce((a, b) => a + b, 0) + r.goods.length + cargo;
   if (r.outcome === 'withdrawn')
     return 'You left the mission. The fighters fell back to the band, wounded, with their kit; nothing was taken.';
-  return `${r.outcome === 'won' ? 'Accomplished' : 'Failed'}: ${r.kills} down, ${hurt} of yours hurt, ${taken} item${taken === 1 ? '' : 's'} brought home.`;
+  const fromCargo = cargo ? ` (${cargo} from the convoy's cargo)` : '';
+  return `${r.outcome === 'won' ? 'Accomplished' : 'Failed'}: ${r.kills} down, ${hurt} of yours hurt, ${taken} item${taken === 1 ? '' : 's'} brought home${fromCargo}.`;
 }

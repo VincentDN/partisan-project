@@ -6,6 +6,7 @@
 import {SQUAD_MAX} from '../../convoy/roster.js';
 import {GEAR} from '../../band/troops.js';
 import {logEvent} from './state.js';
+import {cargoTaken, recordIn} from './cargo.js';
 
 export const OUTCOMES = ['won', 'lost', 'withdrawn'];
 /** Campaign hours a fighter needs to heal: hurt, or carried off after going down. */
@@ -17,12 +18,13 @@ const count = n => (Number.isFinite(n) && n >= 1 ? Math.floor(n) : 0);
 
 /**
  * Launch an encounter: writes c.deployment and reserves its kit (it leaves the stash and travels on the fighters).
- * opts: {id, level, seed, fighters: [fighter ids], kit: {gear id: n}, enemy?, ground?, time?, source?}.
+ * opts: {id, level, seed, fighters: [fighter ids], kit: {gear id: n}, enemy?, ground?, time?, source?, cargo?}; cargo:
+ * the convoy's manifest (shared/campaign/cargo.js), taken home on a win.
  * Throws when a mission is already under way, a fighter is unknown or wounded, or the stash lacks the kit.
  */
 export function deploy(
   c,
-  {id, level, seed = 1, fighters, kit = {}, enemy = null, ground = null, time = null, source = null, variant = null},
+  {id, level, seed = 1, fighters, kit = {}, enemy = null, ground = null, time = null, source = null, variant = null, cargo = null},
 ) {
   if (c.deployment) throw new Error(`a mission is already under way (${c.deployment.id})`);
   if (typeof id !== 'string' || !id) throw new Error('an encounter needs an id');
@@ -61,6 +63,7 @@ export function deploy(
     time,
     source,
     variant,
+    cargo: cargo && typeof cargo === 'object' ? {...cargo} : null,
     entered: false,
     result: null,
   };
@@ -84,7 +87,10 @@ export function enter(c, encounterId) {
   return 'play';
 }
 
-/** A result, cleaned: {outcome, fighters: {id: {state: fit|wounded|down, xp, kills}}, loot: {gear: n}, goods, ...}. */
+/**
+ * A result, cleaned: {outcome, fighters: {id: {state: fit|wounded|down, xp, kills}}, loot: {gear: n}, cargo: {gear: n},
+ * goods, ...}. cargo is what the band takes of the convoy's manifest (from the vehicles and how many burnt).
+ */
 export function cleanResult(d, raw) {
   const r = isObj(raw) ? raw : {};
   const outcome = OUTCOMES.includes(r.outcome) ? r.outcome : 'lost';
@@ -108,6 +114,8 @@ export function cleanResult(d, raw) {
     kills: count(r.kills),
     time: Number.isFinite(r.time) ? r.time : 0,
     destroyed: count(r.destroyed),
+    vehicles: count(r.vehicles),
+    cargo: cargoTaken(d.cargo, {outcome, vehicles: count(r.vehicles), destroyed: count(r.destroyed)}),
     captured: !!r.captured && outcome === 'won',
     // the kits the fighters carried home, as they are after the fight (withdrawn: the ones they left with)
     kits:
@@ -148,7 +156,12 @@ export function settle(c, encounterId = c.deployment?.id) {
       fighter.healIn = Math.max(fighter.healIn || 0, x.state === 'down' ? HEAL_DOWN : HEAL_WOUNDED); // campaign hours
     }
   }
-  for (const bag of [d.kit, r.loot]) for (const [g, n] of Object.entries(bag)) c.stash[g] = (c.stash[g] || 0) + n;
+  const cargo = r.cargo || {};
+  for (const bag of [d.kit, r.loot, cargo]) for (const [g, n] of Object.entries(bag)) c.stash[g] = (c.stash[g] || 0) + n;
+  // where it came from (the reserved kit coming back is not new): the stash lists show it (WP-W14)
+  const from = d.enemy?.name || d.source || 'a fight';
+  recordIn(c, r.loot, from);
+  recordIn(c, cargo, `${from}’s cargo`);
   // grid kits: each fighter keeps what they came home with; a kit they set off with and did not bring back (the
   // mission issued another, for a new weapon) goes to the armoury's inbox, with everything in it
   for (const f of d.fighters) {
@@ -173,7 +186,7 @@ export function settle(c, encounterId = c.deployment?.id) {
     outcome: r.outcome,
     kills: r.kills,
     wounded: Object.keys(r.fighters).filter(f => r.fighters[f].state !== 'fit'),
-    loot: Object.values(r.loot).reduce((a, b) => a + b, 0) + r.goods.length,
+    loot: [r.loot, cargo].flatMap(Object.values).reduce((a, b) => a + b, 0) + r.goods.length,
   });
   return r;
 }

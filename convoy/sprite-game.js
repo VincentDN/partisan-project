@@ -415,7 +415,7 @@ function showDebrief(d) {
     awarded = true;
     lastEarned = missionXp(d, diffId);
     lastLoot = rollLoot(POOL, {levelId, debrief: d, difficulty: DIFFICULTY[diffId], seed: cm.deployment.seed});
-    cm.finish(d, diffId, lastLoot, search?.ammo?.kits);
+    cm.finish(d, diffId, lastLoot, search?.ammo?.kits, sim.vehicles.length);
     text.textContent += ' ' + describe(cm.result);
     $('#start').textContent = 'Return to the map';
     renderSquad();

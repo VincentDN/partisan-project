@@ -91,6 +91,7 @@ export function newCampaign({id = 'c1', seed = 1, now = 0} = {}) {
     record: squad.record,
     deployment: null, // the mission in progress (WP-W2)
     settled: [], // encounter ids whose result was applied, so a result is settled exactly once (WP-W2)
+    ledger: [], // what came into the stash, from where and when (shared/campaign/cargo.js, WP-W14)
     log: [],
     migratedFrom: [],
   };
@@ -136,6 +137,8 @@ export function normalize(raw) {
       if (isObj(o.record[id])) c.record[id] = {played: num(o.record[id].played, 0, 0), won: num(o.record[id].won, 0, 0)};
   c.deployment = isObj(o.deployment) ? o.deployment : null;
   if (Array.isArray(o.settled)) c.settled = o.settled.filter(s => typeof s === 'string');
+  if (Array.isArray(o.ledger))
+    c.ledger = o.ledger.filter(e => isObj(e) && GEAR[e.gear] && Number.isFinite(e.n) && e.n >= 1 && typeof e.from === 'string');
   if (Array.isArray(o.log)) c.log = o.log.filter(isObj).slice(-LOG_LIMIT);
   // saves from before entries had a seq: number them, and turn `seen` (then a position in the log) into a seq
   if (c.log.some(e => !Number.isFinite(e.seq))) {

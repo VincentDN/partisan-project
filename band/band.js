@@ -13,6 +13,7 @@ import {idle, idlePose, promote, endPromotion} from './fx.js';
 import {mountHands, paintHandled} from './hands-view.js';
 import {openBand, freshBand, promoteFighter} from './band-state.js';
 import {fighterGroup, fighterDetail, fighterId, nameOf} from './fighters.js';
+import {provenance, describeProvenance} from '../shared/campaign/cargo.js';
 
 mountTopBar({title: 'Rebel Band', scene: 'viewer'});
 const $ = s => document.querySelector(s);
@@ -160,7 +161,15 @@ function renderStash() {
             c = el('canvas', {width: 128, height: 56, 'aria-hidden': 'true'});
           drawIcon(c, id);
           const cls = ['item', need[id] ? 'needed' : '', need[id] && n < need[id] ? 'short' : '', n ? '' : 'empty'].join(' ');
-          return el('div', {class: cls, title: g.label}, c, el('span', {}, g.label), el('span', {class: 'n'}, String(n)));
+          // in the campaign, where it came from (WP-W14): on hover, and to screen readers
+          const from = inCampaign ? describeProvenance(provenance({stash: S.stash, ledger: opened.campaign.ledger}, id)) : '';
+          return el(
+            'div',
+            {class: cls, title: from ? `${g.label}: ${from}` : g.label, 'aria-description': from || null, 'data-from': from || null},
+            c,
+            el('span', {}, g.label),
+            el('span', {class: 'n'}, String(n)),
+          );
         }),
     ]),
   );
