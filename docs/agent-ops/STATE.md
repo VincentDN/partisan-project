@@ -5,12 +5,12 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json).
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-12 19:39 UTC · claude · WP-W14 · done**
+**2026-10-12 20:53 UTC · claude · WP-W13 · done**
 
-- Branch `claude/friendly-dijkstra-4ky9w6` at `dae5dde`; working tree clean.
-- Last commits: dae5dde WP-W14: convoy cargo manifests, and the stash says where its kit came from · e679bab docs: handoff for WP-W15 · f4f3c00 WP-W15: the Rebel Band screen on the campaign save, linked from the map
-- What happened: W14 done: convoy manifests (shared/campaign/cargo.js) shown on the encounter panel and taken home on a win, less burnt shares; stash ledger with sources shown on the map band panel and band screen; stray null in the encounter panel fixed.
-- Next step: Campaign: W13 (visible aftermath on the map: wrecks, smoke) is the open item before it. QA: QA23, QA20; QA9/QA14/QA15 need other machines.
+- Branch `claude/friendly-dijkstra-4ky9w6` at `47d5284`; working tree clean.
+- Last commits: 47d5284 WP-W13: fights leave their mark on the campaign map · c799309 docs: handoff for WP-W14 · dae5dde WP-W14: convoy cargo manifests, and the stash says where its kit came from
+- What happened: W13 done: fights leave aftermath on the map (map/aftermath.js, world.aftermath): convoy wrecks, scorch, smoke; thins over 2 days, gone after 2 weeks; reload-safe.
+- Next step: Campaign: W9 (ambush set-up from the convoy party), W11 (defence variants), W12 browser gate. QA: QA23, QA20; QA9/QA14/QA15 need other machines.
 <!-- handoff:end -->
 
 ## Resume here
