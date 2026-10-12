@@ -148,6 +148,22 @@ search arrays, marking vehicles once per search and capping the search brought i
 CPU is lower than before paths (1,891 ms against 2,037). The golden replays were re-recorded on purpose: both
 sides now walk round cover, so the fights end differently.
 
+### Module splits (QA17)
+
+`convoy/ai.js` (599 lines) and `convoy/sim.js` (1,045) are split along their seams, all modules under 300 lines:
+
+- `ai.js` keeps the army soldier's state machine and re-exports the rest: `ai-sense.js` (beliefs, sight, hearing,
+  shared helpers), `ai-cover.js` (cover and bounds), `ai-squad.js` (squad director, reinforcements, assaults),
+  `ai-partisan.js` (your teammates).
+- `sim.js` keeps the constructor, the cover queries and `step`; the class's other methods sit in `sim-units`,
+  `sim-comms`, `sim-combat`, `sim-motion` and `sim-orders` as method objects installed on `Sim.prototype` (not
+  enumerable, getters kept), and its pure helpers and constants in `sim-base` (re-exported).
+
+No importer changed. The golden replays, the fuzz and all unit tests pass unchanged, so behaviour is the same to
+the step. The browser modules (`sprite-render` 1,405 lines, `soundscape` 978, `sprite-game` 752) are one closure each
+with lazily created shared state, and the browser suites check little of them (the smoke checks only that shots and
+impacts sound). Splitting them is WP-QA23, which first adds the checks that would notice a broken split.
+
 ### Memory (QA10)
 
 `npm run memory` (`tools/qa/memory.mjs`, needs `CHROMIUM`) repeats what a long session repeats and reads the heap after
@@ -271,10 +287,10 @@ The survey scripts become packets QA1 and QA2 (`tests/fuzz/`, `tools/perf/`); un
 
 ## 7. Where it stands (2026-10-12) and what is left
 
-**Done (17 of 22, counting QA15's code on main):** QA1 fuzz harness and nightly run, QA2 performance budgets, QA3 browser suites fail on page
+**Done (18 of 23, counting QA15's code on main):** QA1 fuzz harness and nightly run, QA2 performance budgets, QA3 browser suites fail on page
 errors, QA4 save hunt, QA5 inventory hunt, QA6 sim soak, QA7 campaign soak, QA11 sim hot path (64 % less CPU),
 QA12 compact catalogue, QA13 asset diet (mission page 14.4 → 3.1 MB), QA16 no fixed sleeps, QA18 golden replays, QA19
-static checks, QA21 pathfinding, QA22 reachable destinations, QA8 keyboard and focus, QA10 memory. Real bugs fixed on the way: the map stopped reporting results after about 80
+static checks, QA21 pathfinding, QA22 reachable destinations, QA8 keyboard and focus, QA10 memory, QA17 simulation module splits. Real bugs fixed on the way: the map stopped reporting results after about 80
 encounters; units stuck against cover for whole fights; soldiers dismounting off the map; a kit screen disabled by
 one failed download; silent save failures; an unlabelled ground pile; a cancelled drag left stuck.
 
@@ -286,7 +302,8 @@ one failed download; silent save failures; an unlabelled ground pile; a cancelle
 2. **QA14** (M) and **QA15** (S): the renderers on real hardware. The mission renderer's own code is cheap; the
    first-frame font hitch and the 60 fps question need a device measurement (WP-Q2). QA15's code work landed on
    main (`docs/engineering/campaign-performance.md`); its browser acceptance is pending.
-3. **QA17** (M): split the oversized modules (sprite-render, soundscape, sim, sprite-game, ai) behind the replays.
+3. **QA23** (M): split the browser modules (sprite-render, soundscape, sprite-game), after adding browser checks
+   for every sound category and the renderer's layers.
 4. **QA20** (M): strict null checks for `shared/` (161 inference errors to type).
 5. **An intermittent smoke failure** to look into with QA9: "operator: Recon base … loads and responds" failed
    once in two runs on 2026-10-12 with "page.evaluate: Resulting promise was garbage collected" at

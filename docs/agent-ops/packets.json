@@ -3874,12 +3874,12 @@
   },
   {
    "id": "WP-QA17",
-   "title": "Split the oversized modules along their seams (sprite-render, soundscape, sim, sprite-game, ai)",
+   "title": "Split the oversized simulation modules along their seams (sim, ai)",
    "track": "Quality",
    "milestone": "QA",
    "size": "M",
    "bu": 20,
-   "status": "ready",
+   "status": "done",
    "deps": [
     "WP-QA18"
    ],
@@ -3888,7 +3888,7 @@
    "inputs": [
     "docs/quality-roadmap.md"
    ],
-   "acceptance": "Each under 300 lines; golden replays and every browser suite unchanged."
+   "acceptance": "sim.js and ai.js each under 300 lines, split into modules along their seams; golden replays, fuzz and every unit test unchanged."
   },
   {
    "id": "WP-QA19",
@@ -3962,6 +3962,29 @@
     "tests/fuzz/soak.mjs"
    ],
    "acceptance": "Soldiers retreating in the village no longer pick a point inside a closed house (soak: village seed 1, foot-4 and foot-5); spots are checked against the walk grid before they are chosen; soak clean."
+  },
+  {
+   "id": "WP-QA23",
+   "title": "Split the oversized browser modules (sprite-render, soundscape, sprite-game) behind new browser checks",
+   "track": "Quality",
+   "milestone": "QA",
+   "size": "M",
+   "bu": 20,
+   "status": "ready",
+   "deps": [
+    "WP-QA17"
+   ],
+   "agent": "any",
+   "needs": [
+    "browser"
+   ],
+   "inputs": [
+    "docs/quality-roadmap.md",
+    "convoy/sprite-render.js",
+    "convoy/soundscape.js",
+    "convoy/sprite-game.js"
+   ],
+   "acceptance": "First a browser check that every sound category plays (shot, impact, explosion, reload, death, radio, engine, fire, footsteps, ambience) and that the renderer draws each layer (ground, cover, units, effects, fog, HUD) on a fixed seed; then each module under 300 lines, its closure state shared through one explicit object; the checks and every browser suite unchanged."
   }
  ]
 }

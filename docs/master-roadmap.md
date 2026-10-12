@@ -195,7 +195,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | **S** Partisan Tactical: extraction PvE, campaign and gated online research | v0.8.0 | 15/44 | 673 BU | 34% |
 | **V** Graphics: 2.5D top-down sprites for the shooter (the overworld moved to W) | v0.9.0 | 2/20 | 251 BU | 11% |
 | **W** World campaign: the Bannerlord loop (map, missions, loot, upgrades) | v0.10.0 | 4/26 | 359 BU | 14% |
-| **QA** Bug hunt and optimisation (docs/quality-roadmap.md) | — | 17/22 | 274 BU | 72% |
+| **QA** Bug hunt and optimisation (docs/quality-roadmap.md) | — | 18/23 | 294 BU | 74% |
 
 ### M0 · Foundation
 
@@ -427,11 +427,12 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-QA14` | Mission renderer: fog of war at a lower rate or incremental, static layers cached | M (20) | ready | — | `WP-QA2` |
 | `WP-QA15` | Overworld map budget: lazy 3-D figures, texture sizes, draw calls | S (8) | ready | — | `WP-QA2` |
 | `WP-QA16` | Test suite speed and flake: no fixed sleeps, suites in parallel | S (8) | done | — | `WP-QA3` |
-| `WP-QA17` | Split the oversized modules along their seams (sprite-render, soundscape, sim, sprite-game, ai) | M (20) | ready | — | `WP-QA18` |
+| `WP-QA17` | Split the oversized simulation modules along their seams (sim, ai) | M (20) | done | — | `WP-QA18` |
 | `WP-QA19` | Static checks: a report of unused exports and unreferenced files; dead code removed | XS (3) | done | — | — |
 | `WP-QA20` | Strict null checks for shared/ and the modules it imports (JSDoc types where inference gives null or never) | M (20) | ready | — | `WP-QA19` |
 | `WP-QA21` | Pathfinding for mission movement: units stuck against concave cover (soak findings) | M (20) | done | — | `WP-QA6`, `WP-QA18` |
 | `WP-QA22` | AI retreat and cover spots inside buildings: choose reachable points only | S (8) | done | — | `WP-QA21` |
+| `WP-QA23` | Split the oversized browser modules (sprite-render, soundscape, sprite-game) behind new browser checks | M (20) | ready | browser | `WP-QA17` |
 
 ### TD · Tech debt (fill windows)
 
