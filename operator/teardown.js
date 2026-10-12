@@ -3,6 +3,7 @@ import * as T from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {createStage} from '../shared/stage.js';
 import {mountTopBar} from '../shared/topbar.js';
+import {hideLoader, loaderError} from '../shared/loader.js';
 mountTopBar({title: 'Recon teardown', scene: 'viewer'});
 const $ = s => document.querySelector(s);
 const colors = {clothing: 0xabb98e, fused: 0xe0a34f, equipment: 0x6bbad5, discard: 0xe18078};
@@ -149,9 +150,9 @@ try {
   });
   select(selected);
   setMode('exploded');
-  $('#status').textContent = '';
+  hideLoader($('#status'));
   window.PARP_RECON_TEARDOWN = {ready: true, stage, parts, audit, setMode, setSeparation, select, frame};
 } catch (error) {
-  $('#status').textContent = 'The source inspection could not load. Reload in a browser with WebGL enabled.';
+  loaderError($('#status'), 'The source inspection could not load. Reload in a browser with WebGL enabled.');
   console.error(error);
 }

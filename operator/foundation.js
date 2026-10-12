@@ -11,6 +11,7 @@ import {resolveAssembly} from './assembly.js';
 import {Grip} from './grip.js';
 import {modularRecon} from './recon-modular.js';
 import {referenceGrip} from './reference-grip.js';
+import {hideLoader, loaderError} from '../shared/loader.js';
 mountTopBar({title: 'Recon clothing foundation', scene: 'viewer'});
 const $ = s => document.querySelector(s);
 try {
@@ -130,9 +131,9 @@ try {
   carrier();
   setPose('rest');
   frame('front');
-  $('#status').textContent = '';
+  hideLoader($('#status'));
   window.PARP_RECON_FOUNDATION = {ready: true, stage, scene: gltf.scene, rig, meshes, setPose, frame, carrierData};
 } catch (error) {
-  $('#status').textContent = 'The clothing preview could not load. Reload in a browser with WebGL enabled.';
+  loaderError($('#status'), 'The clothing preview could not load. Reload in a browser with WebGL enabled.');
   console.error(error);
 }

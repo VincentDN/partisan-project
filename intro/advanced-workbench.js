@@ -6,6 +6,7 @@ import {RGBELoader} from 'three/addons/loaders/RGBELoader.js';
 import {MODELS,DEFAULT_MODEL} from './ak15-weapon-customiser/models.js';
 import {DEFAULT_OPERATOR,buildOperator} from './ak15-weapon-customiser/operator.js';
 import {mountTopBar} from '../shared/topbar.js';
+import {loaderError} from '../shared/loader.js';
 
 const TABLE={top:.86,x:[-.95,.95],z:[.24,1.04]};
 // Camera behind and above the right shoulder, looking down at the rifle.
@@ -180,4 +181,4 @@ const requestedRifle=new URLSearchParams(location.hash.slice(1)).get('rifle');
 session.load(MODELS[requestedRifle]?requestedRifle:DEFAULT_MODEL).then(()=>{
  status.hidden=true;start.disabled=false;begin();
  requestAnimationFrame(frame);requestAnimationFrame(()=>fade.classList.add('clear'));
-}).catch(err=>{status.textContent='Could not load the rifle: '+err.message;fade.classList.add('clear');});
+}).catch(err=>{loaderError(status,'Could not load the rifle: '+err.message);fade.classList.add('clear');});

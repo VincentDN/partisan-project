@@ -28,6 +28,7 @@ import {disposeModel, prefetchModels} from '../shared/model-cache.js';
 import {MODELS} from '../workbench/models.js';
 import {applyLoadout, emptyLoadout, installCamo} from '../workbench/apply-loadout.js';
 import {encode, decode, parseLegacy} from '../shared/loadout.js';
+import {loaderError} from '../shared/loader.js';
 
 const $ = s => document.querySelector(s);
 const status = $('#status');
@@ -710,8 +711,7 @@ try {
   await restore(location.hash);
 } catch (err) {
   console.error(err);
-  status.hidden = false;
-  status.textContent = 'The operator could not load. Reload in a browser with WebGL enabled.';
+  loaderError(status, 'The operator could not load. Reload in a browser with WebGL enabled.');
   throw err;
 }
 addEventListener('hashchange', () => {

@@ -343,19 +343,6 @@ select {
   color: var(--lcd-1);
   font: 12px ui-monospace, monospace;
 }
-.loading {
-  position: fixed;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  background: var(--bg);
-  color: var(--lcd-1);
-  font: 12px ui-monospace, monospace;
-  letter-spacing: 0.12em;
-}
-.loading[hidden] {
-  display: none;
-}
 @media (max-width: 1000px) {
   body {
     overflow: auto;

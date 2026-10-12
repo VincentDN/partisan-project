@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex"><meta name="seo_hidden" content="true">
 <title>Partisan Project | Recon comparison</title><link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="compare.css">
+<link rel="stylesheet" href="compare.css"><link rel="stylesheet" href="../shared/loader.css">
 <script type="importmap">{"imports":{"three":"../vendor/three/build/three.module.min.js","three/addons/":"../vendor/three/examples/jsm/"}}</script>
 </head><body>
 <main>
@@ -13,7 +13,7 @@
 <label>Lighting <select id="environment"><option value="outdoor">Outdoor</option><option value="studio">Studio</option><option value="sunset">Sunset</option></select></label>
 <label>Light rotation <input id="light-rotation" type="range" min="0" max="360" value="255"><output id="light-angle">255°</output></label>
 </div>
-<p id="status" role="status" aria-live="polite">Loading both Recon models…</p>
+<div id="status" class="nk-loader nk-fixed" role="status" aria-live="polite"><span class="nk-spin" aria-hidden="true"></span><span class="nk-text">Loading both Recon models</span></div>
 <div class="comparison">
 <section aria-labelledby="original-title"><h2 id="original-title">Original Recon</h2><p>Complete inbound model, unchanged textures, geometry and generated rifle.</p><div id="original-stage" class="stage" role="group" tabindex="0" aria-label="Original Recon. Drag or use arrow keys to orbit; plus and minus zoom."></div><p class="stats" id="original-stats"></p></section>
 <section aria-labelledby="current-title"><h2 id="current-title">Current modular Recon</h2><p>Current conversion in its rest pose, with all equipment and original colours.</p><div id="current-stage" class="stage" role="group" tabindex="0" aria-label="Current Recon. Drag or use arrow keys to orbit; plus and minus zoom."></div><p class="stats" id="current-stats"></p></section>

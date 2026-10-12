@@ -12,6 +12,7 @@ import {DEFAULT_OPERATOR,buildOperator} from './ak15-weapon-customiser/operator.
 import {solveArm} from './ak15-weapon-customiser/field.js';
 import {mountTopBar} from '../shared/topbar.js';
 import * as mech from './ak15-weapon-customiser/mech.js';
+import {loaderError} from '../shared/loader.js';
 
 const INDEX='../menu/';// the Nokia index: every demo
 const CAMPAIGN='../map/?campaign=c1';// the test campaign: the band on the world map (docs/campaign-roadmap.md)
@@ -386,4 +387,4 @@ const reveal=()=>{loadedAt??=performance.now()/1000;};
 loadRifle().then(()=>{
  status.hidden=true;for(const b of actions)b.disabled=false;campaignBtn.focus({preventScroll:true});
  requestAnimationFrame(frame);requestAnimationFrame(reveal);
-}).catch(err=>{status.textContent='Could not load the rifle: '+err.message;reveal();});
+}).catch(err=>{loaderError(status,'Could not load the rifle: '+err.message);reveal();});

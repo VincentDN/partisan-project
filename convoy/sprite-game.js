@@ -21,6 +21,7 @@ import {createFieldSearch} from './field-search.js';
 import {createBanter} from './banter.js';
 import {createCatalogue} from '../shared/inventory/catalogue.js';
 import {COSMETICS, buildPawn, lookFor, saveLook, resetLook, savedLook} from './sprite-art.js';
+import {setLoader} from '../shared/loader.js';
 
 mountTopBar({title: 'Partisan Tactical', scene: 'viewer'});
 const $ = s => document.querySelector(s);
@@ -42,7 +43,7 @@ const cm = openCampaign(
 );
 if (cm?.action === 'play' && LEVELS[cm.deployment.level]) levelId = cm.deployment.level;
 
-$('#status').textContent = 'Loading the sprites…';
+setLoader($('#status'), 'Loading the sprites');
 const R = await createSpriteRenderer(view);
 $('#status').hidden = true;
 

@@ -14,6 +14,15 @@ Two registers, one family. Tools (Workbench, Customiser, Viewer) are a dark inst
 - Palette `--lcd-0/1/2` plus `--body*`; shading is ordered dither between two tones. Accent `#ef8f39` is shared with the tools.
 - Navigation is keyboard first: arrows, Enter, number keys. Everything reachable by touch.
 
+## Loading: one loader everywhere
+- Every page that loads shows the same loader (`shared/loader.css`, `shared/loader.js`): a small Nokia LCD (backlit
+  paper, dark ink, pixel grid) in the phone's green body, with the pixel chase spinner, an uppercase message with
+  stepping dots, and a battery-segment bar when progress is known. It is pure CSS, so it shows before scripts run.
+- Markup: `<div class="nk-loader" role="status" aria-live="polite"><span class="nk-spin" aria-hidden="true"></span><span class="nk-text">Raising the island</span></div>`.
+  Wrap it in `<div class="nk-cover">` to cover a whole page, or add `nk-fixed` to centre it in the window.
+- Write the message without dots (the loader adds them). Scripts use `setLoader`, `loaderProgress`, `loaderError` and
+  `hideLoader`; an error stops the spinner and keeps the message. `tests/loader.test.mjs` checks every page.
+
 ## Rules for all pages
 1. WCAG 2.2 AA: contrast, 24 px minimum target, visible focus, one `h1`, landmarks. `tests/e2e/a11y.mjs` must stay at zero violations.
 2. `prefers-reduced-motion` disables idle animation, camera glides, spinner motion and secondary motion.

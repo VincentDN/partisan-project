@@ -5,6 +5,7 @@ import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
 import {createStage} from '../shared/stage.js';
 import {mountTopBar} from '../shared/topbar.js';
 import {HERO_AZIMUTH} from './config.js';
+import {hideLoader, loaderError} from '../shared/loader.js';
 mountTopBar({title: 'Recon comparison', scene: 'viewer'});
 const $ = s => document.querySelector(s);
 const loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
@@ -82,15 +83,15 @@ try {
     try {
       await Promise.all(stages.map(s => s.useEnvironment($('#environment').value)));
     } catch {
-      $('#status').textContent = 'Lighting could not load. Try another environment.';
+      loaderError($('#status'), 'Lighting could not load. Try another environment.');
     }
     stages.forEach(s => s.wake());
   };
   const initial = new URLSearchParams(location.hash.slice(1)).get('view');
   view(initial);
-  $('#status').textContent = '';
+  hideLoader($('#status'));
   window.PARP_RECON_COMPARE = {ready: true, stages, models, view};
 } catch (error) {
-  $('#status').textContent = 'The models could not load. Reload in a browser with WebGL enabled.';
+  loaderError($('#status'), 'The models could not load. Reload in a browser with WebGL enabled.');
   console.error(error);
 }

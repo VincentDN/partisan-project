@@ -20,6 +20,5 @@ section p { margin: 0 16px 10px; min-height: 42px; }
 .stage { height: clamp(350px, 63vh, 780px); position: relative; touch-action: none; }
 .stage canvas { display: block; }
 section .stats { min-height: 0; margin: 10px 16px; font: 12px/1.5 ui-monospace, monospace; }
-#status:empty { display: none; }
 .footnote { margin-top: 14px; max-width: 1000px; font-size: 12px; }
 @media (max-width: 700px) { main { padding: 14px; } .comparison { grid-template-columns: 1fr; } .stage { height: 430px; } }

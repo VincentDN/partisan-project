@@ -13,6 +13,7 @@ import {resolve, fits} from './rails.js';
 import {ATTACHMENT_FILES} from './attachments.js';
 import {blockedBy} from './stats.js';
 import * as mech from './mech.js';
+import {loaderError} from '../shared/loader.js';
 
 const accent = 0xef8f39;
 // Launch look: the sunset HDR as a blurred backdrop, turned so the sun keys the rifle from front-left.
@@ -451,8 +452,7 @@ function restore(hash) {
     })
     .catch(err => {
       console.error(err);
-      status.hidden = false;
-      status.textContent = 'The rifle could not load. Reload to try again.';
+      loaderError(status, 'The rifle could not load. Reload to try again.');
     });
   return queue;
 }
@@ -754,6 +754,5 @@ try {
   });
 } catch (err) {
   console.error(err);
-  status.hidden = false;
-  status.textContent = 'The viewer could not load. Reload in a browser with WebGL enabled.';
+  loaderError(status, 'The viewer could not load. Reload in a browser with WebGL enabled.');
 }

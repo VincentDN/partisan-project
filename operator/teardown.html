@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex"><meta name="seo_hidden" content="true">
 <title>Partisan Project | Recon teardown</title><link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="teardown.css">
+<link rel="stylesheet" href="teardown.css"><link rel="stylesheet" href="../shared/loader.css">
 <script type="importmap">{"imports":{"three":"../vendor/three/build/three.module.min.js","three/addons/":"../vendor/three/examples/jsm/"}}</script>
 </head><body><main>
 <div class="intro"><div><h1>Recon teardown</h1><p>Explore the 27 source pieces and the work needed to make them independently wearable.</p></div>
@@ -13,7 +13,7 @@
 <div role="group" aria-label="Camera"><button data-camera="front" aria-pressed="true">Front</button> <button data-camera="back" aria-pressed="false">Back</button> <button data-camera="side" aria-pressed="false">Side</button></div>
 <button id="wire" aria-pressed="false">Wireframe</button>
 </div>
-<p id="status" role="status">Loading source pieces…</p>
+<div id="status" class="nk-loader nk-fixed" role="status" aria-live="polite"><span class="nk-spin" aria-hidden="true"></span><span class="nk-text">Loading source pieces</span></div>
 <div class="teardown">
 <section aria-label="Source inspection"><div class="legend"><span class="clothing">Clothing</span><span class="fused">Fused surfaces</span><span class="equipment">Equipment</span><span class="discard">Replace / discard</span></div>
 <div id="teardown-stage" class="stage" role="group" tabindex="0" aria-label="Recon source pieces. Drag or use arrow keys to orbit; plus and minus zoom."></div>
