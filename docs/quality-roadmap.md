@@ -222,6 +222,9 @@ one failed download; silent save failures; an unlabelled ground pile; a cancelle
    main (`docs/engineering/campaign-performance.md`); its browser acceptance is pending.
 6. **QA17** (M): split the oversized modules (sprite-render, soundscape, sim, sprite-game, ai) behind the replays.
 7. **QA20** (M): strict null checks for `shared/` (161 inference errors to type).
+8. **An intermittent smoke failure** to look into with QA8–QA10: "operator: Recon base … loads and responds" failed
+   once in two runs on 2026-10-12 with "page.evaluate: Resulting promise was garbage collected" at
+   `switchBase('base')`, right after main's change to the Recon reload (d6e9dbf). It passed on the re-run.
 
 The tools stay in place for whoever picks these up: `npm run fuzz`, `node tests/fuzz/soak.mjs`, `npm run replays`,
 `node tools/perf/bench.mjs all --check`, `node tools/qa/unused.mjs`.
