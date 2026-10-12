@@ -5,12 +5,12 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json).
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-12 14:23 UTC · claude · WP-QA10 · done**
+**2026-10-12 14:42 UTC · claude · WP-QA17 · done**
 
-- Branch `claude/friendly-dijkstra-4ky9w6` at `5a47f3f`; working tree clean.
-- Last commits: 5a47f3f QA10: memory hunt; mission restarts no longer keep old soldiers · 2ea443e docs: handoff for WP-QA8 · f026d6e QA8: keyboard and focus through the stacked panels
-- What happened: QA10 done: npm run memory (tools/qa/memory.mjs); fixed the renderer keeping every restart's soldiers (sightFade WeakMap); restarts, search, kit and trips flat.
-- Next step: Next QA packet: QA9 Firefox and WebKit smoke runs (needs those browsers installed); then QA14/15 on real hardware, QA17 module splits, QA20 strict null checks (docs/quality-roadmap.md section 7).
+- Branch `claude/friendly-dijkstra-4ky9w6` at `379b873`; working tree clean.
+- Last commits: 379b873 QA17: split sim.js and ai.js along their seams (all modules under 300 lines) · e06134d QA9 prep: browser tests can run in Firefox or WebKit (BROWSER=firefox|webkit) · c0c9eaf docs: handoff for WP-QA10
+- What happened: QA17 done for sim.js and ai.js (split into sim-*/ai-* modules, replays unchanged). QA9 prep: BROWSER=firefox|webkit in tests/e2e/browser.mjs (browsers not installable here). Browser-module splits filed as WP-QA23.
+- Next step: Owner request in progress: a unified Nokia-style loader with a spinner used on every page. Then QA23, QA20; QA9/QA14/QA15 need other machines.
 <!-- handoff:end -->
 
 ## Resume here
