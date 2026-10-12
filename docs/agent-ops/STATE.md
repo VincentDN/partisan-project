@@ -5,12 +5,12 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json).
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-12 16:19 UTC · claude · WP-W15 · done**
+**2026-10-12 19:39 UTC · claude · WP-W14 · done**
 
-- Branch `claude/friendly-dijkstra-4ky9w6` at `f4f3c00`; working tree clean.
-- Last commits: f4f3c00 WP-W15: the Rebel Band screen on the campaign save, linked from the map · cd1bc63 docs: handoff after the unified loader · 5b27cab One Nokia LCD loader on every page
-- What happened: W15 done: band/?campaign=<id> on the campaign save (band-state.js), named fighters promoted in the band screen (fighters.js), linked from the map band panel and back; standalone demo unchanged. Fixed a stray 'null' in the map band panel.
-- Next step: Campaign: W14 (loot source labels, convoy manifests) or W13. QA: QA23 (browser module splits behind new checks), QA20; QA9/QA14/QA15 need other machines.
+- Branch `claude/friendly-dijkstra-4ky9w6` at `dae5dde`; working tree clean.
+- Last commits: dae5dde WP-W14: convoy cargo manifests, and the stash says where its kit came from · e679bab docs: handoff for WP-W15 · f4f3c00 WP-W15: the Rebel Band screen on the campaign save, linked from the map
+- What happened: W14 done: convoy manifests (shared/campaign/cargo.js) shown on the encounter panel and taken home on a win, less burnt shares; stash ledger with sources shown on the map band panel and band screen; stray null in the encounter panel fixed.
+- Next step: Campaign: W13 (visible aftermath on the map: wrecks, smoke) is the open item before it. QA: QA23, QA20; QA9/QA14/QA15 need other machines.
 <!-- handoff:end -->
 
 ## Resume here
