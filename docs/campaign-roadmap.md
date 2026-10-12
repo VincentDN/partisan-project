@@ -216,7 +216,9 @@ simulation and save authority; additional showcase assets are secondary to those
 
 ## 7. Packet reconciliation
 
-W1–W3 provide the save, bridge and travel foundation. W8–W11, W13–W15 and W19 have meaningful playable subsets but
+W1–W3 provide the save, bridge and travel foundation. W15 is done (2026-10-12): the Rebel Band screen opens from the
+map's band panel on the campaign save, shows the named fighters above the troop stacks and promotes them with their
+experience and the stash's kit; the standalone demo keeps its own save. W8–W11, W13, W14 and W19 have meaningful playable subsets but
 retain unfinished acceptance (ambush choices, exact enemy/cargo composition, aftermath, territory simulation).
 W12 now targets six-to-nine-person deployment rather than the obsolete four-person plan. W18 has recovery/trade
 but not recruitment. W21 has a bounded objective, not the complete endgame/defeat presentation. W24 retains the

@@ -255,12 +255,14 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
             {class: 'note'},
             'Foothold secured. Your band has broken the local supply route and liberated Fort Orion. Continue the campaign with your survivors and equipment.',
           )
-        : null,
+        : '', // replaceChildren would print null
       el(
         'p',
         {class: 'note'},
         'Promote a fighter with the experience their class asks and the kit the new class carries; the kit comes out of the stash.',
       ),
+      // the full Rebel Band screen on this campaign's save: fighters, troop stacks, class tree and stash (WP-W15)
+      el('a', {class: 'band-screen', href: `../band/?campaign=${encodeURIComponent(campaign.id)}`}, 'Open the band screen'),
       hurt.length
         ? el('p', {class: 'hurt'}, hurt.map(([id, f]) => `${NAMES[id] || id} is wounded (${Math.ceil(f.healIn)}h)`).join(' · '))
         : null,

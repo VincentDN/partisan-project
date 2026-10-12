@@ -5,25 +5,14 @@
 import '../shared/frame.js';
 import {mountTopBar} from '../shared/topbar.js';
 import {buildPawn, loadGuns, loadSet, lookFor} from '../convoy/sprite-art.js';
-import {
-  GEAR,
-  CLASSES,
-  TROOPS,
-  LEADER,
-  START_BAND,
-  START_STASH,
-  bandLimit,
-  bandSize,
-  ready,
-  canUpgrade,
-  upgrade,
-  abilitiesOf,
-} from './troops.js';
+import {GEAR, CLASSES, TROOPS, bandLimit, bandSize, ready, canUpgrade, upgrade, abilitiesOf} from './troops.js';
 import {createTreeView} from './tree.js';
 import * as mech from '../workbench/mech.js';
 import * as ui from '../shared/ui-sounds.js';
 import {idle, idlePose, promote, endPromotion} from './fx.js';
 import {mountHands, paintHandled} from './hands-view.js';
+import {openBand, freshBand, promoteFighter} from './band-state.js';
+import {fighterGroup, fighterDetail, fighterId, nameOf} from './fighters.js';
 
 mountTopBar({title: 'Rebel Band', scene: 'viewer'});
 const $ = s => document.querySelector(s);
@@ -38,20 +27,34 @@ const el = (tag, attrs = {}, ...kids) => {
   return e;
 };
 
-// ---------- state ----------
-const KEY = 'parp-band-v2'; // v2: the deep class tree (the v1 troop list is retired)
-const fresh = () => ({band: structuredClone(START_BAND), stash: {...START_STASH}, leader: structuredClone(LEADER), raids: 0});
-let S = fresh();
-try {
-  const saved = JSON.parse(localStorage.getItem(KEY) || 'null');
-  if (saved?.band && saved?.stash && Object.keys(saved.band).every(id => TROOPS[id])) S = {...fresh(), ...saved};
-} catch {}
-const save = () => {
-  try {
-    localStorage.setItem(KEY, JSON.stringify(S));
-  } catch {}
-};
-let selected = 'leader'; // 'leader' or a troop id
+// ---------- state (band/band-state.js): the campaign's band when opened from the map, else the standalone demo ----------
+const params = new URLSearchParams(location.search);
+const opened = openBand(
+  params,
+  (() => {
+    try {
+      return localStorage;
+    } catch {
+      return null;
+    }
+  })(),
+);
+const inCampaign = opened.mode === 'campaign';
+let S = opened.S;
+const save = () => opened.save(S);
+let selected = 'leader'; // 'leader', a troop id, or 'f:' and a fighter id (band/fighters.js)
+if (inCampaign) {
+  // missions give the experience and the kit here: the practice raid and the reset belong to the demo
+  $('#skirmish').hidden = true;
+  $('#reset').hidden = true;
+  const back = el(
+    'a',
+    {class: 'back', href: `../map/?campaign=${encodeURIComponent(params.get('campaign') || opened.campaign.id)}`},
+    '← Back to the map',
+  );
+  $('#tree-btn').before(back);
+  selected = 'f:' + (Object.keys(S.fighters)[0] || '');
+}
 
 // ---------- art ----------
 const guns = await loadGuns();
@@ -130,11 +133,13 @@ function drawIcon(canvas, id) {
 }
 
 // ---------- rendering ----------
+/** The class the selection stands for: a troop's own, a fighter's current class, or null for the leader. */
+const classOf = sel => (sel === 'leader' ? null : fighterId(sel) ? S.fighters[fighterId(sel)]?.class : sel);
 const neededNow = () => {
-  if (selected === 'leader') return {};
+  const cls = classOf(selected);
+  if (!cls) return {};
   const need = {};
-  for (const to of TROOPS[selected].to)
-    for (const [item, per] of Object.entries(TROOPS[to].needs)) need[item] = Math.max(need[item] || 0, per);
+  for (const to of TROOPS[cls].to) for (const [item, per] of Object.entries(TROOPS[to].needs)) need[item] = Math.max(need[item] || 0, per);
   return need;
 };
 function renderStash() {
@@ -178,6 +183,7 @@ function renderBand() {
   $('#leader-card').setAttribute('aria-pressed', String(selected === 'leader'));
   $('#leader-card').onclick = () => choose('leader');
   $('#groups').replaceChildren(
+    ...(inCampaign ? [fighterGroup(S, {el, seg, drawPawn, selected, choose})] : []),
     ...CLASSES.map(c => {
       const ids = Object.keys(TROOPS).filter(id => TROOPS[id].cls === c.id && S.band[id]?.count);
       const total = ids.reduce((s, id) => s + S.band[id].count, 0);
@@ -231,7 +237,18 @@ let promoting = false,
   finishPromotion = null;
 async function renderCentre() {
   const detail = $('#detail');
-  if (selected === 'leader') {
+  const fid = fighterId(selected);
+  if (fid) {
+    const F = fighterDetail(S, fid, {el, seg, drawPawn, abilityList, onPromote: doPromoteFighter});
+    $('#who').textContent = F.who;
+    $('#who-sub').textContent = F.sub;
+    detail.replaceChildren(...F.detail);
+    $('#ups').replaceChildren(
+      ...(F.ups.length
+        ? [el('h3', {class: 'paths'}, 'Promote to'), el('div', {class: 'upgrades'}, ...F.ups)]
+        : [el('p', {class: 'note'}, 'The top of this path.')]),
+    );
+  } else if (selected === 'leader') {
     const L = S.leader;
     $('#who').textContent = L.name;
     $('#who-sub').textContent = `Leader · level ${L.level} · band limit ${bandLimit(L)}`;
@@ -312,11 +329,12 @@ async function renderCentre() {
   }
   if (selected === 'leader') $('#ups').replaceChildren();
   if (!promoting) {
-    const id = selected;
-    const draw = await painter(id, $('#pawn'), PAWN);
+    const id = selected,
+      cls = fid ? S.fighters[fid].class : id; // a fighter is drawn as their class
+    const draw = await painter(cls, $('#pawn'), PAWN);
     if (id !== selected) return; // a newer selection took over while this one loaded
     idle($('#pawn'), draw);
-    handsView.setPawn(draw, gunIdOf(id));
+    handsView.setPawn(draw, gunIdOf(cls));
   }
 }
 /** A class's abilities: its own first, then those carried from the classes it came through. */
@@ -339,7 +357,8 @@ function render() {
   renderStash();
   renderBand();
   renderCentre();
-  $('#status').textContent = `Raids ${S.raids} · ${Object.values(S.stash).reduce((a, b) => a + b, 0)} items in the stash`;
+  $('#status').textContent =
+    `${inCampaign ? 'Missions' : 'Raids'} ${S.raids} · ${Object.values(S.stash).reduce((a, b) => a + b, 0)} items in the stash`;
 }
 function choose(id) {
   selected = id;
@@ -357,7 +376,25 @@ async function doUpgrade(from, to, n) {
   S.stash = r.stash;
   save();
   selected = to;
-  $('#status').textContent = `${r.n} × ${TROOPS[from].label} → ${TROOPS[to].label}`;
+  await celebrate(
+    from,
+    to,
+    `${r.n > 1 ? r.n + ' × ' : ''}${TROOPS[from].label} → ${TROOPS[to].label}`,
+    `${r.n} × ${TROOPS[from].label} → ${TROOPS[to].label}`,
+  );
+}
+/** A named fighter steps up (campaign mode): their experience and the stash's kit pay for it. */
+async function doPromoteFighter(id, to) {
+  if (promoting) finishPromotion?.();
+  const from = S.fighters[id].class;
+  if (!promoteFighter(S, id, to)) return;
+  const said = save()
+    ? `${nameOf(id)} is now a ${TROOPS[to].label}`
+    : 'The campaign could not be saved: browser storage is full or blocked.';
+  await celebrate(from, to, `${nameOf(id)}: ${TROOPS[from].label} → ${TROOPS[to].label}`, said);
+}
+/** The big pawn turns from the old class into the new one, to a fanfare; `said` goes in the status line. */
+async function celebrate(from, to, sub, said) {
   try {
     mech.clunk(0.5);
     ui.victory();
@@ -369,15 +406,13 @@ async function doUpgrade(from, to, n) {
   promoting = true;
   hands.release();
   render();
+  $('#status').textContent = said; // after render, which writes the band's totals there
   const canvas = $('#pawn');
   try {
     const [drawOld, drawNew] = await Promise.all([painter(from, canvas, PAWN), painter(to, canvas, PAWN)]);
     if (run !== promotions) return; // a newer upgrade took over
     await Promise.race([
-      promote(canvas, drawOld, drawNew, {
-        title: 'PROMOTED',
-        sub: `${r.n > 1 ? r.n + ' × ' : ''}${TROOPS[from].label} → ${TROOPS[to].label}`,
-      }),
+      promote(canvas, drawOld, drawNew, {title: 'PROMOTED', sub}),
       new Promise(done => {
         finishPromotion = done; // cut short by the next upgrade
         setTimeout(done, 4000); // and never longer than this, whatever the frame rate
@@ -444,7 +479,7 @@ function showTree(on) {
   $('#tree-btn').setAttribute('aria-pressed', String(on));
   $('#tree-btn').textContent = on ? 'Back to the band' : 'Class tree';
   if (on) {
-    tree.render(selected === 'leader' ? null : selected);
+    tree.render(classOf(selected));
     mech.handle(0.6);
   }
 }
@@ -453,7 +488,7 @@ addEventListener('keydown', e => {
   if (e.key === 'Escape' && !$('#tree-view').hidden) showTree(false);
 });
 $('#reset').onclick = () => {
-  S = fresh();
+  S = freshBand();
   selected = 'leader';
   save();
   mech.clunk(0.4);
@@ -473,6 +508,8 @@ window.PARP_BAND = {
   },
   choose,
   upgrade: doUpgrade,
+  promoteFighter: doPromoteFighter,
+  mode: opened.mode,
   get promoting() {
     return promoting;
   },

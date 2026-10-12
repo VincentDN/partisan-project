@@ -3309,10 +3309,8 @@
    "milestone": "W",
    "size": "M",
    "bu": 20,
-   "status": "planned",
-   "deps": [
-    "WP-W14"
-   ],
+   "status": "done",
+   "deps": [],
    "agent": "any",
    "needs": [
     "browser"
@@ -3321,7 +3319,7 @@
     "docs/campaign-roadmap.md"
    ],
    "acceptance": "band/ reads and writes the campaign state; promoting consumes the stash kit; standalone Rebel Band demo still works.",
-   "progress_note": "2026-10-08: Map band screen, promotions and kit persistence implemented; complete acceptance still needs browser validation."
+   "progress_note": "2026-10-12: done. band/?campaign=<id> reads and writes the campaign save (band/band-state.js); the named fighters show above the troop stacks and are promoted with their experience and the stash kit (band/fighters.js); the map band panel links to it and back; practice raid and reset only in the standalone demo. tests/band-campaign.test.mjs, tests/e2e/band-campaign.mjs. Its dependency on WP-W14 was dropped: W15 needs loot to reach the stash, which works; W14's remaining work (source labels, cargo manifests) does not block it."
   },
   {
    "id": "WP-W16",
