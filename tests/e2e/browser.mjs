@@ -1,5 +1,7 @@
-// Shared helpers for the browser tests: static server + headless Chromium with software WebGL.
-import {chromium} from 'playwright-core';
+// Shared helpers for the browser tests: static server + a headless browser with software WebGL.
+// BROWSER=firefox or BROWSER=webkit runs a suite in Playwright's Firefox or WebKit (WP-QA9; they must be installed,
+// e.g. `npx playwright install firefox webkit` on a machine that allows it); Chromium is the default.
+import {chromium, firefox, webkit} from 'playwright-core';
 import {spawn} from 'node:child_process';
 
 export async function startServer(port = 8199, root = process.env.ROOT || '.') {
@@ -13,15 +15,19 @@ export async function startServer(port = 8199, root = process.env.ROOT || '.') {
   return {url: `http://localhost:${port}/`, stop: () => proc.kill()};
 }
 /**
- * Headless Chromium. Closing it reports every console error, page error, failed request and HTTP error any page
+ * The headless browser. Closing it reports every console error, page error, failed request and HTTP error any page
  * opened with open() recorded (WP-QA3), and fails the run: a suite can pass its own checks and still have broken
  * something on the way. A page may list expected problems in `page.allowProblems` (regular expressions).
  */
 export async function launch() {
-  const browser = await chromium.launch({
-    executablePath: process.env.CHROMIUM || undefined,
-    args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist', '--no-sandbox'],
-  });
+  const kind = process.env.BROWSER || 'chromium';
+  const browser =
+    kind === 'chromium'
+      ? await chromium.launch({
+          executablePath: process.env.CHROMIUM || undefined,
+          args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist', '--no-sandbox'],
+        })
+      : await {firefox, webkit}[kind].launch();
   const close = browser.close.bind(browser);
   browser.close = async () => {
     for (const p of browser.openPages || []) p.closing = true;

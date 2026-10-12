@@ -280,7 +280,9 @@ one failed download; silent save failures; an unlabelled ground pile; a cancelle
 
 **Left for the future roadmap, in this order:**
 
-1. **QA9** (S): Firefox and WebKit smoke runs.
+1. **QA9** (S): Firefox and WebKit smoke runs. The helper is ready: `BROWSER=firefox node tests/e2e/smoke.mjs` (or
+   `webkit`). Blocked here: the cloud container has only Chromium and may not download browsers. Run it on a machine
+   with `npx playwright install firefox webkit`, then fix or document each difference.
 2. **QA14** (M) and **QA15** (S): the renderers on real hardware. The mission renderer's own code is cheap; the
    first-frame font hitch and the 60 fps question need a device measurement (WP-Q2). QA15's code work landed on
    main (`docs/engineering/campaign-performance.md`); its browser acceptance is pending.
