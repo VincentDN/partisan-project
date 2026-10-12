@@ -5,12 +5,12 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json).
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-12 11:24 UTC · claude · WP-QA21 · done**
+**2026-10-12 12:25 UTC · claude · WP-QA22 · done**
 
-- Branch `claude/friendly-dijkstra-4ky9w6` at `274c0da`; **1 uncommitted file(s)** (commit before stopping): M docs/quality-roadmap.md.
-- Last commits: 274c0da Merge main (CM5, CM6, W12, QA15, V5) into the QA branch · 0720dfc Merge pull request #2 from VincentDN/claude/stoic-hypatia-vd8ehz · f3dd8c1 Standing rule: CLAUDE.md stays blank and defers to AGENTS.md
-- What happened: Bug hunt and optimisation roadmap (docs/quality-roadmap.md, milestone QA): 13 of 22 packets done (fuzz, budgets, page-error checks, save/inventory/campaign hunts, sim soak, sim 64% faster, compact catalogue, asset diet, no fixed sleeps, golden replays, static checks, pathfinding). Main merged in (CM5, CM6, W12, QA15, V5): replays re-recorded, banter test moved to the checkpoint level.
-- Next step: Future roadmap, in order: QA22 (AI retreat spots inside closed buildings), QA8 overlays focus audit, QA10 memory, QA9 Firefox/WebKit, QA14/QA15 device measurements, QA17 module splits, QA20 strict null checks. See docs/quality-roadmap.md section 7.
+- Branch `claude/friendly-dijkstra-4ky9w6` at `3892d1d`; working tree clean.
+- Last commits: 3892d1d QA22: AI and squad pick only destinations a body can reach · fabc124 docs: note the intermittent Recon-base smoke failure seen once after the merge · cdaaccd docs: wrap up the bug hunt and optimisation round; what is left goes to the future roadmap
+- What happened: QA22 done: findCover, follow slots and sim.move now only head for reachable open ground (pathfind.js reachable/openNear); soak has no stuck units. Added WP-S44 named reactions to the tactical roadmap (section 10) at the owner's request.
+- Next step: Next QA packet: QA8 overlays focus audit, then QA10, QA9, QA14/15, QA17, QA20 (docs/quality-roadmap.md section 7). Perf baseline for the convoy level predates W12's eight rebels; rebaseline on a quiet host.
 <!-- handoff:end -->
 
 ## Resume here
