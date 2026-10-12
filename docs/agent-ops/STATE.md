@@ -5,12 +5,12 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json).
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-12 14:42 UTC · claude · WP-QA17 · done**
+**2026-10-12 15:28 UTC · claude · (owner request) · done**
 
-- Branch `claude/friendly-dijkstra-4ky9w6` at `379b873`; working tree clean.
-- Last commits: 379b873 QA17: split sim.js and ai.js along their seams (all modules under 300 lines) · e06134d QA9 prep: browser tests can run in Firefox or WebKit (BROWSER=firefox|webkit) · c0c9eaf docs: handoff for WP-QA10
-- What happened: QA17 done for sim.js and ai.js (split into sim-*/ai-* modules, replays unchanged). QA9 prep: BROWSER=firefox|webkit in tests/e2e/browser.mjs (browsers not installable here). Browser-module splits filed as WP-QA23.
-- Next step: Owner request in progress: a unified Nokia-style loader with a spinner used on every page. Then QA23, QA20; QA9/QA14/QA15 need other machines.
+- Branch `claude/friendly-dijkstra-4ky9w6` at `5b27cab`; working tree clean.
+- Last commits: 5b27cab One Nokia LCD loader on every page · 8890795 docs: handoff for WP-QA17 · 379b873 QA17: split sim.js and ai.js along their seams (all modules under 300 lines)
+- What happened: Unified Nokia LCD loader (shared/loader.css + loader.js) on every loading page; tests/loader.test.mjs; all browser suites pass.
+- Next step: QA23 (browser module splits behind new checks), QA20; QA9/QA14/QA15 need other machines. Owner asked about linking the Rebel Band screen to the campaign: that is WP-W15.
 <!-- handoff:end -->
 
 ## Resume here
