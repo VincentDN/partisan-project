@@ -10,7 +10,7 @@ import {requestControl, selectControl, cancelControl, ensureControl, advanceCont
 import {bestBelief, compass, perceive, hear, decay, armyThink, armyAct, partisanThink, partisanAct, squadThink, receive} from './ai.js';
 import {BARKS} from './banter-lines.js';
 import {coverGrid, PAD} from './cover-grid.js';
-import {findPath, walkable} from './pathfind.js';
+import {findPath, walkable, openNear} from './pathfind.js';
 
 /** mulberry32: small seeded PRNG so a run can be replayed exactly. */
 export function rng(seed) {
@@ -781,24 +781,34 @@ export class Sim {
     // the way there: straight when nothing stands in it, else a path round (convoy/pathfind.js); looked at twice a
     // second, and again when the destination moves on (followers, the AI re-thinking)
     if (u.way && Math.hypot(u.way.gx - goal.x, u.way.gz - goal.z) > 2) u.way = null;
-    if (!u.way && this.time >= (u.wayAt ?? 0)) {
+    if ((!u.way || u.way.i >= u.way.pts.length - 1) && this.time >= (u.wayAt ?? 0)) {
       u.wayAt = this.time + 0.5;
-      if (!walkable(this, u.x, u.z, goal.x, goal.z)) {
-        const pts = findPath(this, u, goal);
-        if (pts.length) u.way = {gx: goal.x, gz: goal.z, pts, i: 0};
+      // a destination in a wall's margin or a rock (a slot, a post, a spot by a house) ends at the nearest open ground
+      let end = openNear(this, goal.x, goal.z);
+      if (end && end.x === goal.x && end.z === goal.z) end = goal;
+      if (end && Math.hypot(end.x - u.x, end.z - u.z) < 0.35) {
+        u.moveTo = null;
+        return true;
+      }
+      if (!end || !walkable(this, u.x, u.z, end.x, end.z)) {
+        const pts = end ? findPath(this, u, end) : [];
+        if (pts.length) u.way = {gx: goal.x, gz: goal.z, pts, i: 0, end};
         else {
           // the destination cannot be reached (inside cover, off the map) and this is as near as it gets: stop here
           u.moveTo = null;
           return true;
         }
-      }
+      } else u.way = end === goal ? null : {gx: goal.x, gz: goal.z, pts: [end], i: 0, end};
     }
     let to = goal;
     if (u.way) {
       const R = u.way;
       while (R.i < R.pts.length - 1 && Math.hypot(R.pts[R.i].x - u.x, R.pts[R.i].z - u.z) < 0.5) R.i++;
-      to = R.i < R.pts.length - 1 ? R.pts[R.i] : goal;
-      if (to === goal) u.way = null;
+      to = R.i < R.pts.length - 1 ? R.pts[R.i] : R.end;
+      if (Math.hypot(R.end.x - u.x, R.end.z - u.z) < 0.35) {
+        u.moveTo = u.way = null;
+        return true;
+      }
     }
     const dx = to.x - u.x,
       dz = to.z - u.z,

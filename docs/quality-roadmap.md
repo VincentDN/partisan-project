@@ -148,6 +148,24 @@ search arrays, marking vehicles once per search and capping the search brought i
 CPU is lower than before paths (1,891 ms against 2,037). The golden replays were re-recorded on purpose: both
 sides now walk round cover, so the fights end differently.
 
+### Reachable destinations (QA22)
+
+After main's W12 merge (eight rebels) the soak found seven stuck units, in three kinds: soldiers choosing cover off
+the edge of the convoy map, rebels whose follow slot fell inside a house's wall margin, and soldiers whose retreat
+spot or post lay inside a wall or a rock. Three fixes in `convoy/pathfind.js`, used by the AI and the sim:
+
+- `reachable(sim, a, b)`: the walk grid's connected regions are labelled once per level, so "can a body get there at
+  all" is one lookup. `findCover` (cover, retreat, bounding) skips spots off the map or shut in a house or yard.
+- `openNear(sim, x, z)`: the point itself when a body can stand there, else the nearest open cell. Follow slots use it.
+- `sim.move` ends a path at the nearest open ground to its goal and counts arriving there as arriving, instead of
+  walking the last stretch into the wall and leaning on it. A path on its last leg may be replanned.
+
+Soak (10 minutes, every level, three seeds): no stuck units, no units inside cover. `tests/walk.test.mjs` covers the
+helpers and fails on the old cover choice. Replays re-recorded on purpose. Sim CPU is unchanged within this host's
+noise (an A/B of three runs: 1,546 ms before and 1,636 ms after, with single runs swinging by 300 ms). The perf check
+flags the convoy level at 164 → 240 ms on main without this change: the baseline predates W12's eight-rebel squad.
+Rebaseline on a quiet host with QA14, not from a noisy container.
+
 ### Static checks (QA19)
 
 `node tools/qa/unused.mjs` reports exports no other file mentions: 52, nearly all used inside their own module; three
@@ -204,25 +222,24 @@ The survey scripts become packets QA1 and QA2 (`tests/fuzz/`, `tools/perf/`); un
 
 ## 7. Where it stands (2026-10-12) and what is left
 
-**Done (13 of 22):** QA1 fuzz harness and nightly run, QA2 performance budgets, QA3 browser suites fail on page
+**Done (15 of 22, counting QA15's code on main):** QA1 fuzz harness and nightly run, QA2 performance budgets, QA3 browser suites fail on page
 errors, QA4 save hunt, QA5 inventory hunt, QA6 sim soak, QA7 campaign soak, QA11 sim hot path (64 % less CPU),
 QA12 compact catalogue, QA13 asset diet (mission page 14.4 → 3.1 MB), QA16 no fixed sleeps, QA18 golden replays, QA19
-static checks, QA21 pathfinding. Real bugs fixed on the way: the map stopped reporting results after about 80
+static checks, QA21 pathfinding, QA22 reachable destinations. Real bugs fixed on the way: the map stopped reporting results after about 80
 encounters; units stuck against cover for whole fights; soldiers dismounting off the map; a kit screen disabled by
 one failed download; silent save failures; an unlabelled ground pile; a cancelled drag left stuck.
 
 **Left for the future roadmap, in this order:**
 
-1. **QA22** (S): AI retreat and cover spots inside closed buildings (the soak's last two findings, village).
-2. **QA8** (S): keyboard and focus walk of the stacked overlays (encounter, band, kit, search).
-3. **QA10** (S): memory over restarts, overlays and map–mission trips.
-4. **QA9** (S): Firefox and WebKit smoke runs.
-5. **QA14** (M) and **QA15** (S): the renderers on real hardware. The mission renderer's own code is cheap; the
+1. **QA8** (S): keyboard and focus walk of the stacked overlays (encounter, band, kit, search).
+2. **QA10** (S): memory over restarts, overlays and map–mission trips.
+3. **QA9** (S): Firefox and WebKit smoke runs.
+4. **QA14** (M) and **QA15** (S): the renderers on real hardware. The mission renderer's own code is cheap; the
    first-frame font hitch and the 60 fps question need a device measurement (WP-Q2). QA15's code work landed on
    main (`docs/engineering/campaign-performance.md`); its browser acceptance is pending.
-6. **QA17** (M): split the oversized modules (sprite-render, soundscape, sim, sprite-game, ai) behind the replays.
-7. **QA20** (M): strict null checks for `shared/` (161 inference errors to type).
-8. **An intermittent smoke failure** to look into with QA8–QA10: "operator: Recon base … loads and responds" failed
+5. **QA17** (M): split the oversized modules (sprite-render, soundscape, sim, sprite-game, ai) behind the replays.
+6. **QA20** (M): strict null checks for `shared/` (161 inference errors to type).
+7. **An intermittent smoke failure** to look into with QA8–QA10: "operator: Recon base … loads and responds" failed
    once in two runs on 2026-10-12 with "page.evaluate: Resulting promise was garbage collected" at
    `switchBase('base')`, right after main's change to the Recon reload (d6e9dbf). It passed on the re-run.
 

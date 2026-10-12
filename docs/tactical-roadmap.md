@@ -372,3 +372,42 @@ Preserve setting canon decisions in WP-D1 separately; no new faction art is requ
 No calendar completion promise: after S20/S21/S28/S8/S29, recalibrate packet sizes using actual work and blockers. A solo
 operator should finish one gate before opening the next. The generated master table reports current totals; it does
 not establish that the remaining work fits a particular number of subscription windows.
+
+## 10. Named reactions (WP-S44)
+
+Owner request (2026-10-12), in the spirit of The Last of Us Part II: every soldier and militiaman in a scenario has a
+name the others know, and they react to what happens to the people next to them. The barks that exist
+(`convoy/banter-lines.js`: `hurt`, `mateDown` with `{name}`) are the seed; this makes them a system.
+
+**Who knows whom.** A unit's name is drawn per scenario from a side's name pool (surname for soldiers, first name or
+nickname for militia), with a call name ("Richards", "Kuhar", "Dado"). Units in the same group, vehicle or post are
+*close*: they know each other's names and react hardest. The rest of the side knows the name but reacts less.
+
+**Events and lines** (each a pool of variations, with `{name}`, `{killer}` and `{place}` filled in):
+
+| Event | Who speaks | Examples |
+| --- | --- | --- |
+| Hit, still up | the wounded | "Hit, I'm hit!", "Agh, my arm!" |
+| Hit, armour held | the wounded | "Plates! They got plates! I'm good!" (needs armour from WP-S31) |
+| Comrade hit | someone close | "{name}'s hit! Get him behind cover!" |
+| Comrade down | someone close | "Fuck! They got {name}!" |
+| Comrade down, close bond | a friend | "{name}! NO! You rebel fucks!" |
+| Comrade down, far | anyone who saw | "Man down by the {place}!" |
+| Calling for a comrade | a friend, after a silence | "{name}? {name}, answer me!" |
+| Last one of a group | the survivor | "It's just me! I need help here!" |
+| Revenge | the friend, on a kill | "That's for {name}!" |
+
+Militia get their own pools in their own register ("They got Dado!", "For Mila!"). Cursing is allowed; slurs are not.
+
+**Behaviour, not just words.** Grief and anger change what a unit does for a while: a friend of the fallen may rush
+the killer (more aggressive, less careful), freeze (pinned sooner), or fall back. The choice is seeded from the
+unit's temperament, so replays stay deterministic. A unit that calls a name and gets no answer marks that comrade as
+lost, which feeds squad morale (WP-S15).
+
+**Rules.** A death gets one reaction from the closest friend within a few seconds, and at most one more from anyone
+else. Lines go through the existing bubble queue and cooldowns. Reactions need line of sight or earshot, so a quiet
+kill stays quiet. Every line is text first and voice later.
+
+**Acceptance.** Seeded tests show that a death near a friend draws a named reaction within 3 s, and a silent kill out of
+earshot draws none. A seeded run of every level shows no line repeated inside 30 s. The replay corpus is
+re-recorded only when the behaviour changes are switched on.

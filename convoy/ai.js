@@ -13,6 +13,7 @@
 import {WEAPONS, ROLES} from './weapons.js';
 import {dist, inBox} from './sim.js';
 import {PAD} from './cover-grid.js';
+import {openNear, reachable} from './pathfind.js';
 
 const COMPASS = ['east', 'south-east', 'south', 'south-west', 'west', 'north-west', 'north', 'north-east'];
 /** Compass word for a direction on the map (x east, z south). */
@@ -155,6 +156,7 @@ export function findCover(sim, u, threat) {
       if (blocked(px, pz)) continue;
       const far = Math.hypot(px - u.x, pz - u.z) * 1.2;
       if (40 - far <= bestScore) continue; // even covered and alone it cannot beat the best: skip the sight check
+      if (!reachable(sim, u.x, u.z, px, pz)) continue; // off the map, or shut in a house or a walled yard
       const covered = !sim.los(threat.x, threat.z, px, pz);
       const crowd = sim.units.filter(
         o => o !== u && o.alive && o.side === u.side && Math.hypot((o.moveTo || o).x - px, (o.moveTo || o).z - pz) < 1.6,
@@ -438,7 +440,10 @@ function followSlot(sim, u) {
   if (Math.hypot(p.x - h.x, p.z - h.z) > 0.6) Object.assign(h, {a: Math.atan2(p.z - h.z, p.x - h.x), x: p.x, z: p.z});
   const back = h.a + Math.PI,
     side = (k % 2 ? 1 : -1) * (1 + Math.floor(k / 2)) * 1.4;
-  return {x: p.x + Math.cos(back) * 2.2 - Math.sin(back) * side, z: p.z + Math.sin(back) * 2.2 + Math.cos(back) * side};
+  // a slot that falls in a wall or off the map moves to the nearest ground a body can stand on
+  const x = p.x + Math.cos(back) * 2.2 - Math.sin(back) * side,
+    z = p.z + Math.sin(back) * 2.2 + Math.cos(back) * side;
+  return openNear(sim, x, z) || {x: p.x, z: p.z};
 }
 
 export function partisanThink(sim, u) {

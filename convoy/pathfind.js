@@ -46,6 +46,81 @@ function grid(sim) {
   });
 }
 
+/** Connected regions of the static grid (flood fill, once per level): 0 for a solid cell, else a region number. */
+function regions(G) {
+  if (G.region) return G.region;
+  const {w, h, solid} = G,
+    region = new Int32Array(w * h),
+    stack = [];
+  let next = 0;
+  for (let s = 0; s < w * h; s++) {
+    if (solid[s] || region[s]) continue;
+    region[s] = ++next;
+    stack.push(s);
+    while (stack.length) {
+      const n = stack.pop(),
+        i = n % w,
+        j = (n - i) / w;
+      for (const [ni, nj] of [
+        [i - 1, j],
+        [i + 1, j],
+        [i, j - 1],
+        [i, j + 1],
+      ])
+        if (ni >= 0 && nj >= 0 && ni < w && nj < h && !solid[nj * w + ni] && !region[nj * w + ni]) {
+          region[nj * w + ni] = next;
+          stack.push(nj * w + ni);
+        }
+    }
+  }
+  return (G.region = region);
+}
+
+/** The static cell nearest (x, z) a body can stand in, within three cells: its index, or -1. */
+function openCell(G, x, z) {
+  const {w, h, solid, x0, z0} = G;
+  const i = Math.floor((x - x0) / CELL),
+    j = Math.floor((z - z0) / CELL);
+  let best = -1,
+    bestD = Infinity;
+  for (let dj = -3; dj <= 3; dj++)
+    for (let di = -3; di <= 3; di++) {
+      const ni = i + di,
+        nj = j + dj;
+      if (ni < 0 || nj < 0 || ni >= w || nj >= h || solid[nj * w + ni]) continue;
+      const d = Math.hypot(x0 + (ni + 0.5) * CELL - x, z0 + (nj + 0.5) * CELL - z);
+      if (d < bestD) [best, bestD] = [nj * w + ni, d];
+    }
+  return best;
+}
+
+/** (x, z) itself when a body can stand there, else the nearest point that it can (a cell centre), or null. */
+export function openNear(sim, x, z) {
+  const G = grid(sim),
+    B = sim.level.bounds;
+  if (
+    x > B.minX &&
+    x < B.maxX &&
+    z > B.minZ &&
+    z < B.maxZ &&
+    !sim.someCoverNear(x - 1, z - 1, x + 1, z + 1, b => inBox(x, z, b, BODY - 0.1))
+  )
+    return {x, z};
+  const n = openCell(G, x, z);
+  return n < 0 ? null : {x: G.x0 + ((n % G.w) + 0.5) * CELL, z: G.z0 + (Math.floor(n / G.w) + 0.5) * CELL};
+}
+
+/** Can a body get from a to b at all, round the level's fixed cover (what moves is left out)? Inside the map only. */
+export function reachable(sim, ax, az, bx, bz) {
+  const G = grid(sim),
+    B = sim.level.bounds;
+  if (bx < B.minX || bx > B.maxX || bz < B.minZ || bz > B.maxZ) return false;
+  const region = regions(G),
+    a = openCell(G, ax, az),
+    b = openCell(G, bx, bz);
+  return a >= 0 && b >= 0 && region[a] === region[b];
+}
+
 /** Can a body walk the straight segment a->b without touching cover, a fieldwork or a vehicle? */
 export function walkable(sim, ax, az, bx, bz, r = BODY - 0.1) {
   const hits = b => !inBox(ax, az, b) && segmentBox(ax, az, bx, bz, b, r) <= 1; // touching a box is no excuse to walk through it

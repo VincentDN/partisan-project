@@ -192,10 +192,10 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | **TD** Tech debt (fill windows) | — | 4/4 | 44 BU | 100% |
 | **D** Design docs | — | 3/5 | 59 BU | 61% |
 | **H27** 2027 horizon | — | 0/3 | 48 BU | 0% |
-| **S** Partisan Tactical: extraction PvE, campaign and gated online research | v0.8.0 | 15/43 | 653 BU | 35% |
+| **S** Partisan Tactical: extraction PvE, campaign and gated online research | v0.8.0 | 15/44 | 673 BU | 34% |
 | **V** Graphics: 2.5D top-down sprites for the shooter (the overworld moved to W) | v0.9.0 | 2/20 | 251 BU | 11% |
 | **W** World campaign: the Bannerlord loop (map, missions, loot, upgrades) | v0.10.0 | 4/26 | 359 BU | 14% |
-| **QA** Bug hunt and optimisation (docs/quality-roadmap.md) | — | 14/22 | 274 BU | 64% |
+| **QA** Bug hunt and optimisation (docs/quality-roadmap.md) | — | 15/22 | 274 BU | 66% |
 
 ### M0 · Foundation
 
@@ -348,6 +348,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-S41` | Owner decision: approve a PvPvE experiment after co-op retention, fairness and cost review | XS (3) | blocked | owner | `WP-S40` |
 | `WP-S42` | Conditional PvPvE experiment: small closed raid population and fairness evaluation | M (20) | planned | browser, net | `WP-S41` |
 | `WP-S43` | Ammunition catalogue: real calibres and round types for every tactical weapon, tactical weapons and band gear mapped to catalogue items | S (8) | done | — | — |
+| `WP-S44` | Named reactions: every unit named in a scenario; comrades react to wounds and deaths by name, grief changes behaviour | M (20) | planned | — | `WP-S31` |
 
 ### V · Graphics: 2.5D top-down sprites for the shooter (the overworld moved to W)
 
@@ -430,7 +431,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-QA19` | Static checks: a report of unused exports and unreferenced files; dead code removed | XS (3) | done | — | — |
 | `WP-QA20` | Strict null checks for shared/ and the modules it imports (JSDoc types where inference gives null or never) | M (20) | ready | — | `WP-QA19` |
 | `WP-QA21` | Pathfinding for mission movement: units stuck against concave cover (soak findings) | M (20) | done | — | `WP-QA6`, `WP-QA18` |
-| `WP-QA22` | AI retreat and cover spots inside buildings: choose reachable points only | S (8) | ready | — | `WP-QA21` |
+| `WP-QA22` | AI retreat and cover spots inside buildings: choose reachable points only | S (8) | done | — | `WP-QA21` |
 
 ### TD · Tech debt (fill windows)
 

@@ -3558,6 +3558,27 @@
    "acceptance": "Every tactical weapon and band weapon resolves to a catalogue weapon, its calibre, its magazines and at least two round types; a test fails on any unmapped id."
   },
   {
+   "id": "WP-S44",
+   "title": "Named reactions: every unit named in a scenario; comrades react to wounds and deaths by name, grief changes behaviour",
+   "track": "Tactical",
+   "milestone": "S",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-S31"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/tactical-roadmap.md",
+    "convoy/banter.js",
+    "convoy/banter-lines.js",
+    "convoy/ai.js"
+   ],
+   "acceptance": "Units carry per-scenario names and close bonds (group, vehicle, post); hit, armour-held, comrade hit, comrade down, close-friend grief, name-calling, last-survivor and revenge lines exist for both sides with variations; a death near a friend draws a named reaction within 3 s and a silent kill out of earshot draws none; grief changes behaviour (rush, freeze or fall back) seeded per unit; no line repeats inside 30 s in a seeded run of every level."
+  },
+  {
    "id": "WP-QA18",
    "title": "Golden replays: recorded input streams per level; same seed and inputs give the same debrief",
    "track": "Quality",
@@ -3637,7 +3658,7 @@
    "inputs": [
     "docs/quality-roadmap.md"
    ],
-   "acceptance": "Property tests over garbage and truncated saves; settle is idempotent across a reload at every step; a second tab never loses the other tab\u2019s writes silently (it warns or merges); quota errors are reported, not swallowed."
+   "acceptance": "Property tests over garbage and truncated saves; settle is idempotent across a reload at every step; a second tab never loses the other tab’s writes silently (it warns or merges); quota errors are reported, not swallowed."
   },
   {
    "id": "WP-QA5",
@@ -3930,7 +3951,7 @@
    "milestone": "QA",
    "size": "S",
    "bu": 8,
-   "status": "ready",
+   "status": "done",
    "deps": [
     "WP-QA21"
    ],
