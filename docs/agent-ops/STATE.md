@@ -5,22 +5,12 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json).
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-09 · 3D convoy restoration and faction roadmap**
+**2026-10-12 11:24 UTC · claude · WP-QA21 · done**
 
-- Owner requested original 3D convoy vehicles on the default 2.5D map. Shared `map/vehicles.js` now supplies truck/M-ATV/Humvee models to both styles; people stay sprites in the default map and operator rigs remain lazy.
-- Focused Chromium validation passed: all three convoy columns use solid model geometry and move; HD2D/sprite people retained; no operator-rig request. Map travel browser regression also passes (routing, pause, arrival/save/reload). Lint, formatting, types and build/link checks pass.
-- Graphics/campaign/master roadmaps and V5/CM20 acceptance now require distinct faction silhouettes: occupiers olive drab with helmets and covered faces where supported; default insurgents civilian clothing, hood/shemagh coverings only, never helmets. This art requirement is planned, not implemented in this change.
-
-Previous milestone:
-
-**2026-10-09 · codex · map optimization and correctness follow-up**
-
-- Prior campaign/equipment integration is published and deployed on main: `4a916e7` then `043bb9c`. Local main was aligned to the exact remote commits after verifying identical trees.
-- Hosted run `37818182112` passed build/unit/deployment, general browser smoke, campaign bridge, map travel, campaign loop and inventory. It failed later at generated-Recon reload's generic 30-second navigation timeout; subsequent character suites and accessibility did not run.
-- Follow-up: paused settled map renders at most twice per second, with immediate camera/resize/click wake; shadow projection is cached and updated with shadows; convoy vectors reused; unchanged paused convoy transforms and party summary DOM skipped; reduced-motion decorative animation frozen.
-- Fixes preserve saved speed and pre-encounter pause, display actual fit fighter count, refresh trade summaries while paused and restore convoy heading. Operator reload now waits for DOM readiness with a bounded navigation timeout, retaining model/weapon readiness assertions.
-- Validation: all 45 focused campaign/picking/render-budget/replay checks pass, as do lint, types and direct site build/link checks. New render-budget tests cover idle cadence and immediate wake. Reference-device FPS and final browser/CM6 acceptance remain open.
-- Roadmap and detailed vertical-slice write-up are in `docs/campaign-roadmap.md`; performance evidence and limitations are in `docs/engineering/campaign-performance.md`. Keep working on main as explicitly authorized.
+- Branch `claude/friendly-dijkstra-4ky9w6` at `274c0da`; **1 uncommitted file(s)** (commit before stopping): M docs/quality-roadmap.md.
+- Last commits: 274c0da Merge main (CM5, CM6, W12, QA15, V5) into the QA branch · 0720dfc Merge pull request #2 from VincentDN/claude/stoic-hypatia-vd8ehz · f3dd8c1 Standing rule: CLAUDE.md stays blank and defers to AGENTS.md
+- What happened: Bug hunt and optimisation roadmap (docs/quality-roadmap.md, milestone QA): 13 of 22 packets done (fuzz, budgets, page-error checks, save/inventory/campaign hunts, sim soak, sim 64% faster, compact catalogue, asset diet, no fixed sleeps, golden replays, static checks, pathfinding). Main merged in (CM5, CM6, W12, QA15, V5): replays re-recorded, banter test moved to the checkpoint level.
+- Next step: Future roadmap, in order: QA22 (AI retreat spots inside closed buildings), QA8 overlays focus audit, QA10 memory, QA9 Firefox/WebKit, QA14/QA15 device measurements, QA17 module splits, QA20 strict null checks. See docs/quality-roadmap.md section 7.
 <!-- handoff:end -->
 
 ## Resume here
