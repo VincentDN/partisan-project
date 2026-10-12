@@ -1,0 +1,64 @@
+# Validate the CM6 feature branch on a GitHub-hosted runner; this workflow never deploys.
+name: CM6 cloud acceptance
+
+on:
+  push:
+    branches: [codex/generated-operator-equipment]
+    paths:
+      - 'operator/**'
+      - 'tests/**'
+      - 'tools/assets/**'
+      - 'assets/models/operators/recon-pouches*'
+      - 'assets/register.json'
+      - 'package*.json'
+      - '.github/workflows/cm6-cloud.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cm6-cloud-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  acceptance:
+    if: github.ref == 'refs/heads/codex/generated-operator-equipment'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Unit, lint and type checks
+        run: |
+          mkdir -p build
+          set -o pipefail
+          npm test 2>&1 | tee build/cm6-cloud-units.log
+          npm run lint
+          npm run typecheck
+          npx --no-install prettier --check operator/mounted-pouches.js operator/operator.js operator/pose-profile.js operator/recon-modular.js tests/recon-pouches.test.mjs tests/operator-config.test.mjs tests/e2e/recon-pouches.mjs tests/e2e/pouch-interactions.mjs tools/assets/build-recon-pouches.mjs
+      - name: Build and check the site
+        run: npm run build && npm run check
+      - name: Install Chromium
+        run: npx playwright-core install --with-deps chromium
+      - name: Built-site browser regressions
+        env:
+          ROOT: _site
+        run: |
+          set -o pipefail
+          npm run test:e2e 2>&1 | tee build/cm6-cloud-browser.log
+      - name: Keep acceptance logs and contact sheets
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cm6-acceptance
+          path: |
+            build/cm6-cloud-*.log
+            build/recon-pouches-sheet.png
+            build/recon-pouches-mobile.png
+            build/recon-carrier-sheet.png
+          retention-days: 7

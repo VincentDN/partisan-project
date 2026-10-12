@@ -34,6 +34,7 @@ function purpose(file, text) {
     .map(l => l.trim());
   if (file.endsWith('.md')) return (lines.find(l => l.startsWith('# ')) || '').replace(/^#\s*/, '');
   if (file.endsWith('.html')) return (text.match(/<title>([^<]*)<\/title>/) || [])[1] || '';
+  if (file.endsWith('.yml')) return (lines.find(l => l.startsWith('# ')) || '').replace(/^#\s*/, '');
   if (file.endsWith('.py')) {
     const m = text.match(/^"""([^\n]*)/);
     return m ? m[1] : '';

@@ -25,7 +25,7 @@ test('a good set of conversations: two speakers, a few lines each, readable', ()
 });
 
 test('while it is quiet the militia talk: a whole conversation, in order, in long bubbles', () => {
-  const sim = new Sim({seed: 3});
+  const sim = new Sim({level: 'checkpoint', seed: 3}); // a quiet approach (the convoy now spots the band within seconds)
   const b = createBanter(sim, 3);
   run(sim, b, 40);
   const chat = sim.callouts.filter(c => c.dur);
@@ -43,16 +43,16 @@ test('while it is quiet the militia talk: a whole conversation, in order, in lon
 });
 
 test('a shot cuts the talk short; the same seed, the same words', () => {
-  const sim = new Sim({seed: 3});
+  const sim = new Sim({level: 'checkpoint', seed: 3});
   const b = createBanter(sim, 3);
   for (let i = 0; i < 60 * 40 && !b.talking; i++) {
     sim.step(1 / 60, {});
     b.update();
   }
   assert.ok(b.talking, 'a conversation started');
-  const v = sim.vehicles[1];
+  const p = sim.player;
   for (let i = 0; i < 30; i++) {
-    sim.step(1 / 60, {ax: v.x, az: v.z, fire: true});
+    sim.step(1 / 60, {ax: p.x + 20, az: p.z, fire: true});
     b.update();
   }
   assert.equal(b.talking, null, 'the shot ended it');

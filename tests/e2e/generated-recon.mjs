@@ -46,7 +46,7 @@ try {
   assert.deepEqual(failures, []);
   const hash = await page.evaluate(() => location.hash);
   await page.waitForFunction(() => window.PARP_OPERATOR.weapon?.rifle, null, {timeout: 60000}); // let the rifle finish loading first
-  await page.reload();
+  await page.reload({waitUntil: 'domcontentloaded', timeout: 120000});
   await page.waitForFunction(() => window.PARP_OPERATOR?.ready);
   assert.equal(await page.evaluate(() => location.hash), hash);
   assert.equal(await page.evaluate(() => window.PARP_OPERATOR.state['z.top']), 'navy');
@@ -112,7 +112,7 @@ try {
   assert.equal(await page.evaluate(() => window.PARP_OPERATOR.rig.bones.size), 26);
   await page.emulateMedia({reducedMotion: 'no-preference'});
   await page.waitForFunction(() => window.PARP_OPERATOR.weapon?.rifle, null, {timeout: 60000}); // let the rifle finish loading first
-  await page.reload();
+  await page.reload({waitUntil: 'domcontentloaded', timeout: 120000});
   await page.waitForFunction(() => window.PARP_OPERATOR?.ready && window.PARP_OPERATOR.weapon?.rifle, null, {timeout: 60000});
   await page.evaluate(() => {
     window.PARP_OPERATOR.set('look', 'off');

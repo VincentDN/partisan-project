@@ -1,0 +1,67 @@
+{
+ "version": 1,
+ "fitProfile": "recon-standard",
+ "skeletonId": "recon-v1",
+ "meshes": [
+  {
+   "node": "SK_LC_Shoulder_R",
+   "triangles": 36,
+   "boundaryEdges": 0
+  },
+  {
+   "node": "SK_LC_Pad_R",
+   "triangles": 20,
+   "boundaryEdges": 0
+  },
+  {
+   "node": "SK_LC_Buckle_R",
+   "triangles": 12,
+   "boundaryEdges": 0
+  },
+  {
+   "node": "SK_LC_Cummerbund_R",
+   "triangles": 104,
+   "boundaryEdges": 0
+  },
+  {
+   "node": "SK_LC_Shoulder_L",
+   "triangles": 36,
+   "boundaryEdges": 0
+  },
+  {
+   "node": "SK_LC_Pad_L",
+   "triangles": 20,
+   "boundaryEdges": 0
+  },
+  {
+   "node": "SK_LC_Buckle_L",
+   "triangles": 12,
+   "boundaryEdges": 0
+  },
+  {
+   "node": "SK_LC_Cummerbund_L",
+   "triangles": 104,
+   "boundaryEdges": 0
+  },
+  {
+   "node": "SK_LC_Front",
+   "triangles": 268,
+   "boundaryEdges": 0
+  },
+  {
+   "node": "SK_LC_Rear",
+   "triangles": 268,
+   "boundaryEdges": 0
+  },
+  {
+   "node": "SK_LC_Placard",
+   "triangles": 236,
+   "boundaryEdges": 0
+  }
+ ],
+ "bodySha256": "1064e3091fad7296ce8f857d2d39093ed76274b5e4beb28656ee5f68c5c7a750",
+ "modelSha256": "d68e8a92eb133387e8e6f12c3420c0e56a0f882c70ea955fd63ac36d78429e9f",
+ "triangles": 1116,
+ "mountSpace": "parent asset rest coordinates; pouch skin binding follows in CM6",
+ "budget": "Carrier cost includes every loaded mesh, including hidden placard. The placard is a shared owner-asset selection with zero additional geometry cost."
+}

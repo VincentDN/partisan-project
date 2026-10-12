@@ -1,5 +1,6 @@
 // Convoy Ambush simulation: pure, deterministic (seeded), no three.js, so the AI can be unit-tested in node.
 // Fixed-step: call step(dt, input) at 60 Hz. The renderer (convoy/sprite-render.js) only reads state and event lists.
+import {REBEL_HEALTH, squadSpawns, DEFAULT_SQUAD} from './roster.js';
 import {LEVELS, DEFAULT_LEVEL} from './levels/index.js';
 import {WEAPONS, ROLES, PARTISAN_LOADOUTS, munition} from './weapons.js';
 import {kitFor, modsFor} from './abilities.js';
@@ -183,7 +184,12 @@ export class Sim {
       this.addVehicle(v, x, L.convoy.z);
     }
     (L.units || []).forEach((f, i) => this.footSoldier(f, i));
-    for (const p of L.partisans) {
+    const roster = squad
+      ? Object.keys(squad)
+      : LEVELS[L.id] && L.partisans.some(p => p.id === 'player')
+        ? Object.keys(DEFAULT_SQUAD)
+        : L.partisans.map(p => p.id);
+    for (const p of squadSpawns(L, roster)) {
       const cls = squad?.[p.id] || null;
       const u = this.unit({
         id: p.id,
@@ -194,10 +200,11 @@ export class Sim {
         z: p.z,
         weapons: p.weapons || (cls ? kitFor(cls, p.id === 'player') : PARTISAN_LOADOUTS[p.id] || ['ak']),
       });
+      u.hp = u.maxHp = REBEL_HEALTH;
       if (cls) {
         u.cls = cls;
         u.mods = modsFor(cls);
-        u.hp = u.maxHp = Math.round(100 * u.mods.hp);
+        u.hp = u.maxHp = Math.round(REBEL_HEALTH * u.mods.hp);
       }
       u.cooldowns = {};
       u.grenades = GRENADES;
@@ -1006,7 +1013,7 @@ export class Sim {
         id: u.id,
         name: u.name,
         kills: this.kills[u.id] || 0,
-        state: !u.alive ? 'down' : u.hp < 100 ? 'wounded' : 'fit',
+        state: !u.alive ? 'down' : u.hp < (u.maxHp ?? 100) ? 'wounded' : 'fit',
       })),
       taken: this.items.filter(i => i.taken).map(i => i.label),
       ...s,

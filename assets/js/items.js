@@ -32,15 +32,9 @@ export const ITEMS = [
   },
   {
     label: 'Overworld Map',
-    href: '../map/',
+    href: '../map/?campaign',
     icon: px('0110011110111110111000100'),
-    help: 'Test. A Bannerlord-style campaign map of the island: provinces, towns, your party on a hill, Invader patrols and convoys on the roads.',
-  },
-  {
-    label: 'Overworld 2.5-D',
-    href: '../map25/',
-    icon: px('0010001110111110010001010'),
-    help: 'Test. The same island in HD-2D style, like Octopath Traveler: pixel sprites for every soldier and vehicle standing on the 3-D world, a tilt-shift miniature frame, warm light. Click land to march.',
+    help: 'Campaign. March across the 2.5D island, fight encounters, bring equipment home and build your rebel band.',
   },
   {
     label: 'Inventory',
@@ -54,6 +48,12 @@ export const ITEMS = [
     icon: px('1110010010111111000111111'),
     help: 'Tools and documents for building the game. Locked: keep tapping.',
     children: [
+      {
+        label: '3-D overworld demo',
+        href: '../map/3d.html',
+        icon: px('0010001110111110010001010'),
+        help: 'Demo. The earlier fully 3-D map style, retained for comparison. The campaign uses the 2.5D map.',
+      },
       {
         label: 'Equipment Wiki',
         href: '../wiki/',

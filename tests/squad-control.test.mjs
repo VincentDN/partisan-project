@@ -31,7 +31,7 @@ test('swap preserves each rebel object, health, ammo, cooldowns and in-progress 
 test('invalid selection cannot grant control to enemies, dead, escaped or missing units', () => {
   const sim = new Sim();
   get(sim, 'mila').alive = false;
-  get(sim, 'dragan').escaped = true;
+  for (const u of sim.units.filter(u => u.side === 'partisan' && !['player', 'mila'].includes(u.id))) u.escaped = true;
   for (const id of ['mila', 'dragan', 'lead-0', 'missing', 'player']) assert.equal(sim.swapTo(id), false);
   assert.equal(sim.requestSwap(), false);
 });
@@ -47,7 +47,7 @@ test('active rebel death requests forced choice and all-down alone loses the mis
   assert.ok(sim.swapTo('dragan'), 'forced selection bypasses cooldown');
   assert.equal(sim.player.id, 'dragan');
   sim.damage(get(sim, 'player'), get(sim, 'lead-0'), 999);
-  sim.damage(sim.player, get(sim, 'lead-0'), 999);
+  for (const u of sim.units.filter(u => u.side === 'partisan' && u.alive)) sim.damage(u, get(sim, 'lead-0'), 999);
   sim.checkOutcome();
   assert.equal(sim.outcome, 'lost');
   assert.equal(sim.control.pending, null);

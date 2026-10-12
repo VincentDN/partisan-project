@@ -62,3 +62,25 @@ node tools/agent/…          next-packet | handoff | usage | roadmap-table | co
 
 `feat|fix|docs|chore|test(WP-ID): subject` + a body that says what was verified. Branches: `claude/<topic>`, `codex/<topic>`.
 Do not open pull requests unless the owner asks.
+
+## Claude-specific notes (moved from CLAUDE.md)
+
+Read `docs/agent-ops/STATE.md` after this file.
+
+- Use `Grep`/`Glob` and line-range `Read`s; do not read files listed under "Do not read".
+- Use `/usage` before and after each packet and log it (`node tools/agent/usage.mjs log ...`).
+- Prefer one contact-sheet screenshot to many single screenshots (`tests/e2e/contact-sheet.mjs`).
+- No sub-agents on the $20 plan unless the owner asks.
+- **Do not spend tokens on credits or licences** (hidden test project): skip them, see the express instruction elsewhere in this file.
+
+## Agent instruction files (standing rule)
+
+We run a multi-agent workflow, so `AGENTS.md` is the single source of instructions for every agent. `CLAUDE.md` must always exist, stay blank of instructions, and only defer to this file:
+
+```
+# Claude Code
+
+Read [AGENTS.md](AGENTS.md).
+```
+
+Never add rules, notes or tool preferences to `CLAUDE.md`; put them in this file (mark agent-specific ones clearly). If you find instructions in `CLAUDE.md`, move them here and restore the pointer.

@@ -15,6 +15,8 @@ import {
   SOURCES,
   ACTIONS,
 } from '../shared/campaign/contacts.js';
+import {SQUAD_MIN} from '../convoy/roster.js';
+import {rest, safeHaven, operation} from '../shared/campaign/operations.js';
 import {deploy} from '../shared/campaign/encounter.js';
 import {TROOPS, GEAR} from '../band/troops.js';
 import {createCamp, NAMES} from '../convoy/camp.js';
@@ -40,10 +42,18 @@ const el = (tag, attrs = {}, ...kids) => {
   return e;
 };
 
-export function mountCampaign({travel, parties, townLabels, setSpeed, toast}) {
+export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed = () => 1, toast}) {
   const campaign = travel.campaign;
   if (!campaign) return null;
   const save = () => travel.save();
+  for (const p of parties.parties) {
+    if (!p.state) continue;
+    const stored = campaign.world.parties.find(s => s.id === p.id && s.motion);
+    if (stored) Object.assign(p.state, stored.motion);
+    else campaign.world.parties.push({id: p.id, motion: p.state});
+    if (stored) stored.motion = p.state;
+    p.update(0, 0);
+  }
   const names = Object.fromEntries(SETTLEMENTS.map(s => [s.id, s.name]));
 
   // ---------- what happened while we were away ----------
@@ -67,8 +77,11 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, toast}) {
   const panel = el('div', {class: 'encounter hud', role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': 'enc-title', hidden: true});
   document.body.append(panel);
   let open = null, // {id, source, at: {x, z}}
-    ignored = null; // the contact the player chose to leave
+    ignored = null,
+    resumeSpeed = 1; // the contact the player chose to leave
   function showEncounter(c) {
+    if (open) return;
+    resumeSpeed = getSpeed();
     open = c;
     travel.party.route = null;
     travel.drawRoute();
@@ -87,21 +100,47 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, toast}) {
       cond = [v.time === 'day' ? 'by day' : v.time, v.weather === 'clear' ? '' : v.weather, v.ground === 'plain' ? '' : v.ground]
         .filter(Boolean)
         .join(', ');
+    const selected = new Set(fit);
+    const syncSelection = () => {
+      e.fighters = [...selected];
+      panel.querySelector('#enc-attack').disabled = selected.size < SQUAD_MIN || selected.size > 9;
+    };
     panel.replaceChildren(
       el('h2', {id: 'enc-title', class: 'plate'}, src.name),
       el('p', {class: 'enc-mission'}, `${missionName(e.level)} · ${src.strength} enemy · ${cond}`),
-      el('h3', {}, fit.length ? 'Going in' : 'Nobody can go'),
+      el('h3', {}, fit.length >= SQUAD_MIN ? 'Going in' : 'The band needs to recover'),
       el(
         'ul',
         {class: 'enc-fighters'},
-        fit.map(id => el('li', {}, `${NAMES[id] || id}, ${TROOPS[campaign.band.fighters[id].class].label}`)),
+        fit.map(id =>
+          el(
+            'li',
+            {},
+            el(
+              'label',
+              {},
+              el('input', {
+                type: 'checkbox',
+                checked: true,
+                onchange: event => {
+                  if (event.target.checked) selected.add(id);
+                  else selected.delete(id);
+                  syncSelection();
+                },
+              }),
+              `${NAMES[id] || id}, ${TROOPS[campaign.band.fighters[id].class].label}`,
+            ),
+          ),
+        ),
         hurt.map(([id, f]) => el('li', {class: 'hurt'}, `${NAMES[id] || id}: wounded, ${Math.ceil(f.healIn)}h to heal`)),
       ),
-      fit.length ? null : el('p', {class: 'note'}, 'Everyone is wounded. Rest until they heal.'),
+      fit.length >= SQUAD_MIN
+        ? null
+        : el('p', {class: 'note'}, 'At least six fit fighters are needed. Rest at a friendly settlement until they heal.'),
       el(
         'div',
         {class: 'enc-actions'},
-        el('button', {class: 'primary', id: 'enc-attack', disabled: !fit.length, onclick: () => attack(e)}, act.verb),
+        el('button', {class: 'primary', id: 'enc-attack', disabled: fit.length < SQUAD_MIN, onclick: () => attack(e)}, act.verb),
         el('button', {id: 'enc-leave', onclick: leave}, 'Leave'),
       ),
     );
@@ -113,7 +152,7 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, toast}) {
     ignored = open;
     open = null;
     panel.hidden = true;
-    setSpeed(1);
+    setSpeed(resumeSpeed);
   }
   function attack(e) {
     try {
@@ -122,7 +161,14 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, toast}) {
       toast(`Cannot attack: ${err.message}`);
       return;
     }
-    save();
+    if (!save()) {
+      // No navigation until the deployment is durable; retrying must not reserve kit a second time.
+      for (const [id, kit] of Object.entries(campaign.deployment.kits)) campaign.band.fighters[id].kit = kit;
+      campaign.deployment = null;
+      campaign.log.pop();
+      toast('Cannot launch: campaign storage is unavailable. Free browser storage and try again.');
+      return;
+    }
     const url = new URL(MISSION_URL);
     url.searchParams.set('campaign', campaign.id);
     url.searchParams.set('encounter', e.id);
@@ -176,9 +222,12 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, toast}) {
         f.xp = next.xp[id] ?? f.xp;
       }
       campaign.stash = next.stash;
+      campaign.goods = next.goods;
+      campaign.scrip = next.scrip;
       save();
       if (why) toast(why);
       renderBand();
+      renderCard();
       bandPanel.querySelector('.path.ready button, button')?.focus();
     },
   });
@@ -187,6 +236,14 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, toast}) {
     const gear = Object.entries(campaign.stash).filter(([g]) => GEAR[g]);
     bandPanel.replaceChildren(
       el('h2', {id: 'band-title', class: 'plate'}, 'The band: fighters and stash'),
+      el('p', {}, operation(campaign).text),
+      operation(campaign).complete
+        ? el(
+            'p',
+            {class: 'note'},
+            'Foothold secured. Your band has broken the local supply route and liberated Fort Orion. Continue the campaign with your survivors and equipment.',
+          )
+        : null,
       el(
         'p',
         {class: 'note'},
@@ -196,6 +253,36 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, toast}) {
         ? el('p', {class: 'hurt'}, hurt.map(([id, f]) => `${NAMES[id] || id} is wounded (${Math.ceil(f.healIn)}h)`).join(' · '))
         : null,
       camp.squadCards({}),
+      el('h3', {}, 'Recovery and resupply'),
+      el(
+        'p',
+        {class: 'note'},
+        safeHaven(campaign, SETTLEMENTS, travel.party)
+          ? 'Safe haven: rest, sell recovered valuables, and buy promotion equipment.'
+          : 'Reach a friendly or independent settlement to rest and trade.',
+      ),
+      ...[12, 24, 48].map(hours =>
+        el(
+          'button',
+          {
+            disabled: !safeHaven(campaign, SETTLEMENTS, travel.party),
+            onclick: () => {
+              try {
+                campaign.world.party = {x: travel.party.x, z: travel.party.z};
+                rest(campaign, SETTLEMENTS, hours);
+                save();
+                renderBand();
+                renderCard();
+                toast(`Rested ${hours} hours.`);
+              } catch (err) {
+                toast(err.message);
+              }
+            },
+          },
+          `Rest ${hours}h`,
+        ),
+      ),
+      safeHaven(campaign, SETTLEMENTS, travel.party) ? camp.traderView() : null,
       el('h3', {}, 'Kit: magazines and rounds'),
       el(
         'div',
@@ -239,27 +326,34 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, toast}) {
   if (partyButton) partyButton.onclick = () => toggleBand(true);
 
   // the party card: the band's real numbers
+  let lastCard = '';
   function renderCard() {
     const f = Object.values(campaign.band.fighters);
     const troops = Object.values(campaign.band.troops).reduce((a, t) => a + t.count, 0);
     const card = document.querySelector('.party-card dl');
     if (!card) return;
-    card.replaceChildren(
-      ...[
-        ['Fighters', `${f.filter(x => !x.wounded).length} / ${f.length}`],
-        ['Wounded', f.filter(x => x.wounded).length],
-        ['Troops', troops],
-        ['Stash', Object.values(campaign.stash).reduce((a, n) => a + n, 0)],
-        ['Scrip', campaign.scrip.toLocaleString('en')],
-        ['Fought', campaign.settled.length],
-      ].flatMap(([k, v]) => [el('dt', {}, k), el('dd', {}, String(v))]),
-    );
+    const rows = [
+      ['Fighters', `${f.filter(x => !x.wounded).length} / ${f.length}`],
+      ['Wounded', f.filter(x => x.wounded).length],
+      ['Troops', troops],
+      ['Stash', Object.values(campaign.stash).reduce((a, n) => a + n, 0)],
+      ['Scrip', campaign.scrip.toLocaleString('en')],
+      ['Fought', campaign.settled.length],
+    ];
+    const signature = JSON.stringify(rows);
+    if (signature === lastCard) return;
+    lastCard = signature;
+    const count = parties.parties.find(p => p.kind === 'player')?.plate.querySelector('.pcount');
+    if (count) count.textContent = String(f.filter(x => !x.wounded).length);
+    card.replaceChildren(...rows.flatMap(([k, v]) => [el('dt', {}, k), el('dd', {}, String(v))]));
   }
   renderCard();
+  document.querySelector('.party-card')?.append(el('p', {class: 'note'}, operation(campaign).text));
 
   // ---------- each frame ----------
   let sinceCard = 0;
   function update(dt) {
+    if (open || !bandPanel.hidden || kitScreen.isOpen) return;
     const healed = passTime(campaign, dt * HOURS_PER_SECOND);
     if (healed.length) {
       toast(`${healed.map(id => NAMES[id] || id).join(' and ')} ${healed.length > 1 ? 'are' : 'is'} fit again.`);
@@ -277,6 +371,9 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, toast}) {
   }
   return {
     update,
+    get blocked() {
+      return !!open || !bandPanel.hidden || kitScreen.isOpen;
+    },
     clockText,
     showEncounter,
     contactAt,

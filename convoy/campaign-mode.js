@@ -19,14 +19,14 @@ export function openCampaign(params, storage) {
   const {campaign} = store.load();
   const encounter = params.get('encounter') || '';
   const deployment = campaign.deployment;
-  let action = enter(campaign, encounter);
+  let action = params.get('campaign') === campaign.id ? enter(campaign, encounter) : 'none';
   let settled = null;
   if (action === 'reload') {
     withdraw(campaign, encounter);
     settled = settle(campaign, encounter);
     action = 'withdrawn';
   }
-  store.save(campaign);
+  if (!store.save(campaign)) action = 'none';
   return {
     campaign,
     deployment,
@@ -70,7 +70,10 @@ export function openCampaign(params, storage) {
     /** Settle the result into the campaign and go back to the map. */
     returnToMap() {
       settle(campaign, encounter);
-      store.save(campaign);
+      if (!store.save(campaign)) {
+        alert('Campaign storage is unavailable. Free browser storage, then try returning again. Your result remains in this tab.');
+        return false;
+      }
       location.href = `${MAP}?campaign=${encodeURIComponent(campaign.id)}`;
     },
   };

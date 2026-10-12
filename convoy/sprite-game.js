@@ -80,7 +80,7 @@ function newGame() {
     level: vary(LEVELS[levelId], conditions()),
     seed,
     awareness,
-    squad: cm ? {...squad.classes, ...cm.classes()} : squad.classes,
+    squad: cm?.action === 'play' ? cm.classes() : squad.classes,
     difficulty: diffId,
   });
   search?.attach(sim, {seed, kits: cm?.action === 'play' ? cm.kits() : undefined});

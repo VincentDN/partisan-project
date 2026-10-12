@@ -7,7 +7,8 @@ import {activesFor} from './abilities.js';
 import {canPromote, missingFor, progress, promote} from './progression.js';
 import {sellGoods, buy, priceOf, scripFor} from './loot.js';
 
-export const NAMES = {player: 'Lead rebel', mila: 'Mila', dragan: 'Dragan'};
+import {NAMES} from './roster.js';
+export {NAMES};
 const KEYS = ['Z', 'X', 'V'];
 const KIND_ORDER = ['weapon', 'attachment', 'ammo', 'gear', 'drone'];
 const KIND_LABEL = {weapon: 'Weapons', attachment: 'Attachments', ammo: 'Ammunition and explosives', gear: 'Gear', drone: 'Drones'};

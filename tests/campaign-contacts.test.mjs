@@ -39,7 +39,7 @@ test('an encounter takes the fit fighters, carries the enemy, and is unique per 
   c.band.fighters.mila.wounded = true;
   const e = encounterFor(c, 'supply-convoy');
   assert.equal(e.level, 'convoy');
-  assert.deepEqual(e.fighters, ['player', 'dragan'], 'the wounded stay behind');
+  assert.deepEqual(e.fighters, ['player', 'dragan', 'ivana', 'petar', 'lena', 'niko', 'sara'], 'the wounded stay behind');
   assert.equal(e.enemy.strength, 14);
   assert.equal(e.time, 'day');
   c.world.clock.hour = 22;
@@ -76,12 +76,12 @@ test('wounds heal with time: a day for the hurt, two for the fallen', () => {
   fight(c, 'supply-convoy', {outcome: 'won', fighters: {player: {state: 'wounded'}, mila: {state: 'down'}}});
   assert.equal(c.band.fighters.player.healIn, HEAL_WOUNDED);
   assert.equal(c.band.fighters.mila.healIn, HEAL_DOWN);
-  assert.deepEqual(fitFighters(c), ['dragan']);
+  assert.deepEqual(fitFighters(c), ['dragan', 'ivana', 'petar', 'lena', 'niko', 'sara']);
   const day = c.world.clock.day;
   assert.deepEqual(passTime(c, HEAL_WOUNDED), ['player']);
   assert.equal(c.world.clock.day, day + 1, 'the clock rolls over');
   assert.equal(c.band.fighters.mila.wounded, true);
   assert.deepEqual(passTime(c, HEAL_DOWN - HEAL_WOUNDED), ['mila']);
-  assert.deepEqual(fitFighters(c), ['player', 'mila', 'dragan']);
+  assert.deepEqual(fitFighters(c), ['player', 'mila', 'dragan', 'ivana', 'petar', 'lena', 'niko', 'sara']);
   assert.equal(c.log.at(-1).kind, 'healed');
 });

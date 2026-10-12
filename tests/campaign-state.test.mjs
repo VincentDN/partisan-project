@@ -46,7 +46,7 @@ test('a new campaign is versioned and holds world, band, stash and log', () => {
   assert.deepEqual([c.id, c.seed, c.created, c.saved], ['x', 42, 1000, 1000]);
   assert.deepEqual(c.world.clock, {day: 1, hour: 8, speed: 0});
   assert.equal(c.world.party, null);
-  assert.deepEqual(Object.keys(c.band.fighters), ['player', 'mila', 'dragan']);
+  assert.deepEqual(Object.keys(c.band.fighters), ['player', 'mila', 'dragan', 'ivana', 'petar', 'lena', 'niko', 'sara']);
   for (const f of Object.values(c.band.fighters)) assert.ok(TROOPS[f.class]);
   assert.deepEqual(c.band.troops, START_BAND);
   for (const [g, n] of Object.entries(START_STASH)) assert.ok(c.stash[g] >= n, g);
@@ -111,7 +111,11 @@ test('normalize repairs fields and rejects what is not a version-1 campaign', ()
   assert.equal(n.world.party, null);
   assert.deepEqual(n.world.parties, [{id: 'p'}]);
   assert.equal(n.world.heat, 0);
-  assert.deepEqual(Object.keys(n.band.fighters), ['player', 'mila', 'dragan'], 'no valid fighter: the defaults');
+  assert.deepEqual(
+    Object.keys(n.band.fighters),
+    ['player', 'mila', 'dragan', 'ivana', 'petar', 'lena', 'niko', 'sara'],
+    'no valid fighter: the defaults',
+  );
   assert.deepEqual(n.band.troops, {medic: {count: 2, xp: 0}});
   assert.deepEqual(n.stash, {scope: 2});
   for (const g of Object.keys(n.stash)) assert.ok(GEAR[g]);
