@@ -5,12 +5,12 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json).
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-12 13:32 UTC · claude · WP-QA8 · done**
+**2026-10-12 14:23 UTC · claude · WP-QA10 · done**
 
-- Branch `claude/friendly-dijkstra-4ky9w6` at `f026d6e`; working tree clean.
-- Last commits: f026d6e QA8: keyboard and focus through the stacked panels · be37d0b docs: handoff for WP-QA22 · 3892d1d QA22: AI and squad pick only destinations a body can reach
-- What happened: QA8 done: map/travel keys wait while a modal is open, Space works on panel buttons, music-menu Escape no longer closes the panel below, focus returns to the opener, Tab trapped in the top panel (shared/modal.js); tests/e2e/overlays.mjs covers it incl. touch drag cancel.
-- Next step: Next QA packet: QA10 memory over restarts, overlays and map-mission trips; then QA9, QA14/15, QA17, QA20 (docs/quality-roadmap.md section 7).
+- Branch `claude/friendly-dijkstra-4ky9w6` at `5a47f3f`; working tree clean.
+- Last commits: 5a47f3f QA10: memory hunt; mission restarts no longer keep old soldiers · 2ea443e docs: handoff for WP-QA8 · f026d6e QA8: keyboard and focus through the stacked panels
+- What happened: QA10 done: npm run memory (tools/qa/memory.mjs); fixed the renderer keeping every restart's soldiers (sightFade WeakMap); restarts, search, kit and trips flat.
+- Next step: Next QA packet: QA9 Firefox and WebKit smoke runs (needs those browsers installed); then QA14/15 on real hardware, QA17 module splits, QA20 strict null checks (docs/quality-roadmap.md section 7).
 <!-- handoff:end -->
 
 ## Resume here
