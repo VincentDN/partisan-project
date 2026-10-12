@@ -5,12 +5,12 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json).
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-12 12:25 UTC · claude · WP-QA22 · done**
+**2026-10-12 13:32 UTC · claude · WP-QA8 · done**
 
-- Branch `claude/friendly-dijkstra-4ky9w6` at `3892d1d`; working tree clean.
-- Last commits: 3892d1d QA22: AI and squad pick only destinations a body can reach · fabc124 docs: note the intermittent Recon-base smoke failure seen once after the merge · cdaaccd docs: wrap up the bug hunt and optimisation round; what is left goes to the future roadmap
-- What happened: QA22 done: findCover, follow slots and sim.move now only head for reachable open ground (pathfind.js reachable/openNear); soak has no stuck units. Added WP-S44 named reactions to the tactical roadmap (section 10) at the owner's request.
-- Next step: Next QA packet: QA8 overlays focus audit, then QA10, QA9, QA14/15, QA17, QA20 (docs/quality-roadmap.md section 7). Perf baseline for the convoy level predates W12's eight rebels; rebaseline on a quiet host.
+- Branch `claude/friendly-dijkstra-4ky9w6` at `f026d6e`; working tree clean.
+- Last commits: f026d6e QA8: keyboard and focus through the stacked panels · be37d0b docs: handoff for WP-QA22 · 3892d1d QA22: AI and squad pick only destinations a body can reach
+- What happened: QA8 done: map/travel keys wait while a modal is open, Space works on panel buttons, music-menu Escape no longer closes the panel below, focus returns to the opener, Tab trapped in the top panel (shared/modal.js); tests/e2e/overlays.mjs covers it incl. touch drag cancel.
+- Next step: Next QA packet: QA10 memory over restarts, overlays and map-mission trips; then QA9, QA14/15, QA17, QA20 (docs/quality-roadmap.md section 7).
 <!-- handoff:end -->
 
 ## Resume here
