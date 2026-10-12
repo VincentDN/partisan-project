@@ -103,6 +103,7 @@ export function encounterFor(c, sourceId, source = SOURCES[sourceId], {ground = 
  */
 export function readResults(c, names = {}) {
   const lines = [];
+  pruneAftermath(c);
   for (const e of c.log.filter(e => e.seq > c.world.seen)) {
     if (e.kind !== 'result') continue;
     const src = SOURCES[e.source];
@@ -110,6 +111,11 @@ export function readResults(c, names = {}) {
     if (e.outcome === 'won' && e.source) {
       c.world.heat = Math.min(100, c.world.heat + 10);
       if (!isGone(c, e.source)) c.world.parties.push({id: e.source, state: 'destroyed', day: e.day});
+      // what the fight left on the map: wrecks and smoke where a convoy died, smoke over a taken place (WP-W13)
+      if (e.at) {
+        const kind = src?.kind === 'convoy' ? 'wreck' : src ? 'fight' : 'raid';
+        (c.world.aftermath ||= []).push({id: e.source, kind, x: e.at.x, z: e.at.z, day: e.day, hour: e.hour ?? 0});
+      }
       if (!src) c.world.settlements[e.source] = {...c.world.settlements[e.source], owner: 'resistance', taken: e.day};
     }
     const hurt = e.wounded?.length ? `, ${e.wounded.length} wounded` : '';
@@ -124,6 +130,23 @@ export function readResults(c, names = {}) {
   }
   c.world.seen = c.log.at(-1)?.seq ?? c.world.seen;
   return lines;
+}
+
+// ---------- aftermath (WP-W13) ----------
+/** Campaign hours the marks of a fight stay on the map: the smoke thins over two days, the wrecks over two weeks. */
+export const SMOKE_HOURS = 48,
+  AFTERMATH_HOURS = 14 * 24;
+/** How many campaign hours ago a mark was left. */
+export const ageOf = (c, a) => (c.world.clock.day - a.day) * 24 + (c.world.clock.hour - (a.hour || 0));
+/** Drop marks older than AFTERMATH_HOURS. */
+export function pruneAftermath(c) {
+  if (c.world.aftermath) c.world.aftermath = c.world.aftermath.filter(a => ageOf(c, a) < AFTERMATH_HOURS);
+  return c.world.aftermath || [];
+}
+/** What a mark looks like now: smoke 1..0 over SMOKE_HOURS, the wreck and scorch 1..0 over AFTERMATH_HOURS. */
+export function aftermathLook(c, a) {
+  const age = Math.max(0, ageOf(c, a));
+  return {smoke: Math.max(0, 1 - age / SMOKE_HOURS), remains: Math.max(0, 1 - age / AFTERMATH_HOURS)};
 }
 
 /** Let campaign time pass: wounds heal. Returns the ids of fighters fit again. */

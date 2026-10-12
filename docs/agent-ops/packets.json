@@ -3269,19 +3269,15 @@
    "milestone": "W",
    "size": "S",
    "bu": 8,
-   "status": "planned",
-   "deps": [
-    "WP-W9",
-    "WP-W11",
-    "WP-W12"
-   ],
+   "status": "done",
+   "deps": [],
    "agent": "any",
    "needs": [],
    "inputs": [
     "docs/campaign-roadmap.md"
    ],
    "acceptance": "The debrief returns to the map, which applies the result once and shows it in the world and a toast; reload-safe.",
-   "progress_note": "2026-10-08: Idempotent result, wounds/healing, XP and autosave implemented; visible aftermath and final browser gate remain."
+   "progress_note": "2026-10-12: done. Results settle once and reload-safe (earlier work); now a won fight also leaves its mark where it happened (map/aftermath.js, world.aftermath in the save): a convoy's charred wrecks on a scorched patch with a smoke column, scorch and smoke for a post or the hunters, smoke over a taken settlement; the smoke thins over two campaign days, the marks go after two weeks. Its dependencies on WP-W9, W11 and W12 were dropped: what they still owe (ambush set-up, the defence variants, the deployment browser gate) does not affect returning a result to the map. tests/campaign-aftermath.test.mjs; campaign-loop e2e checks the mark after a reload."
   },
   {
    "id": "WP-W14",

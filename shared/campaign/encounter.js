@@ -19,12 +19,26 @@ const count = n => (Number.isFinite(n) && n >= 1 ? Math.floor(n) : 0);
 /**
  * Launch an encounter: writes c.deployment and reserves its kit (it leaves the stash and travels on the fighters).
  * opts: {id, level, seed, fighters: [fighter ids], kit: {gear id: n}, enemy?, ground?, time?, source?, cargo?}; cargo:
- * the convoy's manifest (shared/campaign/cargo.js), taken home on a win.
+ * the convoy's manifest (shared/campaign/cargo.js), taken home on a win; at: {x, z} where on the map it happens (the
+ * aftermath is left there, WP-W13).
  * Throws when a mission is already under way, a fighter is unknown or wounded, or the stash lacks the kit.
  */
 export function deploy(
   c,
-  {id, level, seed = 1, fighters, kit = {}, enemy = null, ground = null, time = null, source = null, variant = null, cargo = null},
+  {
+    id,
+    level,
+    seed = 1,
+    fighters,
+    kit = {},
+    enemy = null,
+    ground = null,
+    time = null,
+    source = null,
+    variant = null,
+    cargo = null,
+    at = null,
+  },
 ) {
   if (c.deployment) throw new Error(`a mission is already under way (${c.deployment.id})`);
   if (typeof id !== 'string' || !id) throw new Error('an encounter needs an id');
@@ -64,6 +78,7 @@ export function deploy(
     source,
     variant,
     cargo: cargo && typeof cargo === 'object' ? {...cargo} : null,
+    at: at && Number.isFinite(at.x) && Number.isFinite(at.z) ? {x: at.x, z: at.z} : null,
     entered: false,
     result: null,
   };
@@ -183,6 +198,7 @@ export function settle(c, encounterId = c.deployment?.id) {
     encounter: d.id,
     source: d.source,
     level: d.level,
+    at: d.at || null,
     outcome: r.outcome,
     kills: r.kills,
     wounded: Object.keys(r.fighters).filter(f => r.fighters[f].state !== 'fit'),

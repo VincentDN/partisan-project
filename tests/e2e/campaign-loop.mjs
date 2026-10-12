@@ -89,6 +89,11 @@ try {
     /destroyed/,
     'not again after a reload',
   );
+  // the aftermath (WP-W13): the ambushed convoy's wrecks, scorch and smoke where it was met, still there after the reload
+  const marks = await page.evaluate(() => ({n: window.PARP_MAP.aftermath.count, list: window.PARP_MAP.travel.campaign.world.aftermath}));
+  assert.equal(marks.n, 1, 'one mark on the map');
+  assert.equal(marks.list[0].kind, 'wreck');
+  assert.ok(Math.hypot(marks.list[0].x - convoy.x, marks.list[0].z - convoy.z) < 12, 'where the convoy was met');
 
   // 4. the band panel: promote a fighter with experience and stolen kit
   const plan = await page.evaluate(async () => {

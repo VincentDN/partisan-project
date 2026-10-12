@@ -169,7 +169,7 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
   }
   function attack(e) {
     try {
-      deploy(campaign, e);
+      deploy(campaign, {...e, at: open?.at || null}); // where it happens: the aftermath is left there (WP-W13)
     } catch (err) {
       toast(`Cannot attack: ${err.message}`);
       return;

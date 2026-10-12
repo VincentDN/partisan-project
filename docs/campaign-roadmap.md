@@ -216,11 +216,13 @@ simulation and save authority; additional showcase assets are secondary to those
 
 ## 7. Packet reconciliation
 
-W1–W3 provide the save, bridge and travel foundation. W14 is done (2026-10-12): convoys carry fixed cargo
+W1–W3 provide the save, bridge and travel foundation. W13 is done (2026-10-12): a won fight leaves its mark on the
+map where it happened (a convoy's charred wrecks and smoke, scorch and smoke at a post, smoke over a taken settlement),
+kept in the save, the smoke thinning over two campaign days and the marks gone after two weeks. W14 is done (2026-10-12): convoys carry fixed cargo
 manifests shown before the fight, a won ambush takes the cargo home less what burns, and the stash shows where its
 items came from (missions, cargo, the trader). W15 is done (2026-10-12): the Rebel Band screen opens from the
 map's band panel on the campaign save, shows the named fighters above the troop stacks and promotes them with their
-experience and the stash's kit; the standalone demo keeps its own save. W8–W11, W13 and W19 have meaningful playable subsets but
+experience and the stash's kit; the standalone demo keeps its own save. W8–W11 and W19 have meaningful playable subsets but
 retain unfinished acceptance (ambush choices, exact enemy/cargo composition, aftermath, territory simulation).
 W12 now targets six-to-nine-person deployment rather than the obsolete four-person plan. W18 has recovery/trade
 but not recruitment. W21 has a bounded objective, not the complete endgame/defeat presentation. W24 retains the

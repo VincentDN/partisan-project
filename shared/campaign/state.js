@@ -77,6 +77,7 @@ export function newCampaign({id = 'c1', seed = 1, now = 0} = {}) {
       settlements: {}, // per-settlement state by id: owner, garrison, heat (WP-W19)
       heat: 0,
       seen: 0, // the last log entry (by seq) the map has shown: it reports mission results once
+      aftermath: [], // what fights left on the map: {id, kind: wreck|fight|raid, x, z, day, hour} (WP-W13)
     },
     band: {
       leader: structuredClone(LEADER),
@@ -119,6 +120,10 @@ export function normalize(raw) {
   if (isObj(w.settlements)) c.world.settlements = w.settlements;
   c.world.heat = num(w.heat, 0, 0);
   c.world.seen = num(w.seen, 0, 0);
+  if (Array.isArray(w.aftermath))
+    c.world.aftermath = w.aftermath.filter(
+      a => isObj(a) && ['wreck', 'fight', 'raid'].includes(a.kind) && [a.x, a.z, a.day].every(Number.isFinite),
+    );
   const b = isObj(o.band) ? o.band : {};
   if (isObj(b.leader)) c.band.leader = {...c.band.leader, ...b.leader};
   c.band.fighters = cleanFighters(b.fighters, c.band.fighters);

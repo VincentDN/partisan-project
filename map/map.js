@@ -16,6 +16,7 @@ import {mountTravel} from './travel.js';
 import {mountCampaign} from './campaign-ui.js';
 import {createSpriteLayer} from './sprite-parties.js';
 import {createHD2D} from './hd2d.js';
+import {createAftermath} from './aftermath.js';
 import {modalOpen} from '../shared/modal.js';
 
 // The 2.5-D overworld test (map25/) is this page in HD-2D style: sprites for every person and vehicle, a lower and
@@ -246,6 +247,19 @@ const travel = mountTravel({
   params: new URLSearchParams(location.search),
 });
 campaignUi = mountCampaign({travel, parties, townLabels, setSpeed, getSpeed: () => speed, toast});
+// wrecks, scorch and smoke where the band has fought (WP-W13): re-matched to the save as campaign hours pass
+const aftermath = travel.campaign ? createAftermath({scene, field, reduceMotion}) : null;
+let aftermathHour = '';
+const syncAftermath = () => {
+  const k = travel.campaign.world.clock;
+  const at = `${k.day}:${Math.floor(k.hour)}`;
+  if (at !== aftermathHour) {
+    aftermathHour = at;
+    aftermath.sync(travel.campaign);
+    renderDirty = true;
+  }
+};
+if (aftermath) syncAftermath();
 $('#loading').hidden = true;
 
 const clock = new T.Clock();
@@ -268,6 +282,7 @@ renderer.setAnimationLoop(() => {
   keyPan(real);
   travel.update(dt);
   campaignUi?.update(dt);
+  if (aftermath) syncAftermath();
   const cameraMoving =
     Math.abs(cam.tx - cam.x) + Math.abs(cam.tz - cam.z) + Math.abs(cam.td - cam.d) + Math.abs(cam.tyaw - cam.yaw) > 0.001;
   if (!needsFrame(frameStart, {active: dt > 0, cameraMoving, dirty: renderDirty})) {
@@ -280,6 +295,7 @@ renderer.setAnimationLoop(() => {
   terrain.uniforms.uTime.value = worldT;
   water.uniforms.uTime.value = worldT;
   props.update(reduceMotion ? 0 : dt, reduceMotion ? 0 : worldT, camera);
+  aftermath?.update(worldT);
   const w = stageEl.clientWidth,
     h = stageEl.clientHeight;
   parties.update(dt, worldT, camera, w, h);
@@ -331,6 +347,7 @@ window.PARP_MAP = {
   setSpeed,
   travel,
   campaign: campaignUi,
+  aftermath,
   sprites,
   hd2d,
   performance: performanceStats,
