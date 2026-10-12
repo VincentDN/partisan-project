@@ -148,6 +148,35 @@ search arrays, marking vehicles once per search and capping the search brought i
 CPU is lower than before paths (1,891 ms against 2,037). The golden replays were re-recorded on purpose: both
 sides now walk round cover, so the fights end differently.
 
+### Memory (QA10)
+
+`npm run memory` (`tools/qa/memory.mjs`, needs `CHROMIUM`) repeats what a long session repeats and reads the heap after
+forced garbage collection, the window and document listeners added but not removed, and the DOM node count, after each
+round. It found one leak:
+
+- **Every mission restart kept the last mission's soldiers.** The renderer's `sightFade` (how far each soldier has
+  faded into sight) was a `Map` keyed by unit and never cleared, so each restart kept its level's soldiers, names and
+  vehicles: 5 KB a restart, linear. It is a `WeakMap` now. The leak was found with a heap-snapshot diff (25 against
+  125 restarts) and a retainer path.
+
+Results after the fix (this container, Chromium 141, software rendering):
+
+| Cycle | Repeats | Heap, after warm-up → end | Listeners | DOM nodes |
+| --- | --- | --- | --- | --- |
+| Mission restarts | 125 | 3.7 → 3.8 MB | 27, flat | 1,693, flat |
+| Search open and close | 125 | 3.9 → 4.0 MB | 27, flat | 1,780, flat |
+| Kit screen open and close | 125 | 8.0 → 8.2 MB | 25, flat | 987, flat |
+| Map → mission → map | 6 (all the campaign offered) | map 7.0 → 6.8 MB | — | — |
+
+The save grows 0.5 KB a trip (a settled encounter, a log entry). The map's three.js geometries and textures fall as
+convoys are destroyed (77/17 → 27/12) and never rise. Trips are page loads, so nothing on the map carries over in
+memory. What still grows is the browser's own buffer of slow-frame timing entries, one per restart in the harness
+and capped by Chromium; the app registers no performance observer.
+
+A false lead worth knowing: Playwright's `waitForSelector`, and a `waitForFunction` that returns an element, keep that
+element alive through a DevTools handle. Measured that way the kit screen "leaked" 59 nodes an open. Memory checks wait
+on booleans.
+
 ### Keyboard and focus through the panels (QA8)
 
 A keyboard-only walk of the encounter, band, kit and search panels, with the music menu over them, found five bugs:
@@ -242,25 +271,24 @@ The survey scripts become packets QA1 and QA2 (`tests/fuzz/`, `tools/perf/`); un
 
 ## 7. Where it stands (2026-10-12) and what is left
 
-**Done (16 of 22, counting QA15's code on main):** QA1 fuzz harness and nightly run, QA2 performance budgets, QA3 browser suites fail on page
+**Done (17 of 22, counting QA15's code on main):** QA1 fuzz harness and nightly run, QA2 performance budgets, QA3 browser suites fail on page
 errors, QA4 save hunt, QA5 inventory hunt, QA6 sim soak, QA7 campaign soak, QA11 sim hot path (64 % less CPU),
 QA12 compact catalogue, QA13 asset diet (mission page 14.4 → 3.1 MB), QA16 no fixed sleeps, QA18 golden replays, QA19
-static checks, QA21 pathfinding, QA22 reachable destinations, QA8 keyboard and focus. Real bugs fixed on the way: the map stopped reporting results after about 80
+static checks, QA21 pathfinding, QA22 reachable destinations, QA8 keyboard and focus, QA10 memory. Real bugs fixed on the way: the map stopped reporting results after about 80
 encounters; units stuck against cover for whole fights; soldiers dismounting off the map; a kit screen disabled by
 one failed download; silent save failures; an unlabelled ground pile; a cancelled drag left stuck.
 
 **Left for the future roadmap, in this order:**
 
-1. **QA10** (S): memory over restarts, overlays and map–mission trips.
-2. **QA9** (S): Firefox and WebKit smoke runs.
-3. **QA14** (M) and **QA15** (S): the renderers on real hardware. The mission renderer's own code is cheap; the
+1. **QA9** (S): Firefox and WebKit smoke runs.
+2. **QA14** (M) and **QA15** (S): the renderers on real hardware. The mission renderer's own code is cheap; the
    first-frame font hitch and the 60 fps question need a device measurement (WP-Q2). QA15's code work landed on
    main (`docs/engineering/campaign-performance.md`); its browser acceptance is pending.
-4. **QA17** (M): split the oversized modules (sprite-render, soundscape, sim, sprite-game, ai) behind the replays.
-5. **QA20** (M): strict null checks for `shared/` (161 inference errors to type).
-6. **An intermittent smoke failure** to look into with QA9–QA10: "operator: Recon base … loads and responds" failed
+3. **QA17** (M): split the oversized modules (sprite-render, soundscape, sim, sprite-game, ai) behind the replays.
+4. **QA20** (M): strict null checks for `shared/` (161 inference errors to type).
+5. **An intermittent smoke failure** to look into with QA9: "operator: Recon base … loads and responds" failed
    once in two runs on 2026-10-12 with "page.evaluate: Resulting promise was garbage collected" at
    `switchBase('base')`, right after main's change to the Recon reload (d6e9dbf). It passed on the re-run.
 
-The tools stay in place for whoever picks these up: `npm run fuzz`, `node tests/fuzz/soak.mjs`, `npm run replays`,
+The tools stay in place for whoever picks these up: `npm run fuzz`, `npm run memory`, `node tests/fuzz/soak.mjs`, `npm run replays`,
 `node tools/perf/bench.mjs all --check`, `node tools/qa/unused.mjs`.

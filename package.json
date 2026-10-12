@@ -14,6 +14,7 @@
     "test:operator": "node --test tests/generated-recon.test.mjs tests/operator-config.test.mjs tests/rig.test.mjs && node tests/e2e/generated-recon.mjs",
     "contact-sheet": "node tests/e2e/contact-sheet.mjs",
     "test:a11y": "node tests/e2e/a11y.mjs",
+    "memory": "node tools/qa/memory.mjs",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",

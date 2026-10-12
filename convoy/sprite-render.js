@@ -1000,7 +1000,7 @@ export async function createSpriteRenderer(view) {
   const RAYS = 360;
   let SIGHT = 30;
   let inSight = new Set(); // army units drawn this frame
-  const sightFade = new Map(); // army unit -> 0..1, how far it has faded into sight
+  const sightFade = new WeakMap(); // army unit -> 0..1, how far it has faded into sight (weak: gone with the mission)
   const fogNow = document.createElement('canvas'),
     fn = fogNow.getContext('2d');
   let fogCanvas = document.createElement('canvas'),
