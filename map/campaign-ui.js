@@ -23,6 +23,7 @@ import {createCamp, NAMES} from '../convoy/camp.js';
 import {SETTLEMENTS, byId} from './island.js';
 import {groundAt} from '../shared/campaign/nav.js';
 import {createKitScreen} from './kit-screen.js';
+import {rememberFocus, trapTab} from '../shared/modal.js';
 
 const CONTACT = 12, // map units: close enough to fight
   RAID = 22, // around a settlement's centre
@@ -76,6 +77,9 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
   // ---------- the encounter panel ----------
   const panel = el('div', {class: 'encounter hud', role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': 'enc-title', hidden: true});
   document.body.append(panel);
+  trapTab();
+  let backFromEncounter = () => {},
+    backFromBand = () => {}; // put focus back where it was when a panel opened (shared/modal.js)
   let open = null, // {id, source, at: {x, z}}
     ignored = null,
     resumeSpeed = 1; // the contact the player chose to leave
@@ -144,6 +148,7 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
         el('button', {id: 'enc-leave', onclick: leave}, 'Leave'),
       ),
     );
+    if (panel.hidden) backFromEncounter = rememberFocus();
     panel.hidden = false;
     (fit.length ? panel.querySelector('#enc-attack') : panel.querySelector('#enc-leave')).focus();
   }
@@ -153,6 +158,7 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
     open = null;
     panel.hidden = true;
     setSpeed(resumeSpeed);
+    backFromEncounter();
   }
   function attack(e) {
     try {
@@ -204,7 +210,13 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
     hidden: true,
   });
   document.body.append(bandPanel);
-  const kitScreen = createKitScreen({campaign, save, names: NAMES, onClose: () => bandPanel.querySelector('.kit-buttons button')?.focus()});
+  // closing a kit goes back to that fighter's button (the band panel may have been redrawn meanwhile)
+  const kitScreen = createKitScreen({
+    campaign,
+    save,
+    names: NAMES,
+    onClose: id => (bandPanel.querySelector(`.kit-open[data-id="${id}"]`) || bandPanel.querySelector('.kit-open'))?.focus(),
+  });
   // the camp's cards (convoy/camp.js) work on a squad: the campaign's fighters and stash seen as one
   const asSquad = () => ({
     classes: Object.fromEntries(Object.entries(campaign.band.fighters).map(([id, f]) => [id, f.class])),
@@ -288,7 +300,7 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
         'div',
         {class: 'kit-buttons'},
         Object.keys(campaign.band.fighters).map(id =>
-          el('button', {class: 'kit-open', onclick: () => kitScreen.open(id)}, `${NAMES[id] || id}'s kit`),
+          el('button', {class: 'kit-open', 'data-id': id, onclick: () => kitScreen.open(id)}, `${NAMES[id] || id}'s kit`),
         ),
       ),
       el('h3', {}, `Stash · ${gear.reduce((a, [, n]) => a + n, 0)} items`),
@@ -301,7 +313,10 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
     );
   }
   function toggleBand(on = bandPanel.hidden) {
+    if (on && bandPanel.hidden) backFromBand = rememberFocus(() => partyButton);
+    const was = !bandPanel.hidden;
     bandPanel.hidden = !on;
+    if (!on && was) backFromBand();
     if (on) {
       renderBand();
       setSpeed(0);

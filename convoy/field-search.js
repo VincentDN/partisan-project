@@ -5,6 +5,7 @@
 import {attachAmmo, SEARCH_TIME} from './kit-ammo.js';
 import {mountInventory} from '../shared/inventory/grid-ui.js';
 import {useMed} from '../shared/inventory/meds.js';
+import {trapTab} from '../shared/modal.js';
 
 const el = (tag, cls, text) => {
   const e = document.createElement(tag);
@@ -42,6 +43,7 @@ export function createFieldSearch(cat, {onOpen = () => {}, onClose = () => {}} =
   head.append(title, status, close);
   box.append(head, root);
   document.body.append(hint, box);
+  trapTab(); // Tab stays in the search while it is open
 
   /** A new mission: kits for the rebels (or the ones they bring, by unit id) and the soldiers; nothing searched yet. */
   function attach(s, {seed = 1, kits} = {}) {

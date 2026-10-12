@@ -28,7 +28,7 @@ const loadCatalogue = () =>
       throw e;
     }));
 
-/** {campaign, save, names: {id: name}, onClose} -> {open(fighterId), close(), isOpen} */
+/** {campaign, save, names: {id: name}, onClose(fighterId)} -> {open(fighterId), close(), isOpen} */
 export function createKitScreen({campaign, save, names = {}, onClose = () => {}}) {
   const box = el('div', 'kit-screen inv-overlay');
   box.hidden = true;
@@ -47,7 +47,8 @@ export function createKitScreen({campaign, save, names = {}, onClose = () => {}}
   head.append(title, status, close);
   box.append(head, root);
   document.body.append(box);
-  let isOpen = false;
+  let isOpen = false,
+    current = null;
 
   async function open(id) {
     let cat;
@@ -98,6 +99,7 @@ export function createKitScreen({campaign, save, names = {}, onClose = () => {}}
     });
     box.hidden = false;
     isOpen = true;
+    current = id;
     root.querySelector('.inv-item')?.focus();
   }
   function shut() {
@@ -105,7 +107,7 @@ export function createKitScreen({campaign, save, names = {}, onClose = () => {}}
     isOpen = false;
     box.hidden = true;
     save();
-    onClose();
+    onClose(current);
   }
   return {
     open,

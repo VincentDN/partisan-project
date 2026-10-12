@@ -74,6 +74,7 @@ export function mountTopBar({
   });
   bar.addEventListener('keydown', e => {
     if (e.key === 'Escape' && !panel.hidden) {
+      e.stopPropagation(); // closes the music menu only, not a map panel or the fight's pause behind it
       setOpen(false);
       trigger.focus();
     }

@@ -195,7 +195,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | **S** Partisan Tactical: extraction PvE, campaign and gated online research | v0.8.0 | 15/44 | 673 BU | 34% |
 | **V** Graphics: 2.5D top-down sprites for the shooter (the overworld moved to W) | v0.9.0 | 2/20 | 251 BU | 11% |
 | **W** World campaign: the Bannerlord loop (map, missions, loot, upgrades) | v0.10.0 | 4/26 | 359 BU | 14% |
-| **QA** Bug hunt and optimisation (docs/quality-roadmap.md) | — | 15/22 | 274 BU | 66% |
+| **QA** Bug hunt and optimisation (docs/quality-roadmap.md) | — | 16/22 | 274 BU | 69% |
 
 ### M0 · Foundation
 
@@ -418,7 +418,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-QA5` | Inventory hunt: random operation sequences with conservation and ownership invariants | M (20) | done | — | `WP-QA1` |
 | `WP-QA6` | Sim and AI soak: 10-minute fights per level and variant; stuck units, unreachable objectives | M (20) | done | — | `WP-QA1` |
 | `WP-QA7` | Campaign loop soak: 30 encounters through the pure modules with invariants | S (8) | done | — | `WP-QA1` |
-| `WP-QA8` | Input and focus audit across the overlays (encounter, band, kit, search) | S (8) | ready | — | — |
+| `WP-QA8` | Input and focus audit across the overlays (encounter, band, kit, search) | S (8) | done | — | — |
 | `WP-QA9` | Firefox and WebKit smoke runs | S (8) | ready | — | `WP-QA3` |
 | `WP-QA10` | Memory leak hunt: restarts, overlays, map and mission trips | S (8) | ready | — | — |
 | `WP-QA11` | Sim hot path: cached static boxes, a spatial grid for rays and movement, no per-step allocation | M (20) | done | — | `WP-QA18`, `WP-QA2` |

@@ -454,7 +454,16 @@ const CAT = await fetch(new URL('./data/inventory-items.json', import.meta.url))
   .then(r => r.json())
   .then(createCatalogue)
   .catch(() => null);
-const search = CAT ? createFieldSearch(CAT, {onOpen: () => clearInput(), onClose: () => clearInput()}) : null;
+// closing the search puts focus back on the fight, so its keys work at once (WP-QA8)
+const search = CAT
+  ? createFieldSearch(CAT, {
+      onOpen: () => clearInput(),
+      onClose: () => {
+        clearInput();
+        stageEl.focus({preventScroll: true});
+      },
+    })
+  : null;
 const camp = createCamp({
   get: () => squad,
   set: (next, why) => {

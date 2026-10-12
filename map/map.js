@@ -16,6 +16,7 @@ import {mountTravel} from './travel.js';
 import {mountCampaign} from './campaign-ui.js';
 import {createSpriteLayer} from './sprite-parties.js';
 import {createHD2D} from './hd2d.js';
+import {modalOpen} from '../shared/modal.js';
 
 // The 2.5-D overworld test (map25/) is this page in HD-2D style: sprites for every person and vehicle, a lower and
 // longer lens, warmer light and the tilt-shift frame (map/hd2d.js). Its page sets <html data-map-style="hd2d">.
@@ -141,7 +142,8 @@ stageEl.addEventListener(
 );
 const keys = new Set();
 addEventListener('keydown', e => {
-  if (e.target.closest?.('input, select, textarea')) return;
+  // an open panel (encounter, band, kit) has the keyboard: Space presses its focused button, arrows move kit (WP-QA8)
+  if (modalOpen() || e.target.closest?.('input, select, textarea')) return;
   keys.add(e.key.toLowerCase());
   if (e.key === ' ') {
     e.preventDefault();
@@ -152,6 +154,7 @@ addEventListener('keydown', e => {
 });
 addEventListener('keyup', e => keys.delete(e.key.toLowerCase()));
 function keyPan(dt) {
+  if (modalOpen()) return keys.clear(); // a key held as a panel opens does not pan the map behind it
   const v = cam.d * dt * 0.9;
   if (keys.has('w') || keys.has('arrowup')) pan(0, -v);
   if (keys.has('s') || keys.has('arrowdown')) pan(0, v);
@@ -253,6 +256,7 @@ let worldT = 0,
 const performanceStats = {frames: 0, skipped: 0, cpuMs: 0, frameMs: 0};
 const needsFrame = createRenderBudget();
 addEventListener('blur', () => keys.clear());
+addEventListener('visibilitychange', () => keys.clear());
 const v = new T.Vector3();
 renderer.setAnimationLoop(() => {
   const elapsed = clock.getDelta();

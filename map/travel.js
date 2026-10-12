@@ -8,6 +8,7 @@ import {buildNav, findPath, advance, groundAt} from '../shared/campaign/nav.js';
 import {createStore} from '../shared/campaign/state.js';
 import {settleAbandoned} from '../shared/campaign/encounter.js';
 import {sample, PARTY_SPOTS, provinceAt} from './island.js';
+import {modalOpen} from '../shared/modal.js';
 
 /** Map seconds to campaign hours: the map clock runs 0.6 hours a second (map/map.js). */
 const HOURS_PER_SECOND = 0.6;
@@ -146,7 +147,7 @@ export function mountTravel({scene, camera, field, stageEl, hero, cam, toast, re
     if (hit) moveTo(hit.point.x, hit.point.z);
   });
   addEventListener('keydown', e => {
-    if (e.target.closest?.('input, select, textarea')) return;
+    if (modalOpen() || e.target.closest?.('input, select, textarea')) return;
     const k = e.key.toLowerCase();
     if (['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'q', 'e'].includes(k)) follow = false;
     if (k === 'f') follow = true; // back to the band
