@@ -5,12 +5,12 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json).
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-12 20:53 UTC · claude · WP-W13 · done**
+**2026-10-13 04:12 UTC · claude · WP-W9 · done**
 
-- Branch `claude/friendly-dijkstra-4ky9w6` at `47d5284`; working tree clean.
-- Last commits: 47d5284 WP-W13: fights leave their mark on the campaign map · c799309 docs: handoff for WP-W14 · dae5dde WP-W14: convoy cargo manifests, and the stash says where its kit came from
-- What happened: W13 done: fights leave aftermath on the map (map/aftermath.js, world.aftermath): convoy wrecks, scorch, smoke; thins over 2 days, gone after 2 weeks; reload-safe.
-- Next step: Campaign: W9 (ambush set-up from the convoy party), W11 (defence variants), W12 browser gate. QA: QA23, QA20; QA9/QA14/QA15 need other machines.
+- Branch `claude/friendly-dijkstra-4ky9w6` at `954a214`; working tree clean.
+- Last commits: 954a214 WP-W9: the convoy ambush fields the map's own convoy, and you choose how it starts · c22f27d docs: handoff for WP-W13 · 47d5284 WP-W13: fights leave their mark on the campaign map
+- What happened: W9 done: convoy ambush fields the map convoy's own vehicles and escort (convoy/levels/columns.js), ambush start chosen on the encounter panel (roadblock or road charge spent from the stash).
+- Next step: Campaign: W11 (defence variants when caught), W8 (prepare ambush generally, rearguard withdrawal), W12 browser gate. Note: the convoy level's escort spots eight rebels about 13 s in before any shot (seen since W12); worth a balance look.
 <!-- handoff:end -->
 
 ## Resume here
