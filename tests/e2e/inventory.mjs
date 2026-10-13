@@ -1,7 +1,8 @@
 // The grid inventory screen in the browser (WP-S10, TAC-C-11): the rebel's 60 rounds, the weapon's magazine out by
 // keyboard, loot dragged from the cache into the backpack, a magazine emptied, loaded from loose rounds by dropping
 // them on it, and swapped back into the rifle; nothing created or lost on the way. Then in a mission: sixty rounds,
-// hold E by a body to search it, Escape back to the fight (WP-S9). Then the campaign map's kit screen.
+// hold E by a body to search it, loot it (his rifle on the sling, near drops, Ctrl-click and T), Escape back to the
+// fight (WP-S9). Then the campaign map's kit screen.
 import assert from 'node:assert/strict';
 import {launch, open, startServer} from './browser.mjs';
 
@@ -20,7 +21,7 @@ try {
 
   // E on the weapon: its magazine goes to the rig, the chambered round stays
   const mag = (await state()).mag;
-  await page.locator('.inv-slot .inv-item').focus();
+  await page.locator('[data-weapon="primary"] .inv-item').focus();
   await page.keyboard.press('e');
   assert.equal((await state()).mag, null, 'the magazine is out');
   assert.equal(await carried(), 60, 'nothing lost');
@@ -63,7 +64,7 @@ try {
   assert.match(await page.locator('#status').textContent(), /loaded/);
 
   // drop the magazine on the weapon: it goes in and a round is there to fire
-  await drag(`[data-uid="${mag}"]`, '.inv-slot');
+  await drag(`[data-uid="${mag}"]`, '[data-weapon="primary"]');
   assert.equal((await state()).mag, mag, 'the magazine is in the rifle');
   assert.equal(await carried(), 60 + loose.n, 'nothing created or lost');
   await page.screenshot({path: process.env.SHOT || '/tmp/inventory.png'});
@@ -97,6 +98,33 @@ try {
   await m.keyboard.press('h');
   assert.ok((await m.evaluate(() => window.PARP_SPRITES.sim.player.hp)) > hp0, 'H on medicine heals');
   assert.match(await m.locator('.field-search .search-status').textContent(), /healed/);
+  // looting: his rifle dragged onto the sling; a drop on a taken pocket finds the free one; Ctrl-click takes the rest,
+  // T on the rifle leaves it again
+  const mine = () =>
+    m.evaluate(() => [...document.querySelectorAll('.field-search .inv-panel:first-child .inv-item')].map(i => i.dataset.uid));
+  const his = () =>
+    m.evaluate(() => [...document.querySelectorAll('.field-search .inv-panel:last-child .inv-item')].map(i => i.dataset.uid));
+  const mDrag = async (from, to) => {
+    const a = await m.locator(from).boundingBox(),
+      b = await m.locator(to).first().boundingBox();
+    await m.mouse.move(a.x + 6, a.y + 6);
+    await m.mouse.down();
+    await m.mouse.move(b.x + 6, b.y + 6, {steps: 4});
+    await m.mouse.up();
+  };
+  const rifle = await m.locator('.field-search .inv-panel:last-child .k-weapon').first().getAttribute('data-uid');
+  await mDrag(`[data-uid="${rifle}"]`, '.field-search [data-weapon="secondary"]');
+  assert.ok((await mine()).includes(rifle), 'his rifle on your sling');
+  assert.match(await m.locator('.field-search .search-status').textContent(), /on the sling/);
+  const next = await m.locator('.field-search .inv-panel:last-child .k-meds').first().getAttribute('data-uid'); // one cell
+  await mDrag(`[data-uid="${next}"]`, '.field-search .inv-panel:first-child .inv-box:last-child .inv-grid .inv-item');
+  assert.ok((await mine()).includes(next), 'a drop on a taken pocket lands in a free one');
+  for (const uid of await his()) await m.locator(`[data-uid="${uid}"]`).click({modifiers: ['Control']});
+  assert.deepEqual(await his(), [], 'Ctrl-click takes everything that fits');
+  assert.match(await m.locator('.field-search .search-status').textContent(), /^Took the /);
+  await m.locator(`.field-search [data-uid="${rifle}"]`).focus();
+  await m.keyboard.press('t');
+  assert.deepEqual(await his(), [rifle], 'T leaves the rifle on him again');
   if (process.env.SHOT2) await m.screenshot({path: process.env.SHOT2});
   const t0 = await m.evaluate(() => window.PARP_SPRITES.sim.time);
   await m.keyboard.press('Escape');

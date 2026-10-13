@@ -78,7 +78,7 @@ export function createFieldSearch(cat, {onOpen = () => {}, onClose = () => {}} =
     progress = 0;
     hint.hidden = true;
     title.textContent = `Searching: ${t.label}`;
-    status.textContent = '';
+    status.textContent = 'Drag to your kit, or Ctrl-click (T) to take. A rifle goes on the sling.';
     const ui = mountInventory(root, {
       cat,
       panels: [
