@@ -20,7 +20,7 @@ const count = n => (Number.isFinite(n) && n >= 1 ? Math.floor(n) : 0);
  * Launch an encounter: writes c.deployment and reserves its kit (it leaves the stash and travels on the fighters).
  * opts: {id, level, seed, fighters: [fighter ids], kit: {gear id: n}, enemy?, ground?, time?, source?, cargo?}; cargo:
  * the convoy's manifest (shared/campaign/cargo.js), taken home on a win; at: {x, z} where on the map it happens (the
- * aftermath is left there, WP-W13).
+ * aftermath is left there, WP-W13); spend: {gear id: n} the plan uses up (a road charge, WP-W9), not returned.
  * Throws when a mission is already under way, a fighter is unknown or wounded, or the stash lacks the kit.
  */
 export function deploy(
@@ -38,6 +38,7 @@ export function deploy(
     variant = null,
     cargo = null,
     at = null,
+    spend = {},
   },
 ) {
   if (c.deployment) throw new Error(`a mission is already under way (${c.deployment.id})`);
@@ -54,6 +55,17 @@ export function deploy(
     if (!GEAR[g] || !count(n)) continue;
     if ((c.stash[g] || 0) < count(n)) throw new Error(`the stash has ${c.stash[g] || 0} ${g}, not ${count(n)}`);
     reserved[g] = count(n);
+  }
+  // what the plan uses up (a road charge, WP-W9): taken now and not returned at settling
+  const spent = {};
+  for (const [g, n] of Object.entries(spend || {})) {
+    if (!GEAR[g] || !count(n)) continue;
+    if ((c.stash[g] || 0) - (reserved[g] || 0) < count(n)) throw new Error(`the stash has no ${g} to spare`);
+    spent[g] = count(n);
+  }
+  for (const [g, n] of Object.entries(spent)) {
+    c.stash[g] -= n;
+    if (!c.stash[g]) delete c.stash[g];
   }
   for (const [g, n] of Object.entries(reserved)) {
     c.stash[g] -= n;
@@ -79,6 +91,7 @@ export function deploy(
     variant,
     cargo: cargo && typeof cargo === 'object' ? {...cargo} : null,
     at: at && Number.isFinite(at.x) && Number.isFinite(at.z) ? {x: at.x, z: at.z} : null,
+    spent,
     entered: false,
     result: null,
   };

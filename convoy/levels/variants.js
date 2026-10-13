@@ -4,7 +4,9 @@
 //   weather  'clear' | 'fog' | 'rain'           fog and rain shorten sight further
 //   ground   'plain' | 'forest' | 'mountain' | 'snow' | 'coast'   the ground's colours (from where the fight is on the map)
 //   strength enemy strength relative to the level's own (0.6 to 1.6): soldiers are added or stood down
+//   convoy   a campaign convoy's own column and escort (convoy/levels/columns.js); ambush: 'roadblock' | 'charge'
 // Deterministic (a seeded generator), so the same encounter always sets up the same fight.
+import {buildColumn, describeColumn, AMBUSHES} from './columns.js';
 import {lcg} from './util.js';
 
 export const TIMES = ['day', 'dusk', 'night'];
@@ -60,7 +62,14 @@ function scaleUnits(units, k, rnd, tag) {
 }
 
 /** The level under these conditions. */
-export function vary(level, {time = null, weather = 'clear', ground = 'plain', strength = 1, seed = 1} = {}) {
+/**
+ * convoy: {vehicles: [map model ids], escort} fields that column instead of the level's own (convoy/levels/columns.js);
+ * ambush: 'roadblock' (the level as made) or 'charge' (a charge under the stop blows the lead vehicle).
+ */
+export function vary(
+  level,
+  {time = null, weather = 'clear', ground = 'plain', strength = 1, seed = 1, convoy = null, ambush = 'roadblock', name = null} = {},
+) {
   const rnd = lcg(seed * 2654435761 + 17);
   const L = structuredClone(level);
   const t = time || (level.night ? 'night' : 'day');
@@ -86,7 +95,7 @@ export function vary(level, {time = null, weather = 'clear', ground = 'plain', s
     if (L.units?.length) L.units = scaleUnits(L.units, k, rnd, 0);
     if (L.reinforcements) L.reinforcements.units = scaleUnits(L.reinforcements.units, k, rnd, 3);
     for (const [i, w] of (L.waves || []).entries()) for (const s of w.squads) s.units = scaleUnits(s.units, k, rnd, i + 5);
-    if (L.convoy) {
+    if (L.convoy && !convoy) {
       const v = L.convoy.vehicles;
       if (k < 0.85 && v.length > 2) v.pop(); // a weak column: the rear vehicle stays home
       if (k > 1.25) {
@@ -96,6 +105,16 @@ export function vary(level, {time = null, weather = 'clear', ground = 'plain', s
       }
     }
   }
+  // the campaign's convoy: its own vehicles and escort, the optional objective only if it has an MRAP, a brief to match
+  if (L.convoy && convoy?.vehicles?.length) {
+    L.convoy.vehicles = buildColumn({vehicles: convoy.vehicles, escort: convoy.escort || 0, seed});
+    if (!L.convoy.vehicles.some(v => v.id === 'mrap')) L.objectives = L.objectives.filter(o => o.target !== 'mrap');
+    const soldiers = L.convoy.vehicles.reduce((a, v) => a + v.crew.length, 0);
+    L.brief = `${name || 'The convoy'} comes down the road: ${describeColumn(L.convoy.vehicles)}, ${soldiers} soldiers. ${AMBUSHES[ambush]?.text || AMBUSHES.roadblock.text}`;
+  }
+  // a road charge: buried just short of the stop, under the lead vehicle's path; it is the band's (it raises the alarm)
+  if (L.convoy && ambush === 'charge') L.mines = [...(L.mines || []), {x: L.convoy.stopX - 2, z: L.convoy.z}];
+  L.variant.ambush = ambush;
   const tag = [t !== 'day' ? t : '', weather !== 'clear' ? weather : ''].filter(Boolean).join(', ');
   if (tag) L.title = `${level.title} (${tag})`;
   return L;

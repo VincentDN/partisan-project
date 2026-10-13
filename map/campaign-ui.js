@@ -25,6 +25,7 @@ import {groundAt} from '../shared/campaign/nav.js';
 import {createKitScreen} from './kit-screen.js';
 import {rememberFocus, trapTab} from '../shared/modal.js';
 import {describeManifest, describeProvenance, provenance, recordIn, FIRST_CACHE} from '../shared/campaign/cargo.js';
+import {AMBUSHES} from '../convoy/levels/columns.js';
 
 const CONTACT = 12, // map units: close enough to fight
   RAID = 22, // around a settlement's centre
@@ -119,6 +120,38 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
       el('p', {class: 'enc-mission'}, `${missionName(e.level)} · ${src.strength} enemy · ${cond}`),
       // a convoy's manifest: what a won ambush brings home, less what burns (shared/campaign/cargo.js, WP-W14)
       e.cargo ? el('p', {class: 'enc-cargo'}, `Cargo: ${describeManifest(e.cargo)}.`) : null,
+      // how the ambush starts (WP-W9): the roadblock, or a road charge that costs a demolition charge from the stash
+      e.variant?.convoy
+        ? el(
+            'fieldset',
+            {class: 'enc-ambush'},
+            el('legend', {}, 'Ambush start'),
+            Object.entries(AMBUSHES).map(([id, a]) => {
+              const short = Object.entries(a.spend || {}).some(([g, n]) => (campaign.stash[g] || 0) < n);
+              return el(
+                'label',
+                {},
+                el('input', {
+                  type: 'radio',
+                  name: 'ambush',
+                  value: id,
+                  checked: id === e.variant.ambush,
+                  disabled: short,
+                  onchange: () => {
+                    e.variant.ambush = id;
+                    e.spend = a.spend || {};
+                  },
+                }),
+                el('b', {}, ` ${a.label}`),
+                el(
+                  'small',
+                  {},
+                  ` ${a.text}${a.spend ? ` Uses ${describeManifest(a.spend)} from the stash${short ? '; there is none' : ''}.` : ''}`,
+                ),
+              );
+            }),
+          )
+        : null,
       el('h3', {}, fit.length >= SQUAD_MIN ? 'Going in' : 'The band needs to recover'),
       el(
         'ul',

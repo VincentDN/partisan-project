@@ -3176,7 +3176,7 @@
     "docs/campaign-roadmap.md"
    ],
    "acceptance": "Contact pauses time and opens a keyboard-operable panel with both sides' strength and the ground; each option leads to a mission or a map outcome.",
-   "progress_note": "2026-10-08: Contact panel, attack/leave and six-to-nine-person selection implemented; prepare ambush/rearguard choices remain."
+   "progress_note": "2026-10-08: Contact panel, attack/leave and six-to-nine-person selection implemented; prepare ambush/rearguard choices remain. 2026-10-13: a convoy's ambush start (roadblock or road charge) is chosen on the encounter panel (WP-W9); a general \"prepare ambush\" and the rearguard withdrawal remain."
   },
   {
    "id": "WP-W9",
@@ -3185,10 +3185,8 @@
    "milestone": "W",
    "size": "M",
    "bu": 20,
-   "status": "planned",
-   "deps": [
-    "WP-W8"
-   ],
+   "status": "done",
+   "deps": [],
    "agent": "any",
    "needs": [
     "browser"
@@ -3197,7 +3195,7 @@
     "docs/campaign-roadmap.md"
    ],
    "acceptance": "A map convoy opens the convoy level with its escort and vehicles; win leaves a wreck and captures cargo; loss lets it pass; e2e map to mission to map.",
-   "progress_note": "2026-10-08: Convoy/forest-road bridge and conditions implemented; exact cargo/escort-driven generation remains."
+   "progress_note": "2026-10-13: done. A map convoy's vehicles and escort (one definition in shared/campaign/contacts.js SOURCES, read by the map parties) are the column the convoy level fields (convoy/levels/columns.js, via the deployment variant and vary()): MATV as MRAP with its turret, Humvee as jeep, trucks; a leader and a radio operator; the brief names the column; no MRAP, no MRAP objective. The encounter panel offers the ambush start: the roadblock, or a road charge (a demolition charge spent from the stash) that blows the lead vehicle as it arrives and wakes the escort. Win: wreck (W13) and cargo (W14); loss: the convoy stays on the map. The difficulty still stands some of the escort down, as on every level. Its dependency on WP-W8 was dropped: W8 still owes the rearguard withdrawal, which convoys do not need. tests/convoy-column.test.mjs; campaign-loop e2e checks the column, the charge and the stash."
   },
   {
    "id": "WP-W10",

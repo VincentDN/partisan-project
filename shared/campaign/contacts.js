@@ -9,9 +9,16 @@ import {manifestFor} from './cargo.js';
 
 /** The enemies on the map: id -> what they are, and the mission meeting them starts. */
 export const SOURCES = {
-  'supply-convoy': {name: 'Supply convoy', kind: 'convoy', level: 'convoy', strength: 14},
-  'armoured-column': {name: 'Armoured column', kind: 'convoy', level: 'convoy', strength: 18},
-  'fuel-convoy': {name: 'Fuel convoy', kind: 'convoy', level: 'convoy', strength: 9},
+  // a convoy's vehicles (map models, in column order) are the ones the ambush fields (convoy/levels/columns.js, WP-W9)
+  'supply-convoy': {name: 'Supply convoy', kind: 'convoy', level: 'convoy', strength: 14, vehicles: ['matv', 'truck', 'truck']},
+  'armoured-column': {
+    name: 'Armoured column',
+    kind: 'convoy',
+    level: 'convoy',
+    strength: 18,
+    vehicles: ['humvee', 'matv', 'truck', 'humvee'],
+  },
+  'fuel-convoy': {name: 'Fuel convoy', kind: 'convoy', level: 'convoy', strength: 9, vehicles: ['matv', 'truck']},
   'orion-patrol': {name: 'Orion garrison patrol', kind: 'post', level: 'checkpoint', strength: 24},
   'korfos-checkpoint': {name: 'Checkpoint Korfos', kind: 'post', level: 'checkpoint', strength: 12},
   raiders: {name: 'Raiding party', kind: 'hunters', level: 'cave', strength: 31},
@@ -81,7 +88,10 @@ export function encounterFor(c, sourceId, source = SOURCES[sourceId], {ground = 
   const weather = w < 0.14 ? 'fog' : w < 0.28 ? 'rain' : 'clear';
   // the enemy the level fields, scaled to the party actually met
   const base = enemyCount(LEVELS[level]) || source.strength;
-  const strength = Math.round(Math.min(1.6, Math.max(0.6, source.strength / base)) * 100) / 100;
+  // a convoy fields its own column and escort (convoy/levels/columns.js): no scaling on top of that
+  const column = source.vehicles ? {vehicles: [...source.vehicles], escort: source.strength} : null;
+  const convoyVariant = column ? {convoy: column, ambush: 'roadblock', name: source.name} : {};
+  const strength = column ? 1 : Math.round(Math.min(1.6, Math.max(0.6, source.strength / base)) * 100) / 100;
   return {
     id,
     level,
@@ -91,7 +101,7 @@ export function encounterFor(c, sourceId, source = SOURCES[sourceId], {ground = 
     enemy: {name: source.name, kind: source.kind, strength: source.strength, settlement: source.settlement || null},
     ground,
     time,
-    variant: {time, weather, ground: GROUND_LOOK[ground] || 'plain', strength},
+    variant: {time, weather, ground: GROUND_LOOK[ground] || 'plain', strength, ...convoyVariant},
     cargo: manifestFor(sourceId), // a convoy's manifest (shared/campaign/cargo.js); null for anything else
   };
 }

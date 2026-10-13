@@ -50,12 +50,35 @@ try {
   assert.match(await page.locator('.enc-cargo').innerText(), /^Cargo: 4 AK-74, 2 AK-74M, /, 'the convoy shows its manifest (WP-W14)');
   assert.equal(await page.evaluate(() => document.activeElement.id), 'enc-attack', 'Attack has the focus');
 
+  // the ambush start (WP-W9): the roadblock by default, or a road charge from the stash
+  assert.equal(await page.locator('.enc-ambush input[type=radio]').count(), 2, 'two ways to start it');
+  assert.equal(await page.locator('.enc-ambush input[value=roadblock]').isChecked(), true);
+  const charges = before.stash.explosives || 0;
+  await page.locator('.enc-ambush input[value=charge]').check();
+
   // 2. Attack: into the Convoy Ambush with the deployment
   await Promise.all([page.waitForURL(/convoy\/\?campaign=c1&encounter=supply-convoy-1-d1/), page.locator('#enc-attack').click()]);
   await page.waitForFunction(() => window.PARP_SPRITES?.ready, null, {timeout: 60000});
   assert.equal(await page.evaluate(() => window.PARP_SPRITES.campaign.action), 'play');
   const fought = await page.evaluate(() => window.PARP_SPRITES.sim.level.id);
   assert.ok(['convoy', 'forest-road'].includes(fought), 'a convoy map');
+  // the map's supply convoy, as it is on the map: an MATV and two trucks, fourteen soldiers, and the charge under the stop
+  const column = await page.evaluate(() => {
+    const L = window.PARP_SPRITES.sim.level;
+    return {
+      kinds: L.convoy.vehicles.map(v => v.kind),
+      crew: L.convoy.vehicles.reduce((a, v) => a + v.crew.length, 0),
+      mines: L.mines?.length || 0,
+      brief: L.brief,
+    };
+  });
+  assert.deepEqual(column.kinds, ['mrap', 'truck', 'truck'], 'the convoy’s own vehicles');
+  // its escort, as many as the map shows; the difficulty then stands some down as on every level ("most turn up")
+  assert.equal(await page.evaluate(() => window.PARP_SPRITES.campaign.deployment.variant.convoy.escort), 14, 'its escort');
+  assert.ok(column.crew <= 14 && column.crew >= 8, `the escort after the difficulty (${column.crew})`);
+  assert.equal(column.mines, 1, 'the road charge is buried');
+  assert.match(column.brief, /^Supply convoy comes down the road: an MRAP and two trucks, 14 soldiers\. A demolition charge/);
+  assert.equal((await saved(page)).stash.explosives || 0, charges - 1, 'the charge came out of the stash');
   await page.locator('#start').click();
   await page.evaluate(() => {
     window.PARP_SPRITES.sim.outcome = 'won';
@@ -77,7 +100,7 @@ try {
   assert.ok(xp > before.band.fighters.player.xp, 'experience earned');
   const loot = [result.loot, result.cargo].flatMap(Object.values).reduce((a, b) => a + b, 0);
   const stashCount = s => Object.values(s).reduce((a, b) => a + b, 0);
-  assert.equal(stashCount(c.stash), stashCount(before.stash) + loot, 'the loot and the cargo are in the stash');
+  assert.equal(stashCount(c.stash), stashCount(before.stash) + loot - 1, 'the loot and the cargo are in the stash, the charge spent');
   assert.equal(c.world.seen, c.log.length, 'the result is reported once');
   await page.reload();
   await mapReady(page);

@@ -6,6 +6,7 @@
 import * as T from 'three';
 import {vehicle3d} from './vehicles.js';
 import {FACTIONS, PARTY_SPOTS, sample} from './island.js';
+import {SOURCES} from '../shared/campaign/contacts.js';
 const FIGURE_SCALE = 3.2;
 
 // ---------- nameplates (HTML over the canvas) ----------
@@ -108,12 +109,16 @@ export async function buildParties(field, roads, layer, makers = {}) {
     });
   }
 
-  // convoys: a column of vehicles that drives a road to its end, waits, turns round and drives back
-  const COLUMNS = [
-    {id: 'supply-convoy', road: 'fort-orion>agia-marina', name: 'Supply convoy', count: 14, vehicles: ['matv', 'truck', 'truck']},
-    {id: 'armoured-column', road: 'kastro>fort-orion', name: 'Armoured column', count: 18, vehicles: ['humvee', 'matv', 'truck', 'humvee']},
-    {id: 'fuel-convoy', road: 'fort-orion>myrtia', name: 'Fuel convoy', count: 9, vehicles: ['matv', 'truck']},
-  ];
+  // convoys: a column of vehicles that drives a road to its end, waits, turns round and drives back; what it is (name,
+  // escort, vehicles) comes from the campaign's contacts, so the ambush fields the same column (WP-W9)
+  const ROADS = {'supply-convoy': 'fort-orion>agia-marina', 'armoured-column': 'kastro>fort-orion', 'fuel-convoy': 'fort-orion>myrtia'};
+  const COLUMNS = Object.entries(ROADS).map(([id, road]) => ({
+    id,
+    road,
+    name: SOURCES[id].name,
+    count: SOURCES[id].strength,
+    vehicles: SOURCES[id].vehicles,
+  }));
   for (const c of COLUMNS) {
     const [a, b] = c.road.split('>');
     const road = roads.find(r => (r.from === a && r.to === b) || (r.from === b && r.to === a));

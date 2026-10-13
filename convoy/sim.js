@@ -116,6 +116,8 @@ export class Sim {
     this.active = this.units.find(u => u.id === 'player') || this.units.find(u => u.side === 'partisan');
     if (!this.active) throw new Error('level requires a playable rebel');
     this.control = {readyAt: 0, pending: null, revision: 0};
+    // the level's own mines (a road charge, WP-W9): the band's, so setting one off raises the alarm
+    for (const m of this.level.mines || []) this.mines.push({x: m.x, z: m.z, by: this.player});
   }
 
   /** Backward-compatible alias: identity stays on the unit, control moves between units. */
