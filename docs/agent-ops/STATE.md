@@ -5,12 +5,12 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json).
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-13 15:50 UTC · claude · WP-W4 · done**
+**2026-10-13 16:21 UTC · claude · WP-W5 · done**
 
-- Branch `claude/friendly-dijkstra-4ky9w6` at `ffe6367`; working tree clean.
-- Last commits: ffe6367 WP-W4: three speeds on 1-3, night tint and shorter sight on the map · 3432cdd docs: handoff for WP-W12 · d634e42 WP-W12: pick six to nine of every fit fighter; deployment browser gate
-- What happened: W4 done: 1-3 speeds and buttons, night tint from the campaign hour, sight 160 by day and 60 at night hides far enemy nameplates.
-- Next step: Campaign: W5 (seeded headless world sim, fixed step), then W6 (convoy spawn/resupply) and W7 (hunter columns, sight); W22 auto-resolve. Balance: convoy escort spots eight rebels ~13 s in.
+- Branch `claude/friendly-dijkstra-4ky9w6` at `3683359`; working tree clean.
+- Last commits: 3683359 WP-W5: the campaign world in fixed steps, without a renderer · f5c2f04 docs: handoff for WP-W4 · ffe6367 WP-W4: three speeds on 1-3, night tint and shorter sight on the map
+- What happened: W5 done: shared/campaign/world.js runs convoys, the band's march, hunters and the clock in fixed 0.1 s steps; the map only draws it; routes survive reloads; rests run the world.
+- Next step: Campaign: W6 (convoys spawn at Invader seats, resupply on arrival), W7 (hunter columns by heat, last-seen tracking, losing them), W22 auto-resolve. Balance: convoy escort spots eight rebels ~13 s in.
 <!-- handoff:end -->
 
 ## Gameplay/demo module boundary — 13 October 2026
