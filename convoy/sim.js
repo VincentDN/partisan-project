@@ -7,6 +7,7 @@ import {armyAct, armyThink, decay, partisanAct, partisanThink, perceive, receive
 import {coverGrid} from './cover-grid.js';
 import {difficulty as difficultyOf} from './difficulty.js';
 import {DEFAULT_LEVEL, LEVELS} from './levels/index.js';
+import {sandbagsFor} from './levels/util.js';
 import {initObjectives} from './objectives.js';
 import {DEFAULT_SQUAD, REBEL_HEALTH, squadSpawns} from './roster.js';
 import {GRENADES, SPEED, VISION, inBox, rng, segmentBox, segmentCircle, thinLevel} from './sim-base.js';
@@ -118,6 +119,8 @@ export class Sim {
     this.control = {readyAt: 0, pending: null, revision: 0};
     // the level's own mines (a road charge, WP-W9): the band's, so setting one off raises the alarm
     for (const m of this.level.mines || []) this.mines.push({x: m.x, z: m.z, by: this.player});
+    // a prepared ambush (WP-W8): sandbags in front of every fighter where they start
+    if (this.level.prepared) this.fieldworks.push(...sandbagsFor(this.units.filter(u => u.side === 'partisan')));
   }
 
   /** Backward-compatible alias: identity stays on the unit, control moves between units. */

@@ -27,6 +27,8 @@ import {rememberFocus, trapTab} from '../shared/modal.js';
 import {describeManifest, describeProvenance, provenance, recordIn, FIRST_CACHE} from '../shared/campaign/cargo.js';
 import {AMBUSHES} from '../convoy/levels/columns.js';
 import {pursue, campOf, rebuildingFor, CAMP_RANGE, FIRST_CAMP} from '../shared/campaign/defence.js';
+import {prepare, withdrawWithRearguard, stancesFor, caughtBy} from '../shared/campaign/stances.js';
+import {sidesLine, actionRow} from './encounter-actions.js';
 
 const CONTACT = 12, // map units: close enough to fight
   RAID = 22, // around a settlement's centre
@@ -136,6 +138,7 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
       panel,
       el('h2', {id: 'enc-title', class: 'plate'}, src.name),
       el('p', {class: 'enc-mission'}, `${missionName(e.level)} · ${src.strength} enemy · ${cond}`),
+      sidesLine(el, {campaign, fit, ground: e.ground}), // both sides and the ground (WP-W8)
       // a convoy's manifest: what a won ambush brings home, less what burns (shared/campaign/cargo.js, WP-W14)
       e.cargo ? el('p', {class: 'enc-cargo'}, `Cargo: ${describeManifest(e.cargo)}.`) : null,
       // how the ambush starts (WP-W9): the roadblock, or a road charge that costs a demolition charge from the stash
@@ -199,18 +202,49 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
       fit.length >= SQUAD_MIN
         ? null
         : el('p', {class: 'note'}, 'At least six fit fighters are needed. Rest at a friendly settlement until they heal.'),
-      el(
-        'div',
-        {class: 'enc-actions'},
-        el('button', {class: 'primary', id: 'enc-attack', disabled: fit.length < SQUAD_MIN, onclick: () => attack(e)}, act.verb),
-        el('button', {id: 'enc-leave', onclick: leave}, 'Leave'),
-      ),
+      // attack, prepare an ambush, withdraw leaving a rearguard, leave (map/encounter-actions.js, WP-W8)
+      actionRow({
+        el,
+        kind: src.kind,
+        caught: caughtBy(campaign, c.id),
+        verb: act.verb,
+        canAttack: fit.length >= SQUAD_MIN,
+        fit,
+        names: NAMES,
+        onAttack: () => attack(e),
+        onPrepare: () => {
+          prepare(campaign, e); // two hours pass: the clock, healing
+          attack(e);
+        },
+        onRearguard: id => rearguard(c, id),
+        onLeave: leave,
+      }),
     );
     if (panel.hidden) backFromEncounter = rememberFocus();
     panel.hidden = false;
-    (fit.length ? panel.querySelector('#enc-attack') : panel.querySelector('#enc-leave')).focus();
+    panel.querySelector('.enc-actions button:not([disabled])')?.focus();
+  }
+  /** Hunters caught the band: one fighter holds them while the rest get away (shared/campaign/stances.js). */
+  function rearguard(c, id) {
+    const home = parties.parties.find(p => p.id === c.id)?.home || [c.at.x, c.at.z];
+    try {
+      withdrawWithRearguard(campaign, c.id, id, home);
+    } catch (err) {
+      toast(err.message);
+      return;
+    }
+    stepHunters(0);
+    save();
+    toast(`${NAMES[id] || id} holds the rear while the band gets away. ${c.source.name} fall back to their post.`);
+    closeEncounter();
   }
   function leave() {
+    if (!open) return;
+    if (!stancesFor(open.source.kind, {caught: caughtBy(campaign, open.id)}).leave) return; // caught: fight, or leave a rearguard
+    closeEncounter();
+  }
+  /** Close the panel and let the world run on; this contact is ignored until the band has moved off. */
+  function closeEncounter() {
     if (!open) return;
     ignored = open;
     open = null;

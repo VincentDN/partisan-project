@@ -127,7 +127,15 @@ export function normalize(raw) {
     c.world.camp = {id: w.camp.id, ready: isObj(w.camp.ready) ? {day: num(w.camp.ready.day, 1), hour: num(w.camp.ready.hour, 0)} : null};
   if (isObj(w.hunters))
     for (const [id, h] of Object.entries(w.hunters))
-      if (isObj(h) && Number.isFinite(h.x) && Number.isFinite(h.z)) c.world.hunters[id] = {x: h.x, z: h.z, hunting: !!h.hunting};
+      if (isObj(h) && Number.isFinite(h.x) && Number.isFinite(h.z))
+        c.world.hunters[id] = {
+          x: h.x,
+          z: h.z,
+          hunting: !!h.hunting,
+          ...(isObj(h.rest) && Number.isFinite(h.rest.day) && Number.isFinite(h.rest.hour)
+            ? {rest: {day: h.rest.day, hour: h.rest.hour}}
+            : {}),
+        };
   if (Array.isArray(w.burnt)) c.world.burnt = w.burnt.filter(s => typeof s === 'string');
   if (Array.isArray(w.aftermath))
     c.world.aftermath = w.aftermath.filter(

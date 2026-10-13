@@ -1,5 +1,6 @@
-// Hunted, and the camp overrun (WP-W11), in the browser: once the heat is high the raiding party marches on the band
-// across the map and is saved where it got to; caught at Oros Camp, the band fights the cave defence; losing it,
+// Hunted, and the camp overrun (WP-W11, W8), in the browser: once the heat is high the raiding party marches on the
+// band across the map and is saved where it got to; caught, the band cannot leave but can leave a rearguard; caught at
+// Oros Camp again, it prepares an ambush and fights the cave defence behind sandbags; losing it,
 // the map applies TAC-K-03: the band falls back to Lithia (the new camp, rebuilding), Oros Camp is burnt, half the
 // stash is gone and the heat halves.
 import assert from 'node:assert/strict';
@@ -45,7 +46,43 @@ try {
   const h = (await saved(page)).world.hunters.raiders;
   assert.ok(Math.hypot(h.x - r1.x, h.z - r1.z) < 6 && h.hunting, 'where they got to is saved');
 
-  // 2. caught at the camp: the cave defence
+  // 2. caught (WP-W8): no leaving, a rearguard instead; the hunters go home and rest, the rearguard comes back wounded
+  const openRaiders = () =>
+    page.evaluate(() => {
+      const M = window.PARP_MAP,
+        r = M.parties.parties.find(q => q.id === 'raiders').root.position;
+      M.campaign.showEncounter(M.campaign.contactAt({x: r.x, z: r.z}));
+    });
+  await openRaiders();
+  await page.locator('.encounter:not([hidden])').waitFor({timeout: 10000});
+  assert.match(
+    await page.locator('.enc-sides').innerText(),
+    /^Your band: 8 of 8 fighters fit · \d+ troops · /,
+    'both sides and the ground',
+  );
+  assert.equal(await page.locator('#enc-leave').isDisabled(), true, 'caught: no leaving');
+  await page.keyboard.press('Escape');
+  assert.equal(await page.locator('.encounter').isHidden(), false, 'not by Escape either');
+  await page.locator('#enc-rearguard-who').selectOption('dragan');
+  await page.locator('#enc-rearguard').click();
+  assert.equal(await page.locator('.encounter').isHidden(), true, 'the band gets away');
+  let s = await saved(page);
+  assert.equal(s.band.fighters.dragan.wounded, true, 'the rearguard is wounded');
+  assert.equal(s.world.hunters.raiders.hunting, false);
+  assert.ok(s.world.hunters.raiders.rest, 'the hunters rest at their post');
+  // the hunters come back once rested (time moved on), and catch the band at the camp
+  await page.evaluate(() => {
+    const M = window.PARP_MAP,
+      h = M.travel.campaign.world.hunters.raiders;
+    delete h.rest;
+    h.hunting = true;
+    M.travel.campaign.band.fighters.dragan.wounded = false; // healed for the next test step
+    M.travel.campaign.band.fighters.dragan.healIn = 0;
+    M.parties.parties.find(q => q.id === 'raiders').place(-176, -26);
+    M.travel.save();
+  });
+
+  // 3. caught at the camp: the cave defence, from prepared positions
   const before = await saved(page);
   await page.evaluate(() => {
     const M = window.PARP_MAP,
@@ -62,15 +99,20 @@ try {
   assert.match(await page.locator('.enc-mission').innerText(), /Cave/i, 'the cave defence at Oros Camp');
   await Promise.all([
     page.waitForURL(/convoy\/\?campaign=c1&encounter=raiders-/, {waitUntil: 'commit'}),
-    page.locator('#enc-attack').click(),
+    page.locator('#enc-prepare').click(),
   ]);
   await page.waitForFunction(() => window.PARP_SPRITES?.ready, null, {timeout: 60000});
   assert.equal(await page.evaluate(() => window.PARP_SPRITES.sim.level.id), 'cave');
+  const bags = await page.evaluate(() => ({
+    bags: window.PARP_SPRITES.sim.fieldworks.filter(f => f.kind === 'sandbag').length,
+    rebels: window.PARP_SPRITES.sim.units.filter(u => u.side === 'partisan').length,
+  }));
+  assert.equal(bags.bags, bags.rebels, 'prepared: sandbags in front of every fighter');
   await page.locator('#start').click();
   await page.evaluate(() => (window.PARP_SPRITES.sim.outcome = 'lost'));
   await page.waitForFunction(() => !document.querySelector('#card').hidden, null, {timeout: 10000});
 
-  // 3. overrun: back on the map at Lithia, Oros Camp burnt, half the stash gone, heat halved, the camp rebuilding
+  // 4. overrun: back on the map at Lithia, Oros Camp burnt, half the stash gone, heat halved, the camp rebuilding
   await Promise.all([page.waitForURL(/map\/\?campaign=c1$/, {waitUntil: 'commit'}), page.locator('#start').click()]);
   await mapReady(page);
   assert.match(await page.locator('#toast').innerText(), /Raiding party overran Oros Camp: .* The band fell back to Lithia/);

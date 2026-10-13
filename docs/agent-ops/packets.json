@@ -3155,7 +3155,8 @@
    "inputs": [
     "docs/campaign-roadmap.md"
    ],
-   "acceptance": "Attacks raise heat and hunters; hunters chase the last-seen point and can lose you; sight radii shown on the map; harness metrics for hunts per day."
+   "acceptance": "Attacks raise heat and hunters; hunters chase the last-seen point and can lose you; sight radii shown on the map; harness metrics for hunts per day.",
+   "progress_note": "2026-10-13: the raiding party hunts the band once the heat reaches 20 and rests after a rearguard action (WP-W11, W8); hunter columns spawned by heat, map sight, last-seen tracking and losing them remain."
   },
   {
    "id": "WP-W8",
@@ -3164,11 +3165,9 @@
    "milestone": "W",
    "size": "S",
    "bu": 8,
-   "status": "planned",
+   "status": "done",
    "deps": [
-    "WP-W2",
-    "WP-W6",
-    "WP-W7"
+    "WP-W2"
    ],
    "agent": "any",
    "needs": [],
@@ -3176,7 +3175,7 @@
     "docs/campaign-roadmap.md"
    ],
    "acceptance": "Contact pauses time and opens a keyboard-operable panel with both sides' strength and the ground; each option leads to a mission or a map outcome.",
-   "progress_note": "2026-10-08: Contact panel, attack/leave and six-to-nine-person selection implemented; prepare ambush/rearguard choices remain. 2026-10-13: a convoy's ambush start (roadblock or road charge) is chosen on the encounter panel (WP-W9); a general \"prepare ambush\" and the rearguard withdrawal remain."
+   "progress_note": "2026-10-13: done. Contact pauses time and opens the keyboard-operable panel (QA8) showing the enemy, the band (fit fighters, troops) and the ground. Choices (shared/campaign/stances.js, map/encounter-actions.js): Attack; Prepare an ambush against convoys and hunters (two campaign hours, then the fight starts behind sandbags in front of every fighter; levels gain level.prepared); a convoy's ambush start (WP-W9); Withdraw leaving a rearguard when hunters have caught the band (no mission: the chosen fighter comes back wounded, the hunters go home and rest twelve hours); Leave, except from hunters on the hunt (Escape too). tests/campaign-stances.test.mjs; hunted e2e checks the panel, the rearguard and a prepared cave defence. Its dependencies on WP-W6 and WP-W7 were dropped: the panel and its choices work with the convoys and hunters the map has; spawning, resupply and map sight stay in those packets."
   },
   {
    "id": "WP-W9",

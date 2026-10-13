@@ -33,3 +33,15 @@ export function trees(area, step, seed, keepClear) {
     }
   return out;
 }
+
+/**
+ * Sandbags for a prepared position (WP-W8): a low wall a step in front of each fighter, across the way they face.
+ * Returns fieldwork boxes {x, z, w, d, h, kind} (as convoy/abilities.js lays them).
+ */
+export function sandbagsFor(units) {
+  return units.map(u => {
+    const a = u.facing ?? 0,
+      across = Math.abs(Math.sin(a)) > Math.abs(Math.cos(a)); // facing north or south: the wall runs east-west
+    return {x: u.x + Math.cos(a) * 1.4, z: u.z + Math.sin(a) * 1.4, w: across ? 2.2 : 1, d: across ? 1 : 2.2, h: 1, kind: 'sandbag'};
+  });
+}

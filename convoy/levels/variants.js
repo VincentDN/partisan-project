@@ -68,7 +68,17 @@ function scaleUnits(units, k, rnd, tag) {
  */
 export function vary(
   level,
-  {time = null, weather = 'clear', ground = 'plain', strength = 1, seed = 1, convoy = null, ambush = 'roadblock', name = null} = {},
+  {
+    time = null,
+    weather = 'clear',
+    ground = 'plain',
+    strength = 1,
+    seed = 1,
+    convoy = null,
+    ambush = 'roadblock',
+    name = null,
+    prepared = false,
+  } = {},
 ) {
   const rnd = lcg(seed * 2654435761 + 17);
   const L = structuredClone(level);
@@ -115,6 +125,12 @@ export function vary(
   // a road charge: buried just short of the stop, under the lead vehicle's path; it is the band's (it raises the alarm)
   if (L.convoy && ambush === 'charge') L.mines = [...(L.mines || []), {x: L.convoy.stopX - 2, z: L.convoy.z}];
   L.variant.ambush = ambush;
+  // a prepared ambush (WP-W8): the fighters start behind sandbags (convoy/sim.js lays them), the brief says so
+  if (prepared) {
+    L.prepared = true;
+    L.variant.prepared = true;
+    L.brief = `${L.brief} You had two hours to dig in: sandbags in front of every fighter.`;
+  }
   const tag = [t !== 'day' ? t : '', weather !== 'clear' ? weather : ''].filter(Boolean).join(', ');
   if (tag) L.title = `${level.title} (${tag})`;
   return L;

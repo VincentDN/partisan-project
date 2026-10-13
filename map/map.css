@@ -151,7 +151,7 @@ a.band-screen:focus-visible { outline: 2px solid var(--lcd-hi); outline-offset: 
 .enc-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 14px; }
 .enc-actions button { padding: 7px 14px; }
 .enc-actions .primary { background: linear-gradient(var(--bronze-hi), var(--bronze)); color: var(--leather); font-weight: 700; }
-.enc-actions .primary:disabled { opacity: 0.45; cursor: not-allowed; }
+.enc-actions button:disabled { opacity: 0.45; cursor: not-allowed; } /* every choice that is not open now (WP-W8) */
 .encounter .note, .band-panel .note { color: #c8b994; font-size: 12px; }
 /* the camp's rebel cards (convoy/camp.js) in the map's leather */
 .band-panel .squad-cards { display: grid; gap: 8px; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); margin: 6px 0; }
@@ -170,3 +170,9 @@ a.band-screen:focus-visible { outline: 2px solid var(--lcd-hi); outline-offset: 
 .burnt { filter: grayscale(1) brightness(0.8); }
 .burnt .name, .burnt b { text-decoration: line-through; }
 .note.rebuilding { color: #e9c46a; }
+
+/* the encounter panel's other choices (WP-W8) */
+.enc-sides { margin: 2px 0 0; font-size: 12px; opacity: 0.9; }
+.enc-actions { flex-wrap: wrap; }
+.enc-rearguard { display: inline-flex; gap: 4px; align-items: center; }
+.enc-rearguard select { font: inherit; font-size: 12px; min-height: 28px; background: #241d15; color: var(--parch); border: 1px solid var(--bronze); border-radius: 2px; }

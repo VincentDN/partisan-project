@@ -33,7 +33,10 @@ export function rebuildingFor(c) {
 export function pursue(c, id, home, band, dt) {
   if (c.world.parties.some(p => p.id === id && p.state === 'destroyed')) return null;
   const h = ((c.world.hunters ||= {})[id] ||= {x: home[0], z: home[1]});
-  const hunting = c.world.heat >= HUNT_HEAT && !!band;
+  // thrown back by a rearguard (shared/campaign/stances.js, WP-W8): they rest at their post until h.rest
+  const k = c.world.clock,
+    rested = !h.rest || k.day > h.rest.day || (k.day === h.rest.day && k.hour >= h.rest.hour);
+  const hunting = c.world.heat >= HUNT_HEAT && !!band && rested;
   const [tx, tz] = hunting ? [band.x, band.z] : home;
   const dx = tx - h.x,
     dz = tz - h.z,

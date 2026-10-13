@@ -48,7 +48,7 @@ See [graphics roadmap](graphics-roadmap.md) for the shared appearance acceptance
 | --- | --- | --- |
 | Campaign entry and travel | Shared version-1 save, legacy migration, click-to-march A* navigation, terrain costs, camera follow, pause and speed | First-session guidance, strategic sight and route persistence |
 | Default map | 2.5D parties, island terrain, settlement and party labels; 3D demo separated | Real-device visual and frame-time acceptance |
-| Encounters | Proximity contact, enemy summary, ground/time/weather/strength variants, Attack and Leave | Ambush preparation, rearguard withdrawal and strategic pursuit |
+| Encounters | Proximity contact, both sides and the ground, Attack, Prepare an ambush, Withdraw with a rearguard, Leave; hunters pursue the band | Ambush preparation beyond sandbags (positions, traps) |
 | Deployment | Eight starting rebels; select six to nine fit fighters; explicit deployed identities reach the sim | Recruit/reserve roster expansion and broader roster UX |
 | Tactical missions | Convoy, compound, cave, forest road, checkpoint, village and hilltop; squad switching and class abilities | Mission pathfinding defects, tuning with eight rebels, extraction/loss policy audit |
 | Durability | Rebels have 180 base HP, modified by class; army base HP remains 100 | Human difficulty and pacing playtests |
@@ -223,7 +223,9 @@ simulation and save authority; additional showcase assets are secondary to those
 
 ## 7. Packet reconciliation
 
-W1–W3 provide the save, bridge and travel foundation. W11 is done (2026-10-13): with the heat up, the raiding party
+W1–W3 provide the save, bridge and travel foundation. W8 is done (2026-10-13): the encounter panel shows both sides
+and the ground, and offers Attack, Prepare an ambush (two hours, then sandbags), Withdraw leaving a rearguard (when
+hunters have caught the band) and Leave. W11 is done (2026-10-13): with the heat up, the raiding party
 hunts the band across the map; caught at Oros Camp the band fights the cave defence, elsewhere in the open; an
 overrun camp follows TAC-K-03 (half of every stack lost, fall back to the nearest friendly settlement, three days of
 rebuilding, the old camp burnt, heat halved). W9 is done (2026-10-13): an ambushed convoy fields the map
@@ -234,7 +236,7 @@ kept in the save, the smoke thinning over two campaign days and the marks gone a
 manifests shown before the fight, a won ambush takes the cargo home less what burns, and the stash shows where its
 items came from (missions, cargo, the trader). W15 is done (2026-10-12): the Rebel Band screen opens from the
 map's band panel on the campaign save, shows the named fighters above the troop stacks and promotes them with their
-experience and the stash's kit; the standalone demo keeps its own save. W8, W10 and W19 have meaningful playable subsets but
+experience and the stash's kit; the standalone demo keeps its own save. W10 and W19 have meaningful playable subsets but
 retain unfinished acceptance (ambush choices, exact enemy/cargo composition, aftermath, territory simulation).
 W12 now targets six-to-nine-person deployment rather than the obsolete four-person plan. W18 has recovery/trade
 but not recruitment. W21 has a bounded objective, not the complete endgame/defeat presentation. W24 retains the
