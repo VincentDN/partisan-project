@@ -227,7 +227,7 @@ export async function mountMap({HD2D, createSpriteLayer, createHD2D, figure}) {
   resize();
 
   const sprites = HD2D ? await createSpriteLayer() : null;
-  const parties = await buildParties(field, props.roads, labels, sprites?.makers || {figure});
+  const parties = await buildParties(field, labels, sprites?.makers || {figure});
   const hd2d = HD2D ? createHD2D(renderer) : null;
   scene.add(parties.group);
   const travel = mountTravel({
@@ -276,8 +276,8 @@ export async function mountMap({HD2D, createSpriteLayer, createHD2D, figure}) {
     const dt = real * (campaignUi?.blocked ? 0 : speed); // the world runs at the chosen speed; the camera never pauses
     worldT += dt;
     keyPan(real);
+    campaignUi?.update(dt); // the world moves first (WP-W5), then the map draws the band and follows it
     travel.update(dt);
-    campaignUi?.update(dt);
     if (aftermath) syncAftermath();
     const hour = travel.campaign ? travel.campaign.world.clock.hour : day.hours,
       sight = sightRange(hour);

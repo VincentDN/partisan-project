@@ -5,12 +5,13 @@ import {logEvent} from './state.js';
 export function safeHaven(c, settlements, at = c.world.party) {
   return at && settlements.find(s => ownerOf(c, s) !== 'invader' && Math.hypot(s.x - at.x, s.z - at.z) < 32);
 }
-export function rest(c, settlements, hours = 24) {
+/** Rest `hours` at a safe haven; `pass(hours)` lets the time go by (the map runs the world through it, WP-W5). */
+export function rest(c, settlements, hours = 24, pass = h => passTime(c, h)) {
   const haven = safeHaven(c, settlements);
   if (!haven) throw new Error('Reach a friendly or independent settlement to rest.');
   if (c.deployment) throw new Error('Finish the active mission first.');
   if (![12, 24, 48].includes(hours)) throw new Error('Rest for 12, 24 or 48 hours.');
-  const healed = passTime(c, hours);
+  const healed = pass(hours);
   c.world.heat = Math.max(0, c.world.heat - hours / 4);
   logEvent(c, {kind: 'rest', settlement: haven.id, hours, fighters: healed});
   return healed;

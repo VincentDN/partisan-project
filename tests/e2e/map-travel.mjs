@@ -23,7 +23,8 @@ try {
   await ready(page);
   const start = await page.evaluate(() => ({...window.PARP_MAP.travel.party}));
   assert.deepEqual([start.x, start.z], [-160, 40], 'the band starts at its camp spot');
-  assert.deepEqual((await saved(page)).world.party, {x: -160, z: 40}, 'and that is saved');
+  const first = (await saved(page)).world.party;
+  assert.deepEqual([first.x, first.z, first.route], [-160, 40, null], 'and that is saved');
 
   // a click on land (not a drag): a route, a line on the ground and a marker, a toast with the time it takes
   await page.evaluate(() => window.PARP_MAP.setSpeed(0)); // paused: orders still work, the band waits
@@ -84,8 +85,24 @@ try {
     window.PARP_MAP.travel.party.z,
   ]);
   assert.ok(Math.hypot(cam[0] - cam[2], cam[1] - cam[3]) < 1, 'the camera follows the band');
-  // finish the march in one step (the browser is slow here), then check the save
-  await page.evaluate(t => window.PARP_MAP.travel.update(t + 5), plan.time);
+  // halfway: the march is in the save; a reload carries on along the same route (WP-W5)
+  await page.evaluate(t => {
+    window.PARP_MAP.campaign.world.step(t / 3);
+    window.PARP_MAP.travel.save();
+  }, plan.time);
+  const mid = (await saved(page)).world.party;
+  assert.ok(mid.route?.points.length >= 2, 'the route is saved mid-march');
+  await page.reload();
+  await ready(page);
+  await page.evaluate(() => window.PARP_MAP.setSpeed(0));
+  const resumed = await page.evaluate(() => ({...window.PARP_MAP.travel.party}));
+  assert.ok(Math.hypot(resumed.x - mid.x, resumed.z - mid.z) < 0.01 && resumed.route, 'after a reload the band is mid-route');
+  assert.equal(await page.evaluate(() => window.PARP_MAP.scene.getObjectByName('route-end').visible), true, 'the route shows again');
+  // finish the march in one go (the browser is slow here), then check the save
+  await page.evaluate(t => {
+    window.PARP_MAP.campaign.world.step(t);
+    window.PARP_MAP.travel.update(0.02); // the map sees the arrival
+  }, plan.time);
   const end = await page.evaluate(() => ({...window.PARP_MAP.travel.party}));
   assert.equal(end.route, null, 'arrived');
   assert.equal(await page.evaluate(() => window.PARP_MAP.scene.getObjectByName('route-end').visible), false, 'the marker goes');

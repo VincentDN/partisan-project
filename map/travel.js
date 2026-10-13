@@ -31,11 +31,13 @@ export function mountTravel({scene, camera, field, stageEl, hero, cam, toast, re
     if (left) note = left.outcome === 'withdrawn' ? 'The band fell back from an unfinished mission. The fighters are wounded.' : '';
   }
   const [sx, sz] = campaign?.world.party ? [campaign.world.party.x, campaign.world.party.z] : PARTY_SPOTS.player;
-  const party = {x: sx, z: sz, heading: hero.root.rotation.y, route: null};
+  // the band and its march; a route in the save carries on after a reload (WP-W5)
+  const savedRoute = campaign?.world.party?.route;
+  const party = {x: sx, z: sz, heading: hero.root.rotation.y, route: savedRoute ? structuredClone(savedRoute) : null};
   let unsaved = false; // said once: storage full or blocked (private mode), the campaign runs on in memory
   const save = () => {
     if (!campaign) return;
-    campaign.world.party = {x: Math.round(party.x * 10) / 10, z: Math.round(party.z * 10) / 10};
+    campaign.world.party = {x: party.x, z: party.z, route: party.route ? structuredClone(party.route) : null};
     const ok = store.save(campaign);
     if (!ok && !unsaved) toast('The campaign cannot be saved: browser storage is full or blocked. Progress lasts until the tab closes.');
     unsaved = !ok;
@@ -156,6 +158,7 @@ export function mountTravel({scene, camera, field, stageEl, hero, cam, toast, re
 
   // ---------- each frame ----------
   let sinceSave = 0,
+    moving = !!party.route,
     walk = 0,
     sinceRoute = 0;
   function place() {
@@ -163,6 +166,7 @@ export function mountTravel({scene, camera, field, stageEl, hero, cam, toast, re
     hero.root.rotation.y = party.heading;
   }
   place();
+  if (party.route) drawRoute(); // a march the save brought back
   cam.tx = cam.x = party.x + 32;
   cam.tz = cam.z = party.z - 2;
   function update(dt) {
@@ -171,8 +175,10 @@ export function mountTravel({scene, camera, field, stageEl, hero, cam, toast, re
       sinceSave = 0;
       save();
     }
-    if (party.route && dt > 0) {
-      const arrived = advance(nav, party, dt);
+    // in a campaign the world simulation marches the band (shared/campaign/world.js, travel.driven); here it is drawn
+    if ((party.route || moving) && dt > 0) {
+      const arrived = api.driven ? !party.route : advance(nav, party, dt);
+      moving = !!party.route;
       walk += dt;
       place();
       if (!reduceMotion) hero.root.position.y += Math.abs(Math.sin(walk * 9)) * 0.25; // the march
@@ -193,9 +199,10 @@ export function mountTravel({scene, camera, field, stageEl, hero, cam, toast, re
     }
     sizeRoute();
   }
-  return {
+  const api = {
     nav,
     party,
+    driven: false, // set when the campaign's world simulation moves the band
     place, // stand the band where party.x, party.z says (after a fall back, WP-W11)
     moveTo,
     update,
@@ -208,4 +215,5 @@ export function mountTravel({scene, camera, field, stageEl, hero, cam, toast, re
       return follow;
     },
   };
+  return api;
 }

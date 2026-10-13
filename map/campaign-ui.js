@@ -11,7 +11,6 @@ import {
   readResults,
   isGone,
   ownerOf,
-  passTime,
   SOURCES,
   ACTIONS,
 } from '../shared/campaign/contacts.js';
@@ -19,6 +18,7 @@ import {SQUAD_MIN} from '../convoy/roster.js';
 import {squadPicker} from './encounter-squad.js';
 import {rest, safeHaven, operation} from '../shared/campaign/operations.js';
 import {deploy} from '../shared/campaign/encounter.js';
+import {createWorld} from '../shared/campaign/world.js';
 import {TROOPS, GEAR} from '../band/troops.js';
 import {createCamp, NAMES} from '../convoy/camp.js';
 import {SETTLEMENTS, byId} from './island.js';
@@ -27,14 +27,13 @@ import {createKitScreen} from './kit-screen.js';
 import {rememberFocus, trapTab} from '../shared/modal.js';
 import {describeManifest, describeProvenance, provenance, recordIn, FIRST_CACHE} from '../shared/campaign/cargo.js';
 import {AMBUSHES} from '../convoy/levels/columns.js';
-import {pursue, campOf, rebuildingFor, CAMP_RANGE, FIRST_CAMP} from '../shared/campaign/defence.js';
+import {campOf, rebuildingFor, CAMP_RANGE, FIRST_CAMP} from '../shared/campaign/defence.js';
 import {prepare, withdrawWithRearguard, stancesFor, caughtBy} from '../shared/campaign/stances.js';
 import {sidesLine, actionRow} from './encounter-actions.js';
 
 const CONTACT = 12, // map units: close enough to fight
   RAID = 22, // around a settlement's centre
   CLEAR = 34; // after Leave, a contact is ignored until the band is this far away
-const HOURS_PER_SECOND = 0.6; // as the map clock (map/map.js)
 const SEASONS = ['Spring', 'Summer', 'Autumn', 'Winter'];
 const MISSION_URL = new URL('../convoy/', import.meta.url);
 
@@ -56,14 +55,6 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
   const campaign = travel.campaign;
   if (!campaign) return null;
   const save = () => travel.save();
-  for (const p of parties.parties) {
-    if (!p.state) continue;
-    const stored = campaign.world.parties.find(s => s.id === p.id && s.motion);
-    if (stored) Object.assign(p.state, stored.motion);
-    else campaign.world.parties.push({id: p.id, motion: p.state});
-    if (stored) stored.motion = p.state;
-    p.update(0, 0);
-  }
   const names = Object.fromEntries(SETTLEMENTS.map(s => [s.id, s.name]));
 
   // ---------- what happened while we were away ----------
@@ -74,12 +65,31 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
     Object.assign(travel.party, {x: campaign.world.party.x, z: campaign.world.party.z, route: null});
     travel.place();
   }
-  // the hunters stand where the save last saw them
+  // the world runs in fixed steps (shared/campaign/world.js, WP-W5): convoys, the band's march, the hunters, the
+  // clock; the map only draws it. The convoys' motion and the hunters' places are the save's.
   const hunters = parties.parties.filter(p => SOURCES[p.id]?.kind === 'hunters' && p.place);
+  const convoys = parties.parties.filter(p => p.kind === 'convoy');
+  const world = createWorld(campaign, {
+    nav: travel.nav,
+    party: travel.party,
+    hunters: Object.fromEntries(hunters.map(p => [p.id, p.home])),
+    vehicles: Object.fromEntries(convoys.map(p => [p.id, SOURCES[p.id].vehicles.length])),
+  });
+  travel.driven = true;
+  for (const p of convoys) {
+    p.state = world.motion(p.id);
+    p.driven = true;
+    p.update(0, 0);
+  }
+  /** Stand the hunters where the world has them; dt > 0 also lets the world run (a rearguard sends them home). */
   function stepHunters(dt) {
+    if (dt) world.step(dt);
     for (const p of hunters) {
-      const h = pursue(campaign, p.id, p.home, travel.party, dt);
-      if (h) p.place(h.x, h.z, h.heading);
+      const h = campaign.world.hunters?.[p.id];
+      if (!h || isGone(campaign, p.id)) continue;
+      const heading = p.last ? Math.atan2(h.x - p.last.x, h.z - p.last.z) : null;
+      if (!p.last || Math.hypot(h.x - p.last.x, h.z - p.last.z) > 0.01) p.place(h.x, h.z, heading);
+      p.last = {x: h.x, z: h.z};
     }
   }
   stepHunters(0);
@@ -357,7 +367,7 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
             onclick: () => {
               try {
                 campaign.world.party = {x: travel.party.x, z: travel.party.z};
-                rest(campaign, SETTLEMENTS, hours);
+                rest(campaign, SETTLEMENTS, hours, h => world.skip(h).healed); // the world runs on meanwhile (WP-W5)
                 save();
                 renderBand();
                 renderCard();
@@ -465,8 +475,8 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
   let sinceCard = 0;
   function update(dt) {
     if (open || !bandPanel.hidden || kitScreen.isOpen) return;
-    const healed = passTime(campaign, dt * HOURS_PER_SECOND);
-    stepHunters(dt); // the hunters march on the band while the heat is high (WP-W11)
+    const healed = world.step(dt).healed; // time, the convoys, the band's march, the hunters (WP-W5, W11)
+    stepHunters(0);
     if (healed.length) {
       toast(`${healed.map(id => NAMES[id] || id).join(' and ')} ${healed.length > 1 ? 'are' : 'is'} fit again.`);
       save();
@@ -483,6 +493,7 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
   }
   return {
     update,
+    world, // the fixed-step world simulation (shared/campaign/world.js)
     get blocked() {
       return !!open || !bandPanel.hidden || kitScreen.isOpen;
     },

@@ -3107,7 +3107,7 @@
    "milestone": "W",
    "size": "M",
    "bu": 20,
-   "status": "planned",
+   "status": "done",
    "deps": [
     "WP-W1",
     "WP-W4"
@@ -3118,7 +3118,7 @@
     "docs/campaign-roadmap.md"
    ],
    "acceptance": "shared/campaign/world.js steps without a renderer; same seed and orders give the same world; state round-trips through the save.",
-   "progress_note": "2026-10-08: Convoy motion now survives save/load with deterministic initial phase; seeded headless strategic party simulation remains."
+   "progress_note": "2026-10-13: done. shared/campaign/world.js steps the campaign world in fixed 0.1 s ticks with no renderer: the convoys drive their roads out and back (motion in world.parties), the band marches its ordered route (nav.js), the hunters chase or go home (defence.js), and the clock runs (healing). The map only draws it (map/parties.js, travel.js, campaign-ui.js; travel.driven). The band's route is saved, so a reload mid-march carries on; a rest runs the world through its hours (hunters keep coming) instead of jumping the clock. Sight per hour (daylight.js) through world.sees. tests/campaign-world.test.mjs: the same orders give the same world at 60, 23 and 2 frames a second; a save halfway carries on exactly as an unbroken run; convoys turn at each end; a rest lets the hunters close; a damaged route is dropped. map-travel e2e reloads mid-march."
   },
   {
    "id": "WP-W6",

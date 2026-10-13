@@ -3,6 +3,7 @@ import * as T from 'three';
 import {vehicle3d} from './vehicles.js';
 import {FACTIONS, PARTY_SPOTS, sample} from './island.js';
 import {SOURCES} from '../shared/campaign/contacts.js';
+import {CONVOY_ROADS, convoyRoad, freshMotion, driveConvoy, vehicleAt} from '../shared/campaign/world.js';
 const FIGURE_SCALE = 3.2;
 
 // ---------- nameplates (HTML over the canvas) ----------
@@ -22,7 +23,7 @@ function nameplate(layer, {name, count, faction, kind}) {
  * Build the parties. `makers` swaps how they look: {figure(opts), vehicle(id)} (map/sprite-parties.js draws them as
  * sprites for people in the 2.5-D overworld); both map styles use the original 3-D convoy vehicles.
  */
-export async function buildParties(field, roads, layer, {figure, vehicle = vehicle3d}) {
+export async function buildParties(field, layer, {figure, vehicle = vehicle3d}) {
   if (typeof figure !== 'function') throw new TypeError('A party character renderer is required');
   const group = new T.Group();
   group.name = 'parties';
@@ -116,85 +117,42 @@ export async function buildParties(field, roads, layer, {figure, vehicle = vehic
   }
 
   // convoys: a column of vehicles that drives a road to its end, waits, turns round and drives back; what it is (name,
-  // escort, vehicles) comes from the campaign's contacts, so the ambush fields the same column (WP-W9)
-  const ROADS = {'supply-convoy': 'fort-orion>agia-marina', 'armoured-column': 'kastro>fort-orion', 'fuel-convoy': 'fort-orion>myrtia'};
-  const COLUMNS = Object.entries(ROADS).map(([id, road]) => ({
-    id,
-    road,
-    name: SOURCES[id].name,
-    count: SOURCES[id].strength,
-    vehicles: SOURCES[id].vehicles,
-  }));
-  for (const c of COLUMNS) {
-    const [a, b] = c.road.split('>');
-    const road = roads.find(r => (r.from === a && r.to === b) || (r.from === b && r.to === a));
-    if (!road) continue;
-    const pts = road.points;
-    const cum = [0];
-    for (let i = 1; i < pts.length; i++) cum.push(cum[i - 1] + pts[i].distanceTo(pts[i - 1]));
-    const total = cum[cum.length - 1];
-    const sampledPosition = new T.Vector3(),
-      sampledDirection = new T.Vector3();
-    const at = s => {
-      s = Math.max(0, Math.min(total, s));
-      let i = cum.findIndex(d => d >= s);
-      i = Math.max(1, i);
-      const k = (s - cum[i - 1]) / (cum[i] - cum[i - 1] || 1);
-      return {
-        p: sampledPosition.copy(pts[i - 1]).lerp(pts[i], k),
-        d: sampledDirection
-          .copy(pts[i])
-          .sub(pts[i - 1])
-          .normalize(),
-      };
-    };
+  // escort, vehicles) comes from the campaign's contacts, so the ambush fields the same column (WP-W9). The road and
+  // the motion are the world simulation's (shared/campaign/world.js): in a campaign it drives them (p.driven) and
+  // this only draws; on the practice map the column drives itself by the same rules.
+  for (const id of Object.keys(CONVOY_ROADS)) {
+    const src = SOURCES[id],
+      road = convoyRoad(id);
     const cars = [];
-    for (const id of c.vehicles) {
-      const v = await vehicle(id);
+    for (const vid of src.vehicles) {
+      const v = await vehicle(vid);
       group.add(v);
       cars.push(v);
     }
-    const gap = 10;
-    const state = {s: total * 0.35, dir: 1, wait: 0, speed: 9};
-    let placed = false,
-      lastS = NaN,
-      lastDir = 0;
-    const update = dt => {
-      if (!dt && placed && state.s === lastS && state.dir === lastDir) return;
-      if (state.wait > 0) state.wait -= dt;
-      else {
-        state.s += state.dir * state.speed * dt;
-        const end = state.dir > 0 ? total - 2 : gap * (cars.length - 1) + 2;
-        if ((state.dir > 0 && state.s >= end) || (state.dir < 0 && state.s <= end)) {
-          state.s = end;
-          state.wait = 2.5;
-          state.dir *= -1;
-          state.s += state.dir * gap * (cars.length - 1); // the column turns round: the last vehicle leads back
-        }
-      }
-      cars.forEach((v, i) => {
-        const {p, d} = at(state.s - state.dir * i * gap);
-        v.position.copy(p);
-        const want = Math.atan2(-d.z * state.dir, d.x * state.dir);
-        let da = want - v.rotation.y;
-        da = Math.atan2(Math.sin(da), Math.cos(da));
-        v.rotation.y += da * (placed && dt ? Math.min(1, dt * 4) : 1); // turn smoothly, also at the turn-round
-      });
-      placed = true;
-      lastS = state.s;
-      lastDir = state.dir;
-    };
-    update(0);
-    parties.push({
-      id: c.id,
-      state,
+    let placed = false;
+    const party = {
+      id,
+      state: freshMotion(road),
+      driven: false,
       root: cars[0],
-      update,
       hide: () => cars.forEach(v => (v.visible = false)),
       kind: 'convoy',
       head: 3.2,
-      plate: nameplate(layer, {name: c.name, count: String(c.count), faction: 'invader', kind: 'convoy'}),
-    });
+      plate: nameplate(layer, {name: src.name, count: String(src.strength), faction: 'invader', kind: 'convoy'}),
+      update(dt) {
+        if (!party.driven && dt) driveConvoy(road, party.state, cars.length, dt);
+        cars.forEach((v, i) => {
+          const p = vehicleAt(road, party.state, i);
+          v.position.set(p.x, ground(p.x, p.z), p.z);
+          let da = p.heading - v.rotation.y;
+          da = Math.atan2(Math.sin(da), Math.cos(da));
+          v.rotation.y += da * (placed && dt ? Math.min(1, dt * 4) : 1); // turn smoothly, also at the turn-round
+        });
+        placed = true;
+      },
+    };
+    party.update(0);
+    parties.push(party);
   }
 
   const v = new T.Vector3();
