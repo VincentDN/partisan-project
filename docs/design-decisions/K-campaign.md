@@ -25,7 +25,7 @@ owner decisions of WP-W26; the owner delegated them on 5 October 2026.
 - Owner feedback: delegated to the agent, 5 October 2026.
 
 ### TAC-K-03 · An overrun camp is a heavy setback, never a game over by itself
-- Status: planned  ·  Packet: WP-W11, WP-W21, WP-W26
+- Status: built for the stash, troops, fall back, rebuilding and heat (WP-W11, shared/campaign/defence.js); assembled builds, missing the next mission and the campaign loss remain (WP-W21)  ·  Packet: WP-W11, WP-W21, WP-W26
 - Decision: If the Rebel Base Defence is lost at Oros Camp: half of every stack kept at camp is lost, rounded down (so a single item survives in the hidden cache), and a deterministic seeded roll chooses which pieces of assembled builds go. Fighters who fell are wounded, not dead, and miss the next completed mission (the tactical roadmap's rule). The band falls back to the nearest friendly settlement, which becomes the camp; the old camp is burnt, and the new one is "rebuilding" for three in-game days (no faster healing, no stash access beyond what the band carries). Heat halves: the Invader thinks it has won. The campaign is lost only when the band is wiped out in a defence and no friendly settlement is left to fall back to.
 - Why: Losing the camp must hurt enough that being hunted matters, but a single bad fight hours into a campaign should not erase it. Bannerlord loses you your party, not your save. Falling back to a village also makes territory matter.
 - Alternatives rejected: Lose the whole stash (one defeat ends the campaign in practice); lose nothing but time (being hunted stops mattering); permanent death of fallen fighters (the tactical roadmap rejects mandatory permadeath).

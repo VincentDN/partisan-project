@@ -26,6 +26,7 @@ import {createKitScreen} from './kit-screen.js';
 import {rememberFocus, trapTab} from '../shared/modal.js';
 import {describeManifest, describeProvenance, provenance, recordIn, FIRST_CACHE} from '../shared/campaign/cargo.js';
 import {AMBUSHES} from '../convoy/levels/columns.js';
+import {pursue, campOf, rebuildingFor, CAMP_RANGE, FIRST_CAMP} from '../shared/campaign/defence.js';
 
 const CONTACT = 12, // map units: close enough to fight
   RAID = 22, // around a settlement's centre
@@ -63,7 +64,22 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
   const names = Object.fromEntries(SETTLEMENTS.map(s => [s.id, s.name]));
 
   // ---------- what happened while we were away ----------
-  const lines = readResults(campaign, names);
+  const wasAt = {...campaign.world.party};
+  const lines = readResults(campaign, names, {settlements: SETTLEMENTS});
+  // an overrun camp moves the band to the settlement it fell back to (shared/campaign/defence.js, WP-W11)
+  if (campaign.world.party && (campaign.world.party.x !== wasAt.x || campaign.world.party.z !== wasAt.z)) {
+    Object.assign(travel.party, {x: campaign.world.party.x, z: campaign.world.party.z, route: null});
+    travel.place();
+  }
+  // the hunters stand where the save last saw them
+  const hunters = parties.parties.filter(p => SOURCES[p.id]?.kind === 'hunters' && p.place);
+  function stepHunters(dt) {
+    for (const p of hunters) {
+      const h = pursue(campaign, p.id, p.home, travel.party, dt);
+      if (h) p.place(h.x, h.z, h.heading);
+    }
+  }
+  stepHunters(0);
   save();
   if (lines.length) toast(lines.join(' '), 7000);
   function refreshWorld() {
@@ -72,6 +88,7 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
       const owner = ownerOf(campaign, l.s);
       l.el.classList.remove('invader', 'neutral', 'resistance');
       l.el.classList.add(owner);
+      l.el.classList.toggle('burnt', !!campaign.world.burnt?.includes(l.s.id)); // an overrun camp (WP-W11)
       l.el
         .querySelector('.shield')
         .style.setProperty('--c', owner === 'resistance' ? '#3f8a4a' : owner === 'invader' ? '#b0473c' : '#c9a24a');
@@ -100,10 +117,11 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
       fit = fitFighters(campaign),
       hurt = Object.entries(campaign.band.fighters).filter(([, f]) => f.wounded);
     // where it happens sets the map and the conditions: the ground under the band, and whether its camp is near
-    const camp = byId('oros-camp');
+    // the cave is Oros Camp's own defence; a camp the band fell back to is defended in the open (WP-W11)
+    const camp = campOf(campaign, SETTLEMENTS);
     const e = encounterFor(campaign, c.id, src, {
       ground: groundAt(travel.nav, travel.party.x, travel.party.z),
-      nearCamp: Math.hypot(travel.party.x - camp.x, travel.party.z - camp.z) < 90,
+      nearCamp: camp.id === FIRST_CAMP && Math.hypot(travel.party.x - camp.x, travel.party.z - camp.z) < CAMP_RANGE,
     });
     const v = e.variant,
       cond = [v.time === 'day' ? 'by day' : v.time, v.weather === 'clear' ? '' : v.weather, v.ground === 'plain' ? '' : v.ground]
@@ -202,7 +220,10 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
   }
   function attack(e) {
     try {
-      deploy(campaign, {...e, at: open?.at || null}); // where it happens: the aftermath is left there (WP-W13)
+      // where it happens (the aftermath is left there, WP-W13): hunters fight the band where they catch it, at the band
+      // (so a fight at the camp is the camp's defence, WP-W11); everyone else where they stand
+      const at = open?.source?.kind === 'hunters' ? {x: travel.party.x, z: travel.party.z} : open?.at || null;
+      deploy(campaign, {...e, at});
     } catch (err) {
       toast(`Cannot attack: ${err.message}`);
       return;
@@ -291,6 +312,7 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
     },
   });
   function renderBand() {
+    const rebuilding = rebuildingFor(campaign);
     const hurt = Object.entries(campaign.band.fighters).filter(([, f]) => f.wounded);
     const gear = Object.entries(campaign.stash).filter(([g]) => GEAR[g]);
     fill(
@@ -344,13 +366,25 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
           `Rest ${hours}h`,
         ),
       ),
-      safeHaven(campaign, SETTLEMENTS, travel.party) ? camp.traderView() : null,
+      // a camp the band fell back to is rebuilding for three days: no trade, no kit changes (TAC-K-03, WP-W11)
+      rebuilding
+        ? el(
+            'p',
+            {class: 'note rebuilding'},
+            `The new camp at ${campOf(campaign, SETTLEMENTS).name} is rebuilding: ${Math.ceil(rebuilding)} h left. No trade or kit changes until then.`,
+          )
+        : null,
+      safeHaven(campaign, SETTLEMENTS, travel.party) && !rebuilding ? camp.traderView() : null,
       el('h3', {}, 'Kit: magazines and rounds'),
       el(
         'div',
         {class: 'kit-buttons'},
         Object.keys(campaign.band.fighters).map(id =>
-          el('button', {class: 'kit-open', 'data-id': id, onclick: () => kitScreen.open(id)}, `${NAMES[id] || id}'s kit`),
+          el(
+            'button',
+            {class: 'kit-open', 'data-id': id, disabled: !!rebuilding, onclick: () => kitScreen.open(id)},
+            `${NAMES[id] || id}'s kit`,
+          ),
         ),
       ),
       el('h3', {}, `Stash · ${gear.reduce((a, [, n]) => a + n, 0)} items`),
@@ -428,6 +462,7 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
   function update(dt) {
     if (open || !bandPanel.hidden || kitScreen.isOpen) return;
     const healed = passTime(campaign, dt * HOURS_PER_SECOND);
+    stepHunters(dt); // the hunters march on the band while the heat is high (WP-W11)
     if (healed.length) {
       toast(`${healed.map(id => NAMES[id] || id).join(' and ')} ${healed.length > 1 ? 'are' : 'is'} fit again.`);
       save();

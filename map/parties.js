@@ -92,11 +92,23 @@ export async function buildParties(field, roads, layer, {figure, vehicle = vehic
       group.add(f.root);
       men.push(f);
     }
+    // where each man stands relative to the first, so the group can be moved as one (hunters on the march, WP-W11)
+    const offsets = men.map(m => [m.root.position.x - men[0].root.position.x, m.root.position.z - men[0].root.position.z]);
     parties.push({
       id: p.id,
       root: men[0].root,
       update: (dt, t) => men.forEach((m, i) => m.update(dt, t + i * 1.3)),
       hide: () => men.forEach(m => (m.root.visible = false)),
+      /** Stand the group at (x, z), facing `heading` (radians, as the map's figures turn). */
+      place(x, z, heading = null) {
+        men.forEach((m, i) => {
+          const mx = x + offsets[i][0],
+            mz = z + offsets[i][1];
+          m.root.position.set(mx, ground(mx, mz), mz);
+          if (heading !== null) m.root.rotation.y = heading + (i - 1) * 0.15;
+        });
+      },
+      home: [...p.at],
       kind: 'enemy',
       head: 2.2,
       plate: nameplate(layer, {name: p.name, count: String(p.count), faction: 'invader'}),

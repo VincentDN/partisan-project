@@ -6,6 +6,7 @@ import {logEvent} from './state.js';
 import {LEVELS} from '../../convoy/levels/index.js';
 import {enemyCount} from '../../convoy/levels/variants.js';
 import {manifestFor} from './cargo.js';
+import {isOverrun, overrun} from './defence.js';
 
 /** The enemies on the map: id -> what they are, and the mission meeting them starts. */
 export const SOURCES = {
@@ -111,7 +112,7 @@ export function encounterFor(c, sourceId, source = SOURCES[sourceId], {ground = 
  * fight destroys the enemy party; a won raid takes the settlement for the Resistance. Returns one line per result
  * for the map to show, and marks them seen. `names`: settlement id -> name, for raids.
  */
-export function readResults(c, names = {}) {
+export function readResults(c, names = {}, {settlements = null} = {}) {
   const lines = [];
   pruneAftermath(c);
   for (const e of c.log.filter(e => e.seq > c.world.seen)) {
@@ -122,11 +123,22 @@ export function readResults(c, names = {}) {
       c.world.heat = Math.min(100, c.world.heat + 10);
       if (!isGone(c, e.source)) c.world.parties.push({id: e.source, state: 'destroyed', day: e.day});
       // what the fight left on the map: wrecks and smoke where a convoy died, smoke over a taken place (WP-W13)
-      if (e.at) {
+      if (Number.isFinite(e.at?.x) && Number.isFinite(e.at?.z)) {
         const kind = src?.kind === 'convoy' ? 'wreck' : src ? 'fight' : 'raid';
         (c.world.aftermath ||= []).push({id: e.source, kind, x: e.at.x, z: e.at.z, day: e.day, hour: e.hour ?? 0});
       }
       if (!src) c.world.settlements[e.source] = {...c.world.settlements[e.source], owner: 'resistance', taken: e.day};
+    }
+    // a lost defence of the camp: TAC-K-03 (shared/campaign/defence.js, WP-W11)
+    if (settlements && isOverrun(c, e, settlements)) {
+      const o = overrun(c, settlements);
+      const lost = Object.values(o.lost).reduce((a, b) => a + b, 0);
+      lines.push(
+        `${name} overran ${o.from.name}: ${lost} item${lost === 1 ? '' : 's'} of the stash${o.troops ? ` and ${o.troops} troops` : ''} lost. ` +
+          (o.to ? `The band fell back to ${o.to.name}; the new camp needs three days. ` : 'There is nowhere left to fall back to. ') +
+          'The Invader thinks it has won: the heat halves.',
+      );
+      continue;
     }
     const hurt = e.wounded?.length ? `, ${e.wounded.length} wounded` : '';
     const loot = e.loot ? `, ${e.loot} item${e.loot === 1 ? '' : 's'} taken` : '';

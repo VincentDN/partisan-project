@@ -165,3 +165,8 @@ a.band-screen:focus-visible { outline: 2px solid var(--lcd-hi); outline-offset: 
 .band-panel .needs .ok { color: var(--lcd-hi); }
 .band-panel .needs .no { color: #e0a98a; }
 .band-panel ul { padding-left: 16px; }
+
+/* a camp the Invader overran and burnt (WP-W11) */
+.burnt { filter: grayscale(1) brightness(0.8); }
+.burnt .name, .burnt b { text-decoration: line-through; }
+.note.rebuilding { color: #e9c46a; }

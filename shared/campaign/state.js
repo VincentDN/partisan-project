@@ -78,6 +78,9 @@ export function newCampaign({id = 'c1', seed = 1, now = 0} = {}) {
       heat: 0,
       seen: 0, // the last log entry (by seq) the map has shown: it reports mission results once
       aftermath: [], // what fights left on the map: {id, kind: wreck|fight|raid, x, z, day, hour} (WP-W13)
+      camp: null, // after an overrun: {id: the settlement that is the camp now, ready: {day, hour}} (WP-W11)
+      hunters: {}, // hunters on the map by contact id: {x, z, hunting} (WP-W11)
+      burnt: [], // camps the Invader burnt
     },
     band: {
       leader: structuredClone(LEADER),
@@ -120,6 +123,12 @@ export function normalize(raw) {
   if (isObj(w.settlements)) c.world.settlements = w.settlements;
   c.world.heat = num(w.heat, 0, 0);
   c.world.seen = num(w.seen, 0, 0);
+  if (isObj(w.camp) && typeof w.camp.id === 'string')
+    c.world.camp = {id: w.camp.id, ready: isObj(w.camp.ready) ? {day: num(w.camp.ready.day, 1), hour: num(w.camp.ready.hour, 0)} : null};
+  if (isObj(w.hunters))
+    for (const [id, h] of Object.entries(w.hunters))
+      if (isObj(h) && Number.isFinite(h.x) && Number.isFinite(h.z)) c.world.hunters[id] = {x: h.x, z: h.z, hunting: !!h.hunting};
+  if (Array.isArray(w.burnt)) c.world.burnt = w.burnt.filter(s => typeof s === 'string');
   if (Array.isArray(w.aftermath))
     c.world.aftermath = w.aftermath.filter(
       a => isObj(a) && ['wreck', 'fight', 'raid'].includes(a.kind) && [a.x, a.z, a.day].every(Number.isFinite),

@@ -3226,10 +3226,8 @@
    "milestone": "W",
    "size": "M",
    "bu": 20,
-   "status": "planned",
-   "deps": [
-    "WP-W8"
-   ],
+   "status": "done",
+   "deps": [],
    "agent": "any",
    "needs": [
     "browser"
@@ -3238,7 +3236,7 @@
     "docs/campaign-roadmap.md"
    ],
    "acceptance": "A hunter touching the band at Oros Camp opens the cave defence with waves from its strength; in the open, a field defence level; overrun and victory both change the map. An overrun follows TAC-K-03: half of each camp stack lost (rounded down), fallen fighters wounded, fall back to the nearest friendly settlement, heat halved.",
-   "progress_note": "2026-10-08: Cave/hilltop defence mapping implemented; active strategic pursuit remains."
+   "progress_note": "2026-10-13: done. Once the heat reaches 20 the raiding party marches on the band across the map at three quarters of its speed and goes home when the heat drops; its place is saved (shared/campaign/defence.js pursue, map parties place). Caught at Oros Camp: the cave defence, waves scaled from the hunters' strength; anywhere else (or at a camp the band fell back to): the hilltop defence in the open. Victory destroys the hunters and leaves its mark. A lost camp defence applies TAC-K-03: half of every stash and troop stack lost (rounded down), fallen fighters wounded, the band falls back to the nearest Resistance (else independent) settlement, which becomes the camp and rebuilds for three days (no kit changes or trade), Oros Camp burns (smoke, the label struck through), heat halves. Its dependency on WP-W8 was dropped: the rearguard withdrawal W8 owes is not needed to be caught. Not yet: losing assembled builds, fallen fighters missing the next mission and the campaign loss with nowhere to fall back (WP-W21). tests/campaign-defence.test.mjs, tests/e2e/hunted.mjs; the save hunt exercises pursuit and overruns."
   },
   {
    "id": "WP-W12",

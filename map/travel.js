@@ -196,6 +196,7 @@ export function mountTravel({scene, camera, field, stageEl, hero, cam, toast, re
   return {
     nav,
     party,
+    place, // stand the band where party.x, party.z says (after a fall back, WP-W11)
     moveTo,
     update,
     save,

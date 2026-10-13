@@ -7,6 +7,8 @@ import assert from 'node:assert/strict';
 import {newCampaign, normalize, createStore, logEvent} from '../shared/campaign/state.js';
 import {deploy, enter, writeResult, settle, settleAbandoned} from '../shared/campaign/encounter.js';
 import {encounterFor, fitFighters, readResults, passTime, SOURCES} from '../shared/campaign/contacts.js';
+import {pursue} from '../shared/campaign/defence.js';
+import {SETTLEMENTS} from '../map/island.js';
 
 function playedIn() {
   const c = newCampaign({id: 'hunt', seed: 3});
@@ -32,7 +34,8 @@ const paths = (o, at = []) => (o && typeof o === 'object' ? [at, ...Object.keys(
 /** The rules a loaded campaign must survive. */
 function exercise(c) {
   passTime(c, 30);
-  readResults(c);
+  readResults(c, {}, {settlements: SETTLEMENTS}); // an overrun camp too (WP-W11)
+  pursue(c, 'raiders', [0, 0], c.world.party || {x: 1, z: 1}, 2);
   settleAbandoned(c);
   if (!c.deployment && fitFighters(c).length) {
     const e = encounterFor(c, 'supply-convoy');
