@@ -138,6 +138,8 @@ a.band-screen:focus-visible { outline: 2px solid var(--lcd-hi); outline-offset: 
 .stash-list { grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); font-size: 12px; }
 /* a convoy's cargo on the encounter panel, and where each stash item came from (WP-W14) */
 .enc-cargo { margin: 2px 0 0; font-size: 12px; opacity: 0.9; }
+.enc-count { margin: 4px 0 0; font-size: 12px; }
+.enc-count.bad { color: #ffb08a; font-weight: 600; }
 /* the ambush start of a convoy (WP-W9) */
 .enc-ambush { margin: 6px 0 0; padding: 4px 8px 6px; border: 1px solid var(--bronze); border-radius: 2px; display: grid; gap: 4px; font-size: 12px; }
 .enc-ambush legend { padding: 0 4px; font-weight: 600; }

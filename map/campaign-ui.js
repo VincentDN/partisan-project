@@ -16,6 +16,7 @@ import {
   ACTIONS,
 } from '../shared/campaign/contacts.js';
 import {SQUAD_MIN} from '../convoy/roster.js';
+import {squadPicker} from './encounter-squad.js';
 import {rest, safeHaven, operation} from '../shared/campaign/operations.js';
 import {deploy} from '../shared/campaign/encounter.js';
 import {TROOPS, GEAR} from '../band/troops.js';
@@ -116,8 +117,7 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
     setSpeed(0);
     const src = c.source,
       act = ACTIONS[src.kind],
-      fit = fitFighters(campaign),
-      hurt = Object.entries(campaign.band.fighters).filter(([, f]) => f.wounded);
+      fit = Object.keys(campaign.band.fighters).filter(id => !campaign.band.fighters[id].wounded); // every fit fighter
     // where it happens sets the map and the conditions: the ground under the band, and whether its camp is near
     // the cave is Oros Camp's own defence; a camp the band fell back to is defended in the open (WP-W11)
     const camp = campOf(campaign, SETTLEMENTS);
@@ -129,11 +129,8 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
       cond = [v.time === 'day' ? 'by day' : v.time, v.weather === 'clear' ? '' : v.weather, v.ground === 'plain' ? '' : v.ground]
         .filter(Boolean)
         .join(', ');
-    const selected = new Set(fit);
-    const syncSelection = () => {
-      e.fighters = [...selected];
-      panel.querySelector('#enc-attack').disabled = selected.size < SQUAD_MIN || selected.size > 9;
-    };
+    // who goes in (WP-W12, map/encounter-squad.js): six to nine of the fit fighters; the rest stay with the band
+    const picker = squadPicker({el, campaign, names: NAMES, fit, first: fitFighters(campaign), onPick: ids => (e.fighters = ids)});
     fill(
       panel,
       el('h2', {id: 'enc-title', class: 'plate'}, src.name),
@@ -173,35 +170,7 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
             }),
           )
         : null,
-      el('h3', {}, fit.length >= SQUAD_MIN ? 'Going in' : 'The band needs to recover'),
-      el(
-        'ul',
-        {class: 'enc-fighters'},
-        fit.map(id =>
-          el(
-            'li',
-            {},
-            el(
-              'label',
-              {},
-              el('input', {
-                type: 'checkbox',
-                checked: true,
-                onchange: event => {
-                  if (event.target.checked) selected.add(id);
-                  else selected.delete(id);
-                  syncSelection();
-                },
-              }),
-              `${NAMES[id] || id}, ${TROOPS[campaign.band.fighters[id].class].label}`,
-            ),
-          ),
-        ),
-        hurt.map(([id, f]) => el('li', {class: 'hurt'}, `${NAMES[id] || id}: wounded, ${Math.ceil(f.healIn)}h to heal`)),
-      ),
-      fit.length >= SQUAD_MIN
-        ? null
-        : el('p', {class: 'note'}, 'At least six fit fighters are needed. Rest at a friendly settlement until they heal.'),
+      ...picker.nodes,
       // attack, prepare an ambush, withdraw leaving a rearguard, leave (map/encounter-actions.js, WP-W8)
       actionRow({
         el,
@@ -220,6 +189,7 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
         onLeave: leave,
       }),
     );
+    picker.sync(panel);
     if (panel.hidden) backFromEncounter = rememberFocus();
     panel.hidden = false;
     panel.querySelector('.enc-actions button:not([disabled])')?.focus();

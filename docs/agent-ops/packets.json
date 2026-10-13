@@ -3244,7 +3244,7 @@
    "milestone": "W",
    "size": "S",
    "bu": 8,
-   "status": "ready",
+   "status": "done",
    "deps": [
     "WP-W1",
     "WP-W2"
@@ -3255,7 +3255,7 @@
     "docs/campaign-roadmap.md"
    ],
    "acceptance": "Select six to nine fit fighters; all seven mission types preserve selected identities, classes and kit; wounded/reserves stay behind; eight starters and legacy migration; keyboard/browser validation.",
-   "progress_note": "2026-10-08: Eight starters, select six to nine fit fighters, 180 base HP, preserved identities/classes/kits and legacy roster migration implemented; browser acceptance pending."
+   "progress_note": "2026-10-13: done. The encounter panel lists every fit fighter with their class (map/encounter-squad.js): the first nine ticked, more in reserve, the wounded shown healing; a live count line, and Attack and Prepare wait for six to nine. Eight starters, 180 base HP and legacy roster migration from 2026-10-08. tests/e2e/deployment.mjs: ten fit fighters and one wounded, a keyboard pick of six (a reserve swapped in), only those six in the mission with their ids and classes, then all seven mission types played from a deployment with the same fighters, classes and the grid kits they carried home."
   },
   {
    "id": "WP-W13",
