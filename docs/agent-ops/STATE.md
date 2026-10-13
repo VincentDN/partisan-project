@@ -5,12 +5,12 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json).
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-13 04:12 UTC · claude · WP-W9 · done**
+**2026-10-13 10:33 UTC · claude · WP-W11 · done**
 
-- Branch `claude/friendly-dijkstra-4ky9w6` at `954a214`; working tree clean.
-- Last commits: 954a214 WP-W9: the convoy ambush fields the map's own convoy, and you choose how it starts · c22f27d docs: handoff for WP-W13 · 47d5284 WP-W13: fights leave their mark on the campaign map
-- What happened: W9 done: convoy ambush fields the map convoy's own vehicles and escort (convoy/levels/columns.js), ambush start chosen on the encounter panel (roadblock or road charge spent from the stash).
-- Next step: Campaign: W11 (defence variants when caught), W8 (prepare ambush generally, rearguard withdrawal), W12 browser gate. Note: the convoy level's escort spots eight rebels about 13 s in before any shot (seen since W12); worth a balance look.
+- Branch `claude/friendly-dijkstra-4ky9w6` at `a5f70ad`; working tree clean.
+- Last commits: a5f70ad WP-W11: the hunters hunt the band, and an overrun camp follows TAC-K-03 · 79f7757 fix(WP-QA15): isolate gameplay from standalone 3D demos · db480da docs: handoff for WP-W9
+- What happened: W11 done: hunters pursue the band once heat >= 20 (shared/campaign/defence.js), cave defence at Oros Camp else hilltop, overrun per TAC-K-03 (half stacks, fall back to nearest friendly settlement, 3-day rebuild, old camp burnt, heat halved).
+- Next step: Campaign: W8 (general prepare ambush, rearguard withdrawal), W12 browser gate, W21 (assembled builds lost, fallen miss a mission, campaign loss). Balance: convoy escort spots eight rebels ~13 s in.
 <!-- handoff:end -->
 
 ## Gameplay/demo module boundary — 13 October 2026
