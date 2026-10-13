@@ -3842,7 +3842,7 @@
     "docs/quality-roadmap.md"
    ],
    "acceptance": "map/ under 4 MB cold and 35 MB heap; the 2.5-D map loads no 3-D figure models.",
-   "progress_note": "2026-10-09: lazy 3D imports, bounded drawing buffer/postprocess/shadows, fast picking, paused render budget, convoy allocation reuse and DOM caching implemented. Campaign browser suites pass hosted CI; reference-device FPS and visual acceptance remain."
+   "progress_note": "2026-10-09: lazy 3D imports, bounded drawing buffer/postprocess/shadows, fast picking, paused render budget, convoy allocation reuse and DOM caching implemented. Campaign browser suites pass hosted CI; reference-device FPS and visual acceptance remain. 2026-10-13: separate sprite-map and 3D-demo entry points; require injected character factories; shared band audio no longer imports the weapon demo. Import-graph and real shell navigation request regressions added. Overall map-budget acceptance remains open."
   },
   {
    "id": "WP-QA16",

@@ -13,6 +13,17 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json).
 - Next step: Campaign: W11 (defence variants when caught), W8 (prepare ambush generally, rearguard withdrawal), W12 browser gate. Note: the convoy level's escort spots eight rebels about 13 s in before any shot (seen since W12); worth a balance look.
 <!-- handoff:end -->
 
+## Gameplay/demo module boundary — 13 October 2026
+
+Continued from main `db480da`, preserving Claude's W9/W13/W15 changes. The default map did not fetch the
+operator rig, but its shared party builder retained a lazy fallback to it. The campaign and 3D demo now have
+separate entry points (`map.js` and `demo-3d.js`); `map-runtime.js` requires injected character rendering.
+The band screen imports handling audio from `shared/mech.js`; the workbench path remains a compatibility export.
+Gameplay import-graph tests reject static and lazy demo imports. Browser coverage navigates the actual shell
+through map, band and mission, checks requested modules/assets, and opens each standalone 3D demo separately.
+The code-map generator now includes the previously omitted gameplay directories. Overall WP-QA15 map-size/heap
+and reference-device performance acceptance remain open; this change does not claim those budgets are met.
+
 ## Resume here
 
 1. Run browser map travel, campaign bridge/loop, smoke and accessibility in a working browser environment; validate six/eight-person selection and safe-haven services. Keep the owner-requested main target.

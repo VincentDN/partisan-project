@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-10-13 — separate gameplay and demo loading
+
+- Give the sprite campaign map and 3D overworld demo separate entry points; remove the implicit operator-rig fallback from party construction. Keep terrain and original 3D convoy vehicles.
+- Move shared handling sounds out of the weapon-demo directory so the campaign band screen has no demo imports.
+- Add transitive import-boundary tests and browser request checks through the shell, map, band and mission; check standalone demo startup separately.
+
 ## 2026-10-09 — 3D campaign convoys and faction art direction
 
 - Restore the original truck, M-ATV and Humvee models on the default 2.5D campaign map while keeping sprite people. Vehicle loading is separate from the optional 3D operator/weapon modules.

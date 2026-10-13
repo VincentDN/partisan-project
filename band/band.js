@@ -7,7 +7,7 @@ import {mountTopBar} from '../shared/topbar.js';
 import {buildPawn, loadGuns, loadSet, lookFor} from '../convoy/sprite-art.js';
 import {GEAR, CLASSES, TROOPS, bandLimit, bandSize, ready, canUpgrade, upgrade, abilitiesOf} from './troops.js';
 import {createTreeView} from './tree.js';
-import * as mech from '../workbench/mech.js';
+import * as mech from '../shared/mech.js';
 import * as ui from '../shared/ui-sounds.js';
 import {idle, idlePose, promote, endPromotion} from './fx.js';
 import {mountHands, paintHandled} from './hands-view.js';

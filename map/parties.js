@@ -1,8 +1,4 @@
-// Parties on the map, Bannerlord-style: each stands on the ground as a figure (or rolls along a road as vehicles) with a
-// nameplate floating over it: the faction's banner, the party's name and its strength. The player's party is the
-// hooded Recon in the hero pose, rifle raised (the Operator Customiser's rig, pose data and hand IK); Invader patrols
-// stand off in the distance; convoys drive the roads back and forth. Figures are drawn at "token" scale, larger than
-// the towns, as on Bannerlord's campaign map.
+// Overworld party tokens, vehicles and nameplates; character creation is supplied explicitly by the page entry.
 import * as T from 'three';
 import {vehicle3d} from './vehicles.js';
 import {FACTIONS, PARTY_SPOTS, sample} from './island.js';
@@ -26,10 +22,8 @@ function nameplate(layer, {name, count, faction, kind}) {
  * Build the parties. `makers` swaps how they look: {figure(opts), vehicle(id)} (map/sprite-parties.js draws them as
  * sprites for people in the 2.5-D overworld); both map styles use the original 3-D convoy vehicles.
  */
-export async function buildParties(field, roads, layer, makers = {}) {
-  const models = makers.figure ? null : await import('./models.js');
-  const figure = makers.figure || models.figure3d,
-    vehicle = makers.vehicle || vehicle3d;
+export async function buildParties(field, roads, layer, {figure, vehicle = vehicle3d}) {
+  if (typeof figure !== 'function') throw new TypeError('A party character renderer is required');
   const group = new T.Group();
   group.name = 'parties';
   const parties = [];

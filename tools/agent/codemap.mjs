@@ -5,6 +5,12 @@ import fs from 'node:fs';
 import path from 'node:path';
 const ROOTS = [
   'index.html',
+  'shell.js',
+  'menu',
+  'map',
+  'map25',
+  'band',
+  'convoy',
   'assets/js',
   'assets/css',
   'shared',
@@ -61,7 +67,7 @@ for (const file of ROOTS.flatMap(walk)
     out.push('', `### ${d}/`, '');
   }
   const text = fs.readFileSync(file, 'utf8');
-  out.push(`- \`${path.basename(file)}\` · ${text.split('\n').length} · ${purpose(file, text).slice(0, 140)}`);
+  out.push(`- \`${path.basename(file)}\` · ${text.split('\n').length} · ${purpose(file, text).slice(0, 140)}`.trimEnd());
 }
 const body = out.join('\n') + '\n';
 if (process.argv.includes('--check')) {

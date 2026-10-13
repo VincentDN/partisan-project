@@ -19,6 +19,13 @@ is `map/3d.html`, accessible under Dev tools as a demo. Old `map25/` links redir
 and fragment. The tactical game keeps its established sprite renderer. These are complementary views of one
 campaign, not competing choices the player must configure.
 
+Module boundary (13 October): `map/map.js` loads sprite people and HD-2D; `map/demo-3d.js` alone imports the
+operator/weapon-backed figures. Both call `map/map-runtime.js` and share terrain and 3-D convoy vehicles.
+Party construction requires an explicit figure factory; there is no hidden operator fallback. Band handling audio
+lives in `shared/mech.js`, with a compatibility export for weapon-demo callers. The shell hosts one active page;
+its original opening scene remains separate from campaign navigation. Static import-graph tests cover lazy imports,
+and `tests/e2e/module-isolation.mjs` checks actual shell/map/band/mission requests plus standalone demo startup.
+
 A comprehensive vertical slice must demonstrate this entire chain in a bounded operation. It does not require
 an entire island's worth of content, every class, or finished strategic AI. It does require the same people,
 items, consequences and save state to survive every transition, and a clear beginning, setback and conclusion.
