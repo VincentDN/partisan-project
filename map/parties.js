@@ -198,7 +198,8 @@ export async function buildParties(field, roads, layer, {figure, vehicle = vehic
   }
 
   const v = new T.Vector3();
-  function update(dt, t, camera, w, h) {
+  /** seen(p): is the party within the band's sight (WP-W4: at night, far parties show no nameplate)? */
+  function update(dt, t, camera, w, h, seen = () => true) {
     for (const p of parties) {
       if (p.root.visible === false) {
         p.plate.style.display = 'none'; // gone from the map (destroyed in the campaign)
@@ -209,7 +210,7 @@ export async function buildParties(field, roads, layer, {figure, vehicle = vehic
       v.copy(p.root.position);
       v.y += p.head * (p.kind === 'convoy' ? 1 : FIGURE_SCALE) + 1;
       v.project(camera);
-      const on = v.z < 1 && Math.abs(v.x) < 1.1 && Math.abs(v.y) < 1.1;
+      const on = v.z < 1 && Math.abs(v.x) < 1.1 && Math.abs(v.y) < 1.1 && (p.kind === 'player' || seen(p));
       p.plate.style.display = on ? '' : 'none';
       if (on) p.plate.style.transform = `translate(${((v.x + 1) / 2) * w}px, ${((1 - v.y) / 2) * h}px) translate(-50%, -100%)`;
     }

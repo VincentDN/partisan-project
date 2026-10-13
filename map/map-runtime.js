@@ -12,6 +12,8 @@ import {mountTravel} from './travel.js';
 import {mountCampaign} from './campaign-ui.js';
 import {createAftermath} from './aftermath.js';
 import {modalOpen} from '../shared/modal.js';
+import {createDaylight} from './daylight.js';
+import {sightRange} from '../shared/campaign/daylight.js';
 
 export async function mountMap({HD2D, createSpriteLayer, createHD2D, figure}) {
   mountTopBar({title: HD2D ? 'Campaign map' : '3-D overworld demo', scene: 'viewer', overlay: true});
@@ -41,7 +43,9 @@ export async function mountMap({HD2D, createSpriteLayer, createHD2D, figure}) {
   sun.shadow.mapSize.setScalar(1024);
   sun.shadow.bias = -0.0004;
   sun.shadow.normalBias = 0.4;
-  scene.add(sun, sun.target, new T.HemisphereLight('#bcd6f0', '#6b5a3e', 1.1));
+  const hemi = new T.HemisphereLight('#bcd6f0', '#6b5a3e', 1.1);
+  scene.add(sun, sun.target, hemi);
+  const daylightAt = createDaylight({scene, sun, hemi, renderer}); // night tint from the clock (WP-W4, map/daylight.js)
 
   // ---------- the world ----------
   const field = bakeHeights();
@@ -141,6 +145,7 @@ export async function mountMap({HD2D, createSpriteLayer, createHD2D, figure}) {
       e.preventDefault();
       setSpeed(speed ? 0 : 1);
     }
+    if (['1', '2', '3'].includes(e.key)) setSpeed(Number(e.key)); // 1-3: the three speeds (WP-W4)
     if (e.key === '+' || e.key === '=') cam.td = Math.max(28, cam.td * 0.85);
     if (e.key === '-') cam.td = Math.min(560, cam.td * 1.18);
   });
@@ -274,6 +279,9 @@ export async function mountMap({HD2D, createSpriteLayer, createHD2D, figure}) {
     travel.update(dt);
     campaignUi?.update(dt);
     if (aftermath) syncAftermath();
+    const hour = travel.campaign ? travel.campaign.world.clock.hour : day.hours,
+      sight = sightRange(hour);
+    if (daylightAt(hour)) renderDirty = true;
     const cameraMoving =
       Math.abs(cam.tx - cam.x) + Math.abs(cam.tz - cam.z) + Math.abs(cam.td - cam.d) + Math.abs(cam.tyaw - cam.yaw) > 0.001;
     if (!needsFrame(frameStart, {active: dt > 0, cameraMoving, dirty: renderDirty})) {
@@ -289,7 +297,14 @@ export async function mountMap({HD2D, createSpriteLayer, createHD2D, figure}) {
     aftermath?.update(worldT);
     const w = stageEl.clientWidth,
       h = stageEl.clientHeight;
-    parties.update(dt, worldT, camera, w, h);
+    parties.update(
+      dt,
+      worldT,
+      camera,
+      w,
+      h,
+      p => Math.hypot(p.root.position.x - travel.party.x, p.root.position.z - travel.party.z) <= sight,
+    );
     if (frameStart - labelAt >= 80) {
       labelAt = frameStart;
       for (const l of townLabels) {

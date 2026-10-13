@@ -194,7 +194,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | **H27** 2027 horizon | — | 0/3 | 48 BU | 0% |
 | **S** Partisan Tactical: extraction PvE, campaign and gated online research | v0.8.0 | 15/44 | 673 BU | 34% |
 | **V** Graphics: 2.5D top-down sprites for the shooter (the overworld moved to W) | v0.9.0 | 2/20 | 251 BU | 11% |
-| **W** World campaign: the Bannerlord loop (map, missions, loot, upgrades) | v0.10.0 | 11/26 | 359 BU | 40% |
+| **W** World campaign: the Bannerlord loop (map, missions, loot, upgrades) | v0.10.0 | 12/26 | 359 BU | 42% |
 | **QA** Bug hunt and optimisation (docs/quality-roadmap.md) | — | 18/23 | 294 BU | 74% |
 
 ### M0 · Foundation
@@ -382,7 +382,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-W1` | Campaign save v1: one versioned state for world, band, stash and log; migrate the tactical squad and Rebel Band saves; storage adapter | S (8) | done | — | — |
 | `WP-W2` | Mission bridge: deployment and result payloads, kit reserved on launch, result settled exactly once, refresh mid-mission counts as withdrawn | M (20) | done | — | `WP-W1` |
 | `WP-W3` | The band on the map: navigation grid from the heightfield and roads, click to move, route preview, terrain speeds, follow camera | M (20) | done | browser | `WP-W1` |
-| `WP-W4` | Campaign clock: pause and three speeds, day and night tint and sight, pause on encounters and menus | S (8) | ready | — | `WP-W3` |
+| `WP-W4` | Campaign clock: pause and three speeds, day and night tint and sight, pause on encounters and menus | S (8) | done | — | `WP-W3` |
 | `WP-W5` | World simulation core: seeded headless parties with goals, speeds and sight; save and restore; determinism tests | M (20) | planned | — | `WP-W1`, `WP-W4` |
 | `WP-W6` | Convoys on the map: spawn at Invader seats, road routes, cargo manifest and escort on the nameplate, resupply on arrival | S (8) | planned | — | `WP-W5` |
 | `WP-W7` | Hunters and heat: patrols, hunter columns spawned by heat, map sight (night, forest, band size), last-seen tracking, losing them | M (20) | planned | — | `WP-W5` |

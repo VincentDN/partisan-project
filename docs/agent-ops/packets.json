@@ -3088,7 +3088,7 @@
    "milestone": "W",
    "size": "S",
    "bu": 8,
-   "status": "ready",
+   "status": "done",
    "deps": [
     "WP-W3"
    ],
@@ -3098,7 +3098,7 @@
     "docs/campaign-roadmap.md"
    ],
    "acceptance": "Space pauses, 1-3 set speed; night tint and reduced sight; opening a menu or encounter stops time; reduced motion respected.",
-   "progress_note": "2026-10-08: Clock, pause and modal blocking implemented; fixed-step strategic simulation remains."
+   "progress_note": "2026-10-13: done. Space pauses; 1, 2 and 3 set three speeds, with a button for each that shows which is on (aria-pressed, labelled). The light follows the campaign hour (shared/campaign/daylight.js, map/daylight.js): sun, sky and haze dim and turn blue through dusk, dark 21:00-05:00, back at dawn; changes follow the clock, no animation of their own, so reduced motion needs nothing more. At night the band sees 60 map units instead of 160: enemies further away show no nameplate. Open panels (encounter, band, kit) stop time (from 2026-10-08). tests/campaign-daylight.test.mjs and tests/e2e/map-clock.mjs. The fixed-step headless world simulation belongs to WP-W5."
   },
   {
    "id": "WP-W5",
