@@ -52,11 +52,11 @@ import {SQUAD_MAX} from '../../convoy/roster.js';
 export {SQUAD_MAX};
 
 /** A settlement as a contact: Invader settlements can be raided; their garrison is the enemy's strength. */
-export const settlementSource = s => ({
+export const settlementSource = (s, c = null) => ({
   name: s.name,
   kind: 'settlement',
   level: 'compound',
-  strength: s.garrison + s.militia,
+  strength: (c?.world.settlements[s.id]?.garrison ?? s.garrison) + s.militia, // as resupplied by convoys (WP-W6)
   settlement: s.id,
   settlementKind: s.kind,
 });
@@ -121,7 +121,7 @@ export function readResults(c, names = {}, {settlements = null} = {}) {
     const name = src?.name || names[e.source] || e.source || 'the enemy';
     if (e.outcome === 'won' && e.source) {
       c.world.heat = Math.min(100, c.world.heat + 10);
-      if (!isGone(c, e.source)) c.world.parties.push({id: e.source, state: 'destroyed', day: e.day});
+      if (!isGone(c, e.source)) c.world.parties.push({id: e.source, state: 'destroyed', day: e.day, hour: e.hour ?? 0});
       // what the fight left on the map: wrecks and smoke where a convoy died, smoke over a taken place (WP-W13)
       if (Number.isFinite(e.at?.x) && Number.isFinite(e.at?.z)) {
         const kind = src?.kind === 'convoy' ? 'wreck' : src ? 'fight' : 'raid';

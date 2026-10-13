@@ -3,18 +3,21 @@ import * as T from 'three';
 import {vehicle3d} from './vehicles.js';
 import {FACTIONS, PARTY_SPOTS, sample} from './island.js';
 import {SOURCES} from '../shared/campaign/contacts.js';
+import {MANIFESTS, describeManifest} from '../shared/campaign/cargo.js';
 import {CONVOY_ROADS, convoyRoad, freshMotion, driveConvoy, vehicleAt} from '../shared/campaign/world.js';
 const FIGURE_SCALE = 3.2;
 
 // ---------- nameplates (HTML over the canvas) ----------
-function nameplate(layer, {name, count, faction, kind}) {
+function nameplate(layer, {name, count, faction, kind, cargo = ''}) {
   const f = FACTIONS[faction];
   const el = document.createElement('div');
   el.className = `plate-party ${faction}${kind === 'player' ? ' player' : ''}`;
   el.innerHTML = `<span class="shield" style="--c:${f.banner}">${f.emblem}</span><span class="pname"></span><span class="pcount"></span>`;
   el.querySelector('.pname').textContent = name;
   el.querySelector('.pcount').textContent = count;
-  el.title = `${name}: ${count} (${f.name}). Placeholder party.`;
+  el.title = `${name}: ${count} (${f.name}).${cargo ? ` Cargo: ${cargo}.` : ''}`;
+  // a convoy carries its cargo on the plate (WP-W6): what an ambush would bring home
+  if (cargo) el.append(Object.assign(document.createElement('span'), {className: 'pcargo', textContent: cargo}));
   layer.append(el);
   return el;
 }
@@ -136,9 +139,16 @@ export async function buildParties(field, layer, {figure, vehicle = vehicle3d}) 
       driven: false,
       root: cars[0],
       hide: () => cars.forEach(v => (v.visible = false)),
+      show: () => cars.forEach(v => (v.visible = true)), // a new convoy has set out (WP-W6)
       kind: 'convoy',
       head: 3.2,
-      plate: nameplate(layer, {name: src.name, count: String(src.strength), faction: 'invader', kind: 'convoy'}),
+      plate: nameplate(layer, {
+        name: src.name,
+        count: String(src.strength),
+        faction: 'invader',
+        kind: 'convoy',
+        cargo: describeManifest(MANIFESTS[id]),
+      }),
       update(dt) {
         if (!party.driven && dt) driveConvoy(road, party.state, cars.length, dt);
         cars.forEach((v, i) => {

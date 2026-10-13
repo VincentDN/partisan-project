@@ -3127,7 +3127,7 @@
    "milestone": "W",
    "size": "S",
    "bu": 8,
-   "status": "planned",
+   "status": "done",
    "deps": [
     "WP-W5"
    ],
@@ -3137,7 +3137,7 @@
     "docs/campaign-roadmap.md"
    ],
    "acceptance": "Convoys follow ROADS between settlements; their manifest and escort are visible; an arrival raises the garrison; unit tests.",
-   "progress_note": "2026-10-08: Visible road convoys persist; cargo manifests, resupply and respawn remain."
+   "progress_note": "2026-10-13: done. shared/campaign/convoys.js: each convoy sets out from an Invader seat along a real road (ROADS) to another Invader settlement, waits and drives back; arriving at an Invader-held settlement it resupplies the garrison (8, 12 or 4 soldiers, up to half again its starting size; the save keeps it, and a raid meets the resupplied garrison). A destroyed convoy is gone for 48 campaign hours, then a new one sets out from its seat (rests count: the world runs through them). The nameplate shows the escort and, under it, the cargo (title too). Toasts when the band can see a convoy arrive or set out. tests/campaign-convoys.test.mjs; tests/e2e/convoys.mjs (plate, respawn on the map and in the save, resupply after a reload)."
   },
   {
    "id": "WP-W7",

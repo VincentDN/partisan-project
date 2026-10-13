@@ -19,6 +19,7 @@ import {squadPicker} from './encounter-squad.js';
 import {rest, safeHaven, operation} from '../shared/campaign/operations.js';
 import {deploy} from '../shared/campaign/encounter.js';
 import {createWorld} from '../shared/campaign/world.js';
+import {CONVOYS} from '../shared/campaign/convoys.js';
 import {TROOPS, GEAR} from '../band/troops.js';
 import {createCamp, NAMES} from '../convoy/camp.js';
 import {SETTLEMENTS, byId} from './island.js';
@@ -80,6 +81,19 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
     p.state = world.motion(p.id);
     p.driven = true;
     p.update(0, 0);
+  }
+  /** Convoys out again, and garrisons resupplied where the band can see it happen (WP-W6). */
+  function convoyNews({resupplied, respawned}) {
+    for (const p of convoys) if (p.root.visible === isGone(campaign, p.id)) (isGone(campaign, p.id) ? p.hide : p.show)();
+    for (const id of respawned) {
+      const from = byId(CONVOYS[id].from);
+      if (world.sees(from.x, from.z)) toast(`A new ${SOURCES[id].name.toLowerCase()} sets out from ${from.name}.`);
+    }
+    for (const r of resupplied) {
+      const s = byId(r.settlement);
+      if (world.sees(s.x, s.z)) toast(`${SOURCES[r.id].name} reached ${s.name}: its garrison is ${r.garrison} now.`);
+    }
+    if (resupplied.length || respawned.length) save();
   }
   /** Stand the hunters where the world has them; dt > 0 also lets the world run (a rearguard sends them home). */
   function stepHunters(dt) {
@@ -265,7 +279,8 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
       if (near(at, pos, CONTACT)) return {id: p.id, source: SOURCES[p.id], at: pos};
     }
     for (const s of SETTLEMENTS)
-      if (ownerOf(campaign, s) === 'invader' && near(at, s, RAID)) return {id: s.id, source: settlementSource(s), at: {x: s.x, z: s.z}};
+      if (ownerOf(campaign, s) === 'invader' && near(at, s, RAID))
+        return {id: s.id, source: settlementSource(s, campaign), at: {x: s.x, z: s.z}};
     return null;
   }
 
@@ -367,7 +382,12 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
             onclick: () => {
               try {
                 campaign.world.party = {x: travel.party.x, z: travel.party.z};
-                rest(campaign, SETTLEMENTS, hours, h => world.skip(h).healed); // the world runs on meanwhile (WP-W5)
+                // the world runs on meanwhile (WP-W5): hunters close in, convoys come and go
+                rest(campaign, SETTLEMENTS, hours, h => {
+                  const r = world.skip(h);
+                  convoyNews(r);
+                  return r.healed;
+                });
                 save();
                 renderBand();
                 renderCard();
@@ -475,8 +495,10 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
   let sinceCard = 0;
   function update(dt) {
     if (open || !bandPanel.hidden || kitScreen.isOpen) return;
-    const healed = world.step(dt).healed; // time, the convoys, the band's march, the hunters (WP-W5, W11)
+    const step = world.step(dt), // time, the convoys, the band's march, the hunters (WP-W5, W6, W11)
+      healed = step.healed;
     stepHunters(0);
+    convoyNews(step);
     if (healed.length) {
       toast(`${healed.map(id => NAMES[id] || id).join(' and ')} ${healed.length > 1 ? 'are' : 'is'} fit again.`);
       save();
