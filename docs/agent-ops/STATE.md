@@ -5,12 +5,12 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json).
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-13 13:28 UTC · claude · WP-W8 · done**
+**2026-10-13 15:21 UTC · claude · WP-W12 · done**
 
-- Branch `claude/friendly-dijkstra-4ky9w6` at `7869ae2`; working tree clean.
-- Last commits: 7869ae2 WP-W8: the encounter panel's full set of choices · 0e63013 docs: handoff for WP-W11 · a5f70ad WP-W11: the hunters hunt the band, and an overrun camp follows TAC-K-03
-- What happened: W8 done: encounter panel shows both sides and the ground; Attack, Prepare an ambush (2 h, sandbags), Withdraw leaving a rearguard (hunters on the hunt), Leave (not from hunters on the hunt).
-- Next step: Campaign: W12 browser gate, W6 (convoy spawn/resupply), W7 (hunter columns, sight), W21. Balance: convoy escort spots eight rebels ~13 s in.
+- Branch `claude/friendly-dijkstra-4ky9w6` at `d634e42`; working tree clean.
+- Last commits: d634e42 WP-W12: pick six to nine of every fit fighter; deployment browser gate · 1580d76 Fix looting: a sling for a second rifle, forgiving drops, Ctrl-click/T quick-take · 29ad59a docs: handoff for WP-W8
+- What happened: W12 done: the encounter panel picks six to nine of every fit fighter (reserves selectable, wounded shown); deployment e2e covers all seven mission types with identities, classes and kits.
+- Next step: Campaign: W6 (convoy spawn/resupply), W7 (hunter columns, sight), W4 fixed-step sim, W22 auto-resolve. Balance: convoy escort spots eight rebels ~13 s in.
 <!-- handoff:end -->
 
 ## Gameplay/demo module boundary — 13 October 2026
