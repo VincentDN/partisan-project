@@ -41,3 +41,7 @@ This pass does not close WP-A10's remaining UI/finish acceptance or claim real-w
 | spear-retro | [Contact sheet](../../outbound/wip-images/2026-10-14_074059.png) |
 | spear | [Contact sheet](../../outbound/wip-images/2026-10-14_074100.png) |
 | stg44 | [Contact sheet](../../outbound/wip-images/2026-10-14_074101.png) |
+
+[Actual Workbench G3 with scope, GP-25 and light](../../outbound/wip-images/2026-10-14_074426.png).
+
+Validation on main: 480 unit tests, built-site attachment acceptance, build/link checks, lint, typechecking and formatting passed. The actual Workbench G3 build loaded and rendered without page errors.
