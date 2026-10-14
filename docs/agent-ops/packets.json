@@ -3146,7 +3146,7 @@
    "milestone": "W",
    "size": "M",
    "bu": 20,
-   "status": "planned",
+   "status": "done",
    "deps": [
     "WP-W5"
    ],
@@ -3156,7 +3156,7 @@
     "docs/campaign-roadmap.md"
    ],
    "acceptance": "Attacks raise heat and hunters; hunters chase the last-seen point and can lose you; sight radii shown on the map; harness metrics for hunts per day.",
-   "progress_note": "2026-10-13: the raiding party hunts the band once the heat reaches 20 and rests after a rearguard action (WP-W11, W8); hunter columns spawned by heat, map sight, last-seen tracking and losing them remain."
+   "progress_note": "2026-10-14: done. shared/campaign/hunt.js: heat turns the columns out (the raiding party at 20, a new Orion hunter column at 50, posted south of Fort Orion). A column sees the band 110 map units by day, 40 at night, x0.55 when the band is in forest, more or less with the band's size; it chases what it sees, otherwise the last-seen point, searches there three campaign hours and loses the trail (logged, heat -5, home). Every fight tells the columns where it happened. The band sees less far from a forest. The save keeps each column's lead. Map: dashed sight rings round the band and round each column out (red while hunting), toasts when spotted or lost (map/sight-rings.js, map/campaign-world.js). Harness metric: huntMetrics (hunts per day) and tools/campaign-hunts.mjs over seeded headless campaigns (about 0.13 hunts a day at the default pace). tests/campaign-hunt.test.mjs, tests/e2e/hunters.mjs."
   },
   {
    "id": "WP-W8",

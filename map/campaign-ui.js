@@ -18,8 +18,7 @@ import {SQUAD_MIN} from '../convoy/roster.js';
 import {squadPicker} from './encounter-squad.js';
 import {rest, safeHaven, operation} from '../shared/campaign/operations.js';
 import {deploy} from '../shared/campaign/encounter.js';
-import {createWorld} from '../shared/campaign/world.js';
-import {CONVOYS} from '../shared/campaign/convoys.js';
+import {mountWorld} from './campaign-world.js';
 import {TROOPS, GEAR} from '../band/troops.js';
 import {createCamp, NAMES} from '../convoy/camp.js';
 import {SETTLEMENTS, byId} from './island.js';
@@ -52,7 +51,7 @@ const el = (tag, attrs = {}, ...kids) => {
 /** Replace a panel's content; empty parts (a null for "nothing to show") are left out instead of printed. */
 const fill = (node, ...kids) => node.replaceChildren(...kids.flat().filter(k => k !== null && k !== undefined && k !== false && k !== ''));
 
-export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed = () => 1, toast}) {
+export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed = () => 1, toast, rings = null}) {
   const campaign = travel.campaign;
   if (!campaign) return null;
   const save = () => travel.save();
@@ -66,46 +65,8 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
     Object.assign(travel.party, {x: campaign.world.party.x, z: campaign.world.party.z, route: null});
     travel.place();
   }
-  // the world runs in fixed steps (shared/campaign/world.js, WP-W5): convoys, the band's march, the hunters, the
-  // clock; the map only draws it. The convoys' motion and the hunters' places are the save's.
-  const hunters = parties.parties.filter(p => SOURCES[p.id]?.kind === 'hunters' && p.place);
-  const convoys = parties.parties.filter(p => p.kind === 'convoy');
-  const world = createWorld(campaign, {
-    nav: travel.nav,
-    party: travel.party,
-    hunters: Object.fromEntries(hunters.map(p => [p.id, p.home])),
-    vehicles: Object.fromEntries(convoys.map(p => [p.id, SOURCES[p.id].vehicles.length])),
-  });
-  travel.driven = true;
-  for (const p of convoys) {
-    p.state = world.motion(p.id);
-    p.driven = true;
-    p.update(0, 0);
-  }
-  /** Convoys out again, and garrisons resupplied where the band can see it happen (WP-W6). */
-  function convoyNews({resupplied, respawned}) {
-    for (const p of convoys) if (p.root.visible === isGone(campaign, p.id)) (isGone(campaign, p.id) ? p.hide : p.show)();
-    for (const id of respawned) {
-      const from = byId(CONVOYS[id].from);
-      if (world.sees(from.x, from.z)) toast(`A new ${SOURCES[id].name.toLowerCase()} sets out from ${from.name}.`);
-    }
-    for (const r of resupplied) {
-      const s = byId(r.settlement);
-      if (world.sees(s.x, s.z)) toast(`${SOURCES[r.id].name} reached ${s.name}: its garrison is ${r.garrison} now.`);
-    }
-    if (resupplied.length || respawned.length) save();
-  }
-  /** Stand the hunters where the world has them; dt > 0 also lets the world run (a rearguard sends them home). */
-  function stepHunters(dt) {
-    if (dt) world.step(dt);
-    for (const p of hunters) {
-      const h = campaign.world.hunters?.[p.id];
-      if (!h || isGone(campaign, p.id)) continue;
-      const heading = p.last ? Math.atan2(h.x - p.last.x, h.z - p.last.z) : null;
-      if (!p.last || Math.hypot(h.x - p.last.x, h.z - p.last.z) > 0.01) p.place(h.x, h.z, heading);
-      p.last = {x: h.x, z: h.z};
-    }
-  }
+  // the world in motion and its news on the map (map/campaign-world.js, WP-W5, W6, W7)
+  const {world, stepHunters, news} = mountWorld({campaign, travel, parties, toast, save, rings});
   stepHunters(0);
   save();
   if (lines.length) toast(lines.join(' '), 7000);
@@ -385,7 +346,7 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
                 // the world runs on meanwhile (WP-W5): hunters close in, convoys come and go
                 rest(campaign, SETTLEMENTS, hours, h => {
                   const r = world.skip(h);
-                  convoyNews(r);
+                  news(r);
                   return r.healed;
                 });
                 save();
@@ -464,7 +425,10 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
     if (e.key.toLowerCase() === 'p' && panel.hidden) toggleBand();
   });
   const partyButton = document.querySelector('.menu-bar [data-label="Party"]');
-  if (partyButton) partyButton.onclick = () => toggleBand(true);
+  if (partyButton) {
+    partyButton.hidden = false; // only a campaign has a band to show
+    partyButton.onclick = () => toggleBand(true);
+  }
 
   // the party card: the band's real numbers
   let lastCard = '';
@@ -498,7 +462,7 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
     const step = world.step(dt), // time, the convoys, the band's march, the hunters (WP-W5, W6, W11)
       healed = step.healed;
     stepHunters(0);
-    convoyNews(step);
+    news(step);
     if (healed.length) {
       toast(`${healed.map(id => NAMES[id] || id).join(' and ')} ${healed.length > 1 ? 'are' : 'is'} fit again.`);
       save();

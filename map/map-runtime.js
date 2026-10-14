@@ -13,6 +13,7 @@ import {mountCampaign} from './campaign-ui.js';
 import {createAftermath} from './aftermath.js';
 import {modalOpen} from '../shared/modal.js';
 import {createDaylight} from './daylight.js';
+import {createSightRings} from './sight-rings.js';
 import {sightRange} from '../shared/campaign/daylight.js';
 
 export async function mountMap({HD2D, createSpriteLayer, createHD2D, figure}) {
@@ -209,8 +210,6 @@ export async function mountMap({HD2D, createSpriteLayer, createHD2D, figure}) {
     clearTimeout(t._h);
     t._h = setTimeout(() => (t.hidden = true), ms);
   }
-  for (const b of document.querySelectorAll('.menu-bar button'))
-    b.onclick = () => toast(`${b.dataset.label}: placeholder, not built yet.`, 1800);
 
   // ---------- loop ----------
   let renderDirty = true;
@@ -226,7 +225,7 @@ export async function mountMap({HD2D, createSpriteLayer, createHD2D, figure}) {
   new ResizeObserver(resize).observe(stageEl);
   resize();
 
-  const sprites = HD2D ? await createSpriteLayer() : null;
+  const sprites = HD2D ? await createSpriteLayer({ground: (x, z) => sample(field, x, z)}) : null;
   const parties = await buildParties(field, labels, sprites?.makers || {figure});
   const hd2d = HD2D ? createHD2D(renderer) : null;
   scene.add(parties.group);
@@ -241,8 +240,10 @@ export async function mountMap({HD2D, createSpriteLayer, createHD2D, figure}) {
     toast,
     reduceMotion,
     params: new URLSearchParams(location.search),
+    onOrder: () => !speed && setSpeed(1), // an order to march starts the clock
   });
-  campaignUi = mountCampaign({travel, parties, townLabels, setSpeed, getSpeed: () => speed, toast});
+  const rings = travel.campaign ? createSightRings({scene, field}) : null; // sight on the map (WP-W7)
+  campaignUi = mountCampaign({travel, parties, townLabels, setSpeed, getSpeed: () => speed, toast, rings});
   // wrecks, scorch and smoke where the band has fought (WP-W13): re-matched to the save as campaign hours pass
   const aftermath = travel.campaign ? createAftermath({scene, field, reduceMotion}) : null;
   let aftermathHour = '';

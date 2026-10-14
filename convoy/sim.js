@@ -10,7 +10,7 @@ import {DEFAULT_LEVEL, LEVELS} from './levels/index.js';
 import {sandbagsFor} from './levels/util.js';
 import {initObjectives} from './objectives.js';
 import {DEFAULT_SQUAD, REBEL_HEALTH, squadSpawns} from './roster.js';
-import {GRENADES, SPEED, VISION, inBox, rng, segmentBox, segmentCircle, thinLevel} from './sim-base.js';
+import {GRENADES, SPEED, VISION, inBox, isLow, LOW_SHIELD, rng, segmentBox, segmentCircle, thinLevel} from './sim-base.js';
 import {advanceControl, cancelControl, ensureControl, requestControl, selectControl} from './squad-control.js';
 import {PARTISAN_LOADOUTS, WEAPONS} from './weapons.js';
 import {unitMethods} from './sim-units.js';
@@ -174,13 +174,28 @@ export class Sim {
     return grid.near(x0, z0, x1, z1, [], true).map(n => this.level.cover[n]);
   }
 
-  /** Line of sight between two points (eye height is implied: every obstacle is taller than a crouching man). */
+  /** Line of sight between two points (eye height is implied: all but low cover is taller than a crouching man). */
   los(ax, az, bx, bz) {
-    const blocks = b => !inBox(ax, az, b) && !inBox(bx, bz, b) && segmentBox(ax, az, bx, bz, b, -0.05) < 1;
+    const blocks = b => !isLow(b) && !inBox(ax, az, b) && !inBox(bx, bz, b) && segmentBox(ax, az, bx, bz, b, -0.05) < 1;
     if (this.someCoverAlong(ax, az, bx, bz, blocks)) return false;
     for (const b of this.dynamicBoxes()) if (blocks(b)) return false;
     for (const c of this.smokes) if (this.time < c.until && segmentCircle(ax, az, bx, bz, c.x, c.z, c.r)) return false;
     return true;
+  }
+
+  /** The low cover (sandbags, logs) shielding (bx, bz) from (ax, az): just in front of b, not at a's feet; or null. */
+  lowCover(ax, az, bx, bz) {
+    const L = Math.hypot(bx - ax, bz - az);
+    let found = null;
+    const shields = b => {
+      if (!isLow(b) || inBox(ax, az, b, 1.5)) return false;
+      const t = segmentBox(ax, az, bx, bz, b, 0.2);
+      if (t <= 1 && L * (1 - t) < LOW_SHIELD) found = b;
+      return !!found;
+    };
+    if (this.someCoverAlong(ax, az, bx, bz, shields)) return found;
+    for (const b of this.fieldworks) if (shields(b)) return found;
+    return null;
   }
 
   enemiesOf(u) {

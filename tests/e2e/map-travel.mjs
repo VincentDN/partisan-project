@@ -27,7 +27,7 @@ try {
   assert.deepEqual([first.x, first.z, first.route], [-160, 40, null], 'and that is saved');
 
   // a click on land (not a drag): a route, a line on the ground and a marker, a toast with the time it takes
-  await page.evaluate(() => window.PARP_MAP.setSpeed(0)); // paused: orders still work, the band waits
+  await page.evaluate(() => window.PARP_MAP.setSpeed(0)); // paused: an order starts the clock
   const box = await page.locator('#stage canvas').boundingBox();
   await page.mouse.click(box.x + box.width * 0.62, box.y + box.height * 0.55);
   await page.waitForFunction(() => !!window.PARP_MAP.travel.party.route, null, {timeout: 30000}); // slow software frames
@@ -39,6 +39,9 @@ try {
     ),
     'the route on the ground, with its end marked',
   );
+  assert.equal(await page.evaluate(() => window.PARP_MAP.travel.campaign.world.clock.speed), 1, 'the order started the clock');
+  assert.equal(await page.locator('[data-speed="1"]').getAttribute('aria-pressed'), 'true');
+  await page.evaluate(() => window.PARP_MAP.setSpeed(0)); // paused again for the checks below: the band waits
   const still = await page.evaluate(() => ({...window.PARP_MAP.travel.party}));
   await frames(page, 5);
   const after = await page.evaluate(() => ({...window.PARP_MAP.travel.party}));

@@ -5,7 +5,7 @@
 import {loadArt, loadGuns, buildPawn, lookFor, savedLook, DEFAULT_GUN, tinted, atlasCell} from './sprite-art.js';
 import {WEAPONS} from './weapons.js';
 import {ditherToMask} from '../assets/js/dither.js';
-import {segmentBox} from './sim.js';
+import {inBox, isLow, segmentBox} from './sim.js';
 
 const PPM = 32; // pixels per metre at zoom 1 (art bible: 1 m = 32 px)
 
@@ -519,6 +519,23 @@ export async function createSpriteRenderer(view) {
           rot: a + Math.PI / 2,
         });
       }
+    } else if (im.surface === 'sandbag') {
+      // a round into sandbags or a log: a puff of sand and dust that hangs a moment, a few grains thrown back
+      for (let i = 0; i < 3; i++)
+        mote({
+          img: tinted(fx.dustPuff, '#cdbb92'),
+          x: im.x + rnd(-0.15, 0.15),
+          z: im.z + rnd(-0.15, 0.15),
+          y: 0.45 + i * 0.12,
+          vx: Math.cos(back) * rnd(0.3, 0.9),
+          vz: Math.sin(back) * rnd(0.3, 0.9) - 0.3,
+          t,
+          life: rnd(0.9, 1.4),
+          size: 0.55 + i * 0.2,
+          grow: 1.6,
+          alpha: 0.75,
+        });
+      debris(im.x, im.z, 4, 2, art.debris, 0.14, '#b8a57a');
     } else if (im.surface === 'wall') {
       mote({img: art.sparkFlash, x: im.x, z: im.z, y: 0.5, t, life: 0.07, size: 0.6, add: true, rot: back});
       mote({img: tinted(fx.dustPuff, '#b9ad94'), x: im.x, z: im.z, y: 0.5, vz: -0.4, t, life: 0.8, size: 0.6, grow: 1.2, alpha: 0.6});
@@ -1002,21 +1019,32 @@ export async function createSpriteRenderer(view) {
   let inSight = new Set(); // army units drawn this frame
   const sightFade = new WeakMap(); // army unit -> 0..1, how far it has faded into sight (weak: gone with the mission)
   const fogNow = document.createElement('canvas'),
-    fn = fogNow.getContext('2d');
+    fn = fogNow.getContext('2d'),
+    fogHalf = document.createElement('canvas'), // the fog where nobody sees even over low cover
+    fh = fogHalf.getContext('2d'),
+    fogMix = document.createElement('canvas'),
+    fm = fogMix.getContext('2d');
   let fogCanvas = document.createElement('canvas'),
     fogBack = document.createElement('canvas');
   let fogCam = null; // the camera the shown mask was drawn with
-  /** The visibility polygon from (ox, oz): [[x, z], ...] round the circle. */
+  /**
+   * The visibility polygons from (ox, oz), [[x, z], ...] round the circle: `over` sees over low cover (sandbags,
+   * logs), `clear` stops at it too; between the two the ground is half seen (peeking over shows it all).
+   */
   function sightFrom(sim, ox, oz, boxes) {
-    const pts = [];
+    const over = [],
+      clear = [];
     for (let i = 0; i < RAYS; i++) {
       const a = (i / RAYS) * Math.PI * 2,
         ex = ox + Math.cos(a) * SIGHT,
         ez = oz + Math.sin(a) * SIGHT;
-      let t = 1;
+      let t = 1,
+        tl = 1;
       for (const b of boxes) {
-        const h = segmentBox(ox, oz, ex, ez, b, -0.05);
-        if (h < t) t = h;
+        // low cover is padded a little, so a run of sandbags laid end to end leaves no slits
+        const h = segmentBox(ox, oz, ex, ez, b, isLow(b) ? 0.08 : -0.05);
+        if (isLow(b)) tl = Math.min(tl, h);
+        else if (h < t) t = h;
       }
       for (const c of sim.smokes) {
         if (sim.time > c.until) continue;
@@ -1027,11 +1055,13 @@ export async function createSpriteRenderer(view) {
           k = Math.max(0, Math.min(1, ((c.x - ox) * dx + (c.z - oz) * dz) / L));
         if (Math.hypot(ox + dx * k - c.x, oz + dz * k - c.z) < c.r) t = Math.min(t, Math.max(0, k - c.r / SIGHT));
       }
-      pts.push([ox + (ex - ox) * t, oz + (ez - oz) * t]);
+      tl = Math.min(t, tl);
+      over.push([ox + (ex - ox) * t, oz + (ez - oz) * t]);
+      clear.push([ox + (ex - ox) * tl, oz + (ez - oz) * tl]);
     }
-    return pts;
+    return {over, clear};
   }
-  function updateFog(sim, dt) {
+  function updateFog(sim, dt, peek = false) {
     SIGHT = sim.vision ?? SIGHT;
     const eyes = sim.units.filter(u => u.side === 'partisan' && u.alive && !u.escaped);
     const boxes = sim.boxes();
@@ -1049,19 +1079,23 @@ export async function createSpriteRenderer(view) {
     // this frame's dark, with each rebel's sight cut out of it (soft at the edge of its range)
     const w = Math.ceil(W / 2),
       h = Math.ceil(Hh / 2);
-    for (const c of [fogNow, fogCanvas, fogBack]) if (c.width !== w || c.height !== h) [c.width, c.height] = [w, h];
-    fn.setTransform(1, 0, 0, 1, 0, 0);
-    fn.globalCompositeOperation = 'source-over';
-    fn.clearRect(0, 0, w, h);
-    fn.fillStyle = level.night ? 'rgba(4,6,10,.72)' : 'rgba(10,12,9,.58)';
-    fn.fillRect(0, 0, w, h);
-    fn.globalCompositeOperation = 'destination-out';
+    for (const c of [fogNow, fogHalf, fogMix, fogCanvas, fogBack]) if (c.width !== w || c.height !== h) [c.width, c.height] = [w, h];
+    // two masks: fogNow, cut where any rebel sees clearly; fogHalf, cut where any sees, over low cover too
+    for (const g of [fn, fh]) {
+      g.setTransform(1, 0, 0, 1, 0, 0);
+      g.globalCompositeOperation = 'source-over';
+      g.clearRect(0, 0, w, h);
+      g.fillStyle = level.night ? 'rgba(4,6,10,.72)' : 'rgba(10,12,9,.58)';
+      g.fillRect(0, 0, w, h);
+      g.globalCompositeOperation = 'destination-out';
+    }
     for (const e of eyes) {
-      const poly = sightFrom(
+      const {over, clear} = sightFrom(
         sim,
         e.x,
         e.z,
-        boxes.filter(b => !inBoxPad(e.x, e.z, b)),
+        // the cover a rebel stands in or crouches right behind does not block their own view
+        boxes.filter(b => !inBoxPad(e.x, e.z, b) && !(isLow(b) && inBox(e.x, e.z, b, 1.5))),
       );
       const cx = sx(e.x) / 2,
         cy = sy(e.z) / 2,
@@ -1069,12 +1103,28 @@ export async function createSpriteRenderer(view) {
       const g = fn.createRadialGradient(cx, cy, R * 0.55, cx, cy, R);
       g.addColorStop(0, 'rgba(0,0,0,1)');
       g.addColorStop(1, 'rgba(0,0,0,0)');
-      fn.fillStyle = g;
-      fn.beginPath();
-      poly.forEach(([x, z], i) => (i ? fn.lineTo(sx(x) / 2, sy(z) / 2) : fn.moveTo(sx(x) / 2, sy(z) / 2)));
-      fn.closePath();
-      fn.fill();
+      // the player peeking over (holding fire) sees over low cover clearly
+      for (const [m, poly] of [
+        [fn, peek && e === sim.player ? over : clear],
+        [fh, over],
+      ]) {
+        m.fillStyle = g;
+        m.beginPath();
+        poly.forEach(([x, z], i) => (i ? m.lineTo(sx(x) / 2, sy(z) / 2) : m.moveTo(sx(x) / 2, sy(z) / 2)));
+        m.closePath();
+        m.fill();
+      }
     }
+    // this frame's fog: half of each, so ground seen only over low cover is under half the fog
+    fm.setTransform(1, 0, 0, 1, 0, 0);
+    fm.globalCompositeOperation = 'source-over';
+    fm.clearRect(0, 0, w, h);
+    fm.globalCompositeOperation = 'lighter';
+    fm.globalAlpha = 0.5;
+    fm.drawImage(fogNow, 0, 0);
+    fm.drawImage(fogHalf, 0, 0);
+    fm.globalAlpha = 1;
+    fm.globalCompositeOperation = 'source-over';
     // blend into the mask shown last frame, moved to where the camera is now: shown = last·(1−k) + now·k
     // ('lighter' adds premultiplied colour and alpha, so with one fog colour this is an exact mix)
     const cam = {x: camera.x - shake.x / ppm, z: camera.z - shake.y / ppm, ppm};
@@ -1099,7 +1149,7 @@ export async function createSpriteRenderer(view) {
     }
     bg.globalCompositeOperation = 'lighter';
     bg.globalAlpha = k;
-    bg.drawImage(fogNow, 0, 0);
+    bg.drawImage(fogMix, 0, 0);
     bg.globalAlpha = 1;
     bg.globalCompositeOperation = 'source-over';
     [fogCanvas, fogBack] = [fogBack, fogCanvas];
@@ -1243,7 +1293,10 @@ export async function createSpriteRenderer(view) {
    *   abilities: the ability bar [{key, name, left, cd, ready, usable}]; slowmo 0..1: the rebel switch's slow motion
    */
   let fogOn = true;
-  function draw(sim, {aim, selected = [], orders = true, pointer = null, aimZoom = false, abilities = null, slowmo = 0, fog = true} = {}) {
+  function draw(
+    sim,
+    {aim, selected = [], orders = true, pointer = null, aimZoom = false, abilities = null, slowmo = 0, fog = true, peek = false} = {},
+  ) {
     fogOn = fog;
     if (sim.level !== level) {
       level = sim.level;
@@ -1311,7 +1364,7 @@ export async function createSpriteRenderer(view) {
     groundFx(sim);
     // what the player's screen shows, for the sim's "you see them, they see you" (convoy/sim.js onScreen)
     sim.view = {x0: camera.x - W / 2 / ppm, x1: camera.x + W / 2 / ppm, z0: camera.z - Hh / 2 / ppm, z1: camera.z + Hh / 2 / ppm};
-    if (fogOn) updateFog(sim, rdt);
+    if (fogOn) updateFog(sim, rdt, peek);
     else inSight = new Set(sim.units);
     // everything that stands, sorted by its south edge
     const things = [];

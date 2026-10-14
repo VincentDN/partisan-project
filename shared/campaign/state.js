@@ -110,6 +110,7 @@ function addCounts(into, from) {
  * A stored campaign repaired against the current rules: unknown classes and gear are dropped, missing fields take
  * their fresh values. Throws on anything that is not a version-1 campaign object (the store treats that as corrupt).
  */
+const isPoint = p => isObj(p) && Number.isFinite(p.x) && Number.isFinite(p.z);
 export function normalize(raw) {
   const o = typeof raw === 'string' ? JSON.parse(raw) : raw;
   if (!isObj(o)) throw new Error('campaign save is not an object');
@@ -126,16 +127,25 @@ export function normalize(raw) {
   if (isObj(w.camp) && typeof w.camp.id === 'string')
     c.world.camp = {id: w.camp.id, ready: isObj(w.camp.ready) ? {day: num(w.camp.ready.day, 1), hour: num(w.camp.ready.hour, 0)} : null};
   if (isObj(w.hunters))
-    for (const [id, h] of Object.entries(w.hunters))
-      if (isObj(h) && Number.isFinite(h.x) && Number.isFinite(h.z))
-        c.world.hunters[id] = {
-          x: h.x,
-          z: h.z,
-          hunting: !!h.hunting,
-          ...(isObj(h.rest) && Number.isFinite(h.rest.day) && Number.isFinite(h.rest.hour)
-            ? {rest: {day: h.rest.day, hour: h.rest.hour}}
-            : {}),
-        };
+    for (const [id, h] of Object.entries(w.hunters)) {
+      if (!isObj(h) || !((Number.isFinite(h.x) && Number.isFinite(h.z)) || isPoint(h.seen))) continue;
+      // each field checked, in the order it was saved: where they stand, whether they hunt, their rest after a
+      // rearguard (WP-W8), and what they know (WP-W7): where the band was last seen, how long they have searched
+      const ok = {
+        x: v => Number.isFinite(v),
+        z: v => Number.isFinite(v),
+        hunting: v => typeof v === 'boolean',
+        rest: v => isObj(v) && Number.isFinite(v.day) && Number.isFinite(v.hour),
+        seen: v => v === null || isPoint(v),
+        search: v => Number.isFinite(v) && v >= 0,
+        lost: v => typeof v === 'boolean',
+      };
+      const out = {};
+      for (const [k, v] of Object.entries(h)) if (ok[k]?.(v)) out[k] = isObj(v) ? {...v} : v;
+      if (!Number.isFinite(out.x) || !Number.isFinite(out.z)) (delete out.x, delete out.z);
+      out.hunting = !!out.hunting;
+      c.world.hunters[id] = out;
+    }
   if (Array.isArray(w.burnt)) c.world.burnt = w.burnt.filter(s => typeof s === 'string');
   if (Array.isArray(w.aftermath))
     c.world.aftermath = w.aftermath.filter(

@@ -715,6 +715,7 @@ function frame() {
     selected,
     pointer: started ? pointer : null,
     aimZoom: aimZoom && started,
+    peek: fire && started, // holding fire: the player peeks over low cover (sprite-render.js fog)
     abilities: started && !sim.control.pending ? abilityBar() : null,
     slowmo: slowmo < 0.01 ? 0 : slowmo,
   });

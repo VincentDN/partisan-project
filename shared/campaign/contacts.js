@@ -7,6 +7,7 @@ import {LEVELS} from '../../convoy/levels/index.js';
 import {enemyCount} from '../../convoy/levels/variants.js';
 import {manifestFor} from './cargo.js';
 import {isOverrun, overrun} from './defence.js';
+import {alert} from './hunt.js';
 
 /** The enemies on the map: id -> what they are, and the mission meeting them starts. */
 export const SOURCES = {
@@ -23,6 +24,8 @@ export const SOURCES = {
   'orion-patrol': {name: 'Orion garrison patrol', kind: 'post', level: 'checkpoint', strength: 24},
   'korfos-checkpoint': {name: 'Checkpoint Korfos', kind: 'post', level: 'checkpoint', strength: 12},
   raiders: {name: 'Raiding party', kind: 'hunters', level: 'cave', strength: 31},
+  // turned out by heat 50 (hunt.js, WP-W7)
+  'orion-hunters': {name: 'Orion hunter column', kind: 'hunters', level: 'hilltop', strength: 26},
 };
 /** What each kind of contact is called on the encounter panel, and what the band does there. */
 export const ACTIONS = {
@@ -119,6 +122,7 @@ export function readResults(c, names = {}, {settlements = null} = {}) {
     if (e.kind !== 'result') continue;
     const src = SOURCES[e.source];
     const name = src?.name || names[e.source] || e.source || 'the enemy';
+    alert(c, e.at); // every fight tells the hunter columns where the band was (hunt.js, WP-W7)
     if (e.outcome === 'won' && e.source) {
       c.world.heat = Math.min(100, c.world.heat + 10);
       if (!isGone(c, e.source)) c.world.parties.push({id: e.source, state: 'destroyed', day: e.day, hour: e.hour ?? 0});

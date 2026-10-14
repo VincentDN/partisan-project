@@ -28,7 +28,9 @@ test('hunt: the hunters wait while the heat is low and march on the band once it
   const h = pursue(c, 'raiders', home, band, 2);
   assert.equal(h.hunting, true);
   assert.ok(Math.abs(Math.hypot(h.x - -80, h.z - 24) - HUNT_SPEED * 2) < 1e-9, 'at their marching speed');
-  assert.deepEqual(normalize(JSON.parse(JSON.stringify(c))).world.hunters.raiders, {x: h.x, z: h.z, hunting: true}, 'kept in the save');
+  const saved = normalize(JSON.parse(JSON.stringify(c))).world.hunters.raiders;
+  assert.deepEqual(saved, c.world.hunters.raiders, 'kept in the save');
+  assert.deepEqual([saved.x, saved.z, saved.hunting, saved.seen], [h.x, h.z, true, band], 'where they are, and where they saw the band');
   c.world.heat = 0;
   for (let i = 0; i < 20; i++) pursue(c, 'raiders', home, band, 5);
   assert.deepEqual([c.world.hunters.raiders.x, c.world.hunters.raiders.z], home, 'home again when the heat is off');

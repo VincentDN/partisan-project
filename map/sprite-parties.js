@@ -45,7 +45,11 @@ function armed(pawn, gun) {
   return out;
 }
 
-export async function createSpriteLayer() {
+/**
+ * ground(x, z): the terrain height there. Each card stands on the ground under it (a band's members spread over a
+ * slope do not sink into it), raised just enough that the ground in front of its feet does not cut through the card.
+ */
+export async function createSpriteLayer({ground = null} = {}) {
   const guns = await loadGuns();
   const cards = []; // {card, root, frames, mats, kind, bob}
   const look = new T.Vector3();
@@ -78,7 +82,7 @@ export async function createSpriteLayer() {
       holder.position.set(i ? -3.2 * Math.ceil(i / 2) : 0, 0, i ? (i % 2 ? 4.2 : -4.2) : 0);
       holder.add(mesh);
       root.add(holder);
-      members.push({mesh, frames, phase: i * 0.37 + n * 0.11});
+      members.push({mesh, holder, frames, phase: i * 0.37 + n * 0.11});
     }
     cards.push({root, members, kind: 'person', last: new T.Vector3(), moving: 0});
     return {root, update() {}};
@@ -87,7 +91,14 @@ export async function createSpriteLayer() {
   const fwd = new T.Vector3(),
     right = new T.Vector3(),
     toCam = new T.Vector3(),
-    heading = new T.Vector3();
+    heading = new T.Vector3(),
+    at = new T.Vector3();
+  /**
+   * The ground a card stands on: where its feet are, raised only as far as the ground just in front of them (toward
+   * the camera) or beside them would otherwise cut across its feet. Ground rising behind a card cannot hide it.
+   */
+  const standAt = (x, z, cx, cz, rx, rz) =>
+    Math.max(ground(x, z), ground(x + cx * 1.2, z + cz * 1.2) - 0.3, ground(x + rx, z + rz) - 0.4, ground(x - rx, z - rz) - 0.4);
   /** Every frame: turn the cards to the camera, pick each one's facing, flip to west, bob the walkers. */
   function update(camera, t) {
     camera.getWorldDirection(look);
@@ -113,6 +124,12 @@ export async function createSpriteLayer() {
         m.mesh.scale.x = (dir === 'east' ? flip : 1) * Math.abs(m.mesh.scale.x || 1);
         if (m.frames && m.mesh.material.map !== m.frames[dir]) {
           m.mesh.material.map = m.frames[dir];
+        }
+        // on its own patch of ground, not the leader's
+        if (ground && m.holder) {
+          m.holder.position.y = 0;
+          m.holder.getWorldPosition(at); // where the card stands, at the root's height
+          m.holder.position.y = standAt(at.x, at.z, toCam.x, toCam.z, right.x, right.z) - at.y;
         }
         // walkers bob a step; idlers breathe
         const k = c.moving;

@@ -82,6 +82,18 @@ export async function buildParties(field, layer, {figure, vehicle = vehicle3d}) 
         ['relaxed', 'weary'],
       ],
     },
+    {
+      id: 'orion-hunters',
+      name: 'Orion hunter column',
+      count: 26,
+      at: PARTY_SPOTS.column,
+      facing: 3.0,
+      men: [
+        ['ready', 'alert'],
+        ['ready', 'alert'],
+        ['relaxed', 'calm'],
+      ],
+    },
   ];
   for (const p of PATROLS) {
     const men = [];

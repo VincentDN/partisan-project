@@ -14,7 +14,7 @@ import {modalOpen} from '../shared/modal.js';
 const HOURS_PER_SECOND = 0.6;
 const GROUND_NAMES = {road: 'road', plain: 'open country', forest: 'forest', mountain: 'mountains', steep: 'steep ground', snow: 'snow'};
 
-export function mountTravel({scene, camera, field, stageEl, hero, cam, toast, reduceMotion, params}) {
+export function mountTravel({scene, camera, field, stageEl, hero, cam, toast, reduceMotion, params, onOrder = () => {}}) {
   const nav = buildNav();
   // ---------- the campaign save ----------
   let store = null,
@@ -130,6 +130,7 @@ export function mountTravel({scene, camera, field, stageEl, hero, cam, toast, re
     const end = r.points.at(-1),
       ground = GROUND_NAMES[groundAt(nav, end.x, end.z)] || 'open country';
     toast(`Marching to ${provinceAt(end.x, end.z).name} province (${ground}) · about ${hours(r.time)}`);
+    onOrder(r);
     drawRoute();
     save();
     return r;

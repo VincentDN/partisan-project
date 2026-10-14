@@ -233,6 +233,7 @@ export const PARTY_SPOTS = {
   orion: [78, 52],
   korfos: [-30, 92],
   raiders: [-80, 24], // on the ridge east of the player: the enemy in the distance
+  column: [100, 70], // the Orion hunter column's post, south of the fort (WP-W7)
 };
 /** Which settlement's province a point belongs to (nearest seat, over land). */
 export function provinceAt(x, z) {

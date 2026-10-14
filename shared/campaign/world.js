@@ -3,10 +3,10 @@
 // band or home (defence.js), and the clock (wounds heal). Everything it moves lives in the campaign save, so a
 // reload carries on where it was, mid-route included; the same save and the same orders give the same world
 // whatever the frame rate. Pure, no DOM.
-import {advance} from './nav.js';
+import {advance, groundAt} from './nav.js';
+import {bandSight, spotRange} from './hunt.js';
 import {pursue} from './defence.js';
 import {passTime, isGone} from './contacts.js';
-import {sightRange} from './daylight.js';
 import {CONVOY_ROADS, convoyRoad, freshMotion, driveConvoy, vehicleAt, arrive, respawn} from './convoys.js';
 
 export {CONVOY_ROADS, convoyRoad, alongRoad, freshMotion, driveConvoy, vehicleAt} from './convoys.js';
@@ -48,12 +48,18 @@ export function createWorld(c, {nav = null, party = null, hunters = {}, vehicles
     }
     const moving = !!band.route;
     const arrived = moving && nav ? advance(nav, band, dt) : false;
-    for (const [id, home] of Object.entries(hunters)) pursue(c, id, home, band, dt);
-    return {healed: passTime(c, dt * HOURS_PER_SECOND), arrived, resupplied, respawned};
+    // the hunters see the band as far as the hour, the ground under it and its size allow (hunt.js, WP-W7)
+    const spot = spotRange(c, {ground: groundOf(), size: fitCount()}),
+      hunts = [];
+    for (const [id, home] of Object.entries(hunters)) {
+      const r = pursue(c, id, home, band, dt, {spot});
+      if (r?.event) hunts.push({id, event: r.event});
+    }
+    return {healed: passTime(c, dt * HOURS_PER_SECOND), arrived, resupplied, respawned, hunts};
   }
   /** Run the world for dt map seconds (any frame rate: it moves in whole STEPs). Returns what happened. */
   function step(dt) {
-    const out = {healed: [], arrived: false, resupplied: [], respawned: [], ticks: 0};
+    const out = {healed: [], arrived: false, resupplied: [], respawned: [], hunts: [], ticks: 0};
     acc += Math.max(0, dt);
     while (acc >= STEP - 1e-9) {
       acc -= STEP;
@@ -61,6 +67,7 @@ export function createWorld(c, {nav = null, party = null, hunters = {}, vehicles
       out.healed.push(...r.healed);
       out.resupplied.push(...r.resupplied);
       out.respawned.push(...r.respawned);
+      out.hunts.push(...r.hunts);
       out.arrived ||= r.arrived;
       out.ticks++;
     }
@@ -68,12 +75,20 @@ export function createWorld(c, {nav = null, party = null, hunters = {}, vehicles
   }
   /** Let `hours` of campaign time pass in the world (a rest): everything moves, nothing is skipped. */
   const skip = hours => step(hours / HOURS_PER_SECOND);
-  /** Is (x, z) within the band's sight now (night shortens it, WP-W4)? */
-  const sees = (x, z) => Math.hypot(x - band.x, z - band.z) <= sightRange(c.world.clock.hour);
+  /** The ground under the band, and how many fighters are fit (a big band is seen further off). */
+  const groundOf = () => (nav ? groundAt(nav, band.x, band.z) : 'plain');
+  const fitCount = () => Object.values(c.band?.fighters || {}).filter(f => !f.wounded).length || 8;
+  /** How far the band sees now (night and forest shorten it, WP-W4, W7), and how far a column would spot it. */
+  const sight = () => bandSight(c, {ground: groundOf()});
+  const spotted = () => spotRange(c, {ground: groundOf(), size: fitCount()});
+  /** Is (x, z) within the band's sight now? */
+  const sees = (x, z) => Math.hypot(x - band.x, z - band.z) <= sight();
   return {
     step,
     skip,
     sees,
+    sight,
+    spotted,
     band,
     motion,
     /** Where a convoy's vehicles are now: [{x, z, heading}], or null when it is gone. */

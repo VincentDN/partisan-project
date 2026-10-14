@@ -30,12 +30,14 @@ export function findCover(sim, u, threat) {
       const far = Math.hypot(px - u.x, pz - u.z) * 1.2;
       if (40 - far <= bestScore) continue; // even covered and alone it cannot beat the best: skip the sight check
       if (!reachable(sim, u.x, u.z, px, pz)) continue; // off the map, or shut in a house or a walled yard
-      const covered = !sim.los(threat.x, threat.z, px, pz);
+      // hidden, or behind low cover (sandbags, logs: seen over, but a body behind one is harder to hit)
+      const covered = !sim.los(threat.x, threat.z, px, pz),
+        low = !covered && !!sim.lowCover(threat.x, threat.z, px, pz);
       const crowd = sim.units.filter(
         o => o !== u && o.alive && o.side === u.side && Math.hypot((o.moveTo || o).x - px, (o.moveTo || o).z - pz) < 1.6,
       ).length;
       const score =
-        (covered ? 40 : 0) -
+        (covered ? 40 : low ? 30 : 0) -
         far -
         (Math.hypot(px - threat.x, pz - threat.z) < 10 ? 25 : 0) -
         crowd * 14 -

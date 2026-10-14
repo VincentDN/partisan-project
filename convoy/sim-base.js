@@ -109,3 +109,9 @@ export function thinLevel(L, force) {
 export const VISION = 30;
 
 export const dist = (a, b) => Math.hypot(a.x - b.x, a.z - b.z);
+
+/** Low cover (sandbags, logs): seen and shot over; a body just behind it is harder to hit (sim.lowCover). */
+export const isLow = b => b.kind === 'sandbag' || b.kind === 'log';
+/** How close behind low cover a body must be for it to shield, and the share of rounds it then stops. */
+export const LOW_SHIELD = 2.5,
+  LOW_STOP = 0.55;

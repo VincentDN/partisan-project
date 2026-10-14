@@ -2,7 +2,7 @@
 // to people, vehicles, targets. Split out of sim.js (WP-QA17); installed on Sim.prototype there, so `this` is the sim.
 import {hear} from './ai.js';
 import {coverGrid} from './cover-grid.js';
-import {DAMAGE, dist, inBox, rayCircle, segmentBox} from './sim-base.js';
+import {DAMAGE, dist, inBox, isLow, LOW_SHIELD, LOW_STOP, rayCircle, segmentBox} from './sim-base.js';
 import {WEAPONS, munition} from './weapons.js';
 
 export const combatMethods = {
@@ -75,7 +75,10 @@ export const combatMethods = {
       const t = segmentBox(ox, oz, ox + dx * W.range, oz + dz * W.range, b);
       if (t <= 1) boxHits.push({s: t * W.range, b});
     }
-    const blockFor = o => boxHits.reduce((m, h) => (o?.state === 'turret' && h.b.vehicle === o.vehicle ? m : Math.min(m, h.s)), W.range);
+    // low cover (sandbags, logs) is shot over: it only counts just in front of the target (below)
+    const full = boxHits.filter(h => !isLow(h.b)),
+      low = boxHits.filter(h => isLow(h.b) && h.s > 1.5).sort((p, q) => p.s - q.s);
+    const blockFor = o => full.reduce((m, h) => (o?.state === 'turret' && h.b.vehicle === o.vehicle ? m : Math.min(m, h.s)), W.range);
     let best = blockFor(null),
       hit = null;
     for (const o of this.units) {
@@ -87,7 +90,15 @@ export const combatMethods = {
       }
     }
     if (!hit) best = blockFor(null);
-    const hitBox = hit ? null : boxHits.find(h => Math.abs(h.s - best) < 1e-6)?.b || null;
+    let hitBox = hit ? null : full.find(h => Math.abs(h.s - best) < 1e-6)?.b || null;
+    // a body just behind low cover: the cover takes a share of the rounds; a miss near the aim point lands in it
+    const aimAt = hit ? best : Math.min(best, Math.hypot(tx - ox, tz - oz));
+    const shield = low.find(h => h.s < best && Math.abs(aimAt - h.s) < LOW_SHIELD);
+    if (shield && (!hit || this.rand() < LOW_STOP)) {
+      hit = null;
+      best = shield.s;
+      hitBox = shield.b;
+    }
     const x1 = ox + dx * best,
       z1 = oz + dz * best;
     this.tracers.push({x0: ox, z0: oz, x1, z1, side: u.side, weapon: wid, t: this.time, unit: u.id});
@@ -146,7 +157,7 @@ export const combatMethods = {
       p.z1 = p.hit.z;
     }
     if (W.splash) return this.explode(p.x1, p.z1, W, by, p.hitBox);
-    let surface = p.hitBox?.vehicle || p.hitBox?.target ? 'metal' : p.hitBox ? 'wall' : 'ground';
+    let surface = p.hitBox?.vehicle || p.hitBox?.target ? 'metal' : p.hitBox && isLow(p.hitBox) ? 'sandbag' : p.hitBox ? 'wall' : 'ground';
     if (p.hit && p.hit.alive && !p.hit.escaped) {
       surface = 'flesh';
       this.damage(p.hit, by, W.damage * (p.mult ?? 1));

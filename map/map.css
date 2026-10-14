@@ -81,6 +81,8 @@ a.band-screen:focus-visible { outline: 2px solid var(--lcd-hi); outline-offset: 
 .province-card .owner { margin: 0 0 6px; color: var(--c); font-weight: 700; }
 
 .menu-bar { left: 50%; bottom: 12px; transform: translateX(-50%); display: flex; gap: 4px; padding: 6px; }
+.menu-bar button[hidden] { display: none; }
+.menu-bar:not(:has(button:not([hidden]))) { display: none; }
 .toast { position: absolute; left: 50%; bottom: 70px; transform: translateX(-50%); background: #16130fee; border: 1px solid var(--bronze); padding: 8px 12px; border-radius: 3px; }
 .hint { right: 12px; bottom: 12px; margin: 0; padding: 6px 8px; font: 10px/1.2 ui-monospace, monospace; letter-spacing: 0.08em; color: #bba984; max-width: 240px; }
 
@@ -125,7 +127,7 @@ a.band-screen:focus-visible { outline: 2px solid var(--lcd-hi); outline-offset: 
 @media (max-width: 760px) {
   .legend, .hint { display: none; }
   .party-card { width: auto; right: 12px; bottom: 64px; }
-  .menu-bar { flex-wrap: wrap; width: calc(100% - 24px); justify-content: center; }
+  .menu-bar { flex-wrap: wrap; justify-content: center; }
   .timebar { top: 40px; }
   .province-card { top: auto; bottom: 170px; }
 }

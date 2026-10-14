@@ -6,6 +6,7 @@
 // rebuilding for three days (no kit screen or trader there meanwhile), the old camp burns, and the heat halves. Pure.
 import {logEvent} from './state.js';
 import {ownerOf, SOURCES} from './contacts.js';
+import {isOut, track} from './hunt.js';
 
 export const HUNT_HEAT = 20; // heat at which the hunters set out after the band
 export const HUNT_SPEED = 4.5; // map units a second of campaign time: three quarters of the band's (nav.js BASE_SPEED)
@@ -26,18 +27,23 @@ export function rebuildingFor(c) {
 }
 
 /**
- * One step of the hunters (`id`, a hunters contact) for dt seconds of campaign time: after the band while the heat is
- * high, back to their post when it is not. Their place is kept in the save (world.hunters). Returns {x, z, hunting,
- * heading} or null when they are gone.
+ * One step of the hunters (`id`, a hunters contact) for dt seconds of campaign time. Out once the heat is high enough
+ * for them (hunt.js): after the band while they see it (within `spot`; unlimited unless given), else to where it was
+ * last seen, where they search and may lose it (WP-W7); back to their post when not out. Their place and their lead
+ * are kept in the save (world.hunters). Returns {x, z, hunting, heading, event?: 'spotted' | 'lost'} or null when
+ * they are gone.
  */
-export function pursue(c, id, home, band, dt) {
+export function pursue(c, id, home, band, dt, {spot = Infinity} = {}) {
   if (c.world.parties.some(p => p.id === id && p.state === 'destroyed')) return null;
   const h = ((c.world.hunters ||= {})[id] ||= {x: home[0], z: home[1]});
+  if (!Number.isFinite(h.x) || !Number.isFinite(h.z)) Object.assign(h, {x: home[0], z: home[1]}); // a lead, no place yet
   // thrown back by a rearguard (shared/campaign/stances.js, WP-W8): they rest at their post until h.rest
   const k = c.world.clock,
     rested = !h.rest || k.day > h.rest.day || (k.day === h.rest.day && k.hour >= h.rest.hour);
-  const hunting = c.world.heat >= HUNT_HEAT && !!band && rested;
-  const [tx, tz] = hunting ? [band.x, band.z] : home;
+  const out = isOut(c, id) && !!band && rested;
+  const {target, event} = out ? track(c, id, h, band, home, dt, spot) : {target: {x: home[0], z: home[1]}, event: null};
+  const hunting = out && !!h.seen;
+  const [tx, tz] = [target.x, target.z];
   const dx = tx - h.x,
     dz = tz - h.z,
     d = Math.hypot(dx, dz);
@@ -47,7 +53,7 @@ export function pursue(c, id, home, band, dt) {
     h.z += (dz / d) * step;
   }
   h.hunting = hunting;
-  return {x: h.x, z: h.z, hunting, heading: d > 0.01 ? Math.atan2(dx, dz) : null};
+  return {x: h.x, z: h.z, hunting, heading: d > 0.01 ? Math.atan2(dx, dz) : null, ...(event ? {event} : {})};
 }
 
 /** Was this result a lost defence of the camp? (a hunters fight lost within reach of the camp) */
