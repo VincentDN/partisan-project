@@ -146,7 +146,12 @@ function split(geometry, toModel, regions, fallback) {
       const e = r.slack ?? 0.03;
       return r.min.every((m, k) => q.getComponent(k) >= m - e) && r.max.every((m, k) => q.getComponent(k) <= m + e);
     };
-    const r = regions.find(r => corners.every(q => inside(r, q))) || null;
+    const r =
+      regions.find(r =>
+        r.selection === 'center'
+          ? inside(r, corners.reduce((sum, p) => sum.add(p), new T.Vector3()).multiplyScalar(1 / 3))
+          : corners.every(q => inside(r, q)),
+      ) || null;
     if (!groups.has(r)) groups.set(r, []);
     groups.get(r).push(i);
   }
@@ -201,7 +206,15 @@ export function paintSurface(model, config) {
     const toModel = inverse.clone().multiply(mesh.matrixWorld);
     const geometry = boxUV(mesh.geometry, toModel, tile);
     const fallback = owner.get(mesh) || s.base;
-    const pieces = !owner.has(mesh) && s.regions?.length ? split(geometry, toModel, s.regions, fallback) : [[geometry, fallback, null]];
+    const pieces =
+      !owner.has(mesh) && s.regions?.length
+        ? split(
+            geometry,
+            toModel,
+            s.regions.filter(r => !r.source || r.source === mesh.name),
+            fallback,
+          )
+        : [[geometry, fallback, null]];
     const [[first, firstSpec], ...rest] = pieces.sort((a, b) => (a[2] ? 1 : 0) - (b[2] ? 1 : 0)); // unclaimed first
     mesh.geometry = first;
     mesh.material = mat(firstSpec);

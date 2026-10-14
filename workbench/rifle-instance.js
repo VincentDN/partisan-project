@@ -1,4 +1,7 @@
+// Create weapon instances, keep factory parts intact and fit shared attachments in normalized model space.
 import * as T from 'three';
+import {partitionSource} from './rifle-partitions.js';
+import {configureFit, fitOption, refreshFit} from './attachment-fit.js';
 import {loadModel} from '../shared/model-cache.js';
 import {SLOTS, FINISHES, FINISH_TARGETS, FALLBACK_MATERIALS} from './attachments.js';
 import {MODELS} from './models.js';
@@ -76,6 +79,7 @@ export async function loadRifle(id, {decorate = () => {}} = {}) {
     sockets.push(o);
   }
   model.updateMatrixWorld(true);
+  partitionSource(model, id);
   if (config.surface) paintSurface(model, config);
   // Clone materials so highlighting, finishes and wireframe only touch this rifle's meshes.
   model.traverse(o => {
@@ -157,7 +161,7 @@ export async function loadRifle(id, {decorate = () => {}} = {}) {
       (t.part.objects.length || t.option || slots[t.part.id]?.options.some(o => o.build)) &&
       (!t.option || slots[t.part.id]?.options.some(o => o.id === t.option)),
   );
-  return {
+  const rifle = {
     id,
     config,
     decorate,
@@ -169,6 +173,8 @@ export async function loadRifle(id, {decorate = () => {}} = {}) {
     build: {},
     finish: {},
   };
+  configureFit(rifle);
+  return rifle;
 }
 
 // Build an attachment the first time it is needed: its meshes join the part (clicks, highlights), take the rifle's
@@ -180,6 +186,7 @@ export function buildOption(rifle, id, option) {
   object.visible = false;
   slot.container.add(object);
   const adopt = () => {
+    fitOption(rifle, id, option, object);
     object.traverse(m => {
       if (!m.isMesh || m.userData.adopted) return;
       m.userData.adopted = true;
@@ -203,7 +210,7 @@ export function applySlotState(rifle, id, optionId, offset) {
     option = slot.options.find(o => o.id === optionId) || slot.options[0];
   buildOption(rifle, id, option);
   rifle.build[id] = option.id;
-  slot.original.visible = !!option.original;
+  slot.original.visible = !!option.original || !!option.keepOriginal;
   slot.original.rotation.set(0, option.pose?.rotationY || 0, 0);
   slot.original.position.set(...(option.pose?.position || [0, 0, 0]));
   for (const [node, p] of slot.home) {
@@ -218,6 +225,7 @@ export function applySlotState(rifle, id, optionId, offset) {
   }
   if (!slot.rail) slot.offset = 0;
   slot.container.position.copy(slot.base).x += slot.offset;
+  refreshFit(rifle);
   slot.part.detail = option.detail || slot.baseDetail;
   return option;
 }

@@ -109,7 +109,9 @@ extraction** (S8, S29, S30), adopted by the campaign when they land. 4) **CM** d
 ### 5.1 Weapons (Weapon Modder)
 
 Done: eleven rifles from cleared Sketchfab sources (M4), real attachment parts, mounts snapped by a ray-cast audit,
-universal attachments on every rifle, the CNC kit, rail footprints, the new slots, stat consistency, presets. Stats are
+universal attachments on every rifle, the CNC kit, rail footprints, the new slots, stat consistency, presets. The October 2026
+[attachment fitting audit](engineering/weapon-attachment-fit.md) covers 12 variants and 446 choices, with authored seats,
+low scope mounts and magazine clearance; fictional combinations remain supported. Stats are
 *illustrative* handling values, never real-world claims. Remaining: generalise finishes and camo to every real
 material (WP-A4) and the weapon-depth exit tests (WP-A10). In the campaign, the Modder shows only owned parts and assigns
 builds to fighters (WP-W16). Every model is listed in the asset register (`assets/register.json`).

@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-10-14 — weapon attachment fitting
+
+- Fit shared attachments to authored seats on all 12 weapon variants, with low scope rings, visible adapter rails, correctly oriented lights and AK drums, and magazine clearance for underbarrel parts. Fictional combinations such as G3 + GP-25 remain available.
+- Preserve fixed chassis and trigger guards during stock, magazine and grip swaps; correct floating triggers, charging handles and sling endpoints.
+- Add a reproducible 446-choice visual audit and browser checks for interacting selections, rail extremes and alternate handguards.
+
 ## 2026-10-13 — separate gameplay and demo loading
 
 - Give the sprite campaign map and 3D overworld demo separate entry points; remove the implicit operator-rig fallback from party construction. Keep terrain and original 3D convoy vehicles.

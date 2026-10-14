@@ -105,11 +105,7 @@ export const EXTRA = {
     ],
     slots: {
       muzzle: muzzle([{id: 'g3', grams: 90, label: 'G3 flash hider', original: true}]),
-      optic: optic([
-        {id: 'scope', build: real('g3-scope.glb', {scale: 0.971672, rotation: Z_FWD, anchor: ['c', 'min', 'c'], offset: [0, -0.012, 0]})},
-        'micro',
-        'holo',
-      ]),
+      optic: optic(['scope', 'micro', 'holo']),
       buis,
       trigger: std.trigger,
       charging: std.charging,
@@ -192,7 +188,7 @@ export const EXTRA = {
     stats: {ergo: 28, recoil: 42, handling: 30, loud: 92, sighting: 52},
     defaults: {build: {optic: 'scope'}, finish: {}},
     parts: [
-      part('stock', 'Chassis stock', 'Adjustable chassis stock with pistol grip and cheek riser.', ['Object_32', 'Object_37']),
+      part('stock', 'Chassis stock', 'Adjustable chassis stock with pistol grip and cheek riser.', ['mk14-stock']),
       part('magazine', 'Magazine', '20-round 7.62×51 magazine.', ['Object_41']),
       EMPTY.optic,
       EMPTY.buis,
@@ -323,8 +319,11 @@ export const EXTRA = {
         },
         {
           node: 'stg44-grip',
-          min: [-0.16, -1, -1],
-          max: [-0.03, -0.035, 1],
+          min: [-0.22, -0.08, -1],
+          max: [-0.105, 0.075, 1],
+          source: 'Object_7',
+          selection: 'center',
+          slack: 0.002,
           spec: {name: 'bakelite', tex: 'bakelite', color: '#3a2116', roughness: 0.45, metalness: 0},
         },
         {
@@ -460,7 +459,7 @@ export const EXTRA = {
     parts: [
       part('magazine', 'Magazine', '30-round curved box magazine on top.', ['Cube004', 'Cube005']),
       part('stock', 'Stock', 'Wooden buttstock with cheek piece.', ['Cube019', 'Cube020', 'Cube021']),
-      part('grip', 'Pistol grip', 'Pistol grip and trigger guard.', ['Cube008', 'Cube009']),
+      part('grip', 'Pistol grip', 'Pistol grip and trigger guard.', ['Cube008']),
       EMPTY.optic,
       EMPTY.sling,
       EMPTY.muzzle,

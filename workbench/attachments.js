@@ -14,95 +14,10 @@
 // Built attachments are illustrative low-poly shapes, not measured replicas.
 import * as T from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
-import {loadModel} from '../shared/model-cache.js';
 
-// Real (downloaded, CC0 / CC BY) attachment parts. Replace a code-built `build` with
-//   build: glb('red-dot.glb', {position:[0,0,0], rotation:[0,0,0], scale:1})
-// where the file lives in assets/models/attachments/ (import it with tools/assets/import-asset.py,
-// add its budget to assets/register.json). Geometry arrives asynchronously into an empty group,
-// so the slot works immediately and the part pops in when loaded. Units: metres in slot space
-// (+x toward the muzzle, +y up, +z right side, origin at the mount point).
-/** Every model file an attachment can come from, for prefetching (shared/model-cache.js). */
-export const ATTACHMENT_FILES = new Set();
-export const glb = (file, {position = [0, 0, 0], rotation = [0, 0, 0], scale = 1} = {}) => {
-  ATTACHMENT_FILES.add(new URL(`../assets/models/attachments/${file}`, import.meta.url).href);
-  return () => {
-    const group = new T.Group();
-    loadModel(new URL(`../assets/models/attachments/${file}`, import.meta.url).href).then(
-      model => {
-        model.position.set(...position);
-        model.rotation.set(...rotation);
-        model.scale.setScalar(scale);
-        model.traverse(m => {
-          if (m.isMesh) {
-            m.castShadow = m.receiveShadow = true;
-            m.material = m.material.clone();
-          }
-        });
-        group.add(model);
-        group.dispatchEvent({type: 'loaded'}); // rifle-instance.js repaints late parts (the retro MCX)
-      },
-      err => console.error(`attachment ${file} failed to load`, err),
-    );
-    return group;
-  };
-};
-
-// A real part out of one of the downloaded Sketchfab files in assets/models/weapons/ (CC BY 4.0 / CC0, see the register).
-//   file     the GLB; `nodes` picks some nodes out of a set (names as in the file, sanitised like the rifles' parts)
-//   scale    metres per source unit (printed by the importer)
-//   rotation Euler radians that lay the part's forward axis along +x, its up axis along +y
-//   anchor   which point of the rotated part sits at the slot origin, per axis: 'min', 'max' or 'c' (centre)
-//   offset   metres, added after anchoring
-const nodeId = name => T.PropertyBinding.sanitizeNodeName(name);
-export const real = (file, {nodes, scale = 1, rotation = [0, 0, 0], anchor = ['min', 'c', 'c'], offset = [0, 0, 0]} = {}) => {
-  ATTACHMENT_FILES.add(new URL(`../assets/models/weapons/${file}`, import.meta.url).href);
-  return () => {
-    const group = new T.Group();
-    loadModel(new URL(`../assets/models/weapons/${file}`, import.meta.url).href).then(
-      src => {
-        src.updateMatrixWorld(true);
-        let part = src;
-        if (nodes) {
-          part = new T.Group();
-          for (const n of nodes) {
-            const found = src.getObjectByName(nodeId(n));
-            if (found) part.attach(found);
-          }
-        }
-        const wrap = new T.Group();
-        wrap.add(part);
-        wrap.rotation.set(...rotation);
-        wrap.scale.setScalar(scale);
-        wrap.updateMatrixWorld(true);
-        const box = new T.Box3().setFromObject(wrap);
-        wrap.position.set(
-          ...anchor.map(
-            (a, i) =>
-              (a === 'min'
-                ? -box.min.getComponent(i)
-                : a === 'max'
-                  ? -box.max.getComponent(i)
-                  : -(box.min.getComponent(i) + box.max.getComponent(i)) / 2) + offset[i],
-          ),
-        );
-        wrap.traverse(m => {
-          if (m.isMesh) {
-            m.castShadow = m.receiveShadow = true;
-            m.material = m.material.clone();
-          }
-        });
-        group.add(wrap);
-        group.dispatchEvent({type: 'loaded'});
-      },
-      err => console.error(`attachment ${file} failed to load`, err),
-    );
-    return group;
-  };
-};
-// Forward is +z in most of the downloaded parts and -z in the AK kit; these turn either onto +x.
-export const Z_FWD = [0, Math.PI / 2, 0];
-export const Z_BACK = [0, -Math.PI / 2, 0];
+import {real, Z_FWD, Z_BACK} from './attachment-model.js';
+import {buildScope, buildSling} from './attachment-mounts.js';
+export {real, glb, Z_FWD, Z_BACK, ATTACHMENT_FILES} from './attachment-model.js';
 
 const merge = geos => mergeGeometries(geos.map(g => (g.index ? g.toNonIndexed() : g)));
 const box = (w, h, d, [x, y, z] = [0, 0, 0]) => new T.BoxGeometry(w, h, d).translate(x, y, z);
@@ -296,10 +211,10 @@ function cncGrip({original}) {
     [0.8, 0.74],
     [0.96, 0.86],
   ];
-  const w = b.max.x - b.min.x,
-    h = b.max.y - b.min.y;
+  const w = Math.min(0.085, b.max.x - b.min.x),
+    h = Math.min(0.135, Math.max(0.1, b.max.y - b.min.y));
   const g = profile(
-    unit.map(([u, v]) => [b.min.x + u * w, b.min.y + v * h]),
+    unit.map(([u, v]) => [b.min.x + u * w, b.max.y - h + v * h]),
     Math.min(0.032, Math.max(0.024, b.max.z - b.min.z)),
     0.003,
   ).translate(0, 0, (b.min.z + b.max.z) / 2);
@@ -448,12 +363,12 @@ export const SLOTS = [
       },
       {
         id: 'scope',
-        fp: [-0.155, 0.151],
+        fp: [-0.13, 0.13],
         grams: 460,
-        sightHeight: 0.046,
+        sightHeight: 0.042,
         label: '4× scope',
         detail: '4× fixed-power scope in two rings, 280 mm long.',
-        build: real('scope-zf4.glb', {scale: 1.1, rotation: Z_FWD, anchor: ['c', 'min', 'c']}),
+        build: buildScope,
       },
       {id: 'none', fp: [0, 0], sightHeight: 0.012, label: 'Irons', detail: 'No optic: the rifle falls back to its iron sights.'},
     ],
@@ -485,7 +400,7 @@ export const SLOTS = [
         grams: 90,
         label: 'Vertical',
         detail: 'Plain vertical foregrip on a rail clamp.',
-        build: real('grip-rvg.glb', {scale: 1.46184, anchor: ['c', 'max', 'c']}),
+        build: real('grip-rvg.glb', {scale: 1.46184, rotation: Z_FWD, anchor: ['c', 'max', 'c']}),
       },
       {
         id: 'angled',
@@ -515,7 +430,7 @@ export const SLOTS = [
           nodes: ['Cube_1', 'Cylinder004_2', 'Cylinder003_3', 'Cube003_4'],
           scale: 0.103763,
           anchor: ['c', 'max', 'c'],
-          offset: [-0.04, 0, 0],
+          offset: [0.035, 0, 0],
         }),
       },
       {
@@ -524,7 +439,7 @@ export const SLOTS = [
         grams: 30,
         label: 'Hand stop',
         detail: 'Low hand stop at the front of the lower rail.',
-        build: real('ak-grips.glb', {nodes: ['RK-0_4'], scale: 1, anchor: ['c', 'max', 'c'], offset: [0, 0.02, 0]}),
+        build: real('ak-grips.glb', {nodes: ['RK-0_4'], scale: 0.65, rotation: Z_BACK, anchor: ['c', 'max', 'c']}),
       },
       {id: 'none', fp: [0, 0], label: 'None', detail: 'Clean handguard, no foregrip.'},
     ],
@@ -541,7 +456,12 @@ export const SLOTS = [
         grams: 110,
         label: 'Weapon light',
         detail: 'Compact weapon light on a rail clamp; its beam lights the scene.',
-        build: real('light-surefire.glb', {scale: 0.00638423, rotation: Z_FWD, anchor: ['c', 'c', 'min']}),
+        build: real('light-surefire.glb', {
+          scale: 0.00638423,
+          rotation: [-Math.PI / 2, -Math.PI / 2, 0],
+          stretch: [0.7, 1.4, 1.4],
+          anchor: ['c', 'c', 'min'],
+        }),
       },
       {
         id: 'laser',
@@ -549,7 +469,7 @@ export const SLOTS = [
         grams: 80,
         label: 'Laser',
         detail: 'Visible laser aiming module; the dot helps from the hip.',
-        build: real('peq15.glb', {scale: 0.103763, anchor: ['c', 'c', 'min']}),
+        build: real('peq15.glb', {scale: 0.103763, rotation: [Math.PI / 2, 0, 0], anchor: ['c', 'c', 'min']}),
       },
       {
         id: 'combo',
@@ -557,7 +477,7 @@ export const SLOTS = [
         grams: 190,
         label: 'Light + laser',
         detail: 'Combined light and laser unit.',
-        build: real('peq2.glb', {scale: 0.103763, anchor: ['c', 'c', 'min']}),
+        build: real('peq2.glb', {scale: 0.103763, rotation: [Math.PI / 2, 0, 0], anchor: ['c', 'c', 'min']}),
       },
       {id: 'none', fp: [0, 0], label: 'None', detail: 'Bare side rail.'},
     ],
@@ -605,7 +525,6 @@ export const SLOTS = [
         build: real('ak74-drum.glb', {
           nodes: ['11_AKDrumMag'],
           scale: 0.161309,
-          rotation: Z_BACK,
           anchor: ['c', 'max', 'c'],
           offset: [0, 0.025, 0],
         }),
@@ -735,30 +654,7 @@ export const SLOTS = [
         grams: 140,
         label: 'Two-point sling',
         detail: 'Padded two-point sling running from the rear swivel to the handguard, hanging in a loose catenary.',
-        build: ({materials}) => {
-          const top = [],
-            bot = [],
-            n = 14,
-            len = 0.64,
-            sag = 0.15;
-          for (let k = 0; k <= n; k++) {
-            const t = k / n,
-              x = -0.014 + t * len,
-              y = -0.012 - sag * Math.sin(Math.PI * t);
-            top.push([x, y]);
-            bot.push([x, y - 0.006]);
-          }
-          return group(
-            [
-              [
-                new T.TorusGeometry(0.012, 0.0027, 6, 12).rotateY(Math.PI / 2).translate(-0.014, -0.012, 0),
-                box(0.016, 0.012, 0.01, [-0.004, 0, 0]),
-              ],
-              materials.stell,
-            ],
-            [profile([...top, ...bot.reverse()], 0.03, 0.001), materials.polymer],
-          );
-        },
+        build: buildSling,
       },
     ],
   },

@@ -24,6 +24,12 @@ through map, band and mission, checks requested modules/assets, and opens each s
 The code-map generator now includes the previously omitted gameplay directories. Overall WP-QA15 map-size/heap
 and reference-device performance acceptance remain open; this change does not claim those budgets are met.
 
+## Weapon attachment fitting — 14 October 2026
+
+All 12 variants and 446 choices audited; mount profiles, shared scale/orientation, source part ownership and
+underbarrel magazine clearance corrected. See [fit audit](../engineering/weapon-attachment-fit.md) for coverage
+and reproduction. WP-A10 remains open; this pass does not close its UI/finish acceptance.
+
 ## Resume here
 
 1. Run browser map travel, campaign bridge/loop, smoke and accessibility in a working browser environment; validate six/eight-person selection and safe-haven services. Keep the owner-requested main target.

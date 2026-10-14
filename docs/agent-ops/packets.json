@@ -331,7 +331,8 @@
     "workbench/models.js",
     "workbench/stats.js"
    ],
-   "acceptance": "Overlap is impossible by construction; tests assert no two slots on one rail overlap across all rail offsets."
+   "acceptance": "Overlap is impossible by construction; tests assert no two slots on one rail overlap across all rail offsets.",
+   "progress_note": "2026-10-14: audited all 12 weapon variants and 446 choices; authored mount profiles, magazine/underbarrel clearance and source mesh ownership fixes. Browser gate covers 801 physical underbarrel cases, 102 optic pairs and 7,476 pairwise selection states. See docs/engineering/weapon-attachment-fit.md. WP-A10 remains open."
   },
   {
    "id": "WP-A7",
