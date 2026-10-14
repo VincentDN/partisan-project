@@ -5,12 +5,12 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json).
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-13 17:00 UTC · claude · WP-W6 · done**
+**2026-10-14 07:30 UTC · claude · WP-W7 · done**
 
-- Branch `claude/friendly-dijkstra-4ky9w6` at `75b482f`; working tree clean.
-- Last commits: 75b482f WP-W6: convoys resupply garrisons, come back after an ambush, show their cargo · eb2c793 docs: handoff for WP-W5 · 3683359 WP-W5: the campaign world in fixed steps, without a renderer
-- What happened: W6 done: convoys resupply Invader garrisons on arrival (capped), respawn 48 h after an ambush from their seat, and show escort and cargo on the nameplate.
-- Next step: Campaign: W7 (hunter columns by heat, map sight incl. forest and band size, last-seen tracking, losing them), W22 auto-resolve, W10 settlement assault. Balance: convoy escort spots eight rebels ~13 s in.
+- Branch `claude/friendly-dijkstra-4ky9w6` at `369ed2c`; working tree clean.
+- Last commits: 369ed2c Fix a column with a lead but no place yet; map-travel waits from the second order · 8caee26 Sandbags seen over, low cover in fights; campaign map fixes; WP-W7 hunters · b619640 docs: handoff for WP-W6
+- What happened: W7 done with the owner's fixes: sandbags seen over (half fog, peek on fire), low cover hit chance and dust puffs, placeholder map buttons removed, orders start the clock, band sprites stand on slopes; hunter columns with sight, last-seen tracking, sight rings and hunts-per-day harness.
+- Next step: Campaign: W22 auto-resolve, W10 settlement assault, W19 territory. Balance: convoy escort spots eight rebels ~13 s in; tune hunts per day (0.13 now) with tools/campaign-hunts.mjs.
 <!-- handoff:end -->
 
 ## Gameplay/demo module boundary — 13 October 2026
