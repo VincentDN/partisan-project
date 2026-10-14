@@ -30,6 +30,16 @@ All 12 variants and 446 choices audited; mount profiles, shared scale/orientatio
 underbarrel magazine clearance corrected. See [fit audit](../engineering/weapon-attachment-fit.md) for coverage
 and reproduction. WP-A10 remains open; this pass does not close its UI/finish acceptance.
 
+## Campaign continuation — 14 October 2026
+
+Healthy fresh launch (including the initial map card), a nine-item campaign reserve and detailed mission recovery
+reports are implemented. Reports survive debrief reload and distinguish stash rewards/cargo, trade goods and
+net carried-kit additions. Existing saves retain their inventory and earned wounds.
+W22 auto-resolve uses selected fighter tiers, shown odds/wounds, seeded outcomes, restricted eligibility and
+normal one-time settlement. Failed storage rolls back the in-memory attempt. Its human-played balance comparison
+remains open; `tools/campaign-auto.mjs` samples the same resolver. Continue W10/W19 and W18 after that tuning.
+The W4–W7 world/convoy/hunter work from main is retained and the campaign roadmap reflects it.
+
 ## Resume here
 
 1. Run browser map travel, campaign bridge/loop, smoke and accessibility in a working browser environment; validate six/eight-person selection and safe-haven services. Keep the owner-requested main target.

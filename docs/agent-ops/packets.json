@@ -3290,7 +3290,7 @@
     "docs/campaign-roadmap.md"
    ],
    "acceptance": "Debrief loot appears in the band stash labelled with where it came from; convoy loot follows the manifest.",
-   "progress_note": "2026-10-12: done. Convoys carry fixed manifests (shared/campaign/cargo.js), shown on the encounter panel and carried by the deployment; a won ambush takes the cargo home, each burnt vehicle losing half its share; every stash addition (loot, cargo, trader) is written to a ledger with its source and day, and the map band panel and band screen show where the items held came from. Its dependency on WP-W13 was dropped: W13 still owes visible aftermath, which loot and cargo do not need. tests/campaign-cargo.test.mjs; campaign-loop e2e checks the manifest, debrief and labels."
+   "progress_note": "2026-10-12: done. Convoys carry fixed manifests (shared/campaign/cargo.js), shown on the encounter panel and carried by the deployment; a won ambush takes the cargo home, each burnt vehicle losing half its share; every stash addition (loot, cargo, trader) is written to a ledger with its source and day, and the map band panel and band screen show where the items held came from. Its dependency on WP-W13 was dropped: W13 still owes visible aftermath, which loot and cargo do not need. tests/campaign-cargo.test.mjs; campaign-loop e2e checks the manifest, debrief and labels. 2026-10-14: detailed campaign recovery screens list mission loot, cargo, valuables and net carried-kit additions; reload retains the exact report. Fresh campaigns use a nine-item reserve instead of the demo depot."
   },
   {
    "id": "WP-W15",
@@ -3437,7 +3437,7 @@
    "milestone": "W",
    "size": "S",
    "bu": 8,
-   "status": "planned",
+   "status": "ready",
    "deps": [
     "WP-W8"
    ],
@@ -3446,7 +3446,8 @@
    "inputs": [
     "docs/campaign-roadmap.md"
    ],
-   "acceptance": "Offered only at 2.5x strength or against a lone patrol, never for camp defence, captures or the finale; odds and expected wounds shown first; results slightly worse than played (TAC-K-02); used by the harness."
+   "acceptance": "Offered only at 2.5x strength or against a lone patrol, never for camp defence, captures or the finale; odds and expected wounds shown first; results slightly worse than played (TAC-K-02); used by the harness.",
+   "progress_note": "2026-10-14: selected-fighter tier odds, 2.5x/patrol eligibility, forbidden defences/captures/finale, deterministic resolver, reduced loot/cargo, detailed result and failed-save retry implemented. Shared 1,000-seed harness tools/campaign-auto.mjs. Balance against average human-played fights remains acceptance; do not claim that comparison complete."
   },
   {
    "id": "WP-W23",

@@ -402,7 +402,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-W19` | Territory: capture settlements, what they give (recruits, food, rest), Invader counter-attacks to retake them | M (20) | planned | — | `WP-W10`, `WP-W13` |
 | `WP-W20` | Escalation director: Invader response tiers drive hunters, mission difficulty and enemy kit | M (20) | planned | — | `WP-W19`, `WP-W7` |
 | `WP-W21` | Endgame and defeat: the Fort Orion assault, the camp-overrun defeat, campaign summary | M (20) | planned | browser | `WP-W20` |
-| `WP-W22` | Auto-resolve for small, lopsided fights, with the odds shown first | S (8) | planned | — | `WP-W8` |
+| `WP-W22` | Auto-resolve for small, lopsided fights, with the odds shown first | S (8) | ready | — | `WP-W8` |
 | `WP-W23` | Campaign harness: fifty seeded headless campaigns with auto-resolve, pacing report and a tuning pass | S (8) | planned | — | `WP-W20`, `WP-W22` |
 | `WP-W24` | Campaign end-to-end tests and performance: map to mission to map, two tabs and refresh safety, map at 30 fps on a mid phone | M (20) | planned | browser | `WP-W13`, `WP-W15` |
 | `WP-W25` | First-campaign prompts, design doc campaign section, changelog and index entry | S (8) | planned | — | `WP-W21`, `WP-W24` |

@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-10-14 — healthy campaign start and limited auto-resolve
+
+- Start fresh campaigns with nine reserve items instead of the generous demo depot; carried kits remain separate and existing saved inventories are preserved.
+- Add detailed recovery screens after every campaign mission and auto-resolve: mission loot, convoy cargo, valuables, net carried-kit additions and expandable returned kits. Debrief reload shows the same stored report.
+- Correct the map’s initial band card to eight fit fighters and zero wounded. Fresh saves start healthy; continuing a campaign preserves wounds earned in play.
+- Offer seeded auto-resolve for lopsided encounters and the Orion patrol, with selected-squad odds and expected wounds shown first. Exclude captures, Fort Orion and defences; reduce recovered loot/cargo by 25%.
+- Apply results once through campaign settlement, with safe retry when storage fails. Refresh the campaign roadmap to reflect the shipped clock, world, convoy and hunter systems.
+
 ## 2026-10-14 — weapon attachment fitting
 
 - Fit shared attachments to authored seats on all 12 weapon variants, with low scope rings, visible adapter rails, correctly oriented lights and AK drums, and magazine clearance for underbarrel parts. Fictional combinations such as G3 + GP-25 remain available.

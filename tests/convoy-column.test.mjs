@@ -89,8 +89,9 @@ test('ambush: the encounter carries the column; a road charge is spent from the 
   assert.deepEqual(e.variant.convoy, {vehicles: ['matv', 'truck', 'truck'], escort: 14});
   assert.equal(e.variant.ambush, 'roadblock');
   assert.equal(e.variant.strength, 1, 'no scaling on top of the escort');
-  const before = c.stash.explosives || 0;
-  assert.ok(before >= 1, 'the band starts with a charge');
+  assert.equal(c.stash.explosives || 0, 0, 'the small starting reserve has no demolition charge');
+  c.stash.explosives = 1; // recovered earlier in this fixture
+  const before = c.stash.explosives;
   deploy(c, {...e, variant: {...e.variant, ambush: 'charge'}, spend: {explosives: 1}});
   assert.equal(c.stash.explosives || 0, before - 1, 'taken for the charge');
   writeResult(c, e.id, {outcome: 'lost'});

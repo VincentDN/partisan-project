@@ -181,3 +181,10 @@ a.band-screen:focus-visible { outline: 2px solid var(--lcd-hi); outline-offset: 
 .enc-actions { flex-wrap: wrap; }
 .enc-rearguard { display: inline-flex; gap: 4px; align-items: center; }
 .enc-rearguard select { font: inherit; font-size: 12px; min-height: 28px; background: #241d15; color: var(--parch); border: 1px solid var(--bronze); border-radius: 2px; }
+
+/* Recovery reports remain reachable on phone screens and with keyboard scrolling. */
+.encounter { max-height: 85dvh; overflow-y: auto; }
+.loot-report { text-align: left; overflow-wrap: anywhere; }
+.loot-report ul { padding-left: 20px; }
+.loot-report li { margin: 4px 0; }
+.loot-report summary { cursor: pointer; padding: 8px 0; }

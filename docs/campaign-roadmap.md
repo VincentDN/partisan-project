@@ -1,6 +1,6 @@
 # PARTISAN campaign: playable loop and vertical-slice roadmap
 
-Revised 8 October 2026 against the current source, including Claude's tactical, inventory and quality work and the
+Revised 14 October 2026 against the current source, including Claude's tactical, inventory and quality work and the
 campaign integration on main. This document defines the vertical slice and distinguishes implemented rules from
 release acceptance still to be demonstrated. [Master roadmap](master-roadmap.md) indexes the other tracks;
 [packets.json](agent-ops/packets.json) retains their full acceptance criteria. A partial implementation does not close a packet.
@@ -46,27 +46,27 @@ See [graphics roadmap](graphics-roadmap.md) for the shared appearance acceptance
 
 | Area | Implemented now | Remaining acceptance |
 | --- | --- | --- |
-| Campaign entry and travel | Shared version-1 save, legacy migration, click-to-march A* navigation, terrain costs, camera follow, pause and speed | First-session guidance, strategic sight and route persistence |
+| Campaign entry and travel | Shared version-1 save, legacy migration, click-to-march A* navigation, terrain costs, camera follow, pause and speed | First-session guidance and interrupted-save UX |
 | Default map | 2.5D parties, island terrain, settlement and party labels; 3D demo separated | Real-device visual and frame-time acceptance |
 | Encounters | Proximity contact, both sides and the ground, Attack, Prepare an ambush, Withdraw with a rearguard, Leave; hunters pursue the band | Ambush preparation beyond sandbags (positions, traps) |
-| Deployment | Eight starting rebels; select six to nine fit fighters; explicit deployed identities reach the sim | Recruit/reserve roster expansion and broader roster UX |
+| Deployment | Eight healthy starting rebels; select six to nine fit fighters; explicit deployed identities reach the sim | Recruit/reserve roster expansion and broader roster UX |
 | Tactical missions | Convoy, compound, cave, forest road, checkpoint, village and hilltop; squad switching and class abilities | Mission pathfinding defects, tuning with eight rebels, extraction/loss policy audit |
 | Durability | Rebels have 180 base HP, modified by class; army base HP remains 100 | Human difficulty and pacing playtests |
 | Return | One result per encounter, XP, wounds, equipment/goods, persistent kit, abandoned-mission recovery | Concurrent-tab transaction authority and interrupted-save UX |
 | Band | Promotions cost XP and equipment; grid kit and armoury; friendly-settlement recovery and trader | Owned weapon-modder and operator appearance integration |
-| World consequences | Defeated contacts disappear; captured settlements change owner; convoy motion survives reload | Resupply, respawn, cargo-driven missions, garrison simulation and counterattacks |
-| Pressure | Heat increases after victory and decreases when resting | Heat-driven hunters, visibility, search and response tiers |
+| World consequences | Defeated contacts disappear; captured settlements change owner; seeded convoys resupply garrisons and respawn after ambushes | Territory benefits and counterattacks |
+| Pressure | Heat-driven hunter columns, day/night sight, last-seen searches, lost-contact behavior and defence encounters | Human tuning of pursuit frequency and fair recovery |
 | Slice objective | Operation Foothold: win a convoy encounter, earn three victories, liberate Fort Orion; completion in band panel | Dedicated operation summary, authored onboarding and end-to-end player acceptance |
 | Quality | Deterministic replays, simulation/inventory/campaign regression suites, build/link checks | Browser, accessibility, multi-browser, memory and reference-device performance gates |
 
-The old roadmap described many already-connected pieces as wholly future work. Conversely, visible convoy tokens
-and a heat number are not a strategic simulation. Convoys currently follow fixed roads and turn around; patrols
-and raiders are encounter tokens, not searching armies. Troop stacks in the older Rebel Band demo are not a
+The seeded world now advances in fixed steps independently of rendering. Convoys follow saved routes, deliver
+cargo to garrisons and respawn two days after destruction. Hunters react to heat, pursue sightings and search
+the last known position before losing the trail. Broader territory benefits and counterattacks remain unfinished. Troop stacks in the older Rebel Band demo are not a
 second deployable army. The named campaign roster is the authority for tactical deployment.
 
 ## 3. The first complete operation
 
-**Operation Foothold** is the bounded slice. Start with eight named rebels around the Oros camp. Learn movement,
+**Operation Foothold** is the bounded slice. Start with eight healthy named rebels around the Oros camp. Learn movement,
 time controls, the Party panel and recovery. Intercept an occupation convoy for the first major gain, take a
 second target to improve the band, then assault Fort Orion. A convoy victory, at least three recorded victories,
 and Resistance ownership of Fort Orion complete the operation. These conditions are derived from persistent
@@ -74,13 +74,15 @@ records and territory, so trimming the event log cannot remove completion.
 
 The current implementation allows any order and continued play after completion. The intended introductory
 sequence is guidance, not a hard railroad. No new campaign-wide defeat rule is implied: rebels who go down come
-home wounded. Camp overrun remains a future setback with evacuation and recovery, rather than deletion of the save.
+home wounded. Camp overrun now costs half of stored stacks, relocates the band to a friendly settlement and starts three days
+of rebuilding. The complete campaign defeat presentation remains planned.
 
 ### Start and orient
 
 The opening scene's campaign action loads the saved band or creates one. The main map shows the band, contacts,
 settlements, time controls and the operation checklist. Party opens the roster, promotions, kit, recovery and
-trade. New saves and migrated old three-person saves have eight rebels. Migration preserves existing wounds,
+trade. New saves and migrated old three-person saves have eight rebels. Fresh campaigns begin with zero wounded;
+the initial map card also shows eight fit fighters and zero wounded before the save loads. Migration preserves existing wounds,
 experience, classes and kits and adds missing starters once; it does not repeatedly grant new fighters.
 
 ### Plan and travel
@@ -91,7 +93,7 @@ inspection remains available. Hidden tabs do not advance the map. Encounter, ban
 movement; keyboard speed shortcuts cannot resume the world behind a modal.
 
 Position and campaign state autosave during active time and on page exit. This is browser-local storage, not a
-server account. A route is not yet restored across reload. The next stage must show travel estimates, why a path
+server account. Routes now persist across reload. The next stage must show travel estimates, why a path
 is unavailable and the strategic implications of moving at night without exposing implementation details.
 
 ### Contact and deployment
@@ -115,9 +117,25 @@ it must never merge the practice roster back into a campaign and silently deploy
 | Raiders near the hideout | Cave defence |
 | Raiders away from camp | Hilltop defence |
 
-The mapping and environment variants exist. Actual strategic cargo manifests, complete garrison compositions and
-pursuit-generated defence conditions remain future work. A strength multiplier is not the same as deploying the
+The mapping, environment variants, convoy cargo and pursuit-generated defence conditions exist. Convoy ambushes
+field the vehicles and escort shown on the map. Exact settlement garrison composition remains future work. A strength multiplier is not the same as deploying the
 exact army seen on the map.
+
+### Resolve a small fight
+
+WP-W22 offers auto-resolve when the selected six-to-nine fit fighters' summed tiers are at least 2.5 times the
+enemy strength, or when facing the designated Orion patrol. Reserve troop stacks do not count. Settlement
+captures, Fort Orion and all defence missions are excluded. Changing the selected squad updates the offer,
+victory odds and expected number wounded before the action is taken.
+
+The encounter seed fixes the result. Wounds last 24 hours, and loot/cargo recovery is reduced by 25%, rounded down
+per stack, with no rare bonus roll. The normal encounter settlement applies XP, wounds, kit return and map
+consequences once. A failed save leaves the encounter unchanged for retry. Auto-resolve leaves carried grid kits
+intact; ammunition expenditure is not simulated yet. The odds and wound formula are provisional balance values;
+the intended disadvantage against an average played fight still needs human comparison.
+
+`node tools/campaign-auto.mjs` samples the same resolver used by the map. This is a focused balance harness,
+not the planned 50-campaign simulation. Settlement assaults and territory remain the next milestones.
 
 ### Fight
 
@@ -134,7 +152,11 @@ blocks passages or consumes supplies too quickly.
 
 ### Debrief and return
 
-The mission writes one debrief for its encounter. Returning settles XP, fighter condition, reserved kit, recovered
+The mission writes one debrief for its encounter. The detailed recovery screen lists mission rewards and convoy
+cargo going to the stash, named trade goods with their scrip values, net new carried equipment/ammunition, and
+expandable returned-kit lists for each fighter. Net additions compare the entire squad at insertion and return,
+so issued supplies and transfers between fighters do not appear as new loot. Fired ammunition is deducted.
+The same stored result is shown after reloading the debrief; displaying it does not award anything. Returning settles XP, fighter condition, reserved kit, recovered
 equipment and trade goods once. Grid kits return in their changed state; replaced kit goes to the armoury.
 Reloading an unfinished mission withdraws the band, wounds the deployed fighters and returns their original kit
 without new loot. Reloading a completed debrief must not award it again.
@@ -147,9 +169,12 @@ writer or revision-based transaction model before claiming robust multi-tab supp
 ### Recover, trade, equip and promote
 
 At friendly or independent settlements within the service radius, Party offers 12-, 24- or 48-hour rest. Wounded
-fighters recover in 24 hours; fighters brought down take 48. Rest advances campaign time and reduces heat. There
-is currently no strategic enemy advance during the instant rest action; its eventual risk must be integrated
-with the world simulation, not implemented as a separate timer.
+fighters recover in 24 hours; fighters brought down take 48. Rest advances campaign time and reduces heat. The map runs the shared world simulation through that time, including convoy movement and hunter activity.
+The player-facing interruption and risk presentation still needs pacing acceptance.
+
+Fresh campaigns keep only nine reserve items: two AK-74s, a rig, a vest, two medkits, a grenade pack,
+a smoke pack and binoculars. Carried fighter kits are issued separately. Existing campaign and legacy-import
+inventories are preserved; reopening a save does not remove equipment.
 
 The settlement trader sells recovered valuables for scrip and offers promotion equipment. The same campaign
 stash, goods and scrip are updated and saved. Promotions consume their class's XP and equipment requirements.
@@ -215,11 +240,11 @@ updates, and navigation baking. Do not cut art or claim achieved FPS without mea
 | D: economy and territory | W14/W18/W19 ownership unification, recruits/reserves, service stocks, garrisons and counterattacks | No duplication; repeated operations sustain a band; captured places matter |
 | E: owned customisation | W16/W17 and CM19/CM20 connect real owned items to modder and appearance | Preview cannot grant equipment; visuals match the deployed kit |
 | F: slice release | W21/W24/W25 operation debrief, onboarding, browser/device budgets, accessibility and pacing | Recorded complete player journey and acceptance contract above |
-| Later expansion | Auto-resolve, 50-campaign tuning harness, additional regions, larger war and vehicle escalation | Build only after the core loop is stable and understandable |
+| Later expansion | 50-campaign tuning harness, additional regions, larger war and vehicle escalation | Build only after the core loop is stable and understandable |
 
 Do not restart Claude's completed tactical systems. Continue from the working inventory, squad control, mission
-variants, simulation spatial cache, replays and quality harnesses. The next engineering priority is the strategic
-simulation and save authority; additional showcase assets are secondary to those campaign dependencies.
+variants, simulation spatial cache, replays and quality harnesses. The next engineering priorities are settlement assaults (W10), territory benefits and counterattacks (W19),
+recruits and service stock (W18), and stronger save authority; additional showcase assets are secondary to those campaign dependencies.
 
 ## 7. Packet reconciliation
 
@@ -236,8 +261,8 @@ kept in the save, the smoke thinning over two campaign days and the marks gone a
 manifests shown before the fight, a won ambush takes the cargo home less what burns, and the stash shows where its
 items came from (missions, cargo, the trader). W15 is done (2026-10-12): the Rebel Band screen opens from the
 map's band panel on the campaign save, shows the named fighters above the troop stacks and promotes them with their
-experience and the stash's kit; the standalone demo keeps its own save. W10 and W19 have meaningful playable subsets but
-retain unfinished acceptance (ambush choices, exact enemy/cargo composition, aftermath, territory simulation).
+experience and the stash's kit; the standalone demo keeps its own save. W4–W7 now supply day/night time, a fixed-step seeded world, convoy resupply/respawn and searching hunter columns.
+W10 and W19 retain unfinished acceptance for exact garrison composition, territory benefits and counterattacks.
 W12 now targets six-to-nine-person deployment rather than the obsolete four-person plan. W18 has recovery/trade
 but not recruitment. W21 has a bounded objective, not the complete endgame/defeat presentation. W24 retains the
 real-device budget and final browser gate. W26's visual decision is superseded by the owner's 2.5D-default request.

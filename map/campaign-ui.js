@@ -29,6 +29,9 @@ import {describeManifest, describeProvenance, provenance, recordIn, FIRST_CACHE}
 import {AMBUSHES} from '../convoy/levels/columns.js';
 import {campOf, rebuildingFor, CAMP_RANGE, FIRST_CAMP} from '../shared/campaign/defence.js';
 import {prepare, withdrawWithRearguard, stancesFor, caughtBy} from '../shared/campaign/stances.js';
+import {lootReport} from '../shared/campaign/loot-report.js';
+import {resolveAuto} from '../shared/campaign/auto-resolve.js';
+import {autoChoice} from './encounter-auto.js';
 import {sidesLine, actionRow} from './encounter-actions.js';
 
 const CONTACT = 12, // map units: close enough to fight
@@ -115,7 +118,18 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
         .filter(Boolean)
         .join(', ');
     // who goes in (WP-W12, map/encounter-squad.js): six to nine of the fit fighters; the rest stay with the band
-    const picker = squadPicker({el, campaign, names: NAMES, fit, first: fitFighters(campaign), onPick: ids => (e.fighters = ids)});
+    const auto = autoChoice({el, campaign, encounter: e, onResolve: () => autoFight(e)});
+    const picker = squadPicker({
+      el,
+      campaign,
+      names: NAMES,
+      fit,
+      first: fitFighters(campaign),
+      onPick: ids => {
+        e.fighters = ids;
+        auto.sync();
+      },
+    });
     fill(
       panel,
       el('h2', {id: 'enc-title', class: 'plate'}, src.name),
@@ -156,6 +170,7 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
           )
         : null,
       ...picker.nodes,
+      auto.node,
       // attack, prepare an ambush, withdraw leaving a rearguard, leave (map/encounter-actions.js, WP-W8)
       actionRow({
         el,
@@ -178,6 +193,35 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
     if (panel.hidden) backFromEncounter = rememberFocus();
     panel.hidden = false;
     panel.querySelector('.enc-actions button:not([disabled])')?.focus();
+  }
+  /** Resolve on a copy: a failed storage write leaves the original encounter available for a safe retry. */
+  function autoFight(e) {
+    const before = structuredClone(campaign),
+      next = structuredClone(campaign);
+    let lines, result;
+    try {
+      ({result} = resolveAuto(next, {...e, at: open?.at || null}));
+      lines = readResults(next, Object.fromEntries(SETTLEMENTS.map(s => [s.id, s.name])), {settlements: SETTLEMENTS});
+    } catch (err) {
+      toast(err.message);
+      return;
+    }
+    Object.assign(campaign, next);
+    if (!save()) {
+      Object.assign(campaign, before);
+      toast('Cannot resolve: campaign storage is unavailable. Free browser storage and try again.');
+      return;
+    }
+    refreshWorld();
+    renderCard();
+    fill(
+      panel,
+      el('h2', {id: 'enc-title'}, 'Combat result'),
+      lootReport(result),
+      el('button', {id: 'enc-report-close', onclick: closeEncounter}, 'Return to the map'),
+    );
+    panel.querySelector('#enc-report-close').focus();
+    toast(lines.join(' '), 7000);
   }
   /** Hunters caught the band: one fighter holds them while the rest get away (shared/campaign/stances.js). */
   function rearguard(c, id) {

@@ -45,6 +45,9 @@ let S = opened.S;
 const save = () => opened.save(S);
 let selected = 'leader'; // 'leader', a troop id, or 'f:' and a fighter id (band/fighters.js)
 if (inCampaign) {
+  document
+    .querySelector('#stash .sub, .stash .sub')
+    ?.replaceChildren(document.createTextNode('The band’s reserve equipment. Recover supplies in missions to grow the stash.'));
   // missions give the experience and the kit here: the practice raid and the reset belong to the demo
   $('#skirmish').hidden = true;
   $('#reset').hidden = true;

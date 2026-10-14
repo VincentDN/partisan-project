@@ -2,9 +2,19 @@
 // (shared/campaign/state.js).
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {newCampaign, normalize, migrate, logEvent, createStore, VERSION, CAMPAIGN_KEY, BAND_KEY} from '../shared/campaign/state.js';
+import {
+  newCampaign,
+  normalize,
+  migrate,
+  logEvent,
+  createStore,
+  VERSION,
+  CAMPAIGN_KEY,
+  BAND_KEY,
+  CAMPAIGN_START_STASH,
+} from '../shared/campaign/state.js';
 import {SQUAD_KEY, newSquad} from '../convoy/progression.js';
-import {START_BAND, START_STASH, TROOPS, GEAR} from '../band/troops.js';
+import {START_BAND, TROOPS, GEAR} from '../band/troops.js';
 
 /** A Storage stand-in; `fail` makes every call throw (private mode, blocked site data). */
 function memory(init = {}, {fail = false} = {}) {
@@ -49,7 +59,11 @@ test('a new campaign is versioned and holds world, band, stash and log', () => {
   assert.deepEqual(Object.keys(c.band.fighters), ['player', 'mila', 'dragan', 'ivana', 'petar', 'lena', 'niko', 'sara']);
   for (const f of Object.values(c.band.fighters)) assert.ok(TROOPS[f.class]);
   assert.deepEqual(c.band.troops, START_BAND);
-  for (const [g, n] of Object.entries(START_STASH)) assert.ok(c.stash[g] >= n, g);
+  assert.deepEqual(c.stash, CAMPAIGN_START_STASH);
+  assert.equal(
+    Object.values(c.stash).reduce((a, b) => a + b, 0),
+    9,
+  );
   assert.deepEqual([c.log, c.settled, c.deployment], [[], [], null]);
   assert.deepEqual(normalize(JSON.stringify(c)), c, 'a fresh campaign survives a round trip unchanged');
 });

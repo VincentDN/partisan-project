@@ -21,7 +21,7 @@ export const SOURCES = {
     vehicles: ['humvee', 'matv', 'truck', 'humvee'],
   },
   'fuel-convoy': {name: 'Fuel convoy', kind: 'convoy', level: 'convoy', strength: 9, vehicles: ['matv', 'truck']},
-  'orion-patrol': {name: 'Orion garrison patrol', kind: 'post', level: 'checkpoint', strength: 24},
+  'orion-patrol': {name: 'Orion garrison patrol', kind: 'post', patrol: true, level: 'checkpoint', strength: 24},
   'korfos-checkpoint': {name: 'Checkpoint Korfos', kind: 'post', level: 'checkpoint', strength: 12},
   raiders: {name: 'Raiding party', kind: 'hunters', level: 'cave', strength: 31},
   // turned out by heat 50 (hunt.js, WP-W7)
@@ -102,7 +102,13 @@ export function encounterFor(c, sourceId, source = SOURCES[sourceId], {ground = 
     seed,
     fighters: fitFighters(c),
     source: sourceId,
-    enemy: {name: source.name, kind: source.kind, strength: source.strength, settlement: source.settlement || null},
+    enemy: {
+      name: source.name,
+      kind: source.kind,
+      strength: source.strength,
+      settlement: source.settlement || null,
+      patrol: !!source.patrol,
+    },
     ground,
     time,
     variant: {time, weather, ground: GROUND_LOOK[ground] || 'plain', strength, ...convoyVariant},

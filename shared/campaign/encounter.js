@@ -136,6 +136,16 @@ export function cleanResult(d, raw) {
   const goods = Array.isArray(r.goods) ? r.goods.filter(g => isObj(g) && typeof g.name === 'string' && Number.isFinite(g.price)) : [];
   return {
     outcome,
+    kitGains:
+      outcome === 'withdrawn'
+        ? {}
+        : isObj(r.kitGains)
+          ? Object.fromEntries(
+              Object.entries(r.kitGains)
+                .filter(([, n]) => Number.isFinite(n) && n > 0)
+                .map(([slug, n]) => [slug, Math.floor(n)]),
+            )
+          : null,
     fighters,
     loot: outcome === 'withdrawn' ? {} : loot,
     goods: outcome === 'withdrawn' ? [] : goods,
@@ -143,7 +153,12 @@ export function cleanResult(d, raw) {
     time: Number.isFinite(r.time) ? r.time : 0,
     destroyed: count(r.destroyed),
     vehicles: count(r.vehicles),
-    cargo: cargoTaken(d.cargo, {outcome, vehicles: count(r.vehicles), destroyed: count(r.destroyed)}),
+    cargo: cargoTaken(d.cargo, {
+      outcome,
+      vehicles: count(r.vehicles),
+      destroyed: count(r.destroyed),
+      kept: d.resolution === 'auto' ? 0.75 : 1,
+    }),
     captured: !!r.captured && outcome === 'won',
     // the kits the fighters carried home, as they are after the fight (withdrawn: the ones they left with)
     kits:
@@ -213,6 +228,7 @@ export function settle(c, encounterId = c.deployment?.id) {
     level: d.level,
     at: d.at || null,
     outcome: r.outcome,
+    resolution: d.resolution || 'played',
     kills: r.kills,
     wounded: Object.keys(r.fighters).filter(f => r.fighters[f].state !== 'fit'),
     loot: [r.loot, cargo].flatMap(Object.values).reduce((a, b) => a + b, 0) + r.goods.length,

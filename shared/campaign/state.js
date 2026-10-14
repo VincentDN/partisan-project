@@ -3,9 +3,11 @@
 // (`parp-band-v2`, band/band.js), which it migrates on first load. Each module keeps its own save outside a campaign.
 // Storage goes through a small adapter (any object with getItem/setItem/removeItem, localStorage in the browser), so
 // IndexedDB and transactions (WP-S29) can replace it later without touching the rules. docs/campaign-roadmap.md §8.
-import {TROOPS, GEAR, LEADER, START_BAND, START_STASH} from '../../band/troops.js';
+import {TROOPS, GEAR, LEADER, START_BAND} from '../../band/troops.js';
 import {loadSquad, newSquad, SQUAD_KEY} from '../../convoy/progression.js';
 
+// A small reserve; each fighter carries an issued kit separately. The generous depot belongs to the demo.
+export const CAMPAIGN_START_STASH = {ak74: 2, rig: 1, vest: 1, medkit: 2, grenades: 1, smoke: 1, binoculars: 1};
 export const VERSION = 1;
 export const CAMPAIGN_KEY = 'parp-campaign-v1';
 export const BAND_KEY = 'parp-band-v2';
@@ -88,7 +90,7 @@ export function newCampaign({id = 'c1', seed = 1, now = 0} = {}) {
       rosterVersion: 2,
       troops: structuredClone(START_BAND),
     },
-    stash: addCounts({...START_STASH}, squad.stash), // the band depot plus the squad's starting kit
+    stash: {...CAMPAIGN_START_STASH}, // nine reserve items; carried equipment is issued separately
     armoury: newArmoury(), // loose grid kit: magazines, rounds, weapons set aside (TAC-C-11)
     goods: [],
     scrip: squad.scrip,

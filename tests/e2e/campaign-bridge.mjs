@@ -82,6 +82,8 @@ try {
   await ready(page);
   assert.equal(await page.evaluate(() => window.PARP_SPRITES.campaign.action), 'withdrawn');
   assert.match(await page.locator('#card-text').innerText(), /left the mission/);
+  assert.match(await page.locator('#combat-loot').innerText(), /Withdrawn: no new loot recovered/);
+  assert.match(await page.locator('#combat-loot').innerText(), /No mission loot recovered/);
   c = await save(page);
   assert.deepEqual(c.settled, ['e1', 'e2']);
   assert.equal(c.band.fighters.player.wounded, true);

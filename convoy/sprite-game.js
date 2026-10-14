@@ -2,6 +2,7 @@
 // view is archived in docs/archive/convoy-3d/). The squad's classes come from the Rebel Band tree (band/troops.js): they
 // set each rebel's weapons, passives and abilities (Z X V), and the rebels level up between missions
 // (convoy/progression.js). Switching rebel (Q) slows time and dithers the world; difficulty is a select in the panel.
+import {lootReport} from '../shared/campaign/loot-report.js';
 import '../shared/frame.js';
 import {mountTopBar} from '../shared/topbar.js';
 import {Sim} from './sim.js';
@@ -85,6 +86,8 @@ function newGame() {
     difficulty: diffId,
   });
   search?.attach(sim, {seed, kits: cm?.action === 'play' ? cm.kits() : undefined});
+  if (cm?.action === 'play' && search?.ammo) cm.rememberKits(search.ammo.kits);
+  document.querySelector('#combat-loot')?.remove();
   banter = createBanter(sim, seed);
   awarded = false;
   lastLoot = lastEarned = null;
@@ -117,6 +120,7 @@ function campaignCard() {
   $('#card-text').textContent =
     cm.action === 'none' ? 'This mission has been fought already, or the link is out of date.' : describe(cm.result);
   $('#start').textContent = 'Return to the map';
+  if (cm.result) showLootReport();
 }
 /**
  * The conditions this fight is in (convoy/levels/variants.js): a campaign deployment brings its own (time, weather,
@@ -405,6 +409,12 @@ function updatePanel() {
     `<b>${status}</b><br>${objectives}${waveLine}<br>Health ${Math.max(0, Math.ceil(p.hp))}<br>${squad}<br>${weapons}<br>` +
     `Army: ${s.armyAlive} up · ${s.armyDown} down · ${s.escaped} fled · ${s.vehiclesDestroyed} vehicles burning`;
 }
+function showLootReport() {
+  document.querySelector('#combat-loot')?.remove();
+  const report = lootReport(cm.result, {catalogue: CAT});
+  report.id = 'combat-loot';
+  $('#card-text').after(report);
+}
 function showDebrief(d) {
   $('#card-title').textContent = `${sim.level.title}: ${d.outcome === 'won' ? 'accomplished' : 'failed'}`;
   const text = $('#card-text');
@@ -417,6 +427,7 @@ function showDebrief(d) {
     lastLoot = rollLoot(POOL, {levelId, debrief: d, difficulty: DIFFICULTY[diffId], seed: cm.deployment.seed});
     cm.finish(d, diffId, lastLoot, search?.ammo?.kits, sim.vehicles.length);
     text.textContent += ' ' + describe(cm.result);
+    showLootReport();
     $('#start').textContent = 'Return to the map';
     renderSquad();
     return;

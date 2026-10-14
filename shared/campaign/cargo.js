@@ -29,10 +29,10 @@ export const describeManifest = m =>
  * What the band takes from a convoy's cargo: nothing unless the fight was won; otherwise the manifest, less the share
  * of each burnt vehicle (vehicles share the cargo evenly), half of which is salvaged. Whole items, rounded down.
  */
-export function cargoTaken(manifest, {outcome, vehicles = 0, destroyed = 0} = {}) {
+export function cargoTaken(manifest, {outcome, vehicles = 0, destroyed = 0, kept: recovery = 1} = {}) {
   if (!manifest || outcome !== 'won') return {};
   const burnt = vehicles > 0 ? Math.min(1, destroyed / vehicles) : 0;
-  const kept = 1 - burnt * 0.5;
+  const kept = (1 - burnt * 0.5) * Math.max(0, Math.min(1, recovery));
   const out = {};
   for (const [g, n] of Object.entries(manifest)) {
     const k = Math.floor(n * kept + 1e-9);

@@ -4,6 +4,7 @@
 // without a result (reload, closed tab) comes back as withdrawn. Without ?campaign the page is the practice sandbox.
 import {createStore} from '../shared/campaign/state.js';
 import {enter, writeResult, withdraw, settle} from '../shared/campaign/encounter.js';
+import {kitGains} from '../shared/campaign/loot-report.js';
 import {missionXp} from './progression.js';
 
 const MAP = new URL('../map/', import.meta.url).href;
@@ -37,6 +38,11 @@ export function openCampaign(params, storage) {
     classes: () => Object.fromEntries((deployment?.fighters || []).map(f => [f, campaign.band.fighters[f].class])),
     /** The fighters' grid kits by id (copies: the mission changes them; the result carries them home). */
     kits: () => structuredClone(Object.fromEntries(Object.entries(deployment?.kits || {}).filter(([, k]) => k))),
+    rememberKits(kits) {
+      if (action !== 'play' || deployment.initialKits) return;
+      deployment.initialKits = structuredClone(Object.fromEntries(deployment.fighters.filter(f => kits[f]).map(f => [f, kits[f]])));
+      store.save(campaign);
+    },
     /**
      * Write the debrief as the mission's result (once). loot: the rolled entries ({gear} or trade goods); kits: the
      * fighters' grid kits as they are now (convoy/kit-ammo.js); vehicles: how many the level fielded (a convoy's cargo
@@ -61,6 +67,9 @@ export function openCampaign(params, storage) {
         time: d.time,
         destroyed: d.vehiclesDestroyed,
         vehicles,
+        kitGains: deployment.initialKits
+          ? kitGains(deployment.initialKits, Object.fromEntries(deployment.fighters.filter(f => kits[f]).map(f => [f, kits[f]])))
+          : null,
         kits: Object.fromEntries(deployment.fighters.filter(f => kits[f]).map(f => [f, structuredClone(kits[f])])),
       });
       store.save(campaign);
