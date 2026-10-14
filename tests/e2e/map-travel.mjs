@@ -62,14 +62,16 @@ try {
 
   // march to Fort Orion: it walks on the map clock, the camera follows, and it arrives
   const plan = await page.evaluate(() => {
+    const p = window.PARP_MAP.travel.party,
+      from = {x: p.x, z: p.z}; // (the first order already walked it a little: the clock started)
     const r = window.PARP_MAP.travel.moveTo(78, -20);
-    return {time: r.time, end: r.points.at(-1)};
+    return {time: r.time, end: r.points.at(-1), from};
   });
   assert.equal(await page.evaluate(() => window.PARP_MAP.travel.following), true, 'an order brings the camera back');
   await page.evaluate(() => window.PARP_MAP.setSpeed(4));
   await page
     // under way (software frames on a busy machine are slow; the arrival is checked below in one step)
-    .waitForFunction(s => Math.hypot(window.PARP_MAP.travel.party.x - s.x, window.PARP_MAP.travel.party.z - s.z) > 1, start, {
+    .waitForFunction(s => Math.hypot(window.PARP_MAP.travel.party.x - s.x, window.PARP_MAP.travel.party.z - s.z) > 1, plan.from, {
       timeout: 90000,
     })
     .catch(async e => {

@@ -58,7 +58,8 @@ export function mountWorld({campaign, travel, parties, toast, save, rings = null
     if (dt) world.step(dt);
     for (const p of hunters) {
       const h = campaign.world.hunters?.[p.id];
-      if (!h || isGone(campaign, p.id)) continue;
+      // (a column can have a lead from a fight before the world has stood it anywhere: it stays at its post)
+      if (!h || isGone(campaign, p.id) || !Number.isFinite(h.x) || !Number.isFinite(h.z)) continue;
       const heading = p.last ? Math.atan2(h.x - p.last.x, h.z - p.last.z) : null;
       if (!p.last || Math.hypot(h.x - p.last.x, h.z - p.last.z) > 0.01) p.place(h.x, h.z, heading);
       p.last = {x: h.x, z: h.z};
