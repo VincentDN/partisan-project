@@ -169,6 +169,25 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
             }),
           )
         : null,
+      e.variant.settlement
+        ? el(
+            'label',
+            {},
+            'Operation ',
+            el(
+              'select',
+              {
+                id: 'enc-intent',
+                'aria-label': 'Settlement operation',
+                onchange: event => {
+                  e.variant.settlement.intent = event.target.value;
+                },
+              },
+              el('option', {value: 'capture'}, 'Liberate the settlement'),
+              el('option', {value: 'raid'}, 'Raid supplies and leave'),
+            ),
+          )
+        : null,
       ...picker.nodes,
       auto.node,
       // attack, prepare an ambush, withdraw leaving a rearguard, leave (map/encounter-actions.js, WP-W8)

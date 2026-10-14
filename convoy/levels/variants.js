@@ -7,6 +7,7 @@
 //   convoy   a campaign convoy's own column and escort (convoy/levels/columns.js); ambush: 'roadblock' | 'charge'
 // Deterministic (a seeded generator), so the same encounter always sets up the same fight.
 import {buildColumn, describeColumn, AMBUSHES} from './columns.js';
+import {settlementAssault} from './settlement.js';
 import {lcg} from './util.js';
 
 export const TIMES = ['day', 'dusk', 'night'];
@@ -78,6 +79,7 @@ export function vary(
     ambush = 'roadblock',
     name = null,
     prepared = false,
+    settlement = null,
   } = {},
 ) {
   const rnd = lcg(seed * 2654435761 + 17);
@@ -133,6 +135,7 @@ export function vary(
   }
   const tag = [t !== 'day' ? t : '', weather !== 'clear' ? weather : ''].filter(Boolean).join(', ');
   if (tag) L.title = `${level.title} (${tag})`;
+  if (settlement) settlementAssault(L, settlement);
   return L;
 }
 

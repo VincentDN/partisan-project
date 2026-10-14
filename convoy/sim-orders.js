@@ -56,6 +56,12 @@ export const orderMethods = {
       outcome: this.outcome,
       time: this.time,
       objectives: this.objectives.map(o => ({id: o.id, label: o.label, state: o.state, optional: !!o.optional})),
+      enemyLosses: Object.fromEntries(
+        ['garrison', 'militia'].map(kind => [
+          kind,
+          this.units.filter(u => u.side === 'army' && u.group?.startsWith(`settlement-${kind}`) && (!u.alive || u.escaped)).length,
+        ]),
+      ),
       kills: Object.values(this.kills).reduce((a, b) => a + b, 0),
       byPartisan: squad.map(u => ({
         id: u.id,

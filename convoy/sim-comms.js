@@ -113,6 +113,11 @@ export const commsMethods = {
   runWaves() {
     for (const w of this.waves) {
       if (w.spawned || this.time < w.at) continue;
+      if (w.reserve) {
+        const alive = this.units.filter(u => u.side === 'army' && u.alive && !u.escaped).length;
+        const incoming = w.squads.reduce((n, s) => n + s.units.length, 0);
+        if ((!this.alarm && alive > 0) || alive + incoming > w.activeLimit) continue;
+      }
       w.spawned = true;
       this.alarm || this.raiseAlarm(null);
       let first = null;

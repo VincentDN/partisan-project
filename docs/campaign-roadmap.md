@@ -118,7 +118,7 @@ it must never merge the practice roster back into a campaign and silently deploy
 | Raiders away from camp | Hilltop defence |
 
 The mapping, environment variants, convoy cargo and pursuit-generated defence conditions exist. Convoy ambushes
-field the vehicles and escort shown on the map. Exact settlement garrison composition remains future work. A strength multiplier is not the same as deploying the
+field the vehicles and escort shown on the map. Settlement missions now field the saved garrison and militia exactly, with at most 24 active defenders and reserve groups. Choose a raid to take supplies without changing ownership, or a liberation assault to break all defenders and capture the seat. Defender losses persist after raids and defeats. A strength multiplier is not the same as deploying the
 exact army seen on the map.
 
 ### Resolve a small fight
@@ -262,7 +262,7 @@ manifests shown before the fight, a won ambush takes the cargo home less what bu
 items came from (missions, cargo, the trader). W15 is done (2026-10-12): the Rebel Band screen opens from the
 map's band panel on the campaign save, shows the named fighters above the troop stacks and promotes them with their
 experience and the stash's kit; the standalone demo keeps its own save. W4–W7 now supply day/night time, a fixed-step seeded world, convoy resupply/respawn and searching hunter columns.
-W10 and W19 retain unfinished acceptance for exact garrison composition, territory benefits and counterattacks.
+W10 is complete: exact garrison/militia composition, bounded reserves, raid/capture choices and night conditions. W19 retains territory benefits and counterattacks.
 W12 now targets six-to-nine-person deployment rather than the obsolete four-person plan. W18 has recovery/trade
 but not recruitment. W21 has a bounded objective, not the complete endgame/defeat presentation. W24 retains the
 real-device budget and final browser gate. W26's visual decision is superseded by the owner's 2.5D-default request.

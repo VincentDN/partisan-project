@@ -20,8 +20,9 @@ const squad = sim => sim.units.filter(u => u.side === 'partisan' && u.alive);
 
 export const CHECKS = {
   eliminate: (sim, o) => {
+    if (o.reserves && !sim.wavesDone) return 'active';
     const army = sim.units.filter(u => u.side === 'army' && (!o.group || u.group === o.group));
-    return army.length > 0 && army.every(u => !u.alive || (o.routs && u.escaped)) ? 'done' : 'active';
+    return (army.length > 0 || o.reserves) && army.every(u => !u.alive || (o.routs && u.escaped)) ? 'done' : 'active';
   },
   reach: (sim, o) => ((o.who === 'squad' ? squad(sim) : [sim.player]).every(u => u.alive && inBox(u.x, u.z, o.zone)) ? 'done' : 'active'),
   destroy: (sim, o) =>

@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-10-14 — settlement assaults
+
+- Choose a supply raid or liberation assault. Tactical defenders now match the saved garrison and militia, with at most 24 active at once and reserves arriving in groups. Night conditions carry through.
+- Raids and failed assaults reduce the remaining defenders; only a won liberation assault changes ownership.
+
 ## 2026-10-14 — healthy campaign start and limited auto-resolve
 
 - Start fresh campaigns with nine reserve items instead of the generous demo depot; carried kits remain separate and existing saved inventories are preserved.

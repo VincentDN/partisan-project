@@ -59,9 +59,11 @@ export const settlementSource = (s, c = null) => ({
   name: s.name,
   kind: 'settlement',
   level: 'compound',
-  strength: (c?.world.settlements[s.id]?.garrison ?? s.garrison) + s.militia, // as resupplied by convoys (WP-W6)
+  strength: (c?.world.settlements[s.id]?.garrison ?? s.garrison) + (c?.world.settlements[s.id]?.militia ?? s.militia), // as resupplied by convoys (WP-W6)
   settlement: s.id,
   settlementKind: s.kind,
+  garrison: c?.world.settlements[s.id]?.garrison ?? s.garrison,
+  militia: c?.world.settlements[s.id]?.militia ?? s.militia,
 });
 
 /** Is this enemy gone from the map (destroyed, or its settlement taken)? */
@@ -111,7 +113,24 @@ export function encounterFor(c, sourceId, source = SOURCES[sourceId], {ground = 
     },
     ground,
     time,
-    variant: {time, weather, ground: GROUND_LOOK[ground] || 'plain', strength, ...convoyVariant},
+    variant: {
+      time,
+      weather,
+      ground: GROUND_LOOK[ground] || 'plain',
+      strength,
+      ...convoyVariant,
+      ...(source.kind === 'settlement'
+        ? {
+            settlement: {
+              garrison: source.garrison ?? source.strength,
+              militia: source.militia || 0,
+              name: source.name,
+              kind: source.settlementKind,
+              intent: 'capture',
+            },
+          }
+        : {}),
+    },
     cargo: manifestFor(sourceId), // a convoy's manifest (shared/campaign/cargo.js); null for anything else
   };
 }
@@ -128,16 +147,23 @@ export function readResults(c, names = {}, {settlements = null} = {}) {
     if (e.kind !== 'result') continue;
     const src = SOURCES[e.source];
     const name = src?.name || names[e.source] || e.source || 'the enemy';
+    if (e.defenders && e.source) {
+      const state = (c.world.settlements[e.source] ||= {});
+      for (const kind of ['garrison', 'militia'])
+        state[kind] = Math.max(0, (state[kind] ?? e.defenders[kind] ?? 0) - (e.enemyLosses?.[kind] || 0));
+    }
     alert(c, e.at); // every fight tells the hunter columns where the band was (hunt.js, WP-W7)
     if (e.outcome === 'won' && e.source) {
       c.world.heat = Math.min(100, c.world.heat + 10);
-      if (!isGone(c, e.source)) c.world.parties.push({id: e.source, state: 'destroyed', day: e.day, hour: e.hour ?? 0});
+      if ((src || e.intent !== 'raid') && !isGone(c, e.source))
+        c.world.parties.push({id: e.source, state: 'destroyed', day: e.day, hour: e.hour ?? 0});
       // what the fight left on the map: wrecks and smoke where a convoy died, smoke over a taken place (WP-W13)
       if (Number.isFinite(e.at?.x) && Number.isFinite(e.at?.z)) {
         const kind = src?.kind === 'convoy' ? 'wreck' : src ? 'fight' : 'raid';
         (c.world.aftermath ||= []).push({id: e.source, kind, x: e.at.x, z: e.at.z, day: e.day, hour: e.hour ?? 0});
       }
-      if (!src) c.world.settlements[e.source] = {...c.world.settlements[e.source], owner: 'resistance', taken: e.day};
+      if (!src && e.intent !== 'raid')
+        c.world.settlements[e.source] = {...c.world.settlements[e.source], owner: 'resistance', garrison: 0, militia: 0, taken: e.day};
     }
     // a lost defence of the camp: TAC-K-03 (shared/campaign/defence.js, WP-W11)
     if (settlements && isOverrun(c, e, settlements)) {
@@ -154,7 +180,7 @@ export function readResults(c, names = {}, {settlements = null} = {}) {
     const loot = e.loot ? `, ${e.loot} item${e.loot === 1 ? '' : 's'} taken` : '';
     lines.push(
       e.outcome === 'won'
-        ? `${name}: ${src ? 'destroyed' : 'taken for the Resistance'}${loot}${hurt}.`
+        ? `${name}: ${src ? 'destroyed' : e.intent === 'raid' ? 'raided for supplies' : 'taken for the Resistance'}${loot}${hurt}.`
         : e.outcome === 'withdrawn'
           ? `${name}: the band fell back. The fighters are wounded.`
           : `${name}: the attack failed${hurt}.`,

@@ -3204,7 +3204,7 @@
    "milestone": "W",
    "size": "M",
    "bu": 20,
-   "status": "planned",
+   "status": "done",
    "deps": [
     "WP-W8",
     "WP-W13"
@@ -3217,7 +3217,7 @@
     "docs/campaign-roadmap.md"
    ],
    "acceptance": "Marching on an Invader settlement opens the compound level scaled to its garrison; success raids or captures it on the map.",
-   "progress_note": "2026-10-08: Village/compound bridge, conditions and captured ownership implemented; full garrison simulation remains."
+   "progress_note": "2026-10-14: raid/capture selection, exact saved garrison and militia, settlement-specific village/compound missions and night conditions. At most 24 active defenders with bounded reserve waves; campaign forces are not thinned by difficulty. Raids and failed attacks persist defender losses; only won captures change ownership. Unit and built-site browser acceptance passed."
   },
   {
    "id": "WP-W11",

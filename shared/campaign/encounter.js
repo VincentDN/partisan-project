@@ -136,6 +136,9 @@ export function cleanResult(d, raw) {
   const goods = Array.isArray(r.goods) ? r.goods.filter(g => isObj(g) && typeof g.name === 'string' && Number.isFinite(g.price)) : [];
   return {
     outcome,
+    enemyLosses: Object.fromEntries(
+      ['garrison', 'militia'].map(kind => [kind, Math.min(count(r.enemyLosses?.[kind]), count(d.variant?.settlement?.[kind]))]),
+    ),
     kitGains:
       outcome === 'withdrawn'
         ? {}
@@ -225,6 +228,9 @@ export function settle(c, encounterId = c.deployment?.id) {
     kind: 'result',
     encounter: d.id,
     source: d.source,
+    intent: d.variant?.settlement?.intent || null,
+    defenders: d.variant?.settlement || null,
+    enemyLosses: r.enemyLosses,
     level: d.level,
     at: d.at || null,
     outcome: r.outcome,

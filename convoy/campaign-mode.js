@@ -64,6 +64,7 @@ export function openCampaign(params, storage) {
         loot: bag,
         goods,
         kills: d.kills,
+        enemyLosses: d.enemyLosses,
         time: d.time,
         destroyed: d.vehiclesDestroyed,
         vehicles,
