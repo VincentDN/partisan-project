@@ -40,7 +40,11 @@ export class Sim {
     this.vision = VISION;
     this.view = null; // {x0, x1, z0, z1} in metres, set by the renderer each frame
     this.difficultyId = difficulty || 'normal';
-    this.difficulty = difficultyOf(this.difficultyId);
+    this.difficulty = {...difficultyOf(this.difficultyId)};
+    if (this.level.response) {
+      this.difficulty.react *= this.level.response.react;
+      this.difficulty.spread *= this.level.response.spread;
+    }
     // What abilities leave in the world (convoy/abilities.js): sandbag walls, smoke, mines, marks on revealed soldiers.
     this.fieldworks = []; // {x, z, w, d, h, kind}: block like cover
     this.smokes = []; // {x, z, r, t, until}: block sight

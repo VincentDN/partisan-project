@@ -5,12 +5,13 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json).
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-14 07:30 UTC · claude · WP-W7 · done**
+**2026-10-15 · codex · WP-W20 · done**
 
-- Branch `claude/friendly-dijkstra-4ky9w6` at `369ed2c`; working tree clean.
-- Last commits: 369ed2c Fix a column with a lead but no place yet; map-travel waits from the second order · 8caee26 Sandbags seen over, low cover in fights; campaign map fixes; WP-W7 hunters · b619640 docs: handoff for WP-W6
-- What happened: W7 done with the owner's fixes: sandbags seen over (half fog, peek on fire), low cover hit chance and dust puffs, placeholder map buttons removed, orders start the clock, band sprites stand on slopes; hunter columns with sight, last-seen tracking, sight rings and hunts-per-day harness.
-- Next step: Campaign: W22 auto-resolve, W10 settlement assault, W19 territory. Balance: convoy escort spots eight rebels ~13 s in; tune hunts per day (0.13 now) with tools/campaign-hunts.mjs.
+- Working on owner-authorized main; W10/W19/W18 already pushed through `563e27b`.
+- W20 adds four response tiers, exact hunter rosters, specialist equipment and reaction/spread modifiers. Deployment saves its tier; Party/encounter explain the score. Practice remains unchanged.
+- `node tools/campaign-response.mjs` prints the strength/territory curve. Human pacing acceptance remains open.
+- Validation: 502 Node tests; Chromium response snapshot/kit/difficulty and existing hunted/camp-defence flows; lint, types, formatting, build and link checks pass.
+- Next: W21 operation/campaign ending and defeat summary, then W23 longitudinal campaign harness. W22 human auto-resolve comparison and W24 reference-device gates remain open.
 <!-- handoff:end -->
 
 ## Gameplay/demo module boundary — 13 October 2026
@@ -48,7 +49,7 @@ Counterattacks move along saved routes, draw from actual garrisons, can be inter
 undefended seats. Village stock/volunteers refresh weekly; exchanges are item-for-item with failed-save rollback.
 No campaign camp trader; practice shop unchanged. Validation: 497 Node tests, settlement and counterattack browser
 flows, full campaign loop, all seven mission loot/reload reports, village keyboard/rollback/recruit deployment
-and scoped axe accessibility checks; lint, formatting, typecheck, build and link checks pass. Next: W20 escalation, W21 operation endings/defeat presentation,
+and scoped axe accessibility checks; lint, formatting, typecheck, build and link checks pass. Next: W21 operation endings/defeat presentation,
 W23 50-campaign harness, W22 human auto-resolve comparisons and W24 reference-device acceptance. Keep owner-authorized main commits.
 
 ## Resume here

@@ -3397,7 +3397,7 @@
    "milestone": "W",
    "size": "M",
    "bu": 20,
-   "status": "planned",
+   "status": "done",
    "deps": [
     "WP-W19",
     "WP-W7"
@@ -3407,7 +3407,8 @@
    "inputs": [
     "docs/campaign-roadmap.md"
    ],
-   "acceptance": "Response tier rises with Resistance strength; tiers change hunter size, mission difficulty and enemy kit; harness shows the curve."
+   "acceptance": "Response tier rises with Resistance strength; tiers change hunter size, mission difficulty and enemy kit; harness shows the curve.",
+   "progress_note": "2026-10-15: Four response tiers derive from named fighter tiers and liberated occupied seats. Tiers change exact hunter column strength, activation heat, tactical reaction/spread and specialist kit. Encounter snapshots persist the tier; map/briefing explain it. tools/campaign-response.mjs reports the curve; regression and browser checks cover it. Human pacing remains W23/W24 acceptance."
   },
   {
    "id": "WP-W21",

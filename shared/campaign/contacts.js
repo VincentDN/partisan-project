@@ -2,6 +2,7 @@
 // fight changed, and healing over time. The map meets an Invader convoy, a garrison post, an Invader settlement or the
 // hunters; levelFor picks the map from the contact and where it happens, and the deployment carries the conditions
 // (time, weather, ground, the enemy's strength: convoy/levels/variants.js) so the fight is set up from them. Pure.
+import {response} from './response.js';
 import {logEvent} from './state.js';
 import {LEVELS} from '../../convoy/levels/index.js';
 import {enemyCount} from '../../convoy/levels/variants.js';
@@ -28,6 +29,11 @@ export const SOURCES = {
   // turned out by heat 50 (hunt.js, WP-W7)
   'orion-hunters': {name: 'Orion hunter column', kind: 'hunters', level: 'hilltop', strength: 26},
 };
+/** Current strategic strength for a named party; fixed garrisons and convoy manifests remain authoritative. */
+export function sourceFor(c, id) {
+  const source = SOURCES[id];
+  return source?.kind === 'hunters' ? {...source, strength: source.strength + response(c).hunters} : source;
+}
 /** What each kind of contact is called on the encounter panel, and what the band does there. */
 export const ACTIONS = {
   counterattack: {mission: 'Settlement defence', verb: 'Defend against the counterattack'},
@@ -84,7 +90,9 @@ export const fitFighters = c =>
  * The deployment for meeting `sourceId` (an id of SOURCES, or a settlement id with its source given): pass it to
  * encounter.deploy(). The id is unique per meeting, the seed varies with it, and the enemy and ground travel along.
  */
-export function encounterFor(c, sourceId, source = SOURCES[sourceId], {ground = null, nearCamp = false} = {}) {
+export function encounterFor(c, sourceId, source = sourceFor(c, sourceId), {ground = null, nearCamp = false} = {}) {
+  if (source.kind === 'hunters' && SOURCES[sourceId]) source = sourceFor(c, sourceId);
+  const occupation = response(c);
   const n = c.settled.length + 1;
   const id = `${sourceId}-${n}-d${c.world.clock.day}`;
   let seed = c.seed * 7919 + n * 104729;
@@ -121,6 +129,7 @@ export function encounterFor(c, sourceId, source = SOURCES[sourceId], {ground = 
       ground: GROUND_LOOK[ground] || 'plain',
       strength,
       ...convoyVariant,
+      response: {tier: occupation.tier, ...(source.kind === 'hunters' ? {hunters: source.strength} : {})},
       ...(source.kind === 'counterattack' ? {counterattack: source.strength} : {}),
       ...(source.kind === 'settlement'
         ? {
