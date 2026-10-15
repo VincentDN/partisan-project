@@ -1,7 +1,7 @@
 // Overworld party tokens, vehicles and nameplates; character creation is supplied explicitly by the page entry.
 import * as T from 'three';
 import {vehicle3d} from './vehicles.js';
-import {FACTIONS, PARTY_SPOTS, sample} from './island.js';
+import {FACTIONS, PARTY_SPOTS, SETTLEMENTS, sample} from './island.js';
 import {SOURCES} from '../shared/campaign/contacts.js';
 import {MANIFESTS, describeManifest} from '../shared/campaign/cargo.js';
 import {CONVOY_ROADS, convoyRoad, freshMotion, driveConvoy, vehicleAt} from '../shared/campaign/world.js';
@@ -128,6 +128,26 @@ export async function buildParties(field, layer, {figure, vehicle = vehicle3d}) 
       kind: 'enemy',
       head: 2.2,
       plate: nameplate(layer, {name: p.name, count: String(p.count), faction: 'invader'}),
+    });
+  }
+
+  // Saved occupation counterattacks are hidden until the campaign world sends them out.
+  for (const s of SETTLEMENTS.filter(s => s.faction === 'invader')) {
+    const f = await figure({pose: 'ready', idle: 'alert', rifle: 'ak74m', side: 'army'});
+    f.root.visible = false;
+    group.add(f.root);
+    parties.push({
+      ...f,
+      id: `retake-${s.id}`,
+      kind: 'counterattack',
+      head: 2.2,
+      hide: () => {
+        f.root.visible = false;
+      },
+      place(x, z) {
+        f.root.position.set(x, ground(x, z), z);
+      },
+      plate: nameplate(layer, {name: `${s.name} counterattack`, count: '', faction: 'invader'}),
     });
   }
 

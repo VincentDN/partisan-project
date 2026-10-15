@@ -81,6 +81,7 @@ export function newCampaign({id = 'c1', seed = 1, now = 0} = {}) {
       seen: 0, // the last log entry (by seq) the map has shown: it reports mission results once
       aftermath: [], // what fights left on the map: {id, kind: wreck|fight|raid, x, z, day, hour} (WP-W13)
       camp: null, // after an overrun: {id: the settlement that is the camp now, ready: {day, hour}} (WP-W11)
+      counterattacks: {},
       hunters: {}, // hunters on the map by contact id: {x, z, hunting} (WP-W11)
       burnt: [], // camps the Invader burnt
     },
@@ -125,6 +126,29 @@ export function normalize(raw) {
   if (Array.isArray(w.parties)) c.world.parties = w.parties.filter(isObj);
   if (isObj(w.settlements)) c.world.settlements = w.settlements;
   c.world.heat = num(w.heat, 0, 0);
+  if (isObj(w.counterattacks))
+    c.world.counterattacks = Object.fromEntries(
+      Object.entries(w.counterattacks)
+        .filter(
+          ([, a]) =>
+            isObj(a) &&
+            typeof a.id === 'string' &&
+            typeof a.target === 'string' &&
+            Number.isFinite(a.x) &&
+            Number.isFinite(a.z) &&
+            Number.isFinite(a.strength) &&
+            a.strength > 0 &&
+            ['marching', 'besieging', 'defeated', 'retaken'].includes(a.state),
+        )
+        .map(([id, a]) => [
+          id,
+          {
+            ...a,
+            route:
+              a.route && Array.isArray(a.route.points) && a.route.points.every(isPoint) && Number.isInteger(a.route.leg) ? a.route : null,
+          },
+        ]),
+    );
   c.world.seen = num(w.seen, 0, 0);
   if (isObj(w.camp) && typeof w.camp.id === 'string')
     c.world.camp = {id: w.camp.id, ready: isObj(w.camp.ready) ? {day: num(w.camp.ready.day, 1), hour: num(w.camp.ready.hour, 0)} : null};

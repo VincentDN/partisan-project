@@ -3377,7 +3377,7 @@
    "milestone": "W",
    "size": "M",
    "bu": 20,
-   "status": "planned",
+   "status": "ready",
    "deps": [
     "WP-W10",
     "WP-W13"
@@ -3388,7 +3388,7 @@
     "docs/campaign-roadmap.md"
    ],
    "acceptance": "A captured settlement turns its province to the Resistance and gives its benefits; the Invader sends a party to retake it.",
-   "progress_note": "2026-10-08: Captured owner and safe-haven access implemented; garrison economy/counterattack simulation remains."
+   "progress_note": "2026-10-15: Saved garrison-funded counterattacks, interception/defence, retaking and weekly recovery meals implemented and tested. Recruitment benefit completes with W18."
   },
   {
    "id": "WP-W20",
@@ -3647,7 +3647,7 @@
    "inputs": [
     "docs/quality-roadmap.md"
    ],
-   "acceptance": "Property tests over garbage and truncated saves; settle is idempotent across a reload at every step; a second tab never loses the other tab’s writes silently (it warns or merges); quota errors are reported, not swallowed."
+   "acceptance": "Property tests over garbage and truncated saves; settle is idempotent across a reload at every step; a second tab never loses the other tab\u2019s writes silently (it warns or merges); quota errors are reported, not swallowed."
   },
   {
    "id": "WP-QA5",

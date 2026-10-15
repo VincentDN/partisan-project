@@ -56,6 +56,14 @@ export function mountWorld({campaign, travel, parties, toast, save, rings = null
   /** Stand the hunters where the world has them; dt > 0 also lets the world run (a rearguard sends them home). */
   function stepHunters(dt) {
     if (dt) world.step(dt);
+    for (const p of parties.parties.filter(p => p.kind === 'counterattack')) {
+      const a = Object.values(campaign.world.counterattacks || {}).find(a => a.id === p.id);
+      p.root.visible = !!a && ['marching', 'besieging'].includes(a.state);
+      if (p.root.visible) {
+        p.place(a.x, a.z);
+        p.plate.querySelector('.pcount').textContent = String(a.strength);
+      }
+    }
     for (const p of hunters) {
       const h = campaign.world.hunters?.[p.id];
       // (a column can have a lead from a fight before the world has stood it anywhere: it stays at its post)
@@ -69,6 +77,18 @@ export function mountWorld({campaign, travel, parties, toast, save, rings = null
   function news(step) {
     convoyNews(step);
     huntNews(step);
+    for (const e of step.territory || []) {
+      const name = byId(e.target)?.name || e.target;
+      toast(
+        e.kind === 'out'
+          ? `An occupation column is marching to retake ${name}. Intercept it or defend the settlement.`
+          : e.kind === 'siege'
+            ? `${name} is under siege. Without the band, it will fall in six hours.`
+            : `${name} has fallen to the occupier.`,
+        6500,
+      );
+    }
+    if (step.territory?.length) save();
   }
   return {world, stepHunters, news};
 }

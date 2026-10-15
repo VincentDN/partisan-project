@@ -14,6 +14,7 @@ import {createAftermath} from './aftermath.js';
 import {modalOpen} from '../shared/modal.js';
 import {createDaylight} from './daylight.js';
 import {createSightRings} from './sight-rings.js';
+import {ownerOf} from '../shared/campaign/contacts.js';
 import {sightRange} from '../shared/campaign/daylight.js';
 
 export async function mountMap({HD2D, createSpriteLayer, createHD2D, figure}) {
@@ -176,7 +177,7 @@ export async function mountMap({HD2D, createSpriteLayer, createHD2D, figure}) {
     const card = $('#province');
     if (!hit || hit.point.y < 0.2) return void (card.hidden = true);
     const s = provinceAt(hit.point.x, hit.point.z),
-      f = FACTIONS[s.faction];
+      f = FACTIONS[travel?.campaign ? ownerOf(travel.campaign, s) : s.faction];
     card.hidden = false;
     card.style.setProperty('--c', f.color);
     $('#prov-name').textContent = `${s.name} province`;
@@ -184,8 +185,8 @@ export async function mountMap({HD2D, createSpriteLayer, createHD2D, figure}) {
     $('#prov-rows').innerHTML = [
       ['Seat', `${s.name} (${s.kind})`],
       ['Prosperity', s.prosperity],
-      ['Garrison', s.garrison],
-      ['Militia', s.militia],
+      ['Garrison', travel?.campaign?.world.settlements[s.id]?.garrison ?? s.garrison],
+      ['Militia', travel?.campaign?.world.settlements[s.id]?.militia ?? s.militia],
       ['Terrain', hit.point.y > 56 ? 'Snowfield' : hit.point.y > 32 ? 'Mountain' : hit.point.y < 3 ? 'Coast' : 'Hills and scrub'],
     ]
       .map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`)

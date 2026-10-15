@@ -7,6 +7,7 @@ import {LEVELS} from '../../convoy/levels/index.js';
 import {enemyCount} from '../../convoy/levels/variants.js';
 import {manifestFor} from './cargo.js';
 import {isOverrun, overrun} from './defence.js';
+import {counterSource, COUNTER_DELAY} from './territory.js';
 import {alert} from './hunt.js';
 
 /** The enemies on the map: id -> what they are, and the mission meeting them starts. */
@@ -29,6 +30,7 @@ export const SOURCES = {
 };
 /** What each kind of contact is called on the encounter panel, and what the band does there. */
 export const ACTIONS = {
+  counterattack: {mission: 'Settlement defence', verb: 'Defend against the counterattack'},
   convoy: {mission: 'Convoy ambush', verb: 'Ambush the convoy'},
   post: {mission: 'Checkpoint assault', verb: 'Attack the post'},
   hunters: {mission: 'Defence', verb: 'Stand and fight'},
@@ -119,6 +121,7 @@ export function encounterFor(c, sourceId, source = SOURCES[sourceId], {ground = 
       ground: GROUND_LOOK[ground] || 'plain',
       strength,
       ...convoyVariant,
+      ...(source.kind === 'counterattack' ? {counterattack: source.strength} : {}),
       ...(source.kind === 'settlement'
         ? {
             settlement: {
@@ -145,12 +148,24 @@ export function readResults(c, names = {}, {settlements = null} = {}) {
   pruneAftermath(c);
   for (const e of c.log.filter(e => e.seq > c.world.seen)) {
     if (e.kind !== 'result') continue;
-    const src = SOURCES[e.source];
+    const src = SOURCES[e.source] || counterSource(c, e.source);
     const name = src?.name || names[e.source] || e.source || 'the enemy';
     if (e.defenders && e.source) {
       const state = (c.world.settlements[e.source] ||= {});
       for (const kind of ['garrison', 'militia'])
         state[kind] = Math.max(0, (state[kind] ?? e.defenders[kind] ?? 0) - (e.enemyLosses?.[kind] || 0));
+    }
+    if (src?.kind === 'counterattack') {
+      const a = c.world.counterattacks[src.target];
+      if (e.outcome === 'won') a.state = 'defeated';
+      else {
+        // A failed defence leaves the settlement to the attackers, even if the band remains nearby.
+        const s = c.world.settlements[src.target];
+        Object.assign(s, {owner: 'invader', garrison: a.strength, militia: 0});
+        delete s.counterAt;
+        a.state = 'retaken';
+        c.world.parties = c.world.parties.filter(p => p.id !== src.target);
+      }
     }
     alert(c, e.at); // every fight tells the hunter columns where the band was (hunt.js, WP-W7)
     if (e.outcome === 'won' && e.source) {
@@ -162,8 +177,17 @@ export function readResults(c, names = {}, {settlements = null} = {}) {
         const kind = src?.kind === 'convoy' ? 'wreck' : src ? 'fight' : 'raid';
         (c.world.aftermath ||= []).push({id: e.source, kind, x: e.at.x, z: e.at.z, day: e.day, hour: e.hour ?? 0});
       }
-      if (!src && e.intent !== 'raid')
-        c.world.settlements[e.source] = {...c.world.settlements[e.source], owner: 'resistance', garrison: 0, militia: 0, taken: e.day};
+      if (!src && e.intent !== 'raid') {
+        delete c.world.counterattacks[e.source];
+        c.world.settlements[e.source] = {
+          ...c.world.settlements[e.source],
+          owner: 'resistance',
+          garrison: 0,
+          militia: 0,
+          taken: e.day,
+          counterAt: e.day * 24 + (e.hour || 0) + COUNTER_DELAY,
+        };
+      }
     }
     // a lost defence of the camp: TAC-K-03 (shared/campaign/defence.js, WP-W11)
     if (settlements && isOverrun(c, e, settlements)) {

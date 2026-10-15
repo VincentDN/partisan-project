@@ -1,5 +1,6 @@
 // Campaign recovery and the first liberation operation: resupply at friendly settlements and a persistent goal.
-import {ownerOf, passTime} from './contacts.js';
+import {mealBonus} from './territory.js';
+import {ownerOf, passTime, heal} from './contacts.js';
 import {logEvent} from './state.js';
 
 export function safeHaven(c, settlements, at = c.world.party) {
@@ -11,7 +12,8 @@ export function rest(c, settlements, hours = 24, pass = h => passTime(c, h)) {
   if (!haven) throw new Error('Reach a friendly or independent settlement to rest.');
   if (c.deployment) throw new Error('Finish the active mission first.');
   if (![12, 24, 48].includes(hours)) throw new Error('Rest for 12, 24 or 48 hours.');
-  const healed = pass(hours);
+  const recovered = pass(hours);
+  const healed = [...new Set([...recovered, ...heal(c, mealBonus(c, haven, hours))])];
   c.world.heat = Math.max(0, c.world.heat - hours / 4);
   logEvent(c, {kind: 'rest', settlement: haven.id, hours, fighters: healed});
   return healed;

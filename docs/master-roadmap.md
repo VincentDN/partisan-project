@@ -399,7 +399,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-W16` | Owned guns in the Weapon Modder: only owned attachments selectable, locked ones say where they drop; assign a build to a fighter | M (20) | planned | browser | `WP-W15` |
 | `WP-W17` | Looks from kit: a fighter's class and owned wearables set the Operator Customiser look and the map figure | S (8) | planned | browser | `WP-W15` |
 | `WP-W18` | Recruits and barter at friendly villages | S (8) | planned | — | `WP-W15` |
-| `WP-W19` | Territory: capture settlements, what they give (recruits, food, rest), Invader counter-attacks to retake them | M (20) | planned | — | `WP-W10`, `WP-W13` |
+| `WP-W19` | Territory: capture settlements, what they give (recruits, food, rest), Invader counter-attacks to retake them | M (20) | ready | — | `WP-W10`, `WP-W13` |
 | `WP-W20` | Escalation director: Invader response tiers drive hunters, mission difficulty and enemy kit | M (20) | planned | — | `WP-W19`, `WP-W7` |
 | `WP-W21` | Endgame and defeat: the Fort Orion assault, the camp-overrun defeat, campaign summary | M (20) | planned | browser | `WP-W20` |
 | `WP-W22` | Auto-resolve for small, lopsided fights, with the odds shown first | S (8) | ready | — | `WP-W8` |

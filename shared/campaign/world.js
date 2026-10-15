@@ -3,6 +3,7 @@
 // band or home (defence.js), and the clock (wounds heal). Everything it moves lives in the campaign save, so a
 // reload carries on where it was, mid-route included; the same save and the same orders give the same world
 // whatever the frame rate. Pure, no DOM.
+import {stepTerritory} from './territory.js';
 import {advance, groundAt} from './nav.js';
 import {bandSight, spotRange} from './hunt.js';
 import {pursue} from './defence.js';
@@ -55,11 +56,18 @@ export function createWorld(c, {nav = null, party = null, hunters = {}, vehicles
       const r = pursue(c, id, home, band, dt, {spot});
       if (r?.event) hunts.push({id, event: r.event});
     }
-    return {healed: passTime(c, dt * HOURS_PER_SECOND), arrived, resupplied, respawned, hunts};
+    return {
+      healed: passTime(c, dt * HOURS_PER_SECOND),
+      arrived,
+      resupplied,
+      respawned,
+      hunts,
+      territory: stepTerritory(c, {dt, nav, party: band}),
+    };
   }
   /** Run the world for dt map seconds (any frame rate: it moves in whole STEPs). Returns what happened. */
   function step(dt) {
-    const out = {healed: [], arrived: false, resupplied: [], respawned: [], hunts: [], ticks: 0};
+    const out = {healed: [], arrived: false, resupplied: [], respawned: [], hunts: [], territory: [], ticks: 0};
     acc += Math.max(0, dt);
     while (acc >= STEP - 1e-9) {
       acc -= STEP;
@@ -68,6 +76,7 @@ export function createWorld(c, {nav = null, party = null, hunters = {}, vehicles
       out.resupplied.push(...r.resupplied);
       out.respawned.push(...r.respawned);
       out.hunts.push(...r.hunts);
+      out.territory.push(...r.territory);
       out.arrived ||= r.arrived;
       out.ticks++;
     }

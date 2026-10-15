@@ -80,6 +80,7 @@ export function vary(
     name = null,
     prepared = false,
     settlement = null,
+    counterattack = null,
   } = {},
 ) {
   const rnd = lcg(seed * 2654435761 + 17);
@@ -136,6 +137,33 @@ export function vary(
   const tag = [t !== 'day' ? t : '', weather !== 'clear' ? weather : ''].filter(Boolean).join(', ');
   if (tag) L.title = `${level.title} (${tag})`;
   if (settlement) settlementAssault(L, settlement);
+  if (counterattack !== null) {
+    const count = Math.max(1, Math.min(24, Math.floor(counterattack)));
+    const templates = level.waves.flatMap(w => w.squads.flatMap(s => s.units));
+    L.units = [];
+    L.reinforcements = null;
+    L.counterattack = count;
+    L.waves = [
+      {
+        at: 30,
+        text: 'The occupation column is attacking!',
+        squads: [
+          {
+            group: 'retake',
+            goal: {x: 0, z: 0},
+            units: Array.from({length: count}, (_, i) => ({
+              ...structuredClone(templates[i % templates.length]),
+              x: -70 + (i % 3),
+              z: -20 + Math.floor(i / 3) * 4,
+              name: `Counterattack soldier ${i + 1}`,
+            })),
+          },
+        ],
+      },
+    ];
+    L.title = 'Defend liberated territory';
+    L.brief = `The occupation column has ${count} soldiers. Hold the hilltop approaches for three minutes or break the attack to keep the settlement free.`;
+  }
   return L;
 }
 

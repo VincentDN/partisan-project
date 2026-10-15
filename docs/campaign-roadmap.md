@@ -262,7 +262,7 @@ manifests shown before the fight, a won ambush takes the cargo home less what bu
 items came from (missions, cargo, the trader). W15 is done (2026-10-12): the Rebel Band screen opens from the
 map's band panel on the campaign save, shows the named fighters above the troop stacks and promotes them with their
 experience and the stash's kit; the standalone demo keeps its own save. W4–W7 now supply day/night time, a fixed-step seeded world, convoy resupply/respawn and searching hunter columns.
-W10 is complete: exact garrison/militia composition, bounded reserves, raid/capture choices and night conditions. W19 retains territory benefits and counterattacks.
+W10 is complete: exact garrison/militia composition, bounded reserves, raid/capture choices and night conditions. W19 now provides weekly recovery meals and saved, garrison-funded counterattacks: intercept or defend; unattended sieges and lost defences reverse ownership. Its recruitment benefit completes with W18.
 W12 now targets six-to-nine-person deployment rather than the obsolete four-person plan. W18 has recovery/trade
 but not recruitment. W21 has a bounded objective, not the complete endgame/defeat presentation. W24 retains the
 real-device budget and final browser gate. W26's visual decision is superseded by the owner's 2.5D-default request.

@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-10-15 — territory and counterattacks
+
+- Liberated settlements provide four weekly meals; each adds six hours of wound recovery during rest.
+- After a day, the nearest eligible occupation garrison sends a saved column of up to 24 soldiers. Intercept or defend against it; an unattended six-hour siege or lost defence returns the settlement to occupation.
+- Counterattack troops come from the sending garrison. Map labels and province cards show current ownership and defender counts.
+
 ## 2026-10-14 — settlement assaults
 
 - Choose a supply raid or liberation assault. Tactical defenders now match the saved garrison and militia, with at most 24 active at once and reserves arriving in groups. Night conditions carry through.

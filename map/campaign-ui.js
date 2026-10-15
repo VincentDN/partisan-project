@@ -14,6 +14,7 @@ import {
   SOURCES,
   ACTIONS,
 } from '../shared/campaign/contacts.js';
+import {counterSource, provisions} from '../shared/campaign/territory.js';
 import {SQUAD_MIN} from '../convoy/roster.js';
 import {squadPicker} from './encounter-squad.js';
 import {rest, safeHaven, operation} from '../shared/campaign/operations.js';
@@ -298,9 +299,10 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
   const near = (a, b, r) => Math.hypot(a.x - b.x, a.z - b.z) < r;
   function contactAt(at) {
     for (const p of parties.parties) {
-      if (!p.id || !SOURCES[p.id] || isGone(campaign, p.id)) continue;
+      const source = SOURCES[p.id] || counterSource(campaign, p.id);
+      if (!p.id || !source || !p.root.visible || isGone(campaign, p.id)) continue;
       const pos = {x: p.root.position.x, z: p.root.position.z};
-      if (near(at, pos, CONTACT)) return {id: p.id, source: SOURCES[p.id], at: pos};
+      if (near(at, pos, CONTACT)) return {id: p.id, source, at: pos};
     }
     for (const s of SETTLEMENTS)
       if (ownerOf(campaign, s) === 'invader' && near(at, s, RAID))
@@ -366,6 +368,8 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
   });
   function renderBand() {
     const rebuilding = rebuildingFor(campaign);
+    const haven = safeHaven(campaign, SETTLEMENTS, travel.party);
+    const food = haven && ownerOf(campaign, haven) === 'resistance' && haven.kind !== 'camp' ? provisions(campaign, haven).food : 0;
     const hurt = Object.entries(campaign.band.fighters).filter(([, f]) => f.wounded);
     const gear = Object.entries(campaign.stash).filter(([g]) => GEAR[g]);
     fill(
@@ -398,6 +402,13 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
           ? 'Safe haven: rest, sell recovered valuables, and buy promotion equipment.'
           : 'Reach a friendly or independent settlement to rest and trade.',
       ),
+      food
+        ? el(
+            'p',
+            {class: 'territory-food'},
+            `Liberated supplies: ${food} meals this week. Each 12 hours of rest uses one meal for six extra hours of wound recovery.`,
+          )
+        : null,
       ...[12, 24, 48].map(hours =>
         el(
           'button',
@@ -410,6 +421,8 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
                 rest(campaign, SETTLEMENTS, hours, h => {
                   const r = world.skip(h);
                   news(r);
+                  refreshWorld();
+                  stepHunters(0);
                   return r.healed;
                 });
                 save();
@@ -526,6 +539,7 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
       healed = step.healed;
     stepHunters(0);
     news(step);
+    if (step.territory.length) refreshWorld();
     if (healed.length) {
       toast(`${healed.map(id => NAMES[id] || id).join(' and ')} ${healed.length > 1 ? 'are' : 'is'} fit again.`);
       save();
