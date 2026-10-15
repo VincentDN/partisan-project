@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-10-15 — village recruits and barter
+
+- Barter spare equipment and recovered valuables for finite weekly village supplies. Liberated villages offer better rates and larger stock; campaign camps no longer have a trader. Practice trading is unchanged.
+- Recruit healthy tier-one volunteers at liberated villages, with weekly quotas, meal costs and an 18-fighter band limit. Select them for the next mission and promote normally.
+- Preview exchanges before committing. Failed storage leaves equipment and volunteers unchanged; saved weekly stocks survive reload. Combat recovery reports now show consistent barter values.
+
 ## 2026-10-15 — territory and counterattacks
 
 - Liberated settlements provide four weekly meals; each adds six hours of wound recovery during rest.

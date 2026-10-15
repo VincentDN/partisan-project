@@ -96,11 +96,11 @@ export function createCamp({get, set}) {
                 type: 'button',
                 'data-promote': `${id}:${to}`,
                 disabled: !ok,
-                title: ok ? `Promote ${NAMES[id]} to ${TROOPS[to].label}` : why,
+                title: ok ? `Promote ${NAMES[id] || id} to ${TROOPS[to].label}` : why,
                 onclick: () => {
                   const next = promote(get(), id, to);
                   if (!next) return;
-                  set(next, `${NAMES[id]} is now a ${TROOPS[to].label}.`);
+                  set(next, `${NAMES[id] || id} is now a ${TROOPS[to].label}.`);
                   onPromote?.(id, to);
                 },
               },
@@ -112,7 +112,7 @@ export function createCamp({get, set}) {
         return el(
           'div',
           {class: 'squad-card', 'data-squad': id},
-          el('b', {}, NAMES[id]),
+          el('b', {}, NAMES[id] || id),
           el('span', {class: 'cls'}, ` ${t.label} · tier ${t.tier}`),
           gain
             ? el(
@@ -126,7 +126,7 @@ export function createCamp({get, set}) {
             {
               class: 'xpbar',
               role: 'meter',
-              'aria-label': `${NAMES[id]} experience`,
+              'aria-label': `${NAMES[id] || id} experience`,
               'aria-valuemin': 0,
               'aria-valuemax': pr.need || 1,
               'aria-valuenow': Math.min(pr.xp, pr.need || 1),
@@ -135,7 +135,7 @@ export function createCamp({get, set}) {
           ),
           el('small', {}, pr.need ? `${pr.xp} / ${pr.need} XP to promote` : `${pr.xp} XP · top of the path`),
           actives ? el('small', {class: 'acts'}, actives) : null,
-          paths.length ? el('div', {class: 'paths', role: 'group', 'aria-label': `${NAMES[id]}: next classes`}, paths) : null,
+          paths.length ? el('div', {class: 'paths', role: 'group', 'aria-label': `${NAMES[id] || id}: next classes`}, paths) : null,
         );
       }),
     );

@@ -188,3 +188,9 @@ a.band-screen:focus-visible { outline: 2px solid var(--lcd-hi); outline-offset: 
 .loot-report ul { padding-left: 20px; }
 .loot-report li { margin: 4px 0; }
 .loot-report summary { cursor: pointer; padding: 8px 0; }
+
+/* Village barter keeps quantity controls legible on narrow campaign panels. */
+#village-services fieldset { display: grid; gap: 8px; margin: 12px 0; border: 1px solid #8a6a3a66; }
+#village-services label { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+#village-services input[type=number] { width: 5em; padding: 5px; }
+#village-services input:focus-visible { outline: 2px solid var(--lcd-hi); outline-offset: 2px; }

@@ -5,7 +5,7 @@ The Bannerlord loop that joins the world map, the three missions, loot and upgra
 owner decisions of WP-W26; the owner delegated them on 5 October 2026.
 
 ### TAC-K-01 · No shop at home: barter at neutral and liberated villages only
-- Status: planned  ·  Packet: WP-W18, WP-W26
+- Status: built 15 October 2026; human economy tuning remains  ·  Packet: WP-W18, WP-W26
 - Decision: In a campaign there is no trader at the camp. Trade goods are bartered item for item at neutral and liberated villages, valued with today's price table (`convoy/loot.js` `priceOf`, `scripFor`), so scrip becomes a hidden barter value rather than a currency you hold. Each village has a small seeded stock (food, ammunition, medical supplies, common gear, rarely a weapon) that refreshes weekly; liberated villages stock more and give better rates. Invader settlements never trade. The camp trader stays in practice mode.
 - Why: Stealing is the game: the tactical roadmap's rule is finite equipment recovered by scavenging, not bought. Barter in villages turns trade into a reason to move and to free villages (Bannerlord's village markets), and gives the trade goods that loot already rolls somewhere to go.
 - Alternatives rejected: Keeping the camp trader (a safe menu at home removes risk and movement); no trade at all (trade goods become dead weight, and a bad loot roll can stall promotions).

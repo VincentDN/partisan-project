@@ -26,7 +26,7 @@ export function provisions(c, s) {
   return state.provisions;
 }
 export function mealBonus(c, s, hoursRested) {
-  if (owner(c, s) !== 'resistance' || s.kind === 'camp') return 0;
+  if (owner(c, s) === 'invader' || s.kind === 'camp') return 0;
   const stock = provisions(c, s),
     meals = Math.min(stock.food, Math.floor(hoursRested / 12));
   stock.food -= meals;

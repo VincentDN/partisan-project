@@ -1,4 +1,5 @@
 // Read-only combat recovery accounting: stash rewards, convoy cargo, valuables and net additions to carried kits.
+import {scripFor} from '../../convoy/loot.js';
 import {GEAR} from '../../band/troops.js';
 import {NAMES} from '../../convoy/roster.js';
 
@@ -81,7 +82,7 @@ export function lootReport(result, {catalogue = null, title = 'Combat recovery r
   );
   group(
     'Valuables → trade goods',
-    (result.goods || []).map(g => [`${g.name} (${g.price} scrip)`, 1]),
+    (result.goods || []).map(g => [`${g.name} (${scripFor(g)} barter value)`, 1]),
     'No valuables recovered.',
   );
   group(
