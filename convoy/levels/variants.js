@@ -6,6 +6,7 @@
 //   strength enemy strength relative to the level's own (0.6 to 1.6): soldiers are added or stood down
 //   convoy   a campaign convoy's own column and escort (convoy/levels/columns.js); ambush: 'roadblock' | 'charge'
 // Deterministic (a seeded generator), so the same encounter always sets up the same fight.
+import {applyResponse} from './response.js';
 import {buildColumn, describeColumn, AMBUSHES} from './columns.js';
 import {settlementAssault} from './settlement.js';
 import {lcg} from './util.js';
@@ -81,6 +82,7 @@ export function vary(
     prepared = false,
     settlement = null,
     counterattack = null,
+    response = null,
   } = {},
 ) {
   const rnd = lcg(seed * 2654435761 + 17);
@@ -164,6 +166,7 @@ export function vary(
     L.title = 'Defend liberated territory';
     L.brief = `The occupation column has ${count} soldiers. Hold the hilltop approaches for three minutes or break the attack to keep the settlement free.`;
   }
+  if (response) applyResponse(L, response);
   return L;
 }
 

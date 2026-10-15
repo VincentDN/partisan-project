@@ -15,6 +15,7 @@ export function autoPreview(c, e) {
       ids.every(id => c.band.fighters[id] && !c.band.fighters[id].wounded);
   const strength = ids.reduce((n, id) => n + (TROOPS[c.band.fighters[id]?.class]?.tier || 0), 0);
   const ratio = strength / Math.max(1, enemy || 0);
+  const combatRatio = ratio / (1 + 0.1 * (e.variant?.response?.tier || 0));
   const forbidden =
     !['post', 'convoy'].includes(e.enemy?.kind) ||
     e.enemy?.settlement ||
@@ -28,8 +29,8 @@ export function autoPreview(c, e) {
     (ratio >= 2.5 || e.enemy?.patrol === true) &&
     !c.deployment &&
     !c.settled.includes(e.id);
-  const odds = Math.min(0.97, (0.95 * ratio * ratio) / (1 + ratio * ratio));
-  const woundChance = Math.min(0.8, 0.1 + 0.4 / Math.max(0.1, ratio));
+  const odds = Math.min(0.97, (0.95 * combatRatio * combatRatio) / (1 + combatRatio * combatRatio));
+  const woundChance = Math.min(0.8, 0.1 + 0.4 / Math.max(0.1, combatRatio));
   return {eligible, strength, enemy, ratio, odds, expectedWounds: ids.length * (odds * woundChance + (1 - odds) * 0.65), woundChance};
 }
 

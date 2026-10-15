@@ -5,6 +5,7 @@
 // clock and heals the wounded. The Party button opens the band: promotions paid with experience and stolen kit.
 import {
   fitFighters,
+  sourceFor,
   encounterFor,
   missionName,
   settlementSource,
@@ -14,6 +15,7 @@ import {
   SOURCES,
   ACTIONS,
 } from '../shared/campaign/contacts.js';
+import {response} from '../shared/campaign/response.js';
 import {villageServices} from './village-services.js';
 import {counterSource, provisions} from '../shared/campaign/territory.js';
 import {SQUAD_MIN} from '../convoy/roster.js';
@@ -136,6 +138,7 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
       panel,
       el('h2', {id: 'enc-title', class: 'plate'}, src.name),
       el('p', {class: 'enc-mission'}, `${missionName(e.level)} · ${src.strength} enemy · ${cond}`),
+      el('p', {class: 'enc-response'}, `Occupation response: ${response(campaign).label} · tier ${e.variant.response.tier}`),
       sidesLine(el, {campaign, fit, ground: e.ground}), // both sides and the ground (WP-W8)
       // a convoy's manifest: what a won ambush brings home, less what burns (shared/campaign/cargo.js, WP-W14)
       e.cargo ? el('p', {class: 'enc-cargo'}, `Cargo: ${describeManifest(e.cargo)}.`) : null,
@@ -300,7 +303,7 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
   const near = (a, b, r) => Math.hypot(a.x - b.x, a.z - b.z) < r;
   function contactAt(at) {
     for (const p of parties.parties) {
-      const source = SOURCES[p.id] || counterSource(campaign, p.id);
+      const source = sourceFor(campaign, p.id) || counterSource(campaign, p.id);
       if (!p.id || !source || !p.root.visible || isGone(campaign, p.id)) continue;
       const pos = {x: p.root.position.x, z: p.root.position.z};
       if (near(at, pos, CONTACT)) return {id: p.id, source, at: pos};
@@ -369,6 +372,7 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
   });
   function renderBand() {
     campaign.world.party = {...travel.party};
+    const occupation = response(campaign);
     const rebuilding = rebuildingFor(campaign);
     const haven = safeHaven(campaign, SETTLEMENTS, travel.party);
     const food = haven && haven.kind !== 'camp' ? provisions(campaign, haven).food : 0;
@@ -378,6 +382,11 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
       bandPanel,
       el('h2', {id: 'band-title', class: 'plate'}, 'The band: fighters and stash'),
       el('p', {}, operation(campaign).text),
+      el(
+        'p',
+        {id: 'campaign-response'},
+        `Occupation response: ${occupation.label} (tier ${occupation.tier}). Strength ${occupation.score}: ${occupation.fighters} from fighters + ${occupation.seats * 12} from liberated seats. ${occupation.next ? `Next tier at ${occupation.next}.` : 'Highest tier.'} Heat ${Math.round(campaign.world.heat)} controls hunter deployment.`,
+      ),
       operation(campaign).complete
         ? el(
             'p',
@@ -531,6 +540,7 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
       ['Wounded', f.filter(x => x.wounded).length],
       ['Troops', troops],
       ['Stash', Object.values(campaign.stash).reduce((a, n) => a + n, 0)],
+      ['Response', response(campaign).label],
       ['Fought', campaign.settled.length],
     ];
     const signature = JSON.stringify(rows);

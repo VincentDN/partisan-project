@@ -3,6 +3,7 @@
 // it was seen (a won fight tells every column where it happened). There it searches for a while, then loses the trail
 // and goes home, and the heat cools a little. How far they see: less at night, less in forest, and a big band is
 // easier to spot than a small one. The band sees less far in forest too. Pure, no DOM.
+import {response} from './response.js';
 import {daylight, sightRange} from './daylight.js';
 import {logEvent} from './state.js';
 
@@ -23,7 +24,7 @@ export function spotRange(c, {ground = 'plain', size = 8} = {}) {
 export const bandSight = (c, {ground = 'plain'} = {}) => sightRange(c.world.clock.hour) * (ground === 'forest' ? 0.7 : 1);
 
 /** Is this column out (the heat is high enough for it)? */
-export const isOut = (c, id) => c.world.heat >= (COLUMNS[id]?.heat ?? 20);
+export const isOut = (c, id) => c.world.heat >= Math.max(5, (COLUMNS[id]?.heat ?? 20) - response(c).heatDiscount);
 
 /** A won fight at `at`: every column now knows where the band was (it hunts there once the heat turns it out). */
 export function alert(c, at) {

@@ -5,7 +5,7 @@
 import {createWorld} from '../shared/campaign/world.js';
 import {CONVOYS} from '../shared/campaign/convoys.js';
 import {isOut} from '../shared/campaign/hunt.js';
-import {SOURCES, isGone} from '../shared/campaign/contacts.js';
+import {SOURCES, sourceFor, isGone} from '../shared/campaign/contacts.js';
 import {byId} from './island.js';
 
 /** opts: {campaign, travel, parties, toast, save, rings}. Returns {world, stepHunters(dt), news(stepResult)}. */
@@ -65,6 +65,9 @@ export function mountWorld({campaign, travel, parties, toast, save, rings = null
       }
     }
     for (const p of hunters) {
+      const count = p.plate.querySelector('.pcount'),
+        strength = String(sourceFor(campaign, p.id).strength);
+      if (count.textContent !== strength) count.textContent = strength;
       const h = campaign.world.hunters?.[p.id];
       // (a column can have a lead from a fight before the world has stood it anywhere: it stays at its post)
       if (!h || isGone(campaign, p.id) || !Number.isFinite(h.x) || !Number.isFinite(h.z)) continue;

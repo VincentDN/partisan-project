@@ -55,7 +55,7 @@ See [graphics roadmap](graphics-roadmap.md) for the shared appearance acceptance
 | Return | One result per encounter, XP, wounds, equipment/goods, persistent kit, abandoned-mission recovery | Concurrent-tab transaction authority and interrupted-save UX |
 | Band | Promotions cost XP and equipment; grid kit and armoury; settlement recovery, weekly village barter and healthy tier-one recruits | Owned weapon-modder and operator appearance integration |
 | World consequences | Defeated contacts disappear; captured settlements change owner; seeded convoys resupply garrisons; liberated food and saved counterattacks make territory useful and vulnerable | Human tuning of garrison sizes, travel and response pacing |
-| Pressure | Heat-driven hunter columns, day/night sight, last-seen searches, lost-contact behavior and defence encounters | Human tuning of pursuit frequency and fair recovery |
+| Pressure | Four strength-based response tiers, heat-driven hunter columns, day/night sight, last-seen searches, lost-contact behavior and defence encounters | Human tuning of pursuit frequency and fair recovery |
 | Slice objective | Operation Foothold: win a convoy encounter, earn three victories, liberate Fort Orion; completion in band panel | Dedicated operation summary, authored onboarding and end-to-end player acceptance |
 | Quality | Deterministic replays, simulation/inventory/campaign regression suites, build/link checks | Browser, accessibility, multi-browser, memory and reference-device performance gates |
 
@@ -219,6 +219,35 @@ columns. Arrival, departure and retaking are announced; route, siege timing and 
 These are implemented rules, with deterministic simulation and browser transition checks. Full human pacing
 acceptance, interruption of long rests and more varied settlement-defence terrain remain future work.
 
+### Occupation escalation
+
+The response score is the sum of every named fighter's class tier plus twelve points for each originally occupied
+settlement currently liberated. Wounded fighters and reserves count; legacy troop stacks, selected squad size and
+heat do not inflate the score. The fresh eight-person band scores 28. Losing territory can reduce the response.
+
+| Tier | Score | Response | Additional soldiers per hunter column | Raider / Orion activation heat | Reaction / shot-spread multipliers |
+| --- | --- | --- | --- | --- | --- |
+| 0 | 0–39 | Routine patrols | 0 | 20 / 50 | 1.00 / 1.00 |
+| 1 | 40–59 | Active search | 4 | 15 / 45 | 0.90 / 0.95 |
+| 2 | 60–79 | Containment | 8 | 10 / 40 | 0.80 / 0.90 |
+| 3 | 80+ | Suppression | 12 | 5 / 35 | 0.70 / 0.85 |
+
+Hunter sizes start at 31 raiders and 26 Orion soldiers. Their authored cave/hilltop waves now field the exact
+strategic count, including vehicle crew, without difficulty thinning. Tier one upgrades selected regular riflemen
+to grenadiers; tier two adds machine guns and tier three adds marksmen. Existing leaders, radio operators and
+militia keep their roles. Garrison, militia, counterattack and convoy headcounts remain authoritative.
+
+Reaction and spread multipliers apply on top of the chosen tactical difficulty; rebel health and damage settings
+are preserved. Party shows the score breakdown and next threshold, map labels show current hunter strength, and
+encounter briefings show the tier. Deployment snapshots the tier and hunter count so a mission cannot change its
+rules during loading. Practice levels retain their original setup. Auto-resolve uses the same eligibility rule
+but accounts for escalation in victory odds and expected wounds.
+
+Run `node tools/campaign-response.mjs` to inspect the same rules over 8/12/18-person bands and zero to four
+liberated seats. The fresh band reaches tier one after its first liberation; an eighteen-person band with two
+liberated seats reaches containment. This is a deterministic progression curve, not a claim that human difficulty
+or multi-campaign economy balance is finished. W23 supplies that longitudinal harness; W24 retains device acceptance.
+
 ### Finish and continue
 
 Operation Foothold completes when its three conditions are true. Show which conditions remain and acknowledge
@@ -277,7 +306,7 @@ updates, and navigation baking. Do not cut art or claim achieved FPS without mea
 | Later expansion | 50-campaign tuning harness, additional regions, larger war and vehicle escalation | Build only after the core loop is stable and understandable |
 
 Do not restart Claude's completed tactical systems. Continue from the working inventory, squad control, mission
-variants, simulation spatial cache, replays and quality harnesses. The next engineering priorities are escalation tiers (W20), campaign endings (W21), the 50-campaign balance harness (W23),
+variants, simulation spatial cache, replays and quality harnesses. The next engineering priorities are campaign endings (W21), the 50-campaign balance harness (W23),
 and stronger save authority; additional showcase assets are secondary to those campaign dependencies.
 
 ## 7. Packet reconciliation
@@ -297,7 +326,7 @@ items came from (missions, cargo, the trader). W15 is done (2026-10-12): the Reb
 map's band panel on the campaign save, shows the named fighters above the troop stacks and promotes them with their
 experience and the stash's kit; the standalone demo keeps its own save. W4–W7 now supply day/night time, a fixed-step seeded world, convoy resupply/respawn and searching hunter columns.
 W10 is complete: exact garrison/militia composition, bounded reserves, raid/capture choices and night conditions. W19 now provides weekly recovery meals and saved, garrison-funded counterattacks: intercept or defend; unattended sieges and lost defences reverse ownership. W18 completes its recruitment benefit.
-W12 now targets six-to-nine-person deployment rather than the obsolete four-person plan. W18 is complete: finite seeded village barter, better liberated rates, healthy weekly volunteers and failed-save rollback. W21 has a bounded objective, not the complete endgame/defeat presentation. W24 retains the
+W12 now targets six-to-nine-person deployment rather than the obsolete four-person plan. W18 is complete: finite seeded village barter, better liberated rates, healthy weekly volunteers and failed-save rollback. W20 implements the documented response curve and its harness. W21 has a bounded objective, not the complete endgame/defeat presentation. W24 retains the
 real-device budget and final browser gate. W26's visual decision is superseded by the owner's 2.5D-default request.
 
 Packet notes record these distinctions and the generated master table remains synchronized. A ready packet means

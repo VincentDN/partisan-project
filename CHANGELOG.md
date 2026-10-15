@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-10-15 — occupation escalation
+
+- Add four response tiers driven by the named band and liberated territory. Explain current strength and the next tier in Party and show the response before encounters.
+- Higher tiers bring larger hunter columns, earlier heat activation, faster reactions, tighter fire and more specialist equipment. Hunter missions field their exact displayed strength; settlement and convoy counts stay authoritative.
+- Save the response with each deployment. Auto-resolve reflects tougher enemies in its odds and wound forecast. Add a deterministic response-curve harness.
+
 ## 2026-10-15 — village recruits and barter
 
 - Barter spare equipment and recovered valuables for finite weekly village supplies. Liberated villages offer better rates and larger stock; campaign camps no longer have a trader. Practice trading is unchanged.
