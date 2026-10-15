@@ -94,3 +94,9 @@ export async function frames(page, n = 3) {
     n,
   );
 }
+
+/** After a won campaign mission: wait for the spoils screen to finish dealing, then take it back to the world map. */
+export async function leaveSpoils(page) {
+  await page.locator('.spoils-foot:not([hidden])').waitFor({timeout: 30000});
+  await page.locator('.spoils button', {hasText: 'Back to the world map'}).click();
+}

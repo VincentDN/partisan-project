@@ -58,7 +58,9 @@ try {
   await ready(page);
   assert.equal(await page.evaluate(() => window.PARP_SPRITES.campaign.action), 'debrief');
   assert.match(await page.locator('#card-text').innerText(), /Accomplished/);
-  await Promise.all([page.waitForURL(/\/map\/\?campaign=c1$/), page.locator('#start').click()]);
+  // a win shows the spoils first (convoy/spoils.js); its button leads back to the map
+  await page.locator('.spoils-foot:not([hidden])').waitFor({timeout: 30000});
+  await Promise.all([page.waitForURL(/\/map\/\?campaign=c1$/), page.locator('.spoils button', {hasText: 'Back to the world map'}).click()]);
   let c = await save(page);
   assert.deepEqual(c.settled, ['e1']);
   assert.equal(c.deployment, null);

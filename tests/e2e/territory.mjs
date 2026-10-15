@@ -1,6 +1,6 @@
 // A saved counterattack appears on the map, opens a defence and keeps liberation after a won return.
 import assert from 'node:assert/strict';
-import {launch, open, startServer} from './browser.mjs';
+import {launch, open, startServer, leaveSpoils} from './browser.mjs';
 const server = await startServer(8187),
   browser = await launch();
 try {
@@ -34,7 +34,7 @@ try {
     window.PARP_SPRITES.sim.outcome = 'won';
   });
   await page.locator('#combat-loot').waitFor();
-  await page.locator('#start').click();
+  await leaveSpoils(page); // a win: the spoils screen, then the map
   await ready();
   assert.deepEqual(
     await page.evaluate(() => {

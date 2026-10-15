@@ -81,7 +81,11 @@ try {
   await page.locator('#start').click();
   await page.evaluate(() => (window.PARP_SPRITES.sim.outcome = 'won'));
   await page.waitForFunction(() => !document.querySelector('#card').hidden, null, {timeout: 10000});
-  await Promise.all([page.waitForURL(/map\/\?campaign=c1$/, {waitUntil: 'commit'}), page.locator('#start').click()]);
+  await page.locator('.spoils-foot:not([hidden])').waitFor({timeout: 30000}); // a win: the spoils, then the map
+  await Promise.all([
+    page.waitForURL(/map\/\?campaign=c1$/, {waitUntil: 'commit'}),
+    page.locator('.spoils button', {hasText: 'Back to the world map'}).click(),
+  ]);
   await mapReady(page);
   const home = (await saved(page)).band.fighters;
   for (const id of picked) assert.ok(home[id].kit?.primary?.uid, `${id} carried a kit home`);
@@ -113,7 +117,11 @@ try {
     await page.locator('#start').click();
     await page.evaluate(() => (window.PARP_SPRITES.sim.outcome = 'won'));
     await page.waitForFunction(() => !document.querySelector('#card').hidden, null, {timeout: 10000});
-    await Promise.all([page.waitForURL(/map\/\?campaign=c1$/, {waitUntil: 'commit'}), page.locator('#start').click()]);
+    await page.locator('.spoils-foot:not([hidden])').waitFor({timeout: 30000}); // a win: the spoils, then the map
+    await Promise.all([
+      page.waitForURL(/map\/\?campaign=c1$/, {waitUntil: 'commit'}),
+      page.locator('.spoils button', {hasText: 'Back to the world map'}).click(),
+    ]);
     await mapReady(page);
     d = (await saved(page)).deployment;
     assert.equal(d, null, `${level}: settled`);

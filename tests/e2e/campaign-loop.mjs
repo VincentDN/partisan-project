@@ -95,7 +95,9 @@ try {
   assert.match(await page.locator('#card-text').innerText(), /from the convoy's cargo/);
 
   // 3. back on the map: the result reported, the convoy gone, experience and loot in the save
-  await Promise.all([page.waitForURL(/map\/\?campaign=c1$/), page.locator('#start').click()]);
+  // a win shows the spoils first (convoy/spoils.js); its button leads back to the map
+  await page.locator('.spoils-foot:not([hidden])').waitFor({timeout: 30000});
+  await Promise.all([page.waitForURL(/map\/\?campaign=c1$/), page.locator('.spoils button', {hasText: 'Back to the world map'}).click()]);
   await mapReady(page);
   assert.match(await page.locator('#toast').innerText(), /Supply convoy: destroyed/);
   assert.equal(await page.evaluate(() => window.PARP_MAP.parties.parties.find(p => p.id === 'supply-convoy').root.visible), false);

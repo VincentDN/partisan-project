@@ -1,6 +1,6 @@
 // Settlement choices carry actual defenders into missions; raids preserve ownership and captures liberate on return.
 import assert from 'node:assert/strict';
-import {launch, open, startServer} from './browser.mjs';
+import {launch, open, startServer, leaveSpoils} from './browser.mjs';
 const server = await startServer(8186),
   browser = await launch();
 try {
@@ -44,7 +44,7 @@ try {
       s.outcome = 'won';
     });
     await page.locator('#combat-loot').waitFor();
-    await page.locator('#start').click();
+    await leaveSpoils(page); // a win: the spoils screen, then the map
     await ready();
     const state = await page.evaluate(() => window.PARP_MAP.travel.campaign.world.settlements.myrtia);
     assert.equal(state.owner === 'resistance', intent === 'capture');
