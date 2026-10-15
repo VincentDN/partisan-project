@@ -3,6 +3,7 @@
 // grey layers, and assembles paper-doll pawns (body, clothes, head, hair, headgear) for the three drawn directions.
 
 import {OPTIMISED} from './set-optimised.js';
+import {classLook} from '../shared/campaign/looks.js';
 
 const BASE = new URL('../inbound/Placeholder%20Assets/', import.meta.url).href;
 const H = 'Things/Pawn/Humanlike/';
@@ -316,9 +317,14 @@ const HAIRS = ['Bowlcut', 'Mess', 'Recruit', 'Rookie', 'Shaved', 'Tuft', 'Decent
 const HAIR_COLORS = ['#2b2118', '#4a3220', '#6b4a2a', '#1d1a17', '#8a6a42'];
 const pick = (list, key) => list[[...key].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7) % list.length];
 /** The look for a unit: the side's default, with any saved cosmetics on top (rebels only). */
+/**
+ * A unit's paper-doll look. A rebel: their default, their class's outfit (u.cls), what the player chose for them in
+ * the Look panel, and on top what they wear from their kit (u.wear: shared/campaign/looks.js wornLook, WP-W17).
+ */
 export function lookFor(u) {
   const look = defaultLook(u);
-  return u.side === 'partisan' ? {...look, ...savedLook(u.id)} : look;
+  if (u.side !== 'partisan') return look;
+  return {...look, ...(u.cls ? classLook(u.cls) : {}), ...savedLook(u.id), ...(u.wear || {})};
 }
 function defaultLook(u) {
   const base = {

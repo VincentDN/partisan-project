@@ -244,7 +244,17 @@ export async function mountMap({HD2D, createSpriteLayer, createHD2D, figure}) {
     onOrder: () => !speed && setSpeed(1), // an order to march starts the clock
   });
   const rings = travel.campaign ? createSightRings({scene, field}) : null; // sight on the map (WP-W7)
-  campaignUi = mountCampaign({travel, parties, townLabels, setSpeed, getSpeed: () => speed, toast, rings});
+  campaignUi = mountCampaign({
+    travel,
+    parties,
+    townLabels,
+    setSpeed,
+    getSpeed: () => speed,
+    toast,
+    rings,
+    // the band on the map dressed as its first fighters are (WP-W17); the 3-D style keeps its figure
+    dressBand: sprites ? people => sprites.dress(parties.hero.root, people) : null,
+  });
   // wrecks, scorch and smoke where the band has fought (WP-W13): re-matched to the save as campaign hours pass
   const aftermath = travel.campaign ? createAftermath({scene, field, reduceMotion}) : null;
   let aftermathHour = '';

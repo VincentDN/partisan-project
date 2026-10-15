@@ -82,7 +82,7 @@ export async function createSpriteLayer({ground = null} = {}) {
       holder.position.set(i ? -3.2 * Math.ceil(i / 2) : 0, 0, i ? (i % 2 ? 4.2 : -4.2) : 0);
       holder.add(mesh);
       root.add(holder);
-      members.push({mesh, holder, frames, phase: i * 0.37 + n * 0.11});
+      members.push({mesh, holder, frames, gun, look: lookFor({id, side}), phase: i * 0.37 + n * 0.11});
     }
     cards.push({root, members, kind: 'person', last: new T.Vector3(), moving: 0});
     return {root, update() {}};
@@ -137,5 +137,24 @@ export async function createSpriteLayer({ground = null} = {}) {
       }
     }
   }
-  return {makers: {figure}, update, cards};
+  /**
+   * Dress the band figure rooted at `root` as `people` ([{id, cls, wear}], its members in order: WP-W17): each member
+   * looks as that fighter does (class outfit, worn helmet and vest). Members whose look has not changed are kept.
+   */
+  async function dress(root, people) {
+    const c = cards.find(x => x.root === root);
+    if (!c) return;
+    for (const [i, m] of c.members.entries()) {
+      const p = people[i];
+      if (!p) continue;
+      const look = lookFor({id: p.id, side: 'partisan', cls: p.cls, wear: p.wear});
+      if (JSON.stringify(look) === JSON.stringify(m.look)) continue;
+      m.look = look;
+      const old = m.frames;
+      m.frames = Object.fromEntries(Object.entries(armed(await buildPawn(look), m.gun)).map(([d, cv]) => [d, crisp(cv)]));
+      m.mesh.material.map = m.frames.south;
+      for (const t of Object.values(old)) t.dispose();
+    }
+  }
+  return {makers: {figure}, update, cards, dress};
 }

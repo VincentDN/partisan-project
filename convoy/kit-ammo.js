@@ -25,6 +25,11 @@ export function attachAmmo(sim, cat, {kits = {}, seed = 1, army = false} = {}) {
     // a kit for another weapon (the fighter was promoted into a new class) stays home; a new one is issued
     if (!kits[u.id] || (kits[u.id].armsId && kits[u.id].armsId !== w)) kits[u.id] = factory.issue(w);
     kits[u.id].armsId = w;
+    // a soldier wears what his sprite shows (WP-W17): a helmet (the newer 6B47 for crews and radiomen), a flak vest
+    if (u.side === 'army' && !kits[u.id].headwear) {
+      kits[u.id].headwear = factory.make(u.role === 'turret' || u.role === 'rto' ? '6b47-helmet' : 'ssh-68-steel-helmet');
+      kits[u.id].armor = factory.make('flak-vest');
+    }
   }
   const kitOf = u => kits[u.id];
   const owns = (u, wid) => !!kitOf(u) && kitOf(u).armsId === wid && !!kitOf(u).primary;
@@ -101,7 +106,7 @@ export function attachAmmo(sim, cat, {kits = {}, seed = 1, army = false} = {}) {
   function bodyOf(u) {
     const k = kitOf(u),
       c = factory.place('body', u.name || 'Fallen soldier');
-    for (const it of [k.primary, k.secondary].filter(Boolean)) add(cat, c, it);
+    for (const it of [k.primary, k.secondary, k.headwear, k.armor].filter(Boolean)) add(cat, c, it);
     for (const box of reachable(k)) for (const it of contents(box)) add(cat, c, it);
     kits[u.id] = null; // it is all on the ground now
     return c;

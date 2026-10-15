@@ -9,6 +9,13 @@ import {itemKeys} from './grid-keys.js';
 import {loadMag, roundsIn, loadedRounds, chamber} from './ammo.js';
 
 const CELL = 46;
+/** The kit's slots: what each takes, and how the screen says it (a helmet or a vest is worn: it shows, WP-W17). */
+const SLOTS = {
+  primary: {label: 'Primary', kind: 'weapon', where: 'hands', put: 'in your hands'},
+  secondary: {label: 'Sling', kind: 'weapon', where: 'the sling', put: 'on the sling'},
+  headwear: {label: 'Head', kind: 'headwear', where: 'on the head', put: 'worn'},
+  armor: {label: 'Body', kind: 'armor', where: 'worn', put: 'worn'},
+};
 const el = (tag, cls = '', text = '') => Object.assign(document.createElement(tag), {className: cls, textContent: text});
 
 /** panels: [{title, kit}] or [{title, container}]; make(slug, count) builds items (for splits and unloads). */
@@ -92,14 +99,14 @@ export function mountInventory(root, {cat, panels, make, onChange = () => {}, on
     sec.append(...(title ? [el('h3', '', title)] : []), row);
     return sec;
   }
-  /** Primary (it stays in the hands in this screen) and the sling, where a second long gun is carried. */
+  /** A kit slot (SLOTS): the primary stays in the hands in this screen; the sling, head and body take and give. */
   function drawWeapon(kit, which) {
     const slot = el('div', 'inv-slot');
     slot.dataset.weapon = which;
-    slot.append(el('span', 'slot-name', which === 'primary' ? 'Primary' : 'Sling'));
+    slot.append(el('span', 'slot-name', SLOTS[which].label));
     const w = kit[which];
     if (w) {
-      const t = tile(w, which === 'primary' ? null : {slot: which, kit}, which === 'primary' ? 'hands' : 'the sling');
+      const t = tile(w, which === 'primary' ? null : {slot: which, kit}, SLOTS[which].where);
       if (which === 'primary') t.onpointerdown = null;
       slot.append(t);
     }
@@ -113,7 +120,7 @@ export function mountInventory(root, {cat, panels, make, onChange = () => {}, on
         col.append(el('h2', 'inv-title', p.title));
         const k = p.kit;
         if (k) {
-          col.append(drawWeapon(k, 'primary'), drawWeapon(k, 'secondary'));
+          col.append(...Object.keys(SLOTS).map(s => drawWeapon(k, s)));
           if (k.rig) col.append(drawContainer(k.rig, cat.def(k.rig.slug).short));
           col.append(drawContainer(k.pockets, 'Pockets'));
           if (k.backpack) col.append(drawContainer(k.backpack, cat.def(k.backpack.slug).short));
@@ -146,10 +153,10 @@ export function mountInventory(root, {cat, panels, make, onChange = () => {}, on
         if (old && !placeNear(cat, c.from, c.was.g, old, c.was.x, c.was.y, 0)) add(cat, c.from, old);
         done = true;
       }
-    } else if (t?.weapon && kit && !w && d.kind === 'weapon') {
+    } else if (t?.weapon && kit && !w && d.kind === SLOTS[t.weapon].kind) {
       c.item.rot = 0;
       kit[t.weapon] = c.item;
-      why = `${d.name} ${t.weapon === 'primary' ? 'in your hands' : 'on the sling'}.`;
+      why = `${d.name} ${SLOTS[t.weapon].put}.`;
       done = true;
     } else if (t?.container) {
       const under = t.container.grids[t.g].items.find(e => {

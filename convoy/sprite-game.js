@@ -23,6 +23,7 @@ import {createBanter} from './banter.js';
 import {createCatalogue} from '../shared/inventory/catalogue.js';
 import {COSMETICS, buildPawn, lookFor, saveLook, resetLook, savedLook, loadSet} from './sprite-art.js';
 import {showSpoils} from './spoils.js';
+import {wornLook, wornFields} from '../shared/campaign/looks.js';
 import {setLoader} from '../shared/loader.js';
 
 mountTopBar({title: 'Partisan Tactical', scene: 'viewer'});
@@ -87,6 +88,7 @@ function newGame() {
     difficulty: diffId,
   });
   search?.attach(sim, {seed, kits: cm?.action === 'play' ? cm.kits() : undefined});
+  dress();
   if (cm?.action === 'play' && search?.ammo) cm.rememberKits(search.ammo.kits);
   document.querySelector('#combat-loot')?.remove();
   banter = createBanter(sim, seed);
@@ -418,6 +420,19 @@ function showLootReport() {
   $('#card-text').after(report);
   if (cm.result?.outcome === 'won') spoilsScreen();
 }
+/** Each rebel wears what is in their kit's Head and Body slots (shared/campaign/looks.js); redrawn when it changes. */
+function dress() {
+  let changed = false;
+  for (const u of sim?.units || []) {
+    if (u.side !== 'partisan') continue;
+    const wear = wornLook(search?.ammo?.kitOf(u));
+    if (JSON.stringify(wear) === JSON.stringify(u.wear || {})) continue;
+    u.wear = wear;
+    R.refreshLook(u.id);
+    changed = true;
+  }
+  if (changed && lookEl) renderLook(); // the Look panel shows what is worn
+}
 /** A won campaign mission: the spoils dealt out one by one, then on to the map or to the Rebel Band (convoy/spoils.js). */
 function spoilsScreen() {
   document.querySelector('.spoils')?.remove();
@@ -489,6 +504,7 @@ const search = CAT
       onOpen: () => clearInput(),
       onClose: () => {
         clearInput();
+        dress(); // a helmet or a vest put on in the search shows at once (WP-W17)
         stageEl.focus({preventScroll: true});
       },
     })
@@ -649,6 +665,17 @@ async function renderLook() {
     R.refreshLook(u.id);
     renderLook();
   };
+  // what the kit's Head and Body slots hold decides headgear and outfit (WP-W17): shown, not chosen
+  const kit = search?.ammo?.kitOf(u),
+    wornNow = wornFields(kit);
+  const worn = (row, field) => {
+    if (!wornNow.includes(field)) return row;
+    const sel = row.querySelector('select'),
+      item = field === 'hat' ? kit.headwear : kit.armor;
+    sel.disabled = true;
+    row.append(Object.assign(document.createElement('small'), {className: 'worn', textContent: `worn: ${CAT.def(item.slug).short}`}));
+    return row;
+  };
   const gunOptions = [['', `Default (${WEAPONS[u.weapons[0]].label})`], ...Object.entries(R.guns).map(([id, g]) => [id, g.label])];
   lookEl.replaceChildren(
     tabs,
@@ -675,18 +702,24 @@ async function renderLook() {
       v => change({shirt: v}),
     ),
     swatches('Shirt colour', look.shirtColor, COSMETICS.colors, v => change({shirtColor: v})),
-    select(
-      'Outfit',
-      look.shell || 'none',
-      COSMETICS.shell.map(h => [h, nice(h)]),
-      v => change({shell: v}),
+    worn(
+      select(
+        'Outfit',
+        look.shell || 'none',
+        COSMETICS.shell.map(h => [h, nice(h)]),
+        v => change({shell: v}),
+      ),
+      'shell',
     ),
     swatches('Outfit colour', look.shellColor, COSMETICS.colors, v => change({shellColor: v})),
-    select(
-      'Headgear',
-      look.hat || 'none',
-      COSMETICS.hat.map(h => [h, nice(h)]),
-      v => change({hat: v}),
+    worn(
+      select(
+        'Headgear',
+        look.hat || 'none',
+        COSMETICS.hat.map(h => [h, nice(h)]),
+        v => change({hat: v}),
+      ),
+      'hat',
     ),
     swatches('Headgear colour', look.hatColor, COSMETICS.colors, v => change({hatColor: v})),
     reset,

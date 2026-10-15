@@ -3338,7 +3338,7 @@
    "milestone": "W",
    "size": "S",
    "bu": 8,
-   "status": "planned",
+   "status": "done",
    "deps": [
     "WP-W15"
    ],
@@ -3349,7 +3349,8 @@
    "inputs": [
     "docs/campaign-roadmap.md"
    ],
-   "acceptance": "Promoting a fighter or giving them a helmet changes their look in the customiser and on the map."
+   "acceptance": "Promoting a fighter or giving them a helmet changes their look in the customiser and on the map.",
+   "progress_note": "2026-10-15: done. shared/campaign/looks.js: a fighter looks like their class (band/troops.js outfits) with what they wear on top: the grid kit now has Head and Body slots (drag or Ctrl-click a helmet or a vest onto them), and the catalogue has the SSh-68 and 6B47 helmets, a flak vest and a 6B23 plate carrier; soldiers wear them and their bodies drop them. lookFor (convoy/sprite-art.js) layers default, class, the player's own Look choices, then worn kit; a rebel is redressed when a search closes, and the Look panel shows worn headgear and outfit as worn. The campaign map's band figure is dressed as its first three fighters and redressed after a promotion or a kit change. The 3-D Operator Customiser is outside the campaign and unchanged. tests/campaign-looks.test.mjs, tests/e2e/looks.mjs."
   },
   {
    "id": "WP-W18",
@@ -3648,7 +3649,7 @@
    "inputs": [
     "docs/quality-roadmap.md"
    ],
-   "acceptance": "Property tests over garbage and truncated saves; settle is idempotent across a reload at every step; a second tab never loses the other tab\u2019s writes silently (it warns or merges); quota errors are reported, not swallowed."
+   "acceptance": "Property tests over garbage and truncated saves; settle is idempotent across a reload at every step; a second tab never loses the other tab’s writes silently (it warns or merges); quota errors are reported, not swallowed."
   },
   {
    "id": "WP-QA5",

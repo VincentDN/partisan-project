@@ -1,7 +1,7 @@
 // Where a moved item ends up (the grid inventory's forgiving moves): a drop that misses by a cell or two lands in the
 // nearest free place in that grid (then anywhere in that box), and a quick move (Ctrl-click, T) sends an item to the
-// first place it fits on the other side: from a body or a cache into the kit (a long gun onto the sling, if it is free),
-// from the kit into what is searched. Pure, no DOM.
+// first place it fits on the other side: from a body or a cache into the kit (a long gun onto the sling, a helmet or a
+// vest put on, if free), from the kit into what is searched. Pure, no DOM.
 import {footprint, fits, placeAt, add} from './grid.js';
 
 /** Put `item` at (x, y) in grid `g`, or as near to it as it fits in that grid, or anywhere in `container`. */
@@ -32,13 +32,15 @@ export const kitBoxes = kit => [kit.rig, kit.pockets, kit.backpack].filter(Boole
  */
 export function quickPlace(cat, item, {kit, container, toKit}) {
   if (!toKit) return container && add(cat, container, item) ? 'there' : null;
-  if (cat.def(item.slug).kind === 'weapon')
-    for (const slot of ['primary', 'secondary'])
-      if (!kit[slot]) {
-        item.rot = 0;
-        kit[slot] = item;
-        return slot === 'primary' ? 'your hands' : 'the sling';
-      }
+  const kind = cat.def(item.slug).kind;
+  // a weapon to the hands or the sling; a helmet or a vest is put on (WP-W17)
+  const slots = kind === 'weapon' ? ['primary', 'secondary'] : kind === 'headwear' || kind === 'armor' ? [kind] : [];
+  for (const slot of slots)
+    if (!kit[slot]) {
+      item.rot = 0;
+      kit[slot] = item;
+      return slot === 'primary' ? 'your hands' : slot === 'secondary' ? 'the sling' : 'worn';
+    }
   for (const box of kitBoxes(kit)) if (add(cat, box, item)) return box === kit.pockets ? 'pockets' : cat.def(box.slug).short;
   return null;
 }

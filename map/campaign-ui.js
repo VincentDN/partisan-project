@@ -23,6 +23,7 @@ import {squadPicker} from './encounter-squad.js';
 import {rest, safeHaven, operation} from '../shared/campaign/operations.js';
 import {deploy} from '../shared/campaign/encounter.js';
 import {mountWorld} from './campaign-world.js';
+import {wornLook} from '../shared/campaign/looks.js';
 import {TROOPS, GEAR} from '../band/troops.js';
 import {createCamp, NAMES} from '../convoy/camp.js';
 import {SETTLEMENTS, byId} from './island.js';
@@ -58,7 +59,7 @@ const el = (tag, attrs = {}, ...kids) => {
 /** Replace a panel's content; empty parts (a null for "nothing to show") are left out instead of printed. */
 const fill = (node, ...kids) => node.replaceChildren(...kids.flat().filter(k => k !== null && k !== undefined && k !== false && k !== ''));
 
-export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed = () => 1, toast, rings = null}) {
+export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed = () => 1, toast, rings = null, dressBand = null}) {
   const campaign = travel.campaign;
   if (!campaign) return null;
   const save = () => travel.save();
@@ -335,8 +336,20 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
     campaign,
     save,
     names: NAMES,
-    onClose: id => (bandPanel.querySelector(`.kit-open[data-id="${id}"]`) || bandPanel.querySelector('.kit-open'))?.focus(),
+    onClose: id => {
+      dress(); // a helmet or a vest put on shows on the map (WP-W17)
+      (bandPanel.querySelector(`.kit-open[data-id="${id}"]`) || bandPanel.querySelector('.kit-open'))?.focus();
+    },
   });
+  /** The band figure on the map: its first three fighters as they look (class outfit and worn kit, WP-W17). */
+  function dress() {
+    dressBand?.(
+      Object.entries(campaign.band.fighters)
+        .slice(0, 3)
+        .map(([id, f]) => ({id, cls: f.class, wear: wornLook(f.kit)})),
+    );
+  }
+  dress();
   // the camp's cards (convoy/camp.js) work on a squad: the campaign's fighters and stash seen as one
   const asSquad = () => ({
     classes: Object.fromEntries(Object.entries(campaign.band.fighters).map(([id, f]) => [id, f.class])),
@@ -364,6 +377,7 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
       campaign.goods = next.goods;
       campaign.scrip = next.scrip;
       save();
+      dress(); // a promotion changes the outfit (WP-W17)
       if (why) toast(why);
       renderBand();
       renderCard();
