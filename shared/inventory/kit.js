@@ -100,6 +100,9 @@ export function createKit(cat, {prefix = 'i'} = {}) {
     if (r() < 0.45) add(cat, c, make(a.round, 3 + Math.floor(r() * 15)));
     if (r() < 0.3) add(cat, c, make('army-bandage'));
     if (r() < 0.2) add(cat, c, make(ISSUE.grenade));
+    // what he wore (WP-W17): his helmet, and the flak vest most of them have on (a crewman's newer helmet)
+    add(cat, c, make(role === 'turret' || role === 'rto' ? '6b47-helmet' : 'ssh-68-steel-helmet'));
+    if (r() < 0.7) add(cat, c, make('flak-vest'));
     return c;
   }
 

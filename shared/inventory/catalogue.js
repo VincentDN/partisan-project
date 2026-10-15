@@ -21,6 +21,11 @@ const MAG_CALIBRE = /(\d+(?:\.\d+)?x\d+R?|\d{2}ga|\.\d{3}\b)/;
 
 /** Items the catalogue lacks, in its own format. */
 export const EXTRA = [
+  // what soldiers wear (WP-W17): worn in the kit's Head and Body slots, they change a fighter's look
+  {slug: 'ssh-68-steel-helmet', name: 'SSh-68 steel helmet', short: 'SSh-68', w: 2, h: 2, kg: 1.5, stats: {kind: 'headwear', class: 2}},
+  {slug: '6b47-helmet', name: '6B47 Ratnik helmet', short: '6B47', w: 2, h: 2, kg: 1.3, stats: {kind: 'headwear', class: 3}},
+  {slug: 'flak-vest', name: 'Flak vest', short: 'Flak', w: 2, h: 3, kg: 4, stats: {kind: 'armor', class: 2}},
+  {slug: 'plate-carrier', name: '6B23 plate carrier', short: '6B23', w: 2, h: 3, kg: 8, stats: {kind: 'armor', class: 4}},
   {
     slug: 'gp-25-grenade-launcher',
     name: 'GP-25 Kostyor 40mm under-barrel grenade launcher',
@@ -119,7 +124,7 @@ export function createCatalogue(data, extra = EXTRA) {
       Object.assign(d, {stack: st.stackMaxSize || 60, damage: st.damage || 0, pen: st.penetrationPower || 0, tracer: !!st.tracer});
     if (med) Object.assign(d, {heal: st.maxHealPerUse || 15, charges: st.hitpoints || (st.uses || 1) * 15});
     if (kind === 'rig' || kind === 'backpack') d.grids = gridsFor(kind, st.capacity || 4);
-    if (kind === 'armor' || kind === 'rig') d.armourClass = st.class || 0;
+    if (kind === 'armor' || kind === 'rig' || kind === 'headwear') d.armourClass = st.class || 0;
     defs.set(it.slug, d);
   }
   const all = [...defs.values()];
