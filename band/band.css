@@ -112,8 +112,12 @@ button {
 .item.short .n {
   color: var(--bad);
 }
-.item.empty {
-  opacity: 0.45;
+/* none in the stash: the picture dimmed, the words still readable (contrast) */
+.item.empty > :first-child {
+  opacity: 0.4;
+}
+.item.empty span {
+  color: #a8a497;
 }
 /* ---------- centre ---------- */
 .centre {

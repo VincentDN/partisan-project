@@ -66,10 +66,11 @@ try {
         .data.some((v, i) => i % 4 === 3 && v > 0),
     })),
   );
-  assert.ok(
-    /^AK-74, \d+$/.test(cards[0].label) && +cards[0].label.split(', ')[1] >= 4,
-    `the rifles first: the cargo's four and any the fight gave (${cards[0].label})`,
-  );
+  // the AK-74s: the cargo's four and any the fight gave; every rifle before the rest (in any order among them)
+  const ak = cards.find(c => /^AK-74, \d+$/.test(c.label));
+  assert.ok(ak && +ak.label.split(', ')[1] >= 4, `the AK-74s (${ak?.label})`);
+  const rifles = await page.locator('.spoils-card').evaluateAll(cs => cs.map(c => c.classList.contains('spoils-weapon')));
+  assert.ok(rifles.indexOf(false) === -1 || rifles.indexOf(false) > rifles.lastIndexOf(true), 'every rifle before the rest');
   assert.ok(
     cards.some(c => c.label === 'SVDS 7.62x54R sniper rifle, 1'),
     'the rifle brought home in a kit',

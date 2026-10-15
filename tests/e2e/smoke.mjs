@@ -606,10 +606,15 @@ await check(
     // the start stash has the vest and helmet for Heavy Fighter
     const promote = page.locator('#camp [data-promote="player:heavy"]');
     assert.equal(await promote.isDisabled(), false);
+    const had = camp.stash; // (the loot may have brought a vest or a helmet of its own)
     await promote.click();
     const squad = await page.evaluate(() => JSON.parse(localStorage.getItem('parp-squad-v1')));
     assert.equal(squad.classes.player, 'heavy', 'promoted along the tree and saved');
-    assert.ok(!squad.stash.vest && !squad.stash.helmet, 'the equipment is spent');
+    assert.deepEqual(
+      [squad.stash.vest || 0, squad.stash.helmet || 0],
+      [(had.vest || 0) - 1, (had.helmet || 0) - 1],
+      'the equipment is spent: one vest, one helmet',
+    );
     // the trader: buy something with the starting scrip
     const offer = page.locator('#camp .offers button:not([disabled])').first();
     if (await offer.count()) {
