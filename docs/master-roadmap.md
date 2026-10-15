@@ -196,7 +196,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | **H27** 2027 horizon | — | 0/3 | 48 BU | 0% |
 | **S** Partisan Tactical: extraction PvE, campaign and gated online research | v0.8.0 | 15/44 | 673 BU | 34% |
 | **V** Graphics: 2.5D top-down sprites for the shooter (the overworld moved to W) | v0.9.0 | 2/20 | 251 BU | 11% |
-| **W** World campaign: the Bannerlord loop (map, missions, loot, upgrades) | v0.10.0 | 20/26 | 359 BU | 77% |
+| **W** World campaign: the Bannerlord loop (map, missions, loot, upgrades) | v0.10.0 | 21/26 | 359 BU | 82% |
 | **QA** Bug hunt and optimisation (docs/quality-roadmap.md) | — | 18/23 | 294 BU | 74% |
 
 ### M0 · Foundation
@@ -396,7 +396,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-W13` | Return to the map: settle casualties, wounds, experience, kills and aftermath (wreck, smoke); autosave and result toast | S (8) | done | — | — |
 | `WP-W14` | Loot into the band: cargo manifest and level loot into the campaign stash, with its source | S (8) | done | — | — |
 | `WP-W15` | The band screen on the campaign save, opened from the map (P); promotions with experience and stolen kit | M (20) | done | browser | — |
-| `WP-W16` | Owned guns in the Weapon Modder: only owned attachments selectable, locked ones say where they drop; assign a build to a fighter | M (20) | planned | browser | `WP-W15` |
+| `WP-W16` | Owned guns in the Weapon Modder: only owned attachments selectable, locked ones say where they drop; assign a build to a fighter | M (20) | done | browser | `WP-W15` |
 | `WP-W17` | Looks from kit: a fighter's class and owned wearables set the Operator Customiser look and the map figure | S (8) | done | browser | `WP-W15` |
 | `WP-W18` | Recruits and barter at friendly villages | S (8) | done | — | `WP-W15` |
 | `WP-W19` | Territory: capture settlements, what they give (recruits, food, rest), Invader counter-attacks to retake them | M (20) | done | — | `WP-W10`, `WP-W13` |

@@ -65,9 +65,11 @@ button:hover { border-color: var(--bronze-hi); color: #fff3d6; }
 button[aria-pressed='true'] { background: linear-gradient(var(--bronze-hi), var(--bronze)); color: var(--leather); }
 button:focus-visible { outline: 2px solid var(--lcd-hi); outline-offset: 2px; }
 /* a link that looks like the panel's buttons: the band panel's way to the full band screen (WP-W15) */
-a.band-screen { display: inline-flex; align-items: center; margin: 2px 0 8px; font: 600 12px/1 ui-sans-serif, system-ui, sans-serif; color: var(--parch); text-decoration: none; background: linear-gradient(#3a2f22, #241d15); border: 1px solid var(--bronze); border-radius: 2px; padding: 7px 10px; min-height: 28px; box-sizing: border-box; }
-a.band-screen:hover { border-color: var(--bronze-hi); color: #fff3d6; }
-a.band-screen:focus-visible { outline: 2px solid var(--lcd-hi); outline-offset: 2px; }
+a.band-screen, a.gun-open { display: inline-flex; align-items: center; margin: 2px 0 8px; font: 600 12px/1 ui-sans-serif, system-ui, sans-serif; color: var(--parch); text-decoration: none; background: linear-gradient(#3a2f22, #241d15); border: 1px solid var(--bronze); border-radius: 2px; padding: 7px 10px; min-height: 28px; box-sizing: border-box; }
+a.band-screen:hover, a.gun-open:hover { border-color: var(--bronze-hi); color: #fff3d6; }
+a.band-screen:focus-visible, a.gun-open:focus-visible { outline: 2px solid var(--lcd-hi); outline-offset: 2px; }
+.kit-buttons { display: flex; flex-wrap: wrap; gap: 6px; }
+a.gun-open { margin: 0; }
 
 .legend { top: 44px; left: 12px; padding: 10px 12px; width: 210px; }
 .legend ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }

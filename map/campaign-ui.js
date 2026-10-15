@@ -494,6 +494,23 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
           ),
         ),
       ),
+      // the Weapon Modder for each fighter: only the band's own parts, and the build they carry (WP-W16)
+      el('h3', {}, 'Guns: the Weapon Modder'),
+      el(
+        'div',
+        {class: 'kit-buttons'},
+        Object.keys(campaign.band.fighters).map(id =>
+          el(
+            'a',
+            {
+              class: 'gun-open',
+              'data-id': id,
+              href: `../workbench/?campaign=${encodeURIComponent(campaign.id)}&fighter=${encodeURIComponent(id)}`,
+            },
+            `${NAMES[id] || id}'s gun${campaign.band.fighters[id].build ? ` (${campaign.band.fighters[id].build.rifle.toUpperCase()})` : ''}`,
+          ),
+        ),
+      ),
       el('h3', {}, `Stash · ${gear.reduce((a, [, n]) => a + n, 0)} items`),
       el(
         'ul',

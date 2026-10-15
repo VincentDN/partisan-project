@@ -14,6 +14,7 @@ import {ATTACHMENT_FILES} from './attachments.js';
 import {blockedBy} from './stats.js';
 import * as mech from './mech.js';
 import {loaderError} from '../shared/loader.js';
+import {mountCampaignBench} from './campaign-bench.js';
 
 const accent = 0xef8f39;
 // Launch look: the sunset HDR as a blurred backdrop, turned so the sun keys the rifle from front-left.
@@ -44,6 +45,12 @@ let selected = null,
   restoring = true;
 // Everything that belongs to the mounted rifle; replaced on a switch.
 let rifle = null;
+// In a campaign (?campaign=&fighter=): only owned parts fit, and a build can be assigned to a fighter (WP-W16).
+const bench = mountCampaignBench({
+  params: new URLSearchParams(location.search),
+  root: document.querySelector('aside section'),
+  current: () => ({rifle: rifle.id, build: {...rifle.build}}),
+});
 const socketMarkers = new T.Group(),
   labelPoint = new T.Vector3();
 let labelsShown = false;
@@ -221,7 +228,9 @@ function renderBuild() {
         b.textContent = o.label;
         b.setAttribute('aria-pressed', String(rifle.build[slot.spec.id] === o.id));
         // Blocked options stay visible; clicking explains why instead of fitting them.
+        const owned = bench?.part(slot.spec.id, o.id);
         const rule =
+          (owned && !owned.ok ? owned : null) ||
           blockedBy(rifle.build, slot.spec.id, o.id) ||
           (RAIL_OF[slot.spec.id] && !resolve(railItems(), slot.spec.id, o.fp || [0, 0], slot.offset).ok
             ? {reason: 'No room on the ' + RAIL_OF[slot.spec.id] + ' rail: another part is in the way.'}
@@ -379,7 +388,13 @@ async function mount(id) {
   scene.add(rifle.model);
   const config = rifle.config;
   floor.position.y = new T.Box3().setFromObject(rifle.model).min.y - 0.002;
-  for (const b of document.querySelectorAll('[data-rifle]')) b.setAttribute('aria-pressed', String(b.dataset.rifle === id));
+  for (const b of document.querySelectorAll('[data-rifle]')) {
+    b.setAttribute('aria-pressed', String(b.dataset.rifle === id));
+    const lock = bench?.rifle(b.dataset.rifle); // a campaign: rifles the band does not have are locked
+    b.classList.toggle('blocked', !!lock && !lock.ok);
+    if (lock && !lock.ok) (b.setAttribute('aria-disabled', 'true'), (b.title = lock.reason));
+    else b.removeAttribute('aria-disabled');
+  }
   document.querySelector('#source').innerHTML =
     `Model: <a href="${config.source.url}">${config.source.title}</a> by <a href="${config.author.url}">${config.author.name}</a>, <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Loose rounds and spare magazine removed.`;
   for (const part of rifle.parts) {
@@ -419,7 +434,9 @@ async function mount(id) {
 let queue = Promise.resolve();
 function restore(hash) {
   const params = new URLSearchParams(hash.replace(/^#/, ''));
-  const id = MODELS[params.get('rifle')] ? params.get('rifle') : DEFAULT_MODEL;
+  let id = MODELS[params.get('rifle')] ? params.get('rifle') : DEFAULT_MODEL;
+  // in a campaign a rifle the band does not have is not offered: the fighter's first owned one instead
+  if (bench && !bench.rifle(id).ok) id = Object.keys(MODELS).find(m => bench.rifle(m).ok) || id;
   queue = queue
     .then(async () => {
       const switching = rifle?.id !== id;
@@ -437,6 +454,11 @@ function restore(hash) {
         const id = slot.spec.id;
         if (blockedBy(rifle.build, id, rifle.build[id]))
           rifle.build[id] = [defaultOption(slot), ...slot.options.map(o => o.id)].find(o => !blockedBy(rifle.build, id, o));
+        // a part the band does not own (in a campaign): the first it does own that fits
+        if (bench && !bench.part(id, rifle.build[id]).ok)
+          rifle.build[id] =
+            [defaultOption(slot), ...slot.options.map(o => o.id)].find(o => bench.part(id, o).ok && !blockedBy(rifle.build, id, o)) ??
+            rifle.build[id];
       }
       for (const sid of Object.keys(rifle.slots)) applySlot(sid, rifle.build[sid], rifle.slots[sid].pendingOffset);
       settleRails();
@@ -590,12 +612,19 @@ try {
     },
   };
 
-  await restore(location.hash);
+  // a campaign fighter's assigned build opens as it was
+  await restore(location.hash || (bench?.startHash ? '#' + bench.startHash : ''));
   if (!rifle) throw new Error('No rifle loaded');
+  if (bench) bench.onFighter = () => restore('#' + bench.startHash);
   view('hero');
   for (const b of document.querySelectorAll('[data-rifle]'))
     b.onclick = () => {
       if (rifle?.id === b.dataset.rifle) return;
+      const lock = bench?.rifle(b.dataset.rifle);
+      if (lock && !lock.ok) {
+        detail.textContent = `${b.textContent}: ${lock.reason}`;
+        return;
+      }
       mech.setDown();
       switchRifle(b.dataset.rifle)?.then(() => mech.charge());
     };

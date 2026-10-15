@@ -24,6 +24,7 @@ import {createCatalogue} from '../shared/inventory/catalogue.js';
 import {COSMETICS, buildPawn, lookFor, saveLook, resetLook, savedLook, loadSet} from './sprite-art.js';
 import {showSpoils} from './spoils.js';
 import {wornLook, wornFields} from '../shared/campaign/looks.js';
+import {arm} from './builds-in-mission.js';
 import {setLoader} from '../shared/loader.js';
 
 mountTopBar({title: 'Partisan Tactical', scene: 'viewer'});
@@ -88,6 +89,7 @@ function newGame() {
     difficulty: diffId,
   });
   search?.attach(sim, {seed, kits: cm?.action === 'play' ? cm.kits() : undefined});
+  if (cm?.action === 'play') arm(sim, cm.builds()); // the guns assigned in the Weapon Modder (WP-W16)
   dress();
   if (cm?.action === 'play' && search?.ammo) cm.rememberKits(search.ammo.kits);
   document.querySelector('#combat-loot')?.remove();

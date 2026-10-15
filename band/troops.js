@@ -26,6 +26,10 @@ export const GEAR = {
   scope: {label: 'PSO scope', kind: 'attachment', icon: 'Things/Item/Resource/ComponentIndustrial/ComponentIndustrial.png'},
   suppressor: {label: 'Suppressor', kind: 'attachment', icon: 'Things/Item/Resource/Steel/Steel_a.png'},
   bipod: {label: 'Bipod', kind: 'attachment', icon: 'Things/Item/Resource/Steel/Steel_b.png'},
+  // fitted in the Weapon Modder (WP-W16, shared/campaign/builds.js)
+  reddot: {label: 'Red dot sight', kind: 'attachment', icon: 'Things/Item/Resource/ComponentIndustrial/ComponentIndustrial.png'},
+  taclight: {label: 'Tactical light', kind: 'attachment', icon: 'Things/Item/Resource/ComponentSpacer/ComponentSpacer.png'},
+  extmag: {label: 'Extended magazine', kind: 'attachment', icon: 'Things/Item/Resource/Steel/Steel_c.png'},
   rockets: {label: 'PG-7 rockets (x3)', kind: 'ammo', icon: 'Things/Projectile/Rocket_Big.png'},
   grenades: {label: 'Grenades (x4)', kind: 'ammo', icon: 'Things/Item/Equipment/WeaponRanged/Grenades.png'},
   smoke: {label: 'Smoke grenades (x4)', kind: 'ammo', icon: 'Things/Item/Equipment/WeaponRanged/SmokeLauncher.png'},

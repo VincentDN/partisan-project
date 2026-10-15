@@ -3318,7 +3318,7 @@
    "milestone": "W",
    "size": "M",
    "bu": 20,
-   "status": "planned",
+   "status": "done",
    "deps": [
     "WP-W15"
    ],
@@ -3329,7 +3329,8 @@
    "inputs": [
     "docs/campaign-roadmap.md"
    ],
-   "acceptance": "In a campaign the Workbench shows owned parts only; a build assigned to a fighter is the weapon they carry next mission."
+   "acceptance": "In a campaign the Workbench shows owned parts only; a build assigned to a fighter is the weapon they carry next mission.",
+   "progress_note": "2026-10-15: done. shared/campaign/builds.js: in a campaign the Workbench (workbench/?campaign=&fighter=, linked per fighter from the band panel; workbench/campaign-bench.js) offers only the band's rifles (the AK-74M, AK-15K, RPK and Mk 14 when held or carried; the rest are not on the island) and attachments that are band gear only while one is free (in the stash and not fitted to another fighter's build), even a rifle's factory suppressor or sight; furniture and finishes are open. Locked parts and rifles say why and where they are found. New gear: red dot sight, tactical light, extended magazine (they drop: loot rules and the pool). Assign keeps {rifle, parts, hash} on the fighter (saved); next mission the fighter is drawn with that rifle and its parts work: scope/red dot steady the aim, a suppressor is heard nearer, a bipod steadies and suppresses (convoy/builds-in-mission.js). tests/campaign-builds.test.mjs, tests/e2e/owned-guns.mjs."
   },
   {
    "id": "WP-W17",

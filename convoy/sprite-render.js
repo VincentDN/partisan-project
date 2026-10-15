@@ -330,9 +330,12 @@ export async function createSpriteRenderer(view) {
   }
 
   // ---------- pawns ----------
-  /** The gun a unit shows: a rebel's chosen cosmetic gun replaces its first weapon; otherwise the side's default. */
+  /**
+   * The gun a unit shows: a rebel's assigned build (u.gun, WP-W16) or chosen cosmetic gun replaces its first weapon;
+   * otherwise the side's default.
+   */
   function gunFor(u) {
-    const chosen = u.side === 'partisan' && u.weapon === u.weapons[0] ? savedLook(u.id).gun : null;
+    const chosen = u.side === 'partisan' && u.weapon === u.weapons[0] ? u.gun || savedLook(u.id).gun : null;
     return guns[chosen] || guns[DEFAULT_GUN[u.side]?.[u.weapon]] || Object.values(guns)[0];
   }
   function drawPawn(u, sim, opts) {

@@ -46,6 +46,10 @@ function cleanFighters(o, fallback) {
           wounded: !!f.wounded,
           healIn: f.wounded ? num(f.healIn, 24, 0) : 0,
           kit: isKit(f.kit) ? f.kit : null,
+          // the gun assigned in the Weapon Modder (WP-W16): {rifle, parts: {slot: option}, hash}
+          ...(isObj(f.build) && typeof f.build.rifle === 'string' && isObj(f.build.parts)
+            ? {build: {rifle: f.build.rifle, parts: {...f.build.parts}, hash: String(f.build.hash || '')}}
+            : {}),
         };
   return Object.keys(out).length ? out : fallback;
 }

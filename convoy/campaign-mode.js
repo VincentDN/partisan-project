@@ -37,6 +37,11 @@ export function openCampaign(params, storage) {
     settled,
     /** {rebel id: class id} for the fighters deployed (the sim's squad option). */
     classes: () => Object.fromEntries((deployment?.fighters || []).map(f => [f, campaign.band.fighters[f].class])),
+    /** The guns assigned in the Weapon Modder (WP-W16): {rebel id: build} for the deployed fighters that have one. */
+    builds: () =>
+      Object.fromEntries(
+        (deployment?.fighters || []).filter(f => campaign.band.fighters[f]?.build).map(f => [f, campaign.band.fighters[f].build]),
+      ),
     /** The fighters' grid kits by id (copies: the mission changes them; the result carries them home). */
     kits: () => structuredClone(Object.fromEntries(Object.entries(deployment?.kits || {}).filter(([, k]) => k))),
     rememberKits(kits) {
