@@ -5,13 +5,12 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json).
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-15 · codex · WP-W20 · done**
+**2026-10-15 18:45 UTC · claude · WP-W17 · done**
 
-- Working on owner-authorized main; W10/W19/W18 already pushed through `563e27b`.
-- W20 adds four response tiers, exact hunter rosters, specialist equipment and reaction/spread modifiers. Deployment saves its tier; Party/encounter explain the score. Practice remains unchanged.
-- `node tools/campaign-response.mjs` prints the strength/territory curve. Human pacing acceptance remains open.
-- Validation: 502 Node tests; Chromium response snapshot/kit/difficulty and existing hunted/camp-defence flows; lint, types, formatting, build and link checks pass.
-- Next: W21 operation/campaign ending and defeat summary, then W23 longitudinal campaign harness. W22 human auto-resolve comparison and W24 reference-device gates remain open.
+- Branch `claude/friendly-dijkstra-4ky9w6` at `d469b16`; working tree clean.
+- Last commits: d469b16 WP-W17: fighters look like their class and what they wear · fb371f0 Browser tests leave a won mission through the spoils screen · a35faa2 Spoils of war: a visual loot screen after a won campaign mission
+- What happened: Owner's spoils screen (visual loot cards with blips, then map or Rebel Band) and W17 looks from class and worn kit (Head/Body slots, soldiers' helmets and vests, map band figure dressed).
+- Next step: Campaign: W16 owned guns in the Weapon Modder; Codex holds W21 endgame and W23 harness. Helmets/vests are looks only: armour against damage is open.
 <!-- handoff:end -->
 
 ## Gameplay/demo module boundary — 13 October 2026
