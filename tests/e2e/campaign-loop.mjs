@@ -30,6 +30,11 @@ try {
   });
   await page.reload();
   await mapReady(page);
+  // the starting reserve has no demolition charge: the band has come by one for the road charge below
+  await page.evaluate(() => {
+    window.PARP_MAP.travel.campaign.stash.explosives = 1;
+    window.PARP_MAP.travel.save();
+  });
   const before = await saved(page);
   assert.deepEqual(before.settled, []);
   assert.match(await page.locator('#date').innerText(), /Spring 1, Year 3 .* 08:00/, 'the campaign clock');
