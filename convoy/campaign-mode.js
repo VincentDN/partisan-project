@@ -7,7 +7,8 @@ import {enter, writeResult, withdraw, settle} from '../shared/campaign/encounter
 import {kitGains} from '../shared/campaign/loot-report.js';
 import {missionXp} from './progression.js';
 
-const MAP = new URL('../map/', import.meta.url).href;
+const MAP = new URL('../map/', import.meta.url).href,
+  BAND = new URL('../band/', import.meta.url).href;
 
 /**
  * Open the campaign named in the URL, or null for practice. Returns {campaign, deployment, action, ...}: action is
@@ -80,13 +81,14 @@ export function openCampaign(params, storage) {
       return campaign.deployment?.result || settled;
     },
     /** Settle the result into the campaign and go back to the map. */
-    returnToMap() {
+    /** Settle and leave: to the map, or (to: 'band') straight to the Rebel Band screen to spend the spoils. */
+    returnToMap(to = 'map') {
       settle(campaign, encounter);
       if (!store.save(campaign)) {
         alert('Campaign storage is unavailable. Free browser storage, then try returning again. Your result remains in this tab.');
         return false;
       }
-      location.href = `${MAP}?campaign=${encodeURIComponent(campaign.id)}`;
+      location.href = `${to === 'band' ? BAND : MAP}?campaign=${encodeURIComponent(campaign.id)}`;
     },
   };
 }

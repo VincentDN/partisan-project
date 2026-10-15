@@ -80,3 +80,19 @@ button.primary{background:var(--accent);color:#14100a;border-color:var(--accent)
 .loot-report ul { padding-left: 20px; }
 .loot-report li { margin: 4px 0; }
 .loot-report summary { cursor: pointer; padding: 8px 0; }
+/* the spoils of a won mission (convoy/spoils.js): cards dealt one by one, then the way on */
+.spoils { position: fixed; inset: 0; z-index: 40; display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 28px 16px; overflow: auto; background: radial-gradient(ellipse at 50% 30%, #1f2a18f5, #0a0d08fa 70%); color: var(--text); }
+.spoils-title { margin: 0; font-size: 26px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+.spoils-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; width: min(980px, 100%); }
+.spoils-card { display: grid; justify-items: center; gap: 4px; padding: 10px 8px 12px; background: #12170ff2; border: 1px solid var(--line); border-radius: var(--radius); text-align: center; }
+.spoils-card canvas { width: 100%; max-width: 220px; height: auto; image-rendering: pixelated; }
+.spoils-card b { font-size: 13px; line-height: 1.25; }
+.spoils-count { font: 600 14px/1 ui-monospace, monospace; color: var(--accent); }
+.spoils-card.spoils-weapon { border-color: var(--accent); box-shadow: 0 0 0 1px #0006, 0 0 18px #d9a54a33; }
+.spoils-card.dealt { animation: spoils-deal .38s cubic-bezier(.2, 1.4, .4, 1) both; }
+@keyframes spoils-deal { from { opacity: 0; transform: translateY(18px) scale(.86); } to { opacity: 1; transform: none; } }
+.spoils-foot { display: grid; gap: 10px; justify-items: center; width: min(980px, 100%); }
+.spoils-foot[hidden] { display: none; }
+.spoils-more { margin: 0; opacity: .85; text-align: center; }
+.spoils-actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+.spoils-actions button { min-width: 220px; padding: 10px 16px; font-size: 15px; }

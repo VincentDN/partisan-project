@@ -21,7 +21,8 @@ import {createSpriteRenderer} from './sprite-render.js';
 import {createFieldSearch} from './field-search.js';
 import {createBanter} from './banter.js';
 import {createCatalogue} from '../shared/inventory/catalogue.js';
-import {COSMETICS, buildPawn, lookFor, saveLook, resetLook, savedLook} from './sprite-art.js';
+import {COSMETICS, buildPawn, lookFor, saveLook, resetLook, savedLook, loadSet} from './sprite-art.js';
+import {showSpoils} from './spoils.js';
 import {setLoader} from '../shared/loader.js';
 
 mountTopBar({title: 'Partisan Tactical', scene: 'viewer'});
@@ -215,6 +216,7 @@ let fire = false,
   pointer = null; // CSS pixels on the canvas
 const aimPoint = () => (pointer ? R.toWorld(pointer.x, pointer.y) : null);
 addEventListener('keydown', e => {
+  if (document.querySelector('.spoils')) return; // the spoils screen has the keyboard (its buttons, Enter to hurry)
   if (search?.key(e)) return;
   if (picker.key(e)) return;
   if (e.key.toLowerCase() === 'q' && started && !sim.outcome) {
@@ -414,6 +416,21 @@ function showLootReport() {
   const report = lootReport(cm.result, {catalogue: CAT});
   report.id = 'combat-loot';
   $('#card-text').after(report);
+  if (cm.result?.outcome === 'won') spoilsScreen();
+}
+/** A won campaign mission: the spoils dealt out one by one, then on to the map or to the Rebel Band (convoy/spoils.js). */
+function spoilsScreen() {
+  document.querySelector('.spoils')?.remove();
+  showSpoils({
+    result: cm.result,
+    catalogue: CAT,
+    guns: R.guns,
+    icons: loadSet,
+    sound: {on: sound.on, volume: sound.volume},
+    reduceMotion,
+    onMap: () => cm.returnToMap(),
+    onBand: () => cm.returnToMap('band'),
+  });
 }
 function showDebrief(d) {
   $('#card-title').textContent = `${sim.level.title}: ${d.outcome === 'won' ? 'accomplished' : 'failed'}`;
