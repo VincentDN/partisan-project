@@ -5,12 +5,12 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json).
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-15 18:45 UTC · claude · WP-W17 · done**
+**2026-10-15 19:08 UTC · claude · WP-W16 · done**
 
-- Branch `claude/friendly-dijkstra-4ky9w6` at `d469b16`; working tree clean.
-- Last commits: d469b16 WP-W17: fighters look like their class and what they wear · fb371f0 Browser tests leave a won mission through the spoils screen · a35faa2 Spoils of war: a visual loot screen after a won campaign mission
-- What happened: Owner's spoils screen (visual loot cards with blips, then map or Rebel Band) and W17 looks from class and worn kit (Head/Body slots, soldiers' helmets and vests, map band figure dressed).
-- Next step: Campaign: W16 owned guns in the Weapon Modder; Codex holds W21 endgame and W23 harness. Helmets/vests are looks only: armour against damage is open.
+- Branch `claude/friendly-dijkstra-4ky9w6` at `7541d21`; working tree clean.
+- Last commits: 7541d21 WP-W16: owned guns in the Weapon Modder, assigned to a fighter · 4024089 docs: handoff for WP-W17 · d469b16 WP-W17: fighters look like their class and what they wear
+- What happened: W16 done: campaign Workbench offers only owned rifles and free gear attachments (even factory ones), locked parts say where found; Assign keeps the build on a fighter, carried next mission (sprite, scope/red dot aim, suppressor quiet, bipod).
+- Next step: Campaign: W24 end-to-end/perf gates; Codex holds W21 endgame and W23 harness. Open: armour vs damage for worn helmets/vests; lights, lasers and extended magazines have no fight effect yet.
 <!-- handoff:end -->
 
 ## Gameplay/demo module boundary — 13 October 2026
