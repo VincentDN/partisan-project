@@ -1,6 +1,6 @@
 # PARTISAN campaign: playable loop and vertical-slice roadmap
 
-Revised 14 October 2026 against the current source, including Claude's tactical, inventory and quality work and the
+Revised 15 October 2026 against the current source, including Claude's tactical, inventory and quality work and the
 campaign integration on main. This document defines the vertical slice and distinguishes implemented rules from
 release acceptance still to be demonstrated. [Master roadmap](master-roadmap.md) indexes the other tracks;
 [packets.json](agent-ops/packets.json) retains their full acceptance criteria. A partial implementation does not close a packet.
@@ -49,19 +49,19 @@ See [graphics roadmap](graphics-roadmap.md) for the shared appearance acceptance
 | Campaign entry and travel | Shared version-1 save, legacy migration, click-to-march A* navigation, terrain costs, camera follow, pause and speed | First-session guidance and interrupted-save UX |
 | Default map | 2.5D parties, island terrain, settlement and party labels; 3D demo separated | Real-device visual and frame-time acceptance |
 | Encounters | Proximity contact, both sides and the ground, Attack, Prepare an ambush, Withdraw with a rearguard, Leave; hunters pursue the band | Ambush preparation beyond sandbags (positions, traps) |
-| Deployment | Eight healthy starting rebels; select six to nine fit fighters; explicit deployed identities reach the sim | Recruit/reserve roster expansion and broader roster UX |
+| Deployment | Eight healthy starting rebels; village recruits expand the named band up to 18; select six to nine fit fighters; explicit identities reach the sim | Broader reserve roster UX and equipment ownership unification |
 | Tactical missions | Convoy, compound, cave, forest road, checkpoint, village and hilltop; squad switching and class abilities | Mission pathfinding defects, tuning with eight rebels, extraction/loss policy audit |
 | Durability | Rebels have 180 base HP, modified by class; army base HP remains 100 | Human difficulty and pacing playtests |
 | Return | One result per encounter, XP, wounds, equipment/goods, persistent kit, abandoned-mission recovery | Concurrent-tab transaction authority and interrupted-save UX |
-| Band | Promotions cost XP and equipment; grid kit and armoury; friendly-settlement recovery and trader | Owned weapon-modder and operator appearance integration |
-| World consequences | Defeated contacts disappear; captured settlements change owner; seeded convoys resupply garrisons and respawn after ambushes | Territory benefits and counterattacks |
+| Band | Promotions cost XP and equipment; grid kit and armoury; settlement recovery, weekly village barter and healthy tier-one recruits | Owned weapon-modder and operator appearance integration |
+| World consequences | Defeated contacts disappear; captured settlements change owner; seeded convoys resupply garrisons; liberated food and saved counterattacks make territory useful and vulnerable | Human tuning of garrison sizes, travel and response pacing |
 | Pressure | Heat-driven hunter columns, day/night sight, last-seen searches, lost-contact behavior and defence encounters | Human tuning of pursuit frequency and fair recovery |
 | Slice objective | Operation Foothold: win a convoy encounter, earn three victories, liberate Fort Orion; completion in band panel | Dedicated operation summary, authored onboarding and end-to-end player acceptance |
 | Quality | Deterministic replays, simulation/inventory/campaign regression suites, build/link checks | Browser, accessibility, multi-browser, memory and reference-device performance gates |
 
 The seeded world now advances in fixed steps independently of rendering. Convoys follow saved routes, deliver
 cargo to garrisons and respawn two days after destruction. Hunters react to heat, pursue sightings and search
-the last known position before losing the trail. Broader territory benefits and counterattacks remain unfinished. Troop stacks in the older Rebel Band demo are not a
+the last known position before losing the trail. Liberated settlements supply recovery meals; villages offer volunteers, and occupation columns can retake lost seats. Troop stacks in the older Rebel Band demo are not a
 second deployable army. The named campaign roster is the authority for tactical deployment.
 
 ## 3. The first complete operation
@@ -116,6 +116,7 @@ it must never merge the practice roster back into a campaign and silently deploy
 | Occupied town or Fort Orion | Compound assault |
 | Raiders near the hideout | Cave defence |
 | Raiders away from camp | Hilltop defence |
+| Counterattack column | Hilltop defence with the exact saved column strength |
 
 The mapping, environment variants, convoy cargo and pursuit-generated defence conditions exist. Convoy ambushes
 field the vehicles and escort shown on the map. Settlement missions now field the saved garrison and militia exactly, with at most 24 active defenders and reserve groups. Choose a raid to take supplies without changing ownership, or a liberation assault to break all defenders and capture the seat. Defender losses persist after raids and defeats. A strength multiplier is not the same as deploying the
@@ -135,7 +136,7 @@ intact; ammunition expenditure is not simulated yet. The odds and wound formula 
 the intended disadvantage against an average played fight still needs human comparison.
 
 `node tools/campaign-auto.mjs` samples the same resolver used by the map. This is a focused balance harness,
-not the planned 50-campaign simulation. Settlement assaults and territory remain the next milestones.
+not the planned 50-campaign simulation. Escalation, campaign endings and longitudinal balance remain open.
 
 ### Fight
 
@@ -176,14 +177,47 @@ Fresh campaigns keep only nine reserve items: two AK-74s, a rig, a vest, two med
 a smoke pack and binoculars. Carried fighter kits are issued separately. Existing campaign and legacy-import
 inventories are preserved; reopening a save does not remove equipment.
 
-The settlement trader sells recovered valuables for scrip and offers promotion equipment. The same campaign
-stash, goods and scrip are updated and saved. Promotions consume their class's XP and equipment requirements.
+Campaign trade is item-for-item barter at neutral and liberated **villages only**. Camp and towns have no trader;
+practice mode keeps its existing shop. Choose quantities of supplies to receive and spare equipment or recovered
+valuables to offer. The preview shows both values and any donated excess before exchanging. No currency or change
+is awarded; old saves retain their legacy scrip but campaign services do not spend it. Failed saves restore the
+original inventory and selected offer for retry. The recovery report values goods using the same barter table.
+
+Each village's seeded stock refreshes every seven campaign days: meals, medical supplies, grenades, smoke, one
+common equipment type and a 20% chance of one AK-74. Liberated stock is larger on its next generation and its
+prices immediately improve by 15%. Visiting, reloading or changing ownership does not replenish an existing
+week's market. Meals bought at neutral villages also support recovery. Liberated settlements provide four free
+meals weekly; each 12 hours of rest consumes one for six additional wound-recovery hours without skipping world time.
+
+Liberated villages offer two tier-one volunteers weekly. Recruiting consumes one meal, adds a healthy named
+fighter with zero XP, and respects an 18-person band capacity. Volunteers can be selected for the next six-to-nine
+person mission and promoted normally. Their class supplies the initial carried kit, like existing starters;
+this remains part of the broader equipment-ownership work. Weekly stock and volunteer quotas survive reload.
+Promotions consume their class's XP and equipment requirements.
 The kit screen prepares carried weapons, magazines and rounds for the next sortie. Trading counts for promotion
 equipment and concrete inventory item instances still need a unified ownership model before modder integration.
 
 After recovery the player can deploy again with the same experienced fighters. The regression scenario explicitly
 covers a failed mission, all eight rebels wounded, save/load, safe-haven rest, and another eight-person deployment.
 This recovery path prevents a normal defeat from making the campaign unplayable.
+
+### Hold liberated territory
+
+A won liberation assault records Resistance ownership, clears the defeated garrison and updates the settlement
+banner and province information. Raids leave the owner unchanged and subtract actual defender casualties.
+Twenty-four campaign hours after capture, the nearest occupied seat with at least twelve soldiers sends half its
+garrison, capped at 24, along a traversable saved route. Those troops leave the sending garrison; convoy resupply
+can replenish it later. The column appears on the map and can be intercepted before reaching its target.
+
+On arrival, the column starts a six-hour siege. A band within the settlement's service radius can defend it;
+an absent band lets it fall after the deadline. Contact opens a hilltop defence with exactly the saved column's
+soldiers, without difficulty thinning. A win breaks the column and preserves liberation. Defeat or withdrawal
+returns the settlement to occupation. Retaking disables friendly services, restores a hostile contact and updates
+map ownership. Capturing it again schedules a new response; a won defence does not spawn endless replacement
+columns. Arrival, departure and retaking are announced; route, siege timing and result application survive reload.
+
+These are implemented rules, with deterministic simulation and browser transition checks. Full human pacing
+acceptance, interruption of long rests and more varied settlement-defence terrain remain future work.
 
 ### Finish and continue
 
@@ -243,8 +277,8 @@ updates, and navigation baking. Do not cut art or claim achieved FPS without mea
 | Later expansion | 50-campaign tuning harness, additional regions, larger war and vehicle escalation | Build only after the core loop is stable and understandable |
 
 Do not restart Claude's completed tactical systems. Continue from the working inventory, squad control, mission
-variants, simulation spatial cache, replays and quality harnesses. The next engineering priorities are settlement assaults (W10), territory benefits and counterattacks (W19),
-recruits and service stock (W18), and stronger save authority; additional showcase assets are secondary to those campaign dependencies.
+variants, simulation spatial cache, replays and quality harnesses. The next engineering priorities are escalation tiers (W20), campaign endings (W21), the 50-campaign balance harness (W23),
+and stronger save authority; additional showcase assets are secondary to those campaign dependencies.
 
 ## 7. Packet reconciliation
 
@@ -262,9 +296,8 @@ manifests shown before the fight, a won ambush takes the cargo home less what bu
 items came from (missions, cargo, the trader). W15 is done (2026-10-12): the Rebel Band screen opens from the
 map's band panel on the campaign save, shows the named fighters above the troop stacks and promotes them with their
 experience and the stash's kit; the standalone demo keeps its own save. W4–W7 now supply day/night time, a fixed-step seeded world, convoy resupply/respawn and searching hunter columns.
-W10 is complete: exact garrison/militia composition, bounded reserves, raid/capture choices and night conditions. W19 now provides weekly recovery meals and saved, garrison-funded counterattacks: intercept or defend; unattended sieges and lost defences reverse ownership. Its recruitment benefit completes with W18.
-W12 now targets six-to-nine-person deployment rather than the obsolete four-person plan. W18 has recovery/trade
-but not recruitment. W21 has a bounded objective, not the complete endgame/defeat presentation. W24 retains the
+W10 is complete: exact garrison/militia composition, bounded reserves, raid/capture choices and night conditions. W19 now provides weekly recovery meals and saved, garrison-funded counterattacks: intercept or defend; unattended sieges and lost defences reverse ownership. W18 completes its recruitment benefit.
+W12 now targets six-to-nine-person deployment rather than the obsolete four-person plan. W18 is complete: finite seeded village barter, better liberated rates, healthy weekly volunteers and failed-save rollback. W21 has a bounded objective, not the complete endgame/defeat presentation. W24 retains the
 real-device budget and final browser gate. W26's visual decision is superseded by the owner's 2.5D-default request.
 
 Packet notes record these distinctions and the generated master table remains synchronized. A ready packet means

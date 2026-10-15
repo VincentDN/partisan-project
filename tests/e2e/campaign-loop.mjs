@@ -30,7 +30,7 @@ try {
   });
   await page.reload();
   await mapReady(page);
-  // the starting reserve has no demolition charge: the band has come by one for the road charge below
+  // This scenario exercises the optional charge; fresh campaigns deliberately start without explosives.
   await page.evaluate(() => {
     window.PARP_MAP.travel.campaign.stash.explosives = 1;
     window.PARP_MAP.travel.save();

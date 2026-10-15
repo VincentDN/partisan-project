@@ -14,6 +14,7 @@ import {
   SOURCES,
   ACTIONS,
 } from '../shared/campaign/contacts.js';
+import {villageServices} from './village-services.js';
 import {counterSource, provisions} from '../shared/campaign/territory.js';
 import {SQUAD_MIN} from '../convoy/roster.js';
 import {squadPicker} from './encounter-squad.js';
@@ -367,9 +368,10 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
     },
   });
   function renderBand() {
+    campaign.world.party = {...travel.party};
     const rebuilding = rebuildingFor(campaign);
     const haven = safeHaven(campaign, SETTLEMENTS, travel.party);
-    const food = haven && ownerOf(campaign, haven) === 'resistance' && haven.kind !== 'camp' ? provisions(campaign, haven).food : 0;
+    const food = haven && haven.kind !== 'camp' ? provisions(campaign, haven).food : 0;
     const hurt = Object.entries(campaign.band.fighters).filter(([, f]) => f.wounded);
     const gear = Object.entries(campaign.stash).filter(([g]) => GEAR[g]);
     fill(
@@ -399,14 +401,14 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
         'p',
         {class: 'note'},
         safeHaven(campaign, SETTLEMENTS, travel.party)
-          ? 'Safe haven: rest, sell recovered valuables, and buy promotion equipment.'
+          ? 'Safe haven: rest here. Neutral and liberated villages offer barter; liberated villages also offer volunteers.'
           : 'Reach a friendly or independent settlement to rest and trade.',
       ),
       food
         ? el(
             'p',
             {class: 'territory-food'},
-            `Liberated supplies: ${food} meals this week. Each 12 hours of rest uses one meal for six extra hours of wound recovery.`,
+            `Recovery supplies: ${food} meals this week. Each 12 hours of rest uses one meal for six extra hours of wound recovery.`,
           )
         : null,
       ...[12, 24, 48].map(hours =>
@@ -445,7 +447,18 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
             `The new camp at ${campOf(campaign, SETTLEMENTS).name} is rebuilding: ${Math.ceil(rebuilding)} h left. No trade or kit changes until then.`,
           )
         : null,
-      safeHaven(campaign, SETTLEMENTS, travel.party) && !rebuilding ? camp.traderView() : null,
+      villageServices({
+        el,
+        campaign,
+        settlement: haven,
+        save,
+        refresh: () => {
+          renderBand();
+          renderCard();
+          bandPanel.querySelector('#village-recruit:not([disabled]), #village-services input')?.focus();
+        },
+        toast,
+      }),
       el('h3', {}, 'Kit: magazines and rounds'),
       el(
         'div',
@@ -518,7 +531,6 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
       ['Wounded', f.filter(x => x.wounded).length],
       ['Troops', troops],
       ['Stash', Object.values(campaign.stash).reduce((a, n) => a + n, 0)],
-      ['Scrip', campaign.scrip.toLocaleString('en')],
       ['Fought', campaign.settled.length],
     ];
     const signature = JSON.stringify(rows);

@@ -3358,7 +3358,7 @@
    "milestone": "W",
    "size": "S",
    "bu": 8,
-   "status": "planned",
+   "status": "done",
    "deps": [
     "WP-W15"
    ],
@@ -3368,7 +3368,7 @@
     "docs/campaign-roadmap.md"
    ],
    "acceptance": "Neutral and liberated villages barter item for item from a seeded weekly stock (TAC-K-01); liberated villages offer tier-1 recruits; no trader at camp in a campaign.",
-   "progress_note": "2026-10-08: Friendly/independent settlement rest and existing trader integrated; recruits and service stock remain."
+   "progress_note": "2026-10-15: Weekly seeded village barter (items/goods, no currency), liberated rates/stock, healthy tier-one recruits, finite food, no campaign camp trader. Conservation/reload/failed-save and browser checks cover services."
   },
   {
    "id": "WP-W19",
@@ -3377,7 +3377,7 @@
    "milestone": "W",
    "size": "M",
    "bu": 20,
-   "status": "ready",
+   "status": "done",
    "deps": [
     "WP-W10",
     "WP-W13"
@@ -3388,7 +3388,7 @@
     "docs/campaign-roadmap.md"
    ],
    "acceptance": "A captured settlement turns its province to the Resistance and gives its benefits; the Invader sends a party to retake it.",
-   "progress_note": "2026-10-15: Saved garrison-funded counterattacks, interception/defence, retaking and weekly recovery meals implemented and tested. Recruitment benefit completes with W18."
+   "progress_note": "2026-10-15: Captures update map ownership and grant food/recruit benefits; garrison-funded saved columns can be intercepted/defended or retake the seat. Fixed-step, reload, defence outcome and browser checks pass; human pacing remains a balance gate."
   },
   {
    "id": "WP-W20",
