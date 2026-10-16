@@ -3459,10 +3459,9 @@
    "milestone": "W",
    "size": "S",
    "bu": 8,
-   "status": "ready",
+   "status": "done",
    "deps": [
-    "WP-W20",
-    "WP-W22"
+    "WP-W20"
    ],
    "agent": "codex",
    "needs": [],
@@ -3470,7 +3469,7 @@
     "docs/campaign-roadmap.md"
    ],
    "acceptance": "tools/campaign/bench.mjs reports time to first encounter, first promotion, hunts per day and stash growth against the roadmap targets.",
-   "progress_note": "2026-10-16: Owner explicitly assigns W23 balance testing to Codex. Reserved work: harness/metric contract, five resumable batches of ten seeded campaigns, baseline and tuning review, regression/report/roadmap handoff. W22 human-play comparison and W24 real-device measurements remain separate."
+   "progress_note": "2026-10-16: Explicitly assigned to Codex; testing reserved in roadmap. tools/campaign/bench.mjs runs five resumable ten-seed batches with shared world/auto-resolve/promotion rules, daily reload parity, censored milestones and source fingerprints. Committed 50-seed baseline plus paired 50-seed early-rest review: promotion target misses (XP and equipment); no runtime balance change inferred from auto-only policy. Reports in outbound/campaign-balance/. Human/manual-combat and W22 played comparisons remain open. Dependency clarification: W23 uses the already-built W22 resolver; W22 human-play balance acceptance is not a prerequisite for measuring the current resolver, so that completion dependency is removed rather than marking W22 done."
   },
   {
    "id": "WP-W24",

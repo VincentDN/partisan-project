@@ -29,7 +29,8 @@
     "test:carrier": "node --test tests/recon-carrier.test.mjs && node tests/e2e/recon-carrier.mjs",
     "assets:recon-pouches": "node tools/assets/build-recon-pouches.mjs",
     "test:pouches": "node --test tests/recon-pouches.test.mjs && node tests/e2e/recon-pouches.mjs",
-    "test:weapon-fit": "node tests/e2e/weapon-fit.mjs"
+    "test:weapon-fit": "node tests/e2e/weapon-fit.mjs",
+    "campaign:bench": "node tools/campaign/bench.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",

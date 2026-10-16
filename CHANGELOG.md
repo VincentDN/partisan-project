@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-10-16 — campaign balance harness (Codex)
+
+- Add a fifty-seed campaign harness with ten-seed resumable checkpoints, shared game rules, explicit non-reached milestones and machine-readable pacing reports.
+- Publish baseline and paired early-recovery results. Both flag missing promotion progression under auto-resolve-only play; preserve the findings and limits rather than adjusting gameplay from incomplete evidence.
+
 ## 2026-10-15 — occupation escalation
 
 - Add four response tiers driven by the named band and liberated territory. Explain current strength and the next tier in Party and show the response before encounters.

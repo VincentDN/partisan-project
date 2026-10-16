@@ -5,12 +5,13 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json).
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-16 07:34 UTC · claude · WP-W24 · done**
+**2026-10-16 · codex · WP-W23 · done**
 
-- Branch `claude/friendly-dijkstra-4ky9w6` at `eca3b1d`; **20 uncommitted file(s)** (commit before stopping): M band/band-state.js,  M band/band.js,  M convoy/campaign-mode.js,  M docs/CODEMAP.md,  M docs/agent-ops/packets.json,  M docs/campaign-roadmap.md.
-- Last commits: eca3b1d Fix the three suites the W16 merge broke · fb534ea docs: handoff for WP-W16 · 7541d21 WP-W16: owned guns in the Weapon Modder, assigned to a fighter
-- What happened: Save revisions refuse stale tabs (store.js, stale-notice.js); two-tab e2e, smoke round trip, map frame budget (p95 ~7 ms, software WebGL).
-- Next step: Campaign: W25 first-campaign prompts once W21 lands (Codex holds W21/W23). Real-device 30 fps reading for W24/Q2. Open: armour vs damage; lights/lasers/extmags have no fight effect.
+- Main includes Claude's owned builds/appearance/spoils and W24 revision protection through `c2638c0`.
+- Vincent assigns W23 harness/testing to Codex. Ownership and five ten-seed chunks are recorded in the roadmap and packet.
+- `tools/campaign/bench.mjs` produces source-fingerprinted resumable checkpoints, per-seed metrics and Markdown. Baseline and early-rest comparison: 50 seeds each, fourteen days; retained in `outbound/campaign-balance/`.
+- Promotion target misses in every run: both XP and promotion gear are short. Earlier recovery reduces hunts without fixing progression. No runtime tuning is justified from these auto-only policies; see the review for limitations.
+- Next: W21 endings, W25 onboarding; manual-combat/barter-inclusive balance and W22 human comparison remain open. W24 physical-device evidence remains open. Codex owns continued W23 testing.
 <!-- handoff:end -->
 
 ## Gameplay/demo module boundary — 13 October 2026

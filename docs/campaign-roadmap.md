@@ -306,8 +306,7 @@ updates, and navigation baking. Do not cut art or claim achieved FPS without mea
 | Later expansion | 50-campaign tuning harness, additional regions, larger war and vehicle escalation | Build only after the core loop is stable and understandable |
 
 Do not restart Claude's completed tactical systems. Continue from the working inventory, squad control, mission
-variants, simulation spatial cache, replays and quality harnesses. The next engineering priorities are campaign endings (W21), the 50-campaign balance harness (W23),
-and stronger save authority; additional showcase assets are secondary to those campaign dependencies.
+variants, simulation spatial cache, replays and quality harnesses. The next engineering priorities are campaign endings (W21), onboarding (W25), and manual-play balance acceptance; W23 now supplies the repeatable baseline; additional showcase assets are secondary to those campaign dependencies.
 
 ## 7. Packet reconciliation
 
@@ -359,3 +358,30 @@ W21 endings, W25 onboarding, W22 human-play comparison or W24 physical-device me
 There are no numeric W23 pacing targets in the existing roadmap. Codex will document initial diagnostic thresholds
 before collecting the baseline. Campaign-clock hours and map-speed-equivalent seconds must remain distinct from
 human active play time. A seed that never reaches an encounter or promotion must remain visible as a censored result.
+
+### W23 provisional diagnostic thresholds
+
+For the initial 14-day auto-resolve-policy runs: at least 90% of seeds should reach a hostile contact within
+72 campaign hours; at least 60% should pay for a first promotion within 336 hours; mean hunts should be
+0.1–2 per campaign day; mean reserve-stash growth should be 0–80 items. These are new diagnostic thresholds,
+not previously approved human-play targets. Report failures openly; do not tune seeds or grant equipment to pass.
+Baseline policy rests when fewer than six fighters are fit. The paired tuning comparison rests below eight.
+Both start from normal fresh saves, move on A* routes, use legal auto-resolve and paid promotions, leave optional
+forbidden fights and use the game's rearguard rule when caught. They do not simulate manual tactical victories
+or liberation. Compare seeds 1–50 under both policies; human-play pacing remains outside W23's evidence.
+
+### W23 completed evidence and remaining balance acceptance
+
+Codex completed the fifty-seed baseline and fifty-seed paired recovery-policy comparison in five chunks each.
+The [review and reproduction instructions](../outbound/campaign-balance/review.md),
+[baseline](../outbound/campaign-balance/baseline/report.md) and
+[early-rest comparison](../outbound/campaign-balance/early-rest/report.md) retain results and limitations.
+The baseline averages 0.13 hunts/day and +17.20 reserve items; all seeds meet a hostile contact within 4.50
+campaign hours. Neither policy promotes within fourteen days: XP and required equipment are both barriers.
+Early recovery lowers pressure without improving progression. No runtime balance change follows from these
+limited policies. W23's harness/report packet is complete; manual-play pacing, barter-inclusive policy coverage,
+full-endgame balance and W22's human comparison remain open. W23 testing ownership remains **Codex**.
+
+W23 dependency clarification: the harness consumes W22's implemented resolver. Its outstanding human-play
+comparison is a separate acceptance task, not a prerequisite to measuring the current code. W23 therefore
+retains W20 as its completion dependency; W22 remains open and is not declared balanced by these reports.
