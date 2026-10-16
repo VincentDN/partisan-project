@@ -344,3 +344,18 @@ failed writes explicit. Preserve old saves where possible. Strategic party motio
 records, while destroyed-state records retain their historical effect. Future save version changes need migration
 fixtures, corruption recovery, conflict tests and a documented rollback path. No backend, multiplayer authority,
 cloud save or final persistent-war guarantee is implied by the current browser-local slice.
+
+## W23 assignment and test chunks — 16 October 2026
+
+**Owner: Codex, explicitly assigned by Vincent.** W23 balance harness and its testing are reserved for Codex;
+other agents should leave this packet and `tools/campaign/` to that work. This assignment does not transfer
+W21 endings, W25 onboarding, W22 human-play comparison or W24 physical-device measurements.
+
+1. Define reproducible simulation policies, metric units and provisional targets; implement the shared-rule harness.
+2. Run fifty seeds in five resumable chunks: 1–10, 11–20, 21–30, 31–40 and 41–50. Retain per-seed results and aggregate reports.
+3. Review the baseline, run an explicitly labelled tuning comparison and report misses, censored milestones and limitations.
+4. Verify reproducibility/reload behavior, run required checks and commit the report and handoff to main.
+
+There are no numeric W23 pacing targets in the existing roadmap. Codex will document initial diagnostic thresholds
+before collecting the baseline. Campaign-clock hours and map-speed-equivalent seconds must remain distinct from
+human active play time. A seed that never reaches an encounter or promotion must remain visible as a censored result.
