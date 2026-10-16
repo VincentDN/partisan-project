@@ -15,6 +15,7 @@ try {
         const {deploy} = await import('./shared/campaign/encounter.js');
         const c = newCampaign({id: 'loot'});
         deploy(c, {id: `test-${i}`, level, seed: 4242, fighters: Object.keys(c.band.fighters), cargo: {medkit: 4}});
+        localStorage.removeItem('parp-campaign-v1'); // a fresh campaign, not a write over the last one's revision
         createStore(localStorage).save(c);
       },
       {level, i},
