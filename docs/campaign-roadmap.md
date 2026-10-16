@@ -326,8 +326,8 @@ items came from (missions, cargo, the trader). W15 is done (2026-10-12): the Reb
 map's band panel on the campaign save, shows the named fighters above the troop stacks and promotes them with their
 experience and the stash's kit; the standalone demo keeps its own save. W4–W7 now supply day/night time, a fixed-step seeded world, convoy resupply/respawn and searching hunter columns.
 W10 is complete: exact garrison/militia composition, bounded reserves, raid/capture choices and night conditions. W19 now provides weekly recovery meals and saved, garrison-funded counterattacks: intercept or defend; unattended sieges and lost defences reverse ownership. W18 completes its recruitment benefit.
-W12 now targets six-to-nine-person deployment rather than the obsolete four-person plan. W18 is complete: finite seeded village barter, better liberated rates, healthy weekly volunteers and failed-save rollback. W20 implements the documented response curve and its harness. W21 has a bounded objective, not the complete endgame/defeat presentation. W24 retains the
-real-device budget and final browser gate. W26's visual decision is superseded by the owner's 2.5D-default request.
+W12 now targets six-to-nine-person deployment rather than the obsolete four-person plan. W18 is complete: finite seeded village barter, better liberated rates, healthy weekly volunteers and failed-save rollback. W20 implements the documented response curve and its harness. W21 has a bounded objective, not the complete endgame/defeat presentation. W24's browser gate is done (save
+revisions refuse a stale tab, smoke round trip, map frame budget measured); the real-device 30 fps reading remains. W26's visual decision is superseded by the owner's 2.5D-default request.
 
 Packet notes record these distinctions and the generated master table remains synchronized. A ready packet means
 work can proceed; it is not a claim that its entire acceptance criterion has shipped.

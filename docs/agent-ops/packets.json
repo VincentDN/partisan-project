@@ -3478,7 +3478,7 @@
    "milestone": "W",
    "size": "M",
    "bu": 20,
-   "status": "planned",
+   "status": "done",
    "deps": [
     "WP-W13",
     "WP-W15"
@@ -3491,7 +3491,7 @@
     "docs/campaign-roadmap.md"
    ],
    "acceptance": "Smoke covers a full campaign round trip; double settlement impossible across tabs; map frame budget measured.",
-   "progress_note": "2026-10-08: Loop tests expanded and CPU/GPU work reduced; actual browser/device performance, concurrency and full acceptance remain."
+   "progress_note": "2026-10-16: Done. Saves carry a revision (shared/campaign/store.js): a tab writes only over the revision it loaded, so a stale tab (another tab saved since) is refused, shown a reload notice (shared/campaign/stale-notice.js, also on the storage event) and cannot settle a mission twice. Smoke runs a full round trip (map, ambush, spoils, band, map); tests/e2e/campaign-tabs.mjs covers two tabs; tests/e2e/map-budget.mjs measures the map's main-thread frame time (p95 about 7 ms at desktop and phone viewports, software WebGL; ceiling 33 ms). The 30 fps on a real mid-range phone is still to be measured on a device (with WP-Q2)."
   },
   {
    "id": "WP-W25",

@@ -47,9 +47,14 @@ export async function operatorRendered(page) {
   const frame = await page.evaluate(() => window.PARP_OPERATOR.stage.renderer.info.render.frame);
   await page.waitForFunction(frame => window.PARP_OPERATOR.stage.renderer.info.render.frame > frame, frame);
 }
-/** Open a page that records console errors, page errors and failed requests. */
-export async function open(browser, url, opts = {}) {
-  const page = await browser.newPage({viewport: {width: 1280, height: 800}, reducedMotion: 'reduce', ...opts});
+/**
+ * Open a page that records console errors, page errors and failed requests. opts.context: open it as another tab of
+ * that browser context (sharing its storage) instead of a fresh one.
+ */
+export async function open(browser, url, {context, ...opts} = {}) {
+  const page = context
+    ? await context.newPage()
+    : await browser.newPage({viewport: {width: 1280, height: 800}, reducedMotion: 'reduce', ...opts});
   page.problems = [];
   page.openedAt = url.replace(/^https?:\/\/[^/]+\//, '/');
   (browser.openPages ||= []).push(page); // closed after each smoke check, pass or fail

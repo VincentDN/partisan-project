@@ -6,6 +6,7 @@ import * as T from 'three';
 import {pickGround} from './picking.js';
 import {buildNav, findPath, advance, groundAt} from '../shared/campaign/nav.js';
 import {createStore} from '../shared/campaign/state.js';
+import {showStale} from '../shared/campaign/stale-notice.js';
 import {settleAbandoned} from '../shared/campaign/encounter.js';
 import {sample, PARTY_SPOTS, provinceAt} from './island.js';
 import {modalOpen} from '../shared/modal.js';
@@ -22,11 +23,12 @@ export function mountTravel({scene, camera, field, stageEl, hero, cam, toast, re
     note = '';
   if (params.has('campaign')) {
     try {
-      store = createStore(localStorage);
+      store = createStore(localStorage, {onConflict: showStale});
     } catch {
       store = createStore(null);
     }
     campaign = store.load().campaign;
+    store.watch(campaign); // another tab saving this campaign makes this one stale (WP-W24)
     const left = settleAbandoned(campaign);
     if (left) note = left.outcome === 'withdrawn' ? 'The band fell back from an unfinished mission. The fighters are wounded.' : '';
   }
@@ -39,7 +41,8 @@ export function mountTravel({scene, camera, field, stageEl, hero, cam, toast, re
     if (!campaign) return;
     campaign.world.party = {x: party.x, z: party.z, route: party.route ? structuredClone(party.route) : null};
     const ok = store.save(campaign);
-    if (!ok && !unsaved) toast('The campaign cannot be saved: browser storage is full or blocked. Progress lasts until the tab closes.');
+    if (!ok && !unsaved && !store.stale)
+      toast('The campaign cannot be saved: browser storage is full or blocked. Progress lasts until the tab closes.');
     unsaved = !ok;
     return ok;
   };

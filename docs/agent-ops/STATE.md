@@ -5,12 +5,12 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json).
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-15 19:08 UTC · claude · WP-W16 · done**
+**2026-10-16 07:34 UTC · claude · WP-W24 · done**
 
-- Branch `claude/friendly-dijkstra-4ky9w6` at `7541d21`; working tree clean.
-- Last commits: 7541d21 WP-W16: owned guns in the Weapon Modder, assigned to a fighter · 4024089 docs: handoff for WP-W17 · d469b16 WP-W17: fighters look like their class and what they wear
-- What happened: W16 done: campaign Workbench offers only owned rifles and free gear attachments (even factory ones), locked parts say where found; Assign keeps the build on a fighter, carried next mission (sprite, scope/red dot aim, suppressor quiet, bipod).
-- Next step: Campaign: W24 end-to-end/perf gates; Codex holds W21 endgame and W23 harness. Open: armour vs damage for worn helmets/vests; lights, lasers and extended magazines have no fight effect yet.
+- Branch `claude/friendly-dijkstra-4ky9w6` at `eca3b1d`; **20 uncommitted file(s)** (commit before stopping): M band/band-state.js,  M band/band.js,  M convoy/campaign-mode.js,  M docs/CODEMAP.md,  M docs/agent-ops/packets.json,  M docs/campaign-roadmap.md.
+- Last commits: eca3b1d Fix the three suites the W16 merge broke · fb534ea docs: handoff for WP-W16 · 7541d21 WP-W16: owned guns in the Weapon Modder, assigned to a fighter
+- What happened: Save revisions refuse stale tabs (store.js, stale-notice.js); two-tab e2e, smoke round trip, map frame budget (p95 ~7 ms, software WebGL).
+- Next step: Campaign: W25 first-campaign prompts once W21 lands (Codex holds W21/W23). Real-device 30 fps reading for W24/Q2. Open: armour vs damage; lights/lasers/extmags have no fight effect.
 <!-- handoff:end -->
 
 ## Gameplay/demo module boundary — 13 October 2026

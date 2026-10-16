@@ -3,6 +3,7 @@
 // it is found); "Assign" keeps the build on the fighter, and it is the gun they carry next mission. Outside a campaign
 // this is not mounted and the Workbench is unchanged.
 import {createStore} from '../shared/campaign/state.js';
+import {showStale, STALE_TEXT} from '../shared/campaign/stale-notice.js';
 import {NAMES} from '../convoy/roster.js';
 import {TROOPS} from '../band/troops.js';
 import {rifleLock, partLock, makeBuild, buildGear} from '../shared/campaign/builds.js';
@@ -15,11 +16,12 @@ export function mountCampaignBench({params, root, current}) {
   if (!params.has('campaign')) return null;
   let store;
   try {
-    store = createStore(localStorage);
+    store = createStore(localStorage, {onConflict: showStale});
   } catch {
     store = createStore(null);
   }
   const campaign = store.load().campaign;
+  store.watch(campaign); // WP-W24
   const ids = Object.keys(campaign.band.fighters);
   let who = ids.includes(params.get('fighter')) ? params.get('fighter') : ids[0];
   const name = id => NAMES[id] || id;
@@ -64,7 +66,8 @@ export function mountCampaignBench({params, root, current}) {
       for (const [slot, o] of Object.entries(parts)) if (!api.part(slot, o).ok) return (status.textContent = api.part(slot, o).reason);
       if (!api.rifle(rifle).ok) return (status.textContent = api.rifle(rifle).reason);
       campaign.band.fighters[who].build = makeBuild(rifle, parts, location.hash.replace(/^#/, ''));
-      if (!store.save(campaign)) return (status.textContent = 'The campaign could not be saved: browser storage is full or blocked.');
+      if (!store.save(campaign))
+        return (status.textContent = store.stale ? STALE_TEXT : 'The campaign could not be saved: browser storage is full or blocked.');
       status.textContent = `Assigned: ${name(who)} carries this ${rifle.toUpperCase()} next mission.`;
     },
   };

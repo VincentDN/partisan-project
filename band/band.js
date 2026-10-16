@@ -400,9 +400,9 @@ async function doPromoteFighter(id, to) {
   if (promoting) finishPromotion?.();
   const from = S.fighters[id].class;
   if (!promoteFighter(S, id, to)) return;
-  const said = save()
-    ? `${nameOf(id)} is now a ${TROOPS[to].label}`
-    : 'The campaign could not be saved: browser storage is full or blocked.';
+  const ok = save();
+  if (!ok && opened.stale) return; // the notice is up: this tab's promotion was not kept
+  const said = ok ? `${nameOf(id)} is now a ${TROOPS[to].label}` : 'The campaign could not be saved: browser storage is full or blocked.';
   await celebrate(from, to, `${nameOf(id)}: ${TROOPS[from].label} → ${TROOPS[to].label}`, said);
 }
 /** The big pawn turns from the old class into the new one, to a fanfare; `said` goes in the status line. */

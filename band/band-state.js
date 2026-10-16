@@ -4,6 +4,7 @@
 // the standalone demo with its own save (`parp-band-v2`), its practice raids and its reset. Pure apart from storage.
 import {createStore, BAND_KEY} from '../shared/campaign/state.js';
 import {settleAbandoned} from '../shared/campaign/encounter.js';
+import {showStale} from '../shared/campaign/stale-notice.js';
 import {canPromote, missingFor, promote, progress} from '../convoy/progression.js';
 import {TROOPS, LEADER, START_BAND, START_STASH} from './troops.js';
 
@@ -16,8 +17,9 @@ export const freshBand = () => ({band: structuredClone(START_BAND), stash: {...S
  */
 export function openBand(params, storage) {
   if (params.has('campaign')) {
-    const store = createStore(storage);
+    const store = createStore(storage, {onConflict: showStale});
     const c = store.load().campaign;
+    store.watch(c); // WP-W24: another tab's save makes this one stale
     // as the map does on opening: a mission entered and never finished is withdrawn and settled
     const settledNow = settleAbandoned(c);
     const S = {band: c.band.troops, stash: c.stash, leader: c.band.leader, fighters: c.band.fighters, raids: missionsPlayed(c)};
@@ -28,7 +30,15 @@ export function openBand(params, storage) {
       return store.save(c);
     };
     if (settledNow) save(S);
-    return {S, campaign: c, save, mode: 'campaign'};
+    return {
+      S,
+      campaign: c,
+      save,
+      mode: 'campaign',
+      get stale() {
+        return store.stale; // another tab saved this campaign: nothing more is written from here (WP-W24)
+      },
+    };
   }
   let S = freshBand();
   try {

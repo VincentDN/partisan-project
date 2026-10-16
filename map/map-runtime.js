@@ -275,7 +275,7 @@ export async function mountMap({HD2D, createSpriteLayer, createHD2D, figure}) {
     shadowAt = 0,
     labelAt = 0,
     lastDate = '';
-  const performanceStats = {frames: 0, skipped: 0, cpuMs: 0, frameMs: 0};
+  const performanceStats = {frames: 0, skipped: 0, cpuMs: 0, frameMs: 0, recent: []}; // recent: the last 240 frames' cpuMs (WP-W24)
   const needsFrame = createRenderBudget();
   addEventListener('blur', () => keys.clear());
   addEventListener('visibilitychange', () => keys.clear());
@@ -349,6 +349,7 @@ export async function mountMap({HD2D, createSpriteLayer, createHD2D, figure}) {
     else renderer.render(scene, camera);
     performanceStats.frames++;
     performanceStats.cpuMs = performance.now() - frameStart;
+    if (performanceStats.recent.push(performanceStats.cpuMs) > 240) performanceStats.recent.shift();
     performanceStats.frameMs = elapsed * 1000;
   });
 

@@ -5,6 +5,7 @@
 import assert from 'node:assert/strict';
 import {launch, open, startServer, frames} from './browser.mjs';
 import {checkSquadControl} from './squad-control.mjs';
+import {checkRoundTrip} from './round-trip.mjs';
 
 import {execFileSync} from 'node:child_process';
 const live = process.argv.includes('--url') ? process.argv[process.argv.indexOf('--url') + 1] : null;
@@ -561,6 +562,7 @@ await check('art style lab: every style renders over the operator and switching 
   await page.close();
 });
 
+await check('campaign round trip: map, ambush, spoils, band and back, settled once', () => checkRoundTrip(browser, server.url));
 await check('squad control: keyboard, death transfer, all-down and reduced motion', () => checkSquadControl(browser, server.url));
 await check('squad control: timed slow-motion selection', () => checkSquadControl(browser, server.url, 'no-preference'));
 

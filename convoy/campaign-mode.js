@@ -3,6 +3,7 @@
 // the debrief, and settles it when the player returns to the map. No restarts, no practice camp: a mission left
 // without a result (reload, closed tab) comes back as withdrawn. Without ?campaign the page is the practice sandbox.
 import {createStore} from '../shared/campaign/state.js';
+import {showStale} from '../shared/campaign/stale-notice.js';
 import {enter, writeResult, withdraw, settle} from '../shared/campaign/encounter.js';
 import {kitGains} from '../shared/campaign/loot-report.js';
 import {missionXp} from './progression.js';
@@ -17,8 +18,9 @@ const MAP = new URL('../map/', import.meta.url).href,
  */
 export function openCampaign(params, storage) {
   if (!params.has('campaign')) return null;
-  const store = createStore(storage);
+  const store = createStore(storage, {onConflict: showStale});
   const {campaign} = store.load();
+  store.watch(campaign); // a mission settled in another tab cannot be settled again here (WP-W24)
   const encounter = params.get('encounter') || '';
   const deployment = campaign.deployment;
   let action = params.get('campaign') === campaign.id ? enter(campaign, encounter) : 'none';
@@ -90,6 +92,7 @@ export function openCampaign(params, storage) {
     returnToMap(to = 'map') {
       settle(campaign, encounter);
       if (!store.save(campaign)) {
+        if (store.stale) return false; // the notice says why: another tab has moved the campaign on
         alert('Campaign storage is unavailable. Free browser storage, then try returning again. Your result remains in this tab.');
         return false;
       }

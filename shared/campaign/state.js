@@ -76,6 +76,7 @@ export function newCampaign({id = 'c1', seed = 1, now = 0} = {}) {
     seed,
     created: now,
     saved: now,
+    rev: 0,
     world: {
       clock: {day: 1, hour: 8, speed: 0}, // speed 0 = paused (WP-W4)
       party: null, // the band's place on the map, set when the map first opens (WP-W3)
@@ -124,6 +125,7 @@ export function normalize(raw) {
   if (o.version !== VERSION) throw new Error(`campaign save version ${o.version} is not ${VERSION}`);
   const c = newCampaign({id: str(o.id, 'c1'), seed: num(o.seed, 1), now: num(o.created, 0)});
   c.saved = num(o.saved, c.created);
+  c.rev = num(o.rev, 0, 0); // the save's revision: a tab writes only over the revision it loaded (store.js)
   const w = isObj(o.world) ? o.world : {};
   if (isObj(w.clock)) c.world.clock = {day: num(w.clock.day, 1, 1), hour: num(w.clock.hour, 8, 0) % 24, speed: num(w.clock.speed, 0, 0)};
   if (isObj(w.party) && Number.isFinite(w.party.x) && Number.isFinite(w.party.z)) c.world.party = {...w.party};
@@ -263,53 +265,4 @@ export function logEvent(c, entry) {
   return c;
 }
 
-/**
- * The storage adapter. `load()` returns `{campaign, status}`: status is 'loaded', 'migrated' (built from the older
- * saves, which are left in place for the standalone modules), 'new', or 'recovered' (the stored save was unreadable;
- * its raw text is kept under `<key>-corrupt` and a fresh campaign starts). `save()` stamps the time and writes.
- */
-export function createStore(storage, {key = CAMPAIGN_KEY, now = () => Date.now()} = {}) {
-  const read = k => {
-    try {
-      return storage?.getItem(k) ?? null;
-    } catch {
-      return null;
-    }
-  };
-  const write = (k, v) => {
-    try {
-      if (!storage) return false;
-      storage.setItem(k, v);
-      return true;
-    } catch {
-      return false; // full or blocked storage: the campaign keeps running in memory
-    }
-  };
-  return {
-    key,
-    load(opts = {}) {
-      const raw = read(key);
-      if (raw !== null) {
-        try {
-          return {campaign: normalize(raw), status: 'loaded'};
-        } catch {
-          write(key + '-corrupt', raw);
-          return {campaign: newCampaign({now: now(), ...opts}), status: 'recovered'};
-        }
-      }
-      const squad = read(SQUAD_KEY),
-        band = read(BAND_KEY);
-      const campaign = migrate({squad, band}, {now: now(), ...opts});
-      return {campaign, status: campaign.migratedFrom.length ? 'migrated' : 'new'};
-    },
-    save(campaign) {
-      campaign.saved = now();
-      return write(key, JSON.stringify(campaign));
-    },
-    clear() {
-      try {
-        storage?.removeItem(key);
-      } catch {}
-    },
-  };
-}
+export {createStore} from './store.js'; // the save in browser storage, one writer at a time (WP-W24)
