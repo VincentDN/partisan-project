@@ -153,7 +153,7 @@ export function mountTravel({scene, camera, field, stageEl, hero, cam, toast, re
     if (hit) moveTo(hit.point.x, hit.point.z);
   });
   addEventListener('keydown', e => {
-    if (modalOpen() || e.target.closest?.('input, select, textarea')) return;
+    if (modalOpen() || e.target.closest?.('input, select, textarea, button, a, summary')) return;
     const k = e.key.toLowerCase();
     if (['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'q', 'e'].includes(k)) follow = false;
     if (k === 'f') follow = true; // back to the band
@@ -209,6 +209,14 @@ export function mountTravel({scene, camera, field, stageEl, hero, cam, toast, re
     driven: false, // set when the campaign's world simulation moves the band
     place, // stand the band where party.x, party.z says (after a fall back, WP-W11)
     moveTo,
+    focus: () => {
+      follow = true;
+    },
+    stop: () => {
+      party.route = null;
+      drawRoute();
+      save();
+    },
     update,
     save,
     drawRoute,

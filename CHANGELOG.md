@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-10-17 — campaign GUI clarity
+
+- Show the current objective, operation progress, travel order, clock state and real fighter/ammunition readiness on the campaign map. Add visible Find band, Stop travel and Controls actions.
+- Group kit and weapon actions with each fighter; add section navigation for fighters, recovery/trade and reserve stash, plus clear empty-stash guidance.
+- Improve desktop/phone layouts, readable panels, deployment counts, keyboard activation and reachable modal controls. Status updates continue while paused.
+
 ## 2026-10-17 — inventory and body-looting Foley
 
 - Play prominent recorded gun-handling Foley when opening/closing body loot, caches and campaign kits, picking up/placing items, quick-looting, rotating, unloading and ejecting magazines.

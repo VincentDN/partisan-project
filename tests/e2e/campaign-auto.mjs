@@ -12,7 +12,7 @@ try {
   await page.goto(server.url + 'map/?campaign=c1');
   await ready(page);
   const card = () => page.locator('.party-card dl').innerText();
-  assert.match(await card(), /Fighters\s+8 \/ 8\s+Wounded\s+0/);
+  assert.match(await card(), /Fit fighters\s+8 \/ 8\s+Wounded\s+0/);
   assert.ok(await page.evaluate(() => Object.values(window.PARP_MAP.travel.campaign.band.fighters).every(f => !f.wounded)));
   await page.reload();
   await ready(page);

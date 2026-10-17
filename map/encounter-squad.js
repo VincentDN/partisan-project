@@ -19,7 +19,7 @@ export function squadPicker({el, campaign, names, fit, first, onPick}) {
       ok = ids.length >= SQUAD_MIN && ids.length <= SQUAD_MAX;
     onPick(ids);
     for (const b of panel?.querySelectorAll('#enc-attack, #enc-prepare') || []) b.disabled = !ok;
-    count.textContent = `${ids.length} going in${ok ? '' : `: take ${SQUAD_MIN} to ${SQUAD_MAX}`}.`;
+    count.textContent = `Deploying ${ids.length} fighters · choose ${SQUAD_MIN}–${SQUAD_MAX}${ok ? '' : ' to continue'}.`;
     count.classList.toggle('bad', !ok);
   }
   const hurt = Object.entries(campaign.band.fighters).filter(([, f]) => f.wounded);

@@ -5,12 +5,14 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json).
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-17 · codex · inventory/body-looting Foley**
+**2026-10-17 · codex · campaign GUI clarity**
 
-- Shared inventory plays recorded gun Foley on open/close, pickup/drop, quick transfer, rotation, use and magazine handling. Failed placements have quieter clicks. Both body searches and campaign kit screens use it.
-- `shared/inventory/foley.js` lazily warms a small selection of existing samples on user gestures; shared Web Audio compressor, prominent handling gain, four-voice cap, immediate fallback, tactical SFX settings including live mute.
-- `tests/e2e/inventory-foley.mjs` exercises body search, keyboard looting, magazine handling and live mute/volume. Inventory regression retains mouse transfer/conservation and campaign kits.
-- Previous milestone `396e338`: W23 100-run audit found 565 auto fights spend no ammunition. Equipment-aware auto-resolve and tactical scarcity/barter testing remain open; W23 testing stays Codex-owned. W21/W25 and device acceptance remain open.
+- Map objective/progress, next-step guidance, travel status and live fighter/ammunition totals replace ambiguous campaign statistics. Find band and Stop travel expose existing travel controls; focused buttons retain native keyboard activation.
+- Band & supplies groups each fighter's kit/build controls and readiness; section navigation reaches recovery/trade and reserve stash. Responsive HUD, sticky modal controls and explicit deployment counts improve clarity.
+- `tests/e2e/campaign-gui.mjs` covers paused updates, persisted route cancellation, keyboard controls, grouped kits, scoped axe and phone HUD bounds. Screenshots are in `outbound/wip-images/`.
+- W25's full guided onboarding remains open, as do W21 endings and physical-device acceptance. W23 remains Codex-owned; its 100-run audit found 565 auto fights spend no ammunition, leaving W22 equipment-aware auto-resolve and tactical scarcity/barter testing open.
+- Verified: 527 tests, lint, typecheck, format check, production build/link check; GUI desktop/phone + scoped axe, seven-level deployment, complete campaign round trip and stacked overlay keyboard/focus browser checks all pass.
+- Previous main milestone `6b43577` adds inventory/body-looting Foley; preserved here.
 <!-- handoff:end -->
 
 ## Gameplay/demo module boundary — 13 October 2026

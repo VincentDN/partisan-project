@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en" data-map-style="hd2d"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex"><meta name="googlebot" content="noindex, nofollow"><meta name="seo_hidden" content="true"><title>Partisan Project | Campaign map</title><link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="map.css"><link rel="stylesheet" href="../shared/loader.css"><link rel="stylesheet" href="../shared/inventory/grid-ui.css">
+<link rel="stylesheet" href="map.css"><link rel="stylesheet" href="campaign-ui.css"><link rel="stylesheet" href="../shared/loader.css"><link rel="stylesheet" href="../shared/inventory/grid-ui.css">
 <script type="importmap">{"imports":{"three":"../vendor/three/build/three.module.min.js","three/addons/":"../vendor/three/examples/jsm/"}}</script></head>
 <body class="map-theme">
 <main>
@@ -9,16 +9,15 @@
 
   <section class="timebar hud" aria-label="Time">
     <span id="date" class="date">Spring 14, Year 3 of the Occupation</span>
-    <div class="speeds" role="group" aria-label="Speed">
-      <button data-speed="0" aria-pressed="false" aria-label="Pause" title="Pause (Space)">❚❚</button><button data-speed="1" aria-pressed="true" aria-label="Normal speed" title="Play (1)">▶</button><button data-speed="2" aria-pressed="false" aria-label="Faster" title="Faster (2)">▶▶</button><button data-speed="3" aria-pressed="false" aria-label="Fastest" title="Fastest (3)">▶▶▶</button>
+    <span id="clock-state" class="clock-state" role="status">Running</span><div class="speeds" role="group" aria-label="Speed">
+      <button data-speed="0" aria-pressed="false" aria-label="Pause" title="Pause (Space)">Pause</button><button data-speed="1" aria-pressed="true" aria-label="Normal speed" title="Play (1)">1×</button><button data-speed="2" aria-pressed="false" aria-label="Faster" title="Faster (2)">2×</button><button data-speed="3" aria-pressed="false" aria-label="Fastest" title="Fastest (3)">3×</button>
     </div>
   </section>
 
-  <section class="legend hud" aria-label="Factions">
-    <h2 class="plate">Factions</h2>
+  <details class="legend hud" aria-label="Factions">
+    <summary>Map key</summary>
     <ul><li><i style="--c:#4f9a4a"></i>The Resistance</li><li><i style="--c:#c2402f"></i>The Invader</li><li><i style="--c:#c9a64a"></i>Independent</li></ul>
-    <p class="note">Placeholder: canon factions come later.</p>
-  </section>
+  </details>
 
   <section class="party-card hud" aria-label="Your party">
     <div class="portrait" aria-hidden="true">λ</div>

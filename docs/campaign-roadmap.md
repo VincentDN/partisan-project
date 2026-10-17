@@ -417,3 +417,16 @@ then compare with human outcomes. Endings/onboarding and physical-device accepta
 Body searches, caches and campaign kits now use prominent gun-handling Foley for opening, closing and item
 operations, including keyboard transfers and magazine handling. Failed moves use quieter clicks. Playback
 respects tactical SFX mute/volume and caps overlapping voices; no demo modules are required.
+
+## Campaign interface clarity — 17 October 2026
+
+The test campaign now displays the operation objective and next step, expandable progress, live fit/wounded
+fighter counts, carried rounds and reserve items. Travel status stays visible, with Find band, Stop travel,
+clock state and an expandable controls guide. Paused kit changes refresh the dashboard.
+
+Band & supplies places inventory and weapon actions beside each fighter's readiness, with navigation to
+fighters, recovery/trade and reserve stash. Desktop and phone layouts use readable panels and reachable
+close controls; encounter selection explains the six-to-nine deployment requirement. Browser coverage checks
+keyboard operation, persisted route cancellation, live status, phone bounds and scoped HUD accessibility.
+This is a W25 interface milestone; the complete guided move → encounter → loot → promote journey remains
+open alongside W21 operation endings and physical-device acceptance.

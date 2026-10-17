@@ -3512,7 +3512,8 @@
    "inputs": [
     "docs/campaign-roadmap.md"
    ],
-   "acceptance": "A new player is guided through move, encounter, loot and promote; the design doc describes the campaign loop."
+   "acceptance": "A new player is guided through move, encounter, loot and promote; the design doc describes the campaign loop.",
+   "progress_note": "2026-10-17: Campaign GUI clarity pass adds durable objective progress, next-step guidance, live readiness/ammunition, travel status and keyboard controls; groups kit/build actions with fighters and adds recovery/stash navigation with responsive panels. Desktop/phone browser and scoped accessibility coverage added. Full guided move/encounter/loot/promote onboarding and release acceptance remain open."
   },
   {
    "id": "WP-W26",

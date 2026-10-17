@@ -49,7 +49,7 @@ try {
   });
   await standAt(page, convoy.x + 4, convoy.z);
   await page.locator('.encounter:not([hidden])').waitFor({timeout: 10000});
-  assert.equal(await page.locator('#enc-title').innerText(), 'SUPPLY CONVOY');
+  assert.equal(await page.locator('#enc-title').innerText(), 'Supply convoy');
   assert.match(await page.locator('.enc-mission').innerText(), /(Convoy|Forest road) ambush · 14 enemy/);
   assert.equal(await page.locator('.enc-fighters li').count(), 8, 'eight fighters going in');
   assert.match(await page.locator('.enc-cargo').innerText(), /^Cargo: 4 AK-74, 2 AK-74M, /, 'the convoy shows its manifest (WP-W14)');
@@ -164,7 +164,7 @@ try {
   // 6. an Invader settlement offers a raid (the Compound Assault); Leave, and it does not nag until the band has gone
   await standAt(page, 320, -18);
   await page.locator('.encounter:not([hidden])').waitFor({timeout: 10000});
-  assert.equal(await page.locator('#enc-title').innerText(), 'MYRTIA');
+  assert.equal(await page.locator('#enc-title').innerText(), 'Myrtia');
   assert.match(await page.locator('.enc-mission').innerText(), /Village raid/, 'a village is raided street by street');
   assert.equal(await page.locator('#enc-attack').innerText(), 'Raid the settlement');
   await page.keyboard.press('Escape');

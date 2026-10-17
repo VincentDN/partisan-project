@@ -51,7 +51,7 @@ try {
   assert.equal(await boxes.count(), 10, 'every fit fighter is listed');
   assert.equal(await page.locator('.enc-fighters input:checked').count(), 9, 'the first nine are ticked');
   assert.match(await page.locator('.enc-fighters .hurt').innerText(), /^Niko: wounded, 20h to heal$/);
-  assert.equal(await page.locator('.enc-count').innerText(), '9 going in.');
+  assert.equal(await page.locator('.enc-count').innerText(), 'Deploying 9 fighters · choose 6–9.');
   assert.equal(await page.locator('.enc-fighters input[value=jure]').isChecked(), false, 'the tenth is in reserve');
   assert.match(await page.locator('.enc-sides').innerText(), /^Your band: 10 of 11 fighters fit/);
 
@@ -61,12 +61,12 @@ try {
     await page.keyboard.press('Space');
   };
   for (const id of ['dragan', 'lena', 'sara', 'tomo']) await tick(id);
-  assert.equal(await page.locator('.enc-count').innerText(), '5 going in: take 6 to 9.');
+  assert.equal(await page.locator('.enc-count').innerText(), 'Deploying 5 fighters · choose 6–9 to continue.');
   assert.equal(await page.locator('#enc-attack').isDisabled(), true, 'five cannot go');
   assert.equal(await page.locator('#enc-prepare').isDisabled(), true, 'nor prepare');
   await tick('jure');
   const picked = ['player', 'mila', 'ivana', 'petar', 'vesna', 'jure'];
-  assert.equal(await page.locator('.enc-count').innerText(), '6 going in.');
+  assert.equal(await page.locator('.enc-count').innerText(), 'Deploying 6 fighters · choose 6–9.');
   assert.equal(await page.locator('#enc-attack').isDisabled(), false, 'six can go');
 
   // 3. Attack: the six go in, as themselves; the rest stay with the band

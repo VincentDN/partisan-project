@@ -1,0 +1,106 @@
+/* Campaign clarity pass: readable hierarchy, visible travel feedback and reachable controls on desktop and phones. */
+.timebar { min-height: 56px; gap: 14px; }
+.speeds button { min-width: 44px; min-height: 40px; }
+.clock-state { font-size: 12px; font-weight: 700; color: #cce4aa; white-space: nowrap; }
+.clock-state[data-paused='true'] { color: #f1ca82; }
+.legend summary, .campaign-help summary, .campaign-objective summary { cursor: pointer; min-height: 36px; padding: 8px 0; font-weight: 600; }
+.legend ul { margin: 8px 0; }
+.campaign-active .hud { background: linear-gradient(145deg, #22271ff5, #151b17f5); border: 1px solid #69745b; box-shadow: 0 5px 22px #0005; border-radius: 8px; }
+.campaign-active .timebar { top: 42px; left: 16px; right: 16px; transform: none; padding: 8px 14px; }
+.campaign-active .date { flex: 1; font: 600 13px/1.4 system-ui, sans-serif; white-space: normal; }
+.campaign-active button, .campaign-active a.band-screen, .campaign-active a.gun-open { min-height: 40px; border-radius: 5px; font-size: 13px; line-height: 1.25; }
+.campaign-active button:disabled { cursor: not-allowed; opacity: .5; }
+.campaign-active .legend { top: 112px; left: auto; right: 16px; width: 224px; padding: 4px 12px; }
+.campaign-active .province-card { top: 290px; right: 16px; width: 224px; }
+.campaign-active .province-card .note { display: none; }
+.campaign-active .hint, .campaign-active .portrait { display: none; }
+.campaign-objective { left: 16px; top: 112px; width: 290px; padding: 16px; z-index: 2; }
+.eyebrow { margin: 0 0 6px; font: 600 10px/1.4 ui-monospace, monospace; letter-spacing: .12em; color: #c2d4a9; }
+.campaign-objective h2 { margin: 0; font-size: 21px; line-height: 1.2; color: #f0efd9; }
+.objective-next { margin: 12px 0; line-height: 1.55; color: #dadfcf; }
+.campaign-objective details { border-top: 1px solid #69745b77; }
+.campaign-objective summary span { float: right; color: #c2d4a9; }
+.campaign-objective ul { margin: 6px 0 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+.campaign-objective .complete { color: #bbd9a0; }
+.campaign-active .party-card { width: 282px; padding: 14px; left: 16px; bottom: 16px; }
+.campaign-active .party-card h2 { background: none; border: 0; box-shadow: none; color: #e2ebd4; padding: 0 0 10px; font: 700 15px/1.2 system-ui, sans-serif; text-transform: none; letter-spacing: 0; }
+.campaign-active .party-card dl { gap: 5px 12px; }
+.campaign-active dt { color: #b8c1ae; }
+.campaign-active dd { color: #f0efdd; font-weight: 600; }
+.campaign-active .menu-bar { bottom: 16px; padding: 8px; gap: 6px; width: 480px; justify-content: center; z-index: 8; }
+.campaign-active .menu-bar [data-label='Party'] { background: #bdd096; color: #182116; border-color: #bdd096; }
+.campaign-active .menu-bar [data-label='Party']:hover, .campaign-active .enc-actions .primary:hover, .campaign-active .path.ready button:hover { color: #16200f; background: #d0e0b1; }
+.campaign-route { left: 50%; bottom: 92px; transform: translateX(-50%); width: 420px; padding: 12px 16px; }
+.campaign-route strong { color: #e3eccd; font-size: 14px; }
+.campaign-route p { color: #bfc8b5; margin: 5px 0 0; font-size: 12px; line-height: 1.4; }
+.campaign-help { position: relative; }
+.campaign-help summary { padding: 10px 8px; min-height: 40px; }
+.campaign-help > div { position: absolute; bottom: 54px; right: 0; width: 300px; padding: 16px; border: 1px solid #7b8968; border-radius: 8px; background: #19211b; line-height: 1.6; box-shadow: 0 6px 20px #0008; }
+kbd { font: inherit; color: #e6eecf; background: #ffffff12; padding: 1px 4px; border-radius: 3px; }
+.campaign-active .toast { bottom: 186px; max-width: min(520px, 90vw); width: max-content; z-index: 10; padding: 12px 16px; line-height: 1.5; }
+.campaign-active .band-panel, .campaign-active .encounter { padding: 20px; max-height: calc(100dvh - 76px); border-color: #85966c; font-size: 14px; }
+.campaign-active .band-panel { width: min(960px, calc(100vw - 32px)); }
+.campaign-active .encounter { width: min(600px, calc(100vw - 32px)); }
+.campaign-active .band-panel > h2, .campaign-active .encounter > h2 { padding: 12px 0; position: sticky; top: -20px; z-index: 2; background: #1b231c; color: #e8efd7; font: 700 22px/1.3 system-ui, sans-serif; border: 0; box-shadow: none; text-transform: none; letter-spacing: 0; }
+.campaign-active .band-panel h3 { font: 700 16px/1.4 system-ui, sans-serif; letter-spacing: 0; text-transform: none; margin-top: 24px; color: #cfdfa9; }
+.campaign-active .band-panel .squad-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.campaign-active .band-panel .squad-card { border: 1px solid #5c6950; border-radius: 8px; padding: 14px; min-width: 0; }
+.fighter-readiness { margin: 0 0 10px; font-size: 12px; color: #bdd79f; }
+.fighter-actions { display: flex; gap: 8px; flex-wrap: wrap; border-top: 1px solid #5c695066; margin-top: 12px; padding-top: 12px; }
+.campaign-active .band-panel .path button { min-height: 36px; font-size: 12px; }
+.campaign-active .note { line-height: 1.6; font-style: normal; color: #c1cab6; }
+.campaign-active .enc-fighters { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+.campaign-active .enc-fighters label { display: flex; align-items: center; gap: 8px; min-height: 42px; cursor: pointer; }
+.campaign-active input[type='checkbox'], .campaign-active input[type='radio'] { accent-color: #c2d89d; min-width: 18px; min-height: 18px; }
+.campaign-active .enc-ambush { gap: 8px; padding: 10px; border-color: #5c6950; border-radius: 6px; }
+.campaign-active .enc-ambush label { min-height: 40px; }
+.campaign-active .enc-count { padding: 10px; border-radius: 5px; background: #bdd09618; font-weight: 600; }
+.campaign-active .enc-count.bad { background: #d28d5d18; }
+.campaign-active .enc-actions { gap: 8px; }
+.campaign-active .panel-footer, .campaign-active .encounter > .enc-actions { position: sticky; bottom: -20px; background: #1b231c; padding: 12px 0; border-top: 1px solid #5c6950; z-index: 2; }
+.empty-stash { grid-column: 1 / -1; padding: 14px; border: 1px dashed #69745b; border-radius: 6px; color: #c1cab6; line-height: 1.5; }
+.campaign-active:has(.band-panel:not([hidden]), .encounter:not([hidden])) main::after { content: ''; position: absolute; inset: 30px 0 0; z-index: 15; background: #07100b88; }
+@media (max-width: 1000px) {
+  .campaign-active .party-card { width: 240px; }
+  .campaign-active .menu-bar { left: auto; right: 16px; transform: none; width: 450px; }
+  .campaign-route { left: auto; right: 16px; transform: none; width: 360px; }
+}
+@media (max-width: 760px) {
+  .campaign-active .timebar { top: 38px; left: 8px; right: 8px; flex-wrap: wrap; gap: 6px 10px; padding: 8px 10px; }
+  .campaign-active .date { flex-basis: 100%; font-size: 12px; }
+  .campaign-active .speeds { margin-left: auto; }
+  .campaign-active .speeds button { min-height: 40px; min-width: 40px; padding: 6px; }
+  .campaign-objective { top: 142px; left: 8px; width: calc(100% - 16px); padding: 10px 12px; }
+  .campaign-objective h2 { font-size: 17px; }
+  .campaign-objective .eyebrow { display: none; }
+  .objective-next { font-size: 12px; margin: 5px 0; line-height: 1.4; }
+  .campaign-objective details[open] { max-height: 180px; overflow-y: auto; }
+  .campaign-active .legend, .campaign-active .province-card { display: none; }
+  .campaign-active .party-card { left: 8px; right: 8px; bottom: 82px; width: auto; padding: 10px 12px; }
+  .campaign-active .party-card h2 { font-size: 13px; padding-bottom: 7px; }
+  .campaign-active .party-card dl { grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto; gap: 5px 8px; font-size: 11px; }
+  .campaign-active .menu-bar { left: 8px; right: 8px; bottom: 8px; width: auto; display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; padding: 5px; gap: 4px; }
+  .campaign-active .menu-bar button, .campaign-help summary { font-size: 11px; padding: 5px; min-height: 48px; line-height: 1.3; }
+  .campaign-help summary { display: flex; align-items: center; justify-content: center; }
+  .campaign-help > div { width: min(320px, calc(100vw - 32px)); bottom: 62px; }
+  .campaign-route { right: 8px; left: 8px; bottom: 208px; width: auto; padding: 10px 12px; }
+  .campaign-route p { font-size: 11px; }
+  .campaign-active .toast { bottom: 296px; }
+  .campaign-active .band-panel, .campaign-active .encounter { width: calc(100vw - 16px); padding: 14px; }
+  .campaign-active .band-panel .squad-cards, .campaign-active .enc-fighters { grid-template-columns: 1fr; }
+  .campaign-active .band-panel > h2, .campaign-active .encounter > h2 { top: -14px; font-size: 20px; }
+  .campaign-active .panel-footer, .campaign-active .encounter > .enc-actions { bottom: -14px; }
+}
+@media (max-height: 600px) and (min-width: 761px) {
+  .campaign-objective { width: 270px; padding: 10px; }
+  .campaign-objective h2 { font-size: 17px; }
+  .campaign-active .party-card { width: 270px; padding: 10px; }
+  .campaign-active .party-card dl { grid-template-columns: auto auto auto auto; font-size: 11px; }
+  .campaign-active .province-card { display: none; }
+}
+
+.campaign-active .squad-card > small { display: block; margin-top: 6px; line-height: 1.45; }
+.campaign-active .squad-card .cls { margin-left: 5px; }
+.band-jumps { position: sticky; top: 40px; background: #1b231c; display: flex; flex-wrap: wrap; gap: 6px; padding: 8px 0; z-index: 2; }
+.band-section { scroll-margin-top: 130px; }
+@media (max-width: 760px) { .band-jumps { top: 38px; } .band-jumps button { font-size: 12px; padding: 7px; } }

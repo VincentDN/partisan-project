@@ -3,6 +3,7 @@
 // (convoy/?campaign&encounter, shared/campaign/encounter.js). Coming back, the map reports each result once, takes
 // destroyed parties off the map and gives taken settlements to the Resistance. The campaign clock runs with the map
 // clock and heals the wounded. The Party button opens the band: promotions paid with experience and stolen kit.
+import {mountCampaignHud, organiseBand, kitRounds} from './campaign-hud.js';
 import {
   fitFighters,
   sourceFor,
@@ -394,7 +395,7 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
     const gear = Object.entries(campaign.stash).filter(([g]) => GEAR[g]);
     fill(
       bandPanel,
-      el('h2', {id: 'band-title', class: 'plate'}, 'The band: fighters and stash'),
+      el('h2', {id: 'band-title', class: 'plate'}, 'Band & supplies'),
       el('p', {}, operation(campaign).text),
       el(
         'p',
@@ -527,6 +528,7 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
       ),
       el('div', {class: 'enc-actions'}, el('button', {onclick: () => toggleBand(false)}, 'Close')),
     );
+    organiseBand(bandPanel, campaign);
   }
   function toggleBand(on = bandPanel.hidden) {
     if (on && bandPanel.hidden) backFromBand = rememberFocus(() => partyButton);
@@ -536,7 +538,7 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
     if (on) {
       renderBand();
       setSpeed(0);
-      bandPanel.querySelector('button')?.focus();
+      bandPanel.querySelector('button:not([disabled]), a[href]')?.focus();
     }
   }
   // Escape closes whichever panel is open (focus may have left it: a promotion redraws the band panel)
@@ -563,16 +565,15 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
   let lastCard = '';
   function renderCard() {
     const f = Object.values(campaign.band.fighters);
-    const troops = Object.values(campaign.band.troops).reduce((a, t) => a + t.count, 0);
     const card = document.querySelector('.party-card dl');
     if (!card) return;
     const rows = [
-      ['Fighters', `${f.filter(x => !x.wounded).length} / ${f.length}`],
+      ['Fit fighters', `${f.filter(x => !x.wounded).length} / ${f.length}`],
       ['Wounded', f.filter(x => x.wounded).length],
-      ['Troops', troops],
-      ['Stash', Object.values(campaign.stash).reduce((a, n) => a + n, 0)],
+      ['Carried rounds', f.reduce((n, x) => n + kitRounds(x.kit), 0)],
+      ['Reserve items', Object.values(campaign.stash).reduce((a, n) => a + n, 0)],
       ['Response', response(campaign).label],
-      ['Fought', campaign.settled.length],
+      ['Heat', Math.round(campaign.world.heat)],
     ];
     const signature = JSON.stringify(rows);
     if (signature === lastCard) return;
@@ -582,11 +583,18 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
     card.replaceChildren(...rows.flatMap(([k, v]) => [el('dt', {}, k), el('dd', {}, String(v))]));
   }
   renderCard();
-  document.querySelector('.party-card')?.append(el('p', {class: 'note'}, operation(campaign).text));
+  const hud = mountCampaignHud({
+    campaign,
+    travel,
+    getSpeed,
+    refresh: renderCard,
+    blocked: () => !!open || !bandPanel.hidden || kitScreen.isOpen,
+  });
 
   // ---------- each frame ----------
   let sinceCard = 0;
   function update(dt) {
+    hud.update();
     if (open || !bandPanel.hidden || kitScreen.isOpen) return;
     const step = world.step(dt), // time, the convoys, the band's march, the hunters (WP-W5, W6, W11)
       healed = step.healed;

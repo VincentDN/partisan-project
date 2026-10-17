@@ -141,7 +141,7 @@ export async function mountMap({HD2D, createSpriteLayer, createHD2D, figure}) {
   const keys = new Set();
   addEventListener('keydown', e => {
     // an open panel (encounter, band, kit) has the keyboard: Space presses its focused button, arrows move kit (WP-QA8)
-    if (modalOpen() || e.target.closest?.('input, select, textarea')) return;
+    if (modalOpen() || e.target.closest?.('input, select, textarea, button, a, summary')) return;
     keys.add(e.key.toLowerCase());
     if (e.key === ' ') {
       e.preventDefault();
@@ -200,6 +200,11 @@ export async function mountMap({HD2D, createSpriteLayer, createHD2D, figure}) {
   function setSpeed(s) {
     speed = campaignUi?.blocked && s ? 0 : s;
     if (window.PARP_MAP?.travel.campaign) window.PARP_MAP.travel.campaign.world.clock.speed = speed;
+    const state = document.querySelector('#clock-state');
+    if (state) {
+      state.textContent = speed ? `Running · ${speed}×` : 'Paused';
+      state.dataset.paused = String(!speed);
+    }
     for (const b of document.querySelectorAll('[data-speed]')) b.setAttribute('aria-pressed', String(Number(b.dataset.speed) === speed));
   }
   for (const b of document.querySelectorAll('[data-speed]')) b.onclick = () => setSpeed(Number(b.dataset.speed));

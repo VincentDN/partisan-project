@@ -6,15 +6,10 @@ import {stancesFor, PREPARE_HOURS, HUNTER_REST_HOURS} from '../shared/campaign/s
 
 const GROUND = {road: 'on the road', plain: 'open country', forest: 'forest', mountain: 'mountains', steep: 'steep ground', snow: 'snow'};
 
-/** "Your band: 7 of 8 fighters fit · 52 troops · forest" */
+/** "Your band: 7 of 8 fighters fit · forest" */
 export function sidesLine(el, {campaign, fit, ground}) {
-  const all = Object.keys(campaign.band.fighters).length,
-    troops = Object.values(campaign.band.troops).reduce((a, t) => a + t.count, 0);
-  return el(
-    'p',
-    {class: 'enc-sides'},
-    `Your band: ${fit.length} of ${all} fighters fit · ${troops} troops · ${GROUND[ground] || ground || 'open country'}`,
-  );
+  const all = Object.keys(campaign.band.fighters).length;
+  return el('p', {class: 'enc-sides'}, `Your band: ${fit.length} of ${all} fighters fit · ${GROUND[ground] || ground || 'open country'}`);
 }
 
 /**
