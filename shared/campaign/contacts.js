@@ -13,6 +13,7 @@ import {alert} from './hunt.js';
 
 /** The enemies on the map: id -> what they are, and the mission meeting them starts. */
 export const SOURCES = {
+  'oros-roadblock': {name: 'Oros roadblock', kind: 'roadblock', level: 'roadblock', strength: 4},
   // a convoy's vehicles (map models, in column order) are the ones the ambush fields (convoy/levels/columns.js, WP-W9)
   'supply-convoy': {name: 'Supply convoy', kind: 'convoy', level: 'convoy', strength: 14, vehicles: ['matv', 'truck', 'truck']},
   'armoured-column': {
@@ -36,6 +37,7 @@ export function sourceFor(c, id) {
 }
 /** What each kind of contact is called on the encounter panel, and what the band does there. */
 export const ACTIONS = {
+  roadblock: {mission: 'Roadblock', verb: 'Raid the roadblock'},
   counterattack: {mission: 'Settlement defence', verb: 'Defend against the counterattack'},
   convoy: {mission: 'Convoy ambush', verb: 'Ambush the convoy'},
   post: {mission: 'Checkpoint assault', verb: 'Attack the post'},
@@ -112,7 +114,7 @@ export function encounterFor(c, sourceId, source = sourceFor(c, sourceId), {grou
     id,
     level,
     seed,
-    fighters: fitFighters(c),
+    fighters: fitFighters(c).slice(0, source.kind === 'roadblock' ? 3 : SQUAD_MAX),
     source: sourceId,
     enemy: {
       name: source.name,

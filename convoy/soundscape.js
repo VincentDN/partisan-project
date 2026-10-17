@@ -18,6 +18,9 @@ const FOLEY = new URL('../assets/audio/foley/', import.meta.url);
 const REAL = new URL('../assets/audio/shooter/', import.meta.url);
 /** Which recording each weapon fires with: category, pitch, how much of the clip a single round lets ring, level. */
 export const SHOT_SAMPLES = {
+  tt: {cat: 'shot-rifle', rate: 1.25, len: 0.6, gain: 0.55},
+  akm: {cat: 'shot-rifle', rate: 0.9, len: 1.2, gain: 0.9},
+  hunting: {cat: 'shot-sniper', rate: 0.95, len: 2, gain: 1},
   ak: {cat: 'shot-rifle', rate: 1, len: 1.2, gain: 0.9},
   pkm: {cat: 'shot-rifle', rate: 0.86, len: 0.9, gain: 1},
   svd: {cat: 'shot-sniper', rate: 1, len: 2, gain: 1},
@@ -86,6 +89,8 @@ export const RELOADS = {
   ],
 };
 for (const [id, base] of Object.entries({
+  tt: 'ak',
+  akm: 'ak',
   hunting: 'svd',
   ak74: 'ak',
   ak74m: 'ak',
@@ -98,7 +103,7 @@ for (const [id, base] of Object.entries({
 })) {
   GUNS[id] = GUNS[base];
   RELOADS[id] = RELOADS[base];
-  SHOT_SAMPLES[id] = SHOT_SAMPLES[base];
+  SHOT_SAMPLES[id] ||= SHOT_SAMPLES[base];
 }
 
 /**
@@ -906,6 +911,12 @@ export function createSoundscape() {
 
   return {
     stats,
+    outcome(won) {
+      if (!ctx || ctx.state !== 'running' || !prefs.on) return;
+      const notes = won ? [261.63, 329.63, 392, 523.25] : [220, 174.61, 146.83];
+      notes.forEach((freq, i) => tone(A.out, ctx.currentTime + i * 0.22, {dur: 0.65, gain: 0.18, type: 'triangle', freq, attack: 0.025}));
+      stats.outcomes = (stats.outcomes || 0) + 1;
+    },
     get on() {
       return prefs.on;
     },

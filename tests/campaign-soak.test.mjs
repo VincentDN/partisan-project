@@ -15,11 +15,11 @@ test('90 encounters in a row: every result reported once, the world follows, not
   const sources = Object.keys(SOURCES);
   let reported = 0;
   for (let n = 0; n < 90; n++) {
-    while (!fitFighters(c).length) passTime(c, 6);
     const src = sources[n % sources.length];
+    while (fitFighters(c).length < (SOURCES[src].kind === 'roadblock' ? 2 : 1)) passTime(c, 6);
     // each fight is with a fresh party of that kind (on the map they respawn); the result names the party met
     const enc = encounterFor(c, src);
-    deploy(c, {...enc, fighters: fitFighters(c)});
+    deploy(c, enc);
     assert.equal(enter(c, enc.id), 'play');
     const won = rand() < 0.6;
     writeResult(c, enc.id, {

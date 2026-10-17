@@ -20,7 +20,7 @@ try {
     return g.sim.units.filter(u => u.side === 'partisan').map(u => [u.weapon, u.mags[u.weapon] + u.reserve[u.weapon], u.grenades]);
   });
   assert.equal(initial.length, 8);
-  assert.ok(initial.every(([gun, ammo, grenades]) => gun === 'hunting' && ammo === 10 && grenades === 0));
+  assert.ok(initial.every(([gun, ammo, grenades]) => ['hunting', 'tt', 'akm'].includes(gun) && ammo === 10 && grenades === 0));
   await page.evaluate(async () => {
     const g = window.PARP_SPRITES;
     const {selectControl} = await import('/convoy/squad-control.js');

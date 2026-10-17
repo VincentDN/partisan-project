@@ -8,18 +8,18 @@ import {TROOPS} from '../band/troops.js';
  * opts: {el, campaign, names: {id: name}, fit: [fit ids, in band order], first: [ids ticked at the start], onPick([ids])}.
  * Returns {nodes: [heading, list, count or note], sync(panel)}: sync enables the actions for the current pick.
  */
-export function squadPicker({el, campaign, names, fit, first, onPick}) {
+export function squadPicker({el, campaign, names, fit, first, onPick, min = SQUAD_MIN, max = SQUAD_MAX}) {
   const selected = new Set(first);
-  const enough = fit.length >= SQUAD_MIN;
+  const enough = fit.length >= min;
   const count = el('p', {class: 'enc-count', 'aria-live': 'polite'});
   let panel = null;
   function sync(p = panel) {
     panel = p;
     const ids = fit.filter(id => selected.has(id)),
-      ok = ids.length >= SQUAD_MIN && ids.length <= SQUAD_MAX;
+      ok = ids.length >= min && ids.length <= max;
     onPick(ids);
     for (const b of panel?.querySelectorAll('#enc-attack, #enc-prepare') || []) b.disabled = !ok;
-    count.textContent = `Deploying ${ids.length} fighters · choose ${SQUAD_MIN}–${SQUAD_MAX}${ok ? '' : ' to continue'}.`;
+    count.textContent = `Deploying ${ids.length} fighters · choose ${min}–${max}${ok ? '' : ' to continue'}.`;
     count.classList.toggle('bad', !ok);
   }
   const hurt = Object.entries(campaign.band.fighters).filter(([, f]) => f.wounded);
@@ -51,7 +51,7 @@ export function squadPicker({el, campaign, names, fit, first, onPick}) {
       ),
       hurt.map(([id, f]) => el('li', {class: 'hurt'}, `${names[id] || id}: wounded, ${Math.ceil(f.healIn)}h to heal`)),
     ),
-    enough ? count : el('p', {class: 'note'}, 'At least six fit fighters are needed. Rest at a friendly settlement until they heal.'),
+    enough ? count : el('p', {class: 'note'}, `At least ${min} fit fighters are needed. Rest at a friendly settlement until they heal.`),
   ];
   return {nodes, sync};
 }

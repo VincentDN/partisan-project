@@ -130,7 +130,9 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
       campaign,
       names: NAMES,
       fit,
-      first: fitFighters(campaign),
+      first: fitFighters(campaign).slice(0, src.kind === 'roadblock' ? 3 : 9),
+      min: src.kind === 'roadblock' ? 2 : SQUAD_MIN,
+      max: src.kind === 'roadblock' ? 4 : 9,
       onPick: ids => {
         e.fighters = ids;
         auto.sync();
@@ -203,7 +205,7 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
         kind: src.kind,
         caught: caughtBy(campaign, c.id),
         verb: act.verb,
-        canAttack: fit.length >= SQUAD_MIN,
+        canAttack: fit.length >= (src.kind === 'roadblock' ? 2 : SQUAD_MIN),
         fit,
         names: NAMES,
         onAttack: () => attack(e),

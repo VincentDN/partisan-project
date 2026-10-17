@@ -62,5 +62,13 @@
   "compound#1+kits": {
     "digest": "2e413f413c3411b4",
     "summary": "running at 90s, 1 down, 7 rebels standing"
+  },
+  "roadblock#1": {
+    "digest": "b7a96c0ab2f3d999",
+    "summary": "running at 90s, 2 down, 8 rebels standing"
+  },
+  "roadblock#2": {
+    "digest": "87c2b1949fea77b5",
+    "summary": "running at 90s, 4 down, 8 rebels standing"
   }
 }

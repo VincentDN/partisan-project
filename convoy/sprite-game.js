@@ -80,6 +80,7 @@ let sim,
   paused = false,
   selected = [];
 function newGame() {
+  delete $('#card').dataset.outcome;
   const awareness = Number($('#aware').value) / 100;
   const seed = cm?.action === 'play' ? cm.deployment.seed : Number(params.get('seed')) || Math.floor(Math.random() * 1e6);
   sim = new Sim({
@@ -122,11 +123,15 @@ function campaignCard() {
     $('#start').textContent = 'Start mission';
     return;
   }
-  $('#card-title').textContent = cm.action === 'none' ? 'No mission here' : sim.level.title;
+  $('#card-title').textContent =
+    cm.action === 'none' ? 'No mission here' : `${cm.result?.outcome === 'won' ? 'VICTORY' : 'DEFEAT'} — ${sim.level.title}`;
   $('#card-text').textContent =
     cm.action === 'none' ? 'This mission has been fought already, or the link is out of date.' : describe(cm.result);
   $('#start').textContent = 'Return to the map';
-  if (cm.result) showLootReport();
+  if (cm.result) {
+    $('#card').dataset.outcome = cm.result.outcome;
+    showLootReport();
+  }
 }
 /**
  * The conditions this fight is in (convoy/levels/variants.js): a campaign deployment brings its own (time, weather,
@@ -477,7 +482,9 @@ function spoilsScreen() {
   });
 }
 function showDebrief(d) {
-  $('#card-title').textContent = `${sim.level.title}: ${d.outcome === 'won' ? 'accomplished' : 'failed'}`;
+  $('#card-title').textContent = `${d.outcome === 'won' ? 'VICTORY' : 'DEFEAT'} — ${sim.level.title}`;
+  $('#card').dataset.outcome = d.outcome;
+  sound.outcome(d.outcome === 'won');
   const text = $('#card-text');
   text.textContent = `${Math.floor(d.time / 60)}:${String(Math.floor(d.time % 60)).padStart(2, '0')} · ${d.armyDown} soldiers down, ${d.escaped} fled, ${d.vehiclesDestroyed} vehicles destroyed. ${d.byPartisan.map(u => `${u.name}: ${u.state}, ${u.kills} down`).join(' · ')}`;
   // experience and loot: paid once per mission, scaled by difficulty; promotions and the trader are right below

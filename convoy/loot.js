@@ -105,6 +105,7 @@ export const RARITIES = ['common', 'uncommon', 'rare', 'very rare'];
 const RARITY_WEIGHT = {common: 52, uncommon: 28, rare: 14, 'very rare': 6};
 /** What each mission's ground is rich in: multipliers on a gear's kind (GEAR[id].kind, or 'goods'). */
 export const LEVEL_LOOT = {
+  roadblock: {label: 'Roadblock supplies', kinds: {weapon: 1.4, ammo: 2, gear: 1, attachment: 0.5, drone: 0, goods: 0.5}},
   convoy: {label: 'Convoy cargo', kinds: {weapon: 2, ammo: 1.6, gear: 1, attachment: 1, drone: 0.6, goods: 1}},
   compound: {label: 'Compound stores', kinds: {gear: 2, drone: 1.6, attachment: 1.3, weapon: 1, ammo: 1, goods: 1.4}},
   cave: {label: 'Abandoned caches', kinds: {ammo: 2, attachment: 1.5, weapon: 1.2, gear: 1, drone: 0.8, goods: 1.2}},

@@ -5,14 +5,15 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json).
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-17 · codex · campaign GUI clarity**
+**2026-10-17 · codex · campaign opening, Roadblock and result feedback**
 
-- Map objective/progress, next-step guidance, travel status and live fighter/ammunition totals replace ambiguous campaign statistics. Find band and Stop travel expose existing travel controls; focused buttons retain native keyboard activation.
-- Band & supplies groups each fighter's kit/build controls and readiness; section navigation reaches recovery/trade and reserve stash. Responsive HUD, sticky modal controls and explicit deployment counts improve clarity.
-- `tests/e2e/campaign-gui.mjs` covers paused updates, persisted route cancellation, keyboard controls, grouped kits, scoped axe and phone HUD bounds. Screenshots are in `outbound/wip-images/`.
-- W25's full guided onboarding remains open, as do W21 endings and physical-device acceptance. W23 remains Codex-owned; its 100-run audit found 565 auto fights spend no ammunition, leaving W22 equipment-aware auto-resolve and tactical scarcity/barter testing open.
-- Verified: 527 tests, lint, typecheck, format check, production build/link check; GUI desktop/phone + scoped axe, seven-level deployment, complete campaign round trip and stacked overlay keyboard/focus browser checks all pass.
-- Previous main milestone `6b43577` adds inventory/body-looting Foley; preserved here.
+- Fresh eight-person kit: five Mosins, two TT-33 pistols, one AKM; ten rounds each, empty stash, existing saves unchanged. TT calibre normalization fixes spare-magazine reloads; tactical stats/sprites/audio support both new arms.
+- Response tiers now scale reaction 1.6→1.0, spread 1.9→1.2 and incoming damage 0.65→0.95 on chosen difficulty. Base health remains 180. Deterministic shot and damage regressions cover the curve.
+- Oros roadblock near the opening band: four riflemen regardless of difficulty/response, two-to-four-rebel campaign selection, clear/loot/extract objectives and normal idempotent settlement. No reinforcement waves or specialist upgrades.
+- VICTORY/DEFEAT headers and ascending/descending result cues through shared SFX mute/volume. Victory spoils also states VICTORY.
+- New `tests/campaign-opening.test.mjs` and `tests/e2e/roadblock.mjs`; existing scope/start tests updated for mixed kits. W23 testing remains Codex-owned; old auto-only reports are historical. Human pacing, equipment-aware auto-resolve, full W25 onboarding and W21 campaign endings remain open.
+- Verified: 535 tests; lint, typecheck, formatting, build/link checks; Roadblock browser flow and mixed-start/sniper controls. Roadblock screenshots committed. Added two new Roadblock golden replays; existing replay digests unchanged.
+- Fixed 30m shot sample: baseline 603/1000 hits; response tiers 0–3 yield 339, 402, 457, 517. Human play balance still needs feedback.
 <!-- handoff:end -->
 
 ## Gameplay/demo module boundary — 13 October 2026

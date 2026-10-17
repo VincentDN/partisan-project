@@ -49,7 +49,7 @@ See [graphics roadmap](graphics-roadmap.md) for the shared appearance acceptance
 | Campaign entry and travel | Shared version-1 save, legacy migration, click-to-march A* navigation, terrain costs, camera follow, pause and speed | First-session guidance and interrupted-save UX |
 | Default map | 2.5D parties, island terrain, settlement and party labels; 3D demo separated | Real-device visual and frame-time acceptance |
 | Encounters | Proximity contact, both sides and the ground, Attack, Prepare an ambush, Withdraw with a rearguard, Leave; hunters pursue the band | Ambush preparation beyond sandbags (positions, traps) |
-| Deployment | Eight healthy starting rebels; village recruits expand the named band up to 18; select six to nine fit fighters; explicit identities reach the sim | Broader reserve roster UX and equipment ownership unification |
+| Deployment | Eight healthy starting rebels; village recruits expand the named band up to 18; select six to nine fit fighters (two to four for Roadblocks); explicit identities reach the sim | Broader reserve roster UX and equipment ownership unification |
 | Tactical missions | Convoy, compound, cave, forest road, checkpoint, village and hilltop; squad switching and class abilities | Mission pathfinding defects, tuning with eight rebels, extraction/loss policy audit |
 | Durability | Rebels have 180 base HP, modified by class; army base HP remains 100 | Human difficulty and pacing playtests |
 | Return | One result per encounter, XP, wounds, equipment/goods, persistent kit, abandoned-mission recovery | Concurrent-tab transaction authority and interrupted-save UX |
@@ -99,7 +99,7 @@ is unavailable and the strategic implications of moving at night without exposin
 ### Contact and deployment
 
 Reaching a hostile party or occupied settlement offers an encounter. The summary names the enemy, strength,
-mission, terrain and conditions. The player selects **six to nine fit rebels**; the starting roster has eight.
+mission, terrain and conditions. The player selects **six to nine fit rebels**, or **two to four for a Roadblock**; the starting roster has eight. The nearby Oros roadblock has exactly four riflemen, no specialists or reinforcements. Clear it, search bodies with E, then bring the surviving crew to the marked southwest exit. Its loot follows normal one-time settlement.
 Wounded fighters stay behind. Fewer than six fit fighters requires recovery before launching another fight.
 Leave suppresses that immediate contact until the band moves clear, avoiding repeated dialogs.
 
@@ -173,9 +173,10 @@ At friendly or independent settlements within the service radius, Party offers 1
 fighters recover in 24 hours; fighters brought down take 48. Rest advances campaign time and reduces heat. The map runs the shared world simulation through that time, including convoy movement and hunter activity.
 The player-facing interruption and risk presentation still needs pacing acceptance.
 
-Fresh campaigns start with an empty reserve stash and eight healthy fighters, each owning one Mosin-Nagant-style
-bolt-action rifle and ten rounds (five loaded, five spare). There are no issued sidearms, launchers, grenades,
-armour or medical supplies. Recover better equipment and ammunition from combat; existing village barter remains
+Fresh campaigns start with an empty reserve stash and eight healthy fighters: five Mosin-style bolt-action rifles,
+two TT-33 pistols and one AKM. This rounds the requested 60% Mosin / 30% pistol / 10% AKM mix to eight people.
+Each fighter owns ten rounds: Mosins have five loaded/five spare, pistols eight/two, and the AKM ten loaded.
+There are no extra sidearms, launchers, grenades, armour or medical supplies. Recover better equipment and ammunition from combat; existing village barter remains
 available for exchanging recovered stock. Class changes do not grant a weapon or refill ammunition. Empty slings
 and spent magazines survive saves and completed missions. Existing acquired inventories are preserved.
 
@@ -232,20 +233,21 @@ The response score is the sum of every named fighter's class tier plus twelve po
 settlement currently liberated. Wounded fighters and reserves count; legacy troop stacks, selected squad size and
 heat do not inflate the score. The fresh eight-person band scores 28. Losing territory can reduce the response.
 
-| Tier | Score | Response | Additional soldiers per hunter column | Raider / Orion activation heat | Reaction / shot-spread multipliers |
+| Tier | Score | Response | Additional soldiers per hunter column | Raider / Orion activation heat | Reaction / shot-spread / incoming-damage multipliers |
 | --- | --- | --- | --- | --- | --- |
-| 0 | 0–39 | Routine patrols | 0 | 20 / 50 | 1.00 / 1.00 |
-| 1 | 40–59 | Active search | 4 | 15 / 45 | 0.90 / 0.95 |
-| 2 | 60–79 | Containment | 8 | 10 / 40 | 0.80 / 0.90 |
-| 3 | 80+ | Suppression | 12 | 5 / 35 | 0.70 / 0.85 |
+| 0 | 0–39 | Routine patrols | 0 | 20 / 50 | 1.60 / 1.90 / 0.65 |
+| 1 | 40–59 | Active search | 4 | 15 / 45 | 1.40 / 1.65 / 0.75 |
+| 2 | 60–79 | Containment | 8 | 10 / 40 | 1.20 / 1.40 / 0.85 |
+| 3 | 80+ | Suppression | 12 | 5 / 35 | 1.00 / 1.20 / 0.95 |
 
 Hunter sizes start at 31 raiders and 26 Orion soldiers. Their authored cave/hilltop waves now field the exact
 strategic count, including vehicle crew, without difficulty thinning. Tier one upgrades selected regular riflemen
 to grenadiers; tier two adds machine guns and tier three adds marksmen. Existing leaders, radio operators and
 militia keep their roles. Garrison, militia, counterattack and convoy headcounts remain authoritative.
 
-Reaction and spread multipliers apply on top of the chosen tactical difficulty; rebel health and damage settings
-are preserved. Party shows the score breakdown and next threshold, map labels show current hunter strength, and
+Reaction, spread and incoming-damage multipliers apply on top of the chosen tactical difficulty. Higher reaction
+and spread values mean slower, less accurate troops. Base rebel health stays 180; routine troops inflict 65%
+of the selected difficulty’s damage. Roadblocks retain four ordinary riflemen at every tier. Party shows the score breakdown and next threshold, map labels show current hunter strength, and
 encounter briefings show the tier. Deployment snapshots the tier and hunter count so a mission cannot change its
 rules during loading. Practice levels retain their original setup. Auto-resolve uses the same eligibility rule
 but accounts for escalation in victory odds and expected wounds.
@@ -430,3 +432,16 @@ close controls; encounter selection explains the six-to-nine deployment requirem
 keyboard operation, persisted route cancellation, live status, phone bounds and scoped HUD accessibility.
 This is a W25 interface milestone; the complete guided move → encounter → loot → promote journey remains
 open alongside W21 operation endings and physical-device acceptance.
+
+## Opening difficulty and results — 17 October 2026
+
+The mixed scarce starting kit and small Roadblock provide an equipment-recovery step before convoy ambushes.
+Tactical response now starts slower, less accurate and less damaging, escalating gradually across four tiers.
+A deterministic 1,000-shot-per-profile test measures 603 hits at 30 metres for the previous Normal baseline;
+new tiers 0–3 yield 339, 402, 457 and 517 hits. Damage tests ensure ordinary
+AK, PKM, SVD and HMG rounds cannot kill a healthy rebel in one hit on Normal. These checks are not human-play
+pacing acceptance; W23’s older Mosin-only auto-resolve reports remain historical and do not validate this opening.
+
+Combat results now headline VICTORY or DEFEAT, including the victory spoils overlay, with distinct ascending
+and descending sound cues through the existing SFX volume/mute controls. Roadblocks include a loot window
+before extraction so the last guard’s equipment remains recoverable. W21’s campaign-wide ending remains open.

@@ -48,6 +48,17 @@ export async function buildParties(field, layer, {figure, vehicle = vehicle3d}) 
   // Invader patrols in the distance, in a slate-grey uniform
   const PATROLS = [
     {
+      id: 'oros-roadblock',
+      name: 'Oros roadblock',
+      count: 4,
+      at: [-138, 60],
+      facing: 2.6,
+      men: [
+        ['ready', 'alert'],
+        ['relaxed', 'calm'],
+      ],
+    },
+    {
       id: 'orion-patrol',
       name: 'Orion garrison patrol',
       count: 24,

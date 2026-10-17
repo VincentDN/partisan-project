@@ -110,5 +110,5 @@ export function describe(r) {
   if (r.outcome === 'withdrawn')
     return 'You left the mission. The fighters fell back to the band, wounded, with their kit; nothing was taken.';
   const fromCargo = cargo ? ` (${cargo} from the convoy's cargo)` : '';
-  return `${r.outcome === 'won' ? 'Accomplished' : 'Failed'}: ${r.kills} down, ${hurt} of yours hurt, ${taken} item${taken === 1 ? '' : 's'} brought home${fromCargo}.`;
+  return `${r.outcome === 'won' ? 'Victory' : 'Defeat'}: ${r.kills} down, ${hurt} of yours hurt, ${taken} item${taken === 1 ? '' : 's'} brought home${fromCargo}.`;
 }

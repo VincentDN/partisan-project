@@ -45,6 +45,7 @@ export function deploy(
   if (typeof id !== 'string' || !id) throw new Error('an encounter needs an id');
   if (c.settled.includes(id)) throw new Error(`encounter ${id} was already fought`);
   if (!Array.isArray(fighters) || !fighters.length) throw new Error('deploy at least one fighter');
+  if (level === 'roadblock' && (fighters.length < 2 || fighters.length > 4)) throw new Error('Roadblocks need two to four fit fighters');
   if (fighters.length > SQUAD_MAX || new Set(fighters).size !== fighters.length) throw new Error('deploy up to nine distinct fighters');
   for (const f of fighters) {
     if (!c.band.fighters[f]) throw new Error(`no fighter ${f}`);

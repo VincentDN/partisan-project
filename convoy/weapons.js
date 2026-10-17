@@ -5,6 +5,32 @@
 // lob: indirect fire that arcs over cover and lands near the aim point · reserve: spare rounds beyond the loaded one
 // speed: the projectile's flight speed in m/s (RimWorld-style: rounds are seen in flight, damage lands on arrival)
 export const WEAPONS = {
+  tt: {
+    label: 'TT-33',
+    mag: 8,
+    reload: 2,
+    cd: 0.4,
+    speed: 40,
+    damage: 30,
+    spread: 0.035,
+    range: 35,
+    supp: 0.15,
+    burst: [1, 2],
+    pause: [0.8, 1.4],
+  },
+  akm: {
+    label: 'AKM',
+    mag: 30,
+    reload: 2.6,
+    cd: 0.12,
+    speed: 45,
+    damage: 38,
+    spread: 0.03,
+    range: 65,
+    supp: 0.24,
+    burst: [2, 3],
+    pause: [0.7, 1.3],
+  },
   hunting: {
     label: 'Mosin-Nagant',
     mag: 5,

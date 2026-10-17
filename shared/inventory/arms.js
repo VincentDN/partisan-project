@@ -5,6 +5,13 @@
 
 /** id -> {weapon, mag (null: loaded by hand, one at a time), round, start (rounds at deployment)} */
 export const ARMS = {
+  akm: {
+    weapon: 'kalashnikov-akm-762x39-assault-rifle',
+    mag: 'ak-762x39-30-round-magazine-issued-55-or-later',
+    round: '762x39mm-ps-gzh',
+    start: 30,
+  },
+  tt: {weapon: 'tokarev-tt-33-762x25-tt-pistol', mag: 'tt-762x25-tt-105-8-round-magazine', round: '762x25mm-tt-pst-gzh', start: 16},
   // convoy/weapons.js
   ak: {weapon: 'kalashnikov-ak-74m-545x39-assault-rifle', mag: 'ak-74-545x39-6l23-30-round-magazine', round: '545x39mm-ps-gs', start: 60},
   pkm: {weapon: 'kalashnikov-pkm-762x54r-machine-gun', mag: 'pk-762x54r-100-round-box', round: '762x54mm-r-lps-gzh', start: 60},

@@ -14,7 +14,7 @@ export function calibreKey(s) {
     .toLowerCase()
     .replace(/para|nato|mm|\s/g, '')
     .replace(/\./g, '');
-  return k === '12ga' ? '12g' : k === '20ga' ? '20g' : k;
+  return k === '12ga' ? '12g' : k === '20ga' ? '20g' : k === '762x25tt' ? '762x25' : k;
 }
 /** The calibre a magazine's name declares ('AK-12 5.45x39 30-round magazine' -> '545x39'). */
 const MAG_CALIBRE = /(\d+(?:\.\d+)?x\d+R?|\d{2}ga|\.\d{3}\b)/;

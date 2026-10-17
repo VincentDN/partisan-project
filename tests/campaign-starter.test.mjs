@@ -11,22 +11,27 @@ import {Sim} from '../convoy/sim.js';
 const cat = createCatalogue(JSON.parse(fs.readFileSync('convoy/data/inventory-items.json')));
 const classes = c => Object.fromEntries(Object.entries(c.band.fighters).map(([id, f]) => [id, f.class]));
 
-test('all eight fresh fighters have only a Mosin, ten rounds and no reserve equipment', () => {
+test('fresh band has five Mosins, two old pistols and an AKM, ten rounds each and no reserve equipment', () => {
   const c = normalize(newCampaign());
   assert.deepEqual(c.stash, {});
   assert.equal(Object.keys(c.band.fighters).length, 8);
+  assert.deepEqual(
+    Object.values(c.band.fighters)
+      .map(f => f.kit.armsId)
+      .sort(),
+    ['akm', 'hunting', 'hunting', 'hunting', 'hunting', 'hunting', 'tt', 'tt'],
+  );
   for (const f of Object.values(c.band.fighters)) {
     assert.equal(f.wounded, false);
-    assert.equal(f.kit.armsId, 'hunting');
     assert.equal(roundsCarried(cat, f.kit, cat.def(f.kit.primary.slug).calibre), 10);
     for (const slot of ['secondary', 'rig', 'armor', 'headwear', 'backpack']) assert.equal(f.kit[slot], null);
   }
   const sim = new Sim({squad: classes(c)});
   attachAmmo(sim, cat, {campaign: true, kits: Object.fromEntries(Object.entries(c.band.fighters).map(([id, f]) => [id, f.kit]))});
   for (const u of sim.units.filter(u => u.side === 'partisan')) {
-    assert.deepEqual(u.weapons, ['hunting']);
+    assert.deepEqual(u.weapons, [c.band.fighters[u.id].kit.armsId]);
     assert.equal(u.grenades, 0);
-    assert.equal(u.mags.hunting + u.reserve.hunting, 10);
+    assert.equal(u.mags[u.weapon] + u.reserve[u.weapon], 10);
   }
 });
 

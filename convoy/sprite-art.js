@@ -158,6 +158,7 @@ export const SET_GUNS = {
   'set-bolt': {label: 'Bolt-action rifle (set)', file: SET + 'BoltActionRifle.png', length: 1.15},
   'set-shotgun': {label: 'Shotgun (set)', file: SET + 'Shotgun.png', length: 1},
   'set-smg': {label: 'Heavy SMG (set)', file: SET + 'HeavySMG.png', length: 0.8},
+  'set-pistol': {label: 'Old service pistol', file: SET + 'Autopistol.png', length: 0.35},
   'set-mp': {label: 'Machine pistol (set)', file: SET + 'MachinePistol.png', length: 0.55},
   'set-rocket': {label: 'Rocket launcher (set)', file: SET + 'RocketLauncher.png', length: 1.15},
 };
@@ -183,7 +184,7 @@ export async function loadGuns() {
 }
 // What each simulated weapon shows by default (a cosmetic gun replaces a rebel's first weapon).
 export const DEFAULT_GUN = {
-  partisan: {hunting: 'set-bolt', ak: 'ak74m', svd: 'set-sniper', pkm: 'set-lmg', rpg: 'set-rocket'},
+  partisan: {tt: 'set-pistol', akm: 'ak74', hunting: 'set-bolt', ak: 'ak74m', svd: 'set-sniper', pkm: 'set-lmg', rpg: 'set-rocket'},
   army: {ak: 'ak15k', svd: 'set-sniper', pkm: 'set-lmg', rpg: 'set-rocket', gp: 'ak15k'},
 };
 

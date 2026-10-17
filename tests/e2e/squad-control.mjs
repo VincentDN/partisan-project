@@ -61,7 +61,7 @@ export async function checkSquadControl(browser, url, reducedMotion = 'reduce') 
     });
     await page.waitForFunction(() => window.PARP_SPRITES.sim.outcome === 'lost');
     await page.locator('#card:not([hidden])').waitFor();
-    assert.match(await page.locator('#card-title').innerText(), /failed/);
+    assert.match(await page.locator('#card-title').innerText(), /DEFEAT/);
     assert.equal(await page.locator('#squad-picker').isVisible(), false);
     await page.locator('#restart').click();
     assert.equal(await page.evaluate(() => window.PARP_SPRITES.sim.player.id), 'player');

@@ -68,8 +68,9 @@ test('response preserves actual garrison/convoy counts, changes equipment and mo
     const roles = L => JSON.stringify([L.units, L.convoy?.vehicles, L.waves]);
     assert.notEqual(roles(high), roles(low));
     const sim = new Sim({level: high, difficulty: 'normal'});
-    assert.equal(sim.difficulty.react, 0.7);
-    assert.equal(sim.difficulty.spread, 0.85);
+    assert.equal(sim.difficulty.react, RESPONSE_TIERS[3].react);
+    assert.equal(sim.difficulty.spread, RESPONSE_TIERS[3].spread);
+    assert.equal(sim.difficulty.taken, RESPONSE_TIERS[3].taken);
   }
   assert.deepEqual(DIFFICULTY, original);
   assert.equal(vary(LEVELS.hilltop).response, undefined);

@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-10-17 — gentler campaign opening and Roadblocks
+
+- Start routine occupiers with slower reactions, wider aim and 35% less incoming damage on the selected difficulty; escalate gradually with occupation response.
+- Give the eight healthy starters five Mosin rifles, two TT-33 pistols and one AKM, each with ten owned rounds. Existing saves retain their earned kits. Fix TT magazine calibre matching for reloads.
+- Add the Oros Roadblock: exactly four riflemen, two-to-four-rebel deployment, no reinforcements, body looting and a marked extraction zone.
+- Show prominent VICTORY/DEFEAT headlines and distinct result cues honoring SFX mute/volume, including the victory spoils screen.
+
 ## 2026-10-17 — campaign GUI clarity
 
 - Show the current objective, operation progress, travel order, clock state and real fighter/ammunition readiness on the campaign map. Add visible Find band, Stop travel and Controls actions.

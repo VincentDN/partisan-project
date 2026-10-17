@@ -9,7 +9,11 @@ import {ARMS} from '../shared/inventory/arms.js';
 /** A catalogue weapon (kit slug) as the gun sprite it is drawn with (by the gear id it shares with ARMS). */
 const GUN_OF_SLUG = Object.fromEntries(
   Object.entries(ARMS)
-    .map(([id, a]) => [a.weapon, GEAR[id]?.gun || {ak: 'ak74m', pkm: 'set-lmg', svd: 'set-sniper', rpg: 'set-rocket'}[id]])
+    .map(([id, a]) => [
+      a.weapon,
+      GEAR[id]?.gun ||
+        {tt: 'set-pistol', akm: 'ak74', hunting: 'set-bolt', ak: 'ak74m', pkm: 'set-lmg', svd: 'set-sniper', rpg: 'set-rocket'}[id],
+    ])
     .filter(([, gun]) => gun),
 );
 const WEAR_ICON = {headwear: 'helmet', armor: 'vest'};
@@ -94,7 +98,7 @@ export function showSpoils({
   box.setAttribute('role', 'dialog');
   box.setAttribute('aria-modal', 'true');
   box.setAttribute('aria-labelledby', 'spoils-title');
-  const title = el('h2', 'spoils-title', 'Spoils of war');
+  const title = el('h2', 'spoils-title', 'VICTORY — Spoils of war');
   title.id = 'spoils-title';
   const grid = el('ul', 'spoils-grid');
   grid.setAttribute('aria-live', 'polite');

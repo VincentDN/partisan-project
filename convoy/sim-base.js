@@ -81,7 +81,7 @@ const KEY_ROLES = new Set(['leader', 'rto', 'turret']);
  * Leaders, radio operators and turret gunners always come; the rest are thinned evenly. The level object is not changed.
  */
 export function thinLevel(L, force) {
-  if (!(force < 1) || L.settlement || L.counterattack || L.hunters) return L;
+  if (!(force < 1) || L.settlement || L.counterattack || L.hunters || L.id === 'roadblock') return L;
   const thin = list => {
     const keepN = Math.max(1, Math.round(list.length * force));
     const key = list.filter(u => KEY_ROLES.has(u.role)).length,

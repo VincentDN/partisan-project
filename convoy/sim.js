@@ -42,6 +42,7 @@ export class Sim {
     this.difficultyId = difficulty || 'normal';
     this.difficulty = {...difficultyOf(this.difficultyId)};
     if (this.level.response) {
+      this.difficulty.taken *= this.level.response.taken ?? 1;
       this.difficulty.react *= this.level.response.react;
       this.difficulty.spread *= this.level.response.spread;
     }

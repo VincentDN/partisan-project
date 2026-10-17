@@ -44,12 +44,12 @@ function reachable(level, a, b, r = 0.6) {
 test('levels: every mission is built and listed in order', () => {
   assert.deepEqual(
     MISSIONS.map(m => m.id),
-    ['convoy', 'compound', 'cave', 'forest-road', 'checkpoint', 'village', 'hilltop'],
+    ['roadblock', 'convoy', 'compound', 'cave', 'forest-road', 'checkpoint', 'village', 'hilltop'],
   );
   for (const m of MISSIONS) assert.ok(LEVELS[m.id] && !m.soon, m.id);
 });
 
-for (const id of ['compound', 'cave', 'forest-road', 'checkpoint', 'village', 'hilltop']) {
+for (const id of ['roadblock', 'compound', 'cave', 'forest-road', 'checkpoint', 'village', 'hilltop']) {
   const L = LEVELS[id];
   test(`[${id}] complete data: bounds, objectives with known types, everything placed inside the map and clear of cover`, () => {
     for (const k of ['title', 'summary', 'brief', 'bounds', 'ground', 'cover', 'partisans', 'objectives']) assert.ok(L[k], k);
@@ -314,6 +314,11 @@ test('variations: the enemy scales with the party met', async () => {
   for (const id of Object.keys(LEVELS)) {
     const base = enemyCount(LEVELS[id]);
     assert.ok(base > 0, `${id} has an enemy`);
+    if (id === 'roadblock') {
+      assert.equal(enemyCount(vary(LEVELS[id], {strength: 1.5})), 4);
+      assert.equal(enemyCount(vary(LEVELS[id], {strength: 0.6})), 4);
+      continue;
+    }
     assert.ok(enemyCount(vary(LEVELS[id], {strength: 1.5})) > base, `${id}: stronger`);
     assert.ok(enemyCount(vary(LEVELS[id], {strength: 0.6})) < base, `${id}: weaker`);
   }

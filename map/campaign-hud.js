@@ -77,11 +77,13 @@ export function mountCampaignHud({campaign, travel, getSpeed, blocked, refresh})
     objective.querySelector('.objective-next').textContent = op.complete
       ? 'Foothold secured. Keep building your resistance.'
       : fit < 6
-        ? 'Recover your wounded at a safe settlement. You need six fit fighters.'
+        ? 'Recover at a safe settlement. Roadblocks need 2–4 fit fighters; larger battles need six.'
         : rounds === 0
           ? 'Check your kits: no carried ammunition. Equip recovered supplies before fighting.'
           : !op.convoy
-            ? 'Next: intercept a convoy. Loot its escort for weapons and ammunition.'
+            ? campaign.world.parties.some(p => p.id === 'oros-roadblock' && p.state === 'destroyed')
+              ? 'Next: intercept a convoy. Loot its escort for weapons and ammunition.'
+              : 'Start with the Oros roadblock: four guards, 2–4 rebels. Loot supplies before intercepting a convoy.'
             : op.victories < 3
               ? 'Next: win more battles, recover supplies and prepare your band.'
               : 'Next: liberate Fort Orion to secure your foothold.';

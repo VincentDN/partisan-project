@@ -28,7 +28,7 @@ export function applyResponse(L, {tier = 0, hunters = null} = {}) {
     });
     L.hunters = hunters;
   }
-  if (!r.tier) return;
+  if (!r.tier || L.id === 'roadblock') return;
   const units = [
     ...(L.units || []),
     ...(L.reinforcements?.units || []),

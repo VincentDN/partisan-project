@@ -12,6 +12,7 @@
 //   items  [{id, label, x, z, search}] things to steal (hold E)    alarm 'global' | 'local'    reinforcements {...}
 //   waves  [{at, text, squads: [{group, goal, units}], vehicle?}]   scheduled attacks      night, sight    darkness
 //   objectives [...]                   what wins and loses the mission (convoy/objectives.js)
+import roadblock from './roadblock.js';
 import convoy from './convoy.js';
 import compound from './compound.js';
 import cave from './cave.js';
@@ -20,9 +21,10 @@ import checkpoint from './checkpoint.js';
 import village from './village.js';
 import hilltop from './hilltop.js';
 
-export const LEVELS = {convoy, compound, cave, 'forest-road': forestRoad, checkpoint, village, hilltop};
+export const LEVELS = {roadblock, convoy, compound, cave, 'forest-road': forestRoad, checkpoint, village, hilltop};
 // Mission order in the campaign; levels not built yet are listed so the select can show what is coming.
 export const MISSIONS = [
+  {id: 'roadblock', title: 'Roadblock'},
   {id: 'convoy', title: 'Convoy ambush'},
   {id: 'compound', title: 'Compound assault'},
   {id: 'cave', title: 'Cave hideout defence'},

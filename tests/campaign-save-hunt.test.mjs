@@ -15,7 +15,7 @@ function playedIn() {
   for (let n = 0; n < 4; n++) {
     while (!fitFighters(c).length) passTime(c, 12);
     const e = encounterFor(c, Object.keys(SOURCES)[n]);
-    deploy(c, {...e, fighters: fitFighters(c)});
+    deploy(c, e);
     enter(c, e.id);
     writeResult(c, e.id, {outcome: n % 2 ? 'won' : 'lost', fighters: {player: {state: 'wounded', xp: 5}}, kills: 1});
     settle(c, e.id);

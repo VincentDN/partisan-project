@@ -105,7 +105,7 @@ export function vary(
     };
   }
   // the enemy's strength
-  const k = Math.min(1.6, Math.max(0.6, strength));
+  const k = L.id === 'roadblock' ? 1 : Math.min(1.6, Math.max(0.6, strength));
   if (Math.abs(k - 1) > 0.05) {
     if (L.units?.length) L.units = scaleUnits(L.units, k, rnd, 0);
     if (L.reinforcements) L.reinforcements.units = scaleUnits(L.reinforcements.units, k, rnd, 3);

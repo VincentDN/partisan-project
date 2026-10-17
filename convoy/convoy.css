@@ -96,3 +96,9 @@ button.primary{background:var(--accent);color:#14100a;border-color:var(--accent)
 .spoils-more { margin: 0; opacity: .85; text-align: center; }
 .spoils-actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
 .spoils-actions button { min-width: 220px; padding: 10px 16px; font-size: 15px; }
+
+/* Result labels stay prominent above the detailed report, using words as well as colour. */
+.card[data-outcome] #card-title { font-size: clamp(28px, 4vw, 44px); line-height: 1.15; letter-spacing: .04em; border-bottom: 2px solid currentColor; padding-bottom: 14px; }
+.card[data-outcome="won"] #card-title { color: #cfe8a1; }
+.card[data-outcome="lost"] #card-title { color: #ffb8a1; }
+.spoils-title { font-size: clamp(28px, 4vw, 44px); color: #cfe8a1; }
