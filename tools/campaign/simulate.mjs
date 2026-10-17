@@ -1,4 +1,5 @@
 // One deterministic strategic campaign; no synthetic wins, loot, XP or forced resolution of forbidden missions.
+import {carried} from './inventory.mjs';
 import {newCampaign, normalize} from '../../shared/campaign/state.js';
 import {createWorld, HOURS_PER_SECOND} from '../../shared/campaign/world.js';
 import {buildNav} from '../../shared/campaign/nav.js';
@@ -40,6 +41,8 @@ export function simulate({seed, days = 14, policy = 'standard', reloadEveryHours
     unreachablePlans: 0,
     blockedDefence: false,
     stashStart: count(c),
+    carriedStart: carried(c),
+    autoAmmoSpent: 0,
   };
   const remember = {ignored: new Set(), nextPlan: 0},
     horizon = days * 24;
@@ -67,6 +70,7 @@ export function simulate({seed, days = 14, policy = 'standard', reloadEveryHours
     elapsedHours: round(duration),
     huntsPerDay: round(metrics.hunts / (duration / 24)),
     stashEnd: count(c),
+    carriedEnd: carried(c),
     stashGrowth: count(c) - metrics.stashStart,
     goodsEnd: c.goods.length,
     responseTier: response(c).tier,

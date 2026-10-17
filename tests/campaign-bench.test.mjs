@@ -5,6 +5,7 @@ import {mkdtemp, readFile, writeFile, rm} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {spawnSync} from 'node:child_process';
+import {carried} from '../tools/campaign/inventory.mjs';
 import {simulate} from '../tools/campaign/simulate.mjs';
 import {promoteAtHaven} from '../tools/campaign/policy.mjs';
 import {newCampaign} from '../shared/campaign/state.js';
@@ -91,4 +92,22 @@ test('the policy pays real promotion requirements only at a haven and keeps woun
   assert.equal(fighter.class, 'heavy');
   assert.equal(fighter.xp, 7);
   assert.deepEqual(c.stash, {});
+});
+
+test('scarce-opening audit counts real carried rounds and exposes auto-resolve without ammunition spend', () => {
+  const c = newCampaign();
+  assert.deepEqual(carried(c), {rounds: 80, weapons: 8});
+  const k = c.band.fighters.player.kit;
+  k.primary.chamber = null;
+  k.primary.mag.rounds = [];
+  k.pockets.grids[0].items = [];
+  assert.deepEqual(carried(c), {rounds: 70, weapons: 8});
+  c.stash.ak74 = 100;
+  assert.deepEqual(carried(c), {rounds: 70, weapons: 8}, 'reserve rewards are not carried ammunition');
+  const r = simulate({seed: 4, days: 14});
+  assert.ok(r.autoFights > 0);
+  assert.deepEqual(r.carriedStart, {rounds: 80, weapons: 8});
+  assert.deepEqual(r.carriedEnd, r.carriedStart);
+  assert.equal(r.autoAmmoSpent, 0);
+  assert.deepEqual(aggregate([r]).ammunitionAudit, {campaigns: 1, roundsSpent: 0, campaignsWithCombatAndNoSpend: 1});
 });

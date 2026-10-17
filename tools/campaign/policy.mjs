@@ -1,4 +1,5 @@
 // Headless campaign policy uses real positions, legal auto-resolve, rearguards, safe-haven rest and paid promotions.
+import {carried} from './inventory.mjs';
 import {SETTLEMENTS, PARTY_SPOTS} from '../../map/island.js';
 import {TROOPS} from '../../band/troops.js';
 import {SOURCES, sourceFor, ownerOf, isGone, encounterFor, readResults, settlementSource} from '../../shared/campaign/contacts.js';
@@ -76,7 +77,9 @@ export function act({c, world, nav, metrics, policy, remember, stepHours, horizo
       metrics.declined++;
       continue;
     }
+    const ammoBefore = carried(c).rounds;
     const {result} = resolveAuto(c, {...e, at: {x: at.x, z: at.z}});
+    metrics.autoAmmoSpent += Math.max(0, ammoBefore - carried(c).rounds);
     readResults(c, {}, {settlements: SETTLEMENTS});
     metrics.autoFights++;
     metrics.firstAutoHours ??= now;

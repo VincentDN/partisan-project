@@ -396,3 +396,17 @@ retains W20 as its completion dependency; W22 remains open and is not declared b
 The retained W23 baseline/comparison predates the Mosin-only, ten-round campaign start. Its source fingerprints
 make it historical evidence, not validation of this new opening balance. Codex owns the follow-up measurement;
 manual-combat ammunition scarcity and loot progression require played comparison beyond the auto-only harness.
+
+
+### W23 Mosin-start follow-up — 17 October 2026
+
+Codex completed another fifty-seed standard run and fifty-seed early-rest comparison in ten-seed chunks,
+including checkpoint resumption. The [Mosin-start review](../outbound/campaign-balance/mosin-start/review.md)
+records 565 auto-resolved fights with **zero rounds spent**. Every band retained its eight rifles and eighty
+rounds; measured strategic outcomes match the historical policies seed for seed. These results validate the
+harness's strategic reproducibility, not ammunition scarcity or tactical sustainability.
+
+**W22 remaining scope:** equipment/ammunition-aware auto-resolve strength and expenditure, preview feedback for
+unarmed/dry bands, and one-time settlement/reload conservation, followed by the existing human-play comparison.
+**W23 testing remains assigned to Codex:** add real-ammunition tactical and barter policies in ten-seed chunks,
+then compare with human outcomes. Endings/onboarding and physical-device acceptance remain open.

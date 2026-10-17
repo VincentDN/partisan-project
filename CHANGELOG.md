@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-10-17 — W23 scarce-opening audit
+
+- Add carried weapon/ammunition counts and per-fight ammunition expenditure to the campaign balance harness.
+- Publish 100 Mosin-start runs in ten-seed chunks. All 565 auto-resolved fights spent zero rounds, exposing an auto-resolve limitation rather than validating tactical scarcity.
+- Record equipment-aware auto-resolve and tactical/barter testing as remaining roadmap work; preserve historical reports.
+
 ## 2026-10-17 — scarce campaign start and sniper scope
 
 - Fresh campaigns start with eight healthy fighters carrying Mosin-style rifles and ten rounds each, with an empty reserve stash. Existing earned equipment remains.

@@ -5,13 +5,13 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json).
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-17 · codex · campaign starter / sniper follow-up**
+**2026-10-17 · codex · W23 Mosin-start audit complete**
 
-- Fresh campaign: eight healthy rebels, one Mosin-style rifle and ten rounds each, empty reserve. `starter-kit.js` creates owned kits once; spent ammo and empty primaries persist. Practice equipment is unchanged.
-- Campaign tactical weapons derive from carried inventory; class changes no longer issue free replacements or secondaries. Grenades consume real kit items. Field swaps do not recreate the old kit at settlement.
-- Marksmen with Mosins and SVD/Mk 14 users hold right-click to scope, left-click to fire. 2.4× reticle, 90 m directional sight, occlusion retained. Mouse edges pan; Escape/blur/search/soldier changes cancel.
-- Regression coverage includes ammunition exhaustion/redeployment, equipment swaps, directional visibility and real browser pointer lifecycle.
-- W23's existing reports predate this new opening and remain historical, source-fingerprinted evidence. Codex retains testing ownership; follow up with manual-combat scarcity/loot balance. W21/W25 and other previously open acceptance remain open.
+- Main includes `a956a3c`: scarce Mosin opening, owned ammunition and right-click scope/left-click firing.
+- Codex reran 50 standard + 50 early-rest seeds, five ten-seed chunks each; standard resumed after chunk one.
+- `tools/campaign/inventory.mjs` audits carried tactical weapons/rounds; policy measures expenditure around real auto-resolve. New source-fingerprinted reports: `outbound/campaign-balance/mosin-start/`.
+- Across 565 fights, zero rounds spent; all bands retain 80 rounds and 8 rifles. Selected strategic metrics match old reports seed for seed. Existing auto-resolve uses class tiers and returns unchanged kits, so this cannot validate tactical scarcity.
+- W22 now explicitly tracks equipment/ammunition-aware preview and expenditure before its existing human comparison. W23 tactical-ammunition/barter policies remain assigned to Codex in ten-seed chunks. W21/W25 and device acceptance remain open.
 <!-- handoff:end -->
 
 ## Gameplay/demo module boundary — 13 October 2026

@@ -31,6 +31,11 @@ export function aggregate(rows) {
     campaigns: rows.length,
     metrics: result,
     blockedDefences: rows.filter(r => r.blockedDefence).length,
+    ammunitionAudit: {
+      campaigns: rows.filter(r => Number.isFinite(r.autoAmmoSpent)).length,
+      roundsSpent: rows.reduce((n, r) => n + (r.autoAmmoSpent || 0), 0),
+      campaignsWithCombatAndNoSpend: rows.filter(r => r.autoFights > 0 && r.autoAmmoSpent === 0).length,
+    },
     autoFights: rows.reduce((a, r) => a + r.autoFights, 0),
     wins: rows.reduce((a, r) => a + r.wins, 0),
     promotions: rows.reduce((a, r) => a + r.promotions, 0),
@@ -53,6 +58,7 @@ export function markdown(report) {
       )
       .join('\n') +
     `\n\nAuto-resolved fights: ${a.autoFights}; wins: ${a.wins}; paid promotions: ${a.promotions}; campaigns blocked by unavoidable tactical defence: ${a.blockedDefences}.\n\n` +
+    `Carried ammunition audit: ${a.ammunitionAudit.campaigns} campaigns measured; ${a.ammunitionAudit.roundsSpent} rounds spent during auto-resolve; ${a.ammunitionAudit.campaignsWithCombatAndNoSpend} campaigns fought without spending ammunition. Start/end carried weapon and round counts are retained per seed in the checkpoint. Counts cover tactical ARMS catalogue ammunition; reserve rewards are separate. Zero expenditure cannot validate the ten-round tactical opening or looting sustainability.\n\n` +
     'Targets are calibrated for the fourteen-day scenario; other horizons are sensitivity runs. The policy does not visit villages to barter or recruit.\n\nTimes are elapsed campaign-clock hours, including travel and rest. At map speed 1, one map second advances 0.6 campaign hours. This excludes human tactical time, menus and loading. Null milestones are right-censored; means/quantiles include reached milestones only, while reach targets include every seed. Stash growth counts reserve items, excluding carried kits, goods and legacy troop stacks. Hunt counts are collected from every world-step event, not the bounded log.\n\n' +
     'The policy only auto-resolves eligible fights, leaves forbidden voluntary fights and uses real rearguards when caught. It does not fabricate tactical victories, captures, recruitment, loot or XP. Forced defence without an available rearguard stops and flags the run. This reports an auto-resolve campaign policy, not a full human campaign or the W22 played-fight comparison.\n'
   );

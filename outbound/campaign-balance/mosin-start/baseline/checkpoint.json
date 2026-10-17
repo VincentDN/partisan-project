@@ -1,0 +1,2152 @@
+{
+  "schema": 1,
+  "options": {
+    "campaigns": 50,
+    "days": 14,
+    "startSeed": 1,
+    "policy": "standard"
+  },
+  "fingerprint": "3eea7d3728e092ce58c2ef1f76e7c6856f371961736c424b8c83ad87408f6db2",
+  "complete": true,
+  "targets": {
+    "firstEncounterHours": {
+      "max": 72,
+      "reach": 0.9
+    },
+    "firstPromotionHours": {
+      "max": 336,
+      "reach": 0.6
+    },
+    "huntsPerDay": {
+      "min": 0.1,
+      "max": 2
+    },
+    "stashGrowth": {
+      "min": 0,
+      "max": 80
+    }
+  },
+  "summary": {
+    "campaigns": 50,
+    "metrics": {
+      "firstEncounterHours": {
+        "target": {
+          "max": 72,
+          "reach": 0.9
+        },
+        "reached": 50,
+        "censored": 0,
+        "mean": 4.5,
+        "median": 4.5,
+        "p95": 4.5,
+        "within": 50,
+        "pass": true
+      },
+      "firstPromotionHours": {
+        "target": {
+          "max": 336,
+          "reach": 0.6
+        },
+        "reached": 0,
+        "censored": 50,
+        "mean": null,
+        "median": null,
+        "p95": null,
+        "within": 0,
+        "pass": false
+      },
+      "huntsPerDay": {
+        "target": {
+          "min": 0.1,
+          "max": 2
+        },
+        "reached": 50,
+        "censored": 0,
+        "mean": 0.1285,
+        "median": 0.143,
+        "p95": 0.357,
+        "within": 26,
+        "pass": true
+      },
+      "stashGrowth": {
+        "target": {
+          "min": 0,
+          "max": 80
+        },
+        "reached": 50,
+        "censored": 0,
+        "mean": 17.2,
+        "median": 16,
+        "p95": 20,
+        "within": 50,
+        "pass": true
+      }
+    },
+    "blockedDefences": 0,
+    "ammunitionAudit": {
+      "campaigns": 50,
+      "roundsSpent": 0,
+      "campaignsWithCombatAndNoSpend": 50
+    },
+    "autoFights": 286,
+    "wins": 215,
+    "promotions": 0,
+    "promotionBarriers": {
+      "campaignsWithXp": 0,
+      "campaignsWithGear": 0,
+      "campaignsReady": 0
+    }
+  },
+  "rows": [
+    {
+      "seed": 1,
+      "firstEncounterHours": 4.5,
+      "firstAutoHours": 16.56,
+      "firstPromotionHours": null,
+      "contacts": 17,
+      "autoFights": 6,
+      "wins": 6,
+      "wounded": 8,
+      "promotions": 0,
+      "hunts": 5,
+      "rearguards": 1,
+      "rests": 1,
+      "declined": 10,
+      "unreachablePlans": 0,
+      "blockedDefence": false,
+      "stashStart": 0,
+      "carriedStart": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "autoAmmoSpent": 0,
+      "promotionBarriers": {
+        "xpReady": 0,
+        "gearReady": 0,
+        "ready": 0,
+        "maxXp": 72
+      },
+      "elapsedHours": 336,
+      "huntsPerDay": 0.357,
+      "stashEnd": 24,
+      "carriedEnd": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "stashGrowth": 24,
+      "goodsEnd": 0,
+      "responseTier": 0,
+      "simulatedMapSeconds": 560,
+      "finalStateHash": "671833d61c2852c524bee6c6bcdf122b0e2a1145e7fdbba7db9e2ab5a067bd08"
+    },
+    {
+      "seed": 2,
+      "firstEncounterHours": 4.5,
+      "firstAutoHours": 16.56,
+      "firstPromotionHours": null,
+      "contacts": 14,
+      "autoFights": 5,
+      "wins": 5,
+      "wounded": 12,
+      "promotions": 0,
+      "hunts": 3,
+      "rearguards": 1,
+      "rests": 3,
+      "declined": 8,
+      "unreachablePlans": 0,
+      "blockedDefence": false,
+      "stashStart": 0,
+      "carriedStart": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "autoAmmoSpent": 0,
+      "promotionBarriers": {
+        "xpReady": 0,
+        "gearReady": 0,
+        "ready": 0,
+        "maxXp": 60
+      },
+      "elapsedHours": 336,
+      "huntsPerDay": 0.214,
+      "stashEnd": 20,
+      "carriedEnd": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "stashGrowth": 20,
+      "goodsEnd": 0,
+      "responseTier": 0,
+      "simulatedMapSeconds": 560,
+      "finalStateHash": "c0ccfac457fbe063d5e3dff3a1744f290de11be99ec19e3ef97a3426cf13d851"
+    },
+    {
+      "seed": 3,
+      "firstEncounterHours": 4.5,
+      "firstAutoHours": 16.56,
+      "firstPromotionHours": null,
+      "contacts": 14,
+      "autoFights": 6,
+      "wins": 4,
+      "wounded": 16,
+      "promotions": 0,
+      "hunts": 0,
+      "rearguards": 0,
+      "rests": 3,
+      "declined": 8,
+      "unreachablePlans": 0,
+      "blockedDefence": false,
+      "stashStart": 0,
+      "carriedStart": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "autoAmmoSpent": 0,
+      "promotionBarriers": {
+        "xpReady": 0,
+        "gearReady": 0,
+        "ready": 0,
+        "maxXp": 56
+      },
+      "elapsedHours": 336,
+      "huntsPerDay": 0,
+      "stashEnd": 16,
+      "carriedEnd": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "stashGrowth": 16,
+      "goodsEnd": 0,
+      "responseTier": 0,
+      "simulatedMapSeconds": 560,
+      "finalStateHash": "60d019e51f2f2ee885a38814bb380ead0e1f65c3ecb4addf1cdbfaf03f6bdc94"
+    },
+    {
+      "seed": 4,
+      "firstEncounterHours": 4.5,
+      "firstAutoHours": 16.56,
+      "firstPromotionHours": null,
+      "contacts": 17,
+      "autoFights": 5,
+      "wins": 5,
+      "wounded": 6,
+      "promotions": 0,
+      "hunts": 6,
+      "rearguards": 2,
+      "rests": 0,
+      "declined": 10,
+      "unreachablePlans": 0,
+      "blockedDefence": false,
+      "stashStart": 0,
+      "carriedStart": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "autoAmmoSpent": 0,
+      "promotionBarriers": {
+        "xpReady": 0,
+        "gearReady": 0,
+        "ready": 0,
+        "maxXp": 60
+      },
+      "elapsedHours": 336,
+      "huntsPerDay": 0.429,
+      "stashEnd": 20,
+      "carriedEnd": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "stashGrowth": 20,
+      "goodsEnd": 0,
+      "responseTier": 0,
+      "simulatedMapSeconds": 560,
+      "finalStateHash": "e81a5711de4020ba5d8e39bf14f79de67495aed1d7994eedd29f9ca45611c265"
+    },
+    {
+      "seed": 5,
+      "firstEncounterHours": 4.5,
+      "firstAutoHours": 16.56,
+      "firstPromotionHours": null,
+      "contacts": 14,
+      "autoFights": 6,
+      "wins": 3,
+      "wounded": 22,
+      "promotions": 0,
+      "hunts": 1,
+      "rearguards": 2,
+      "rests": 8,
+      "declined": 6,
+      "unreachablePlans": 0,
+      "blockedDefence": false,
+      "stashStart": 0,
+      "carriedStart": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "autoAmmoSpent": 0,
+      "promotionBarriers": {
+        "xpReady": 0,
+        "gearReady": 0,
+        "ready": 0,
+        "maxXp": 48
+      },
+      "elapsedHours": 336,
+      "huntsPerDay": 0.071,
+      "stashEnd": 12,
+      "carriedEnd": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "stashGrowth": 12,
+      "goodsEnd": 0,
+      "responseTier": 0,
+      "simulatedMapSeconds": 560,
+      "finalStateHash": "6d86ca7eba211d2780d23a683d33a8cea590ddcb02a12414820ef53fbcb93d1c"
+    },
+    {
+      "seed": 6,
+      "firstEncounterHours": 4.5,
+      "firstAutoHours": 16.56,
+      "firstPromotionHours": null,
+      "contacts": 18,
+      "autoFights": 6,
+      "wins": 4,
+      "wounded": 14,
+      "promotions": 0,
+      "hunts": 3,
+      "rearguards": 1,
+      "rests": 3,
+      "declined": 11,
+      "unreachablePlans": 0,
+      "blockedDefence": false,
+      "stashStart": 0,
+      "carriedStart": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "autoAmmoSpent": 0,
+      "promotionBarriers": {
+        "xpReady": 0,
+        "gearReady": 0,
+        "ready": 0,
+        "maxXp": 56
+      },
+      "elapsedHours": 336,
+      "huntsPerDay": 0.214,
+      "stashEnd": 16,
+      "carriedEnd": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "stashGrowth": 16,
+      "goodsEnd": 0,
+      "responseTier": 0,
+      "simulatedMapSeconds": 560,
+      "finalStateHash": "f12b792c529d50fa0f233a66032b48070e3c5103bd0549c7a66cbf765fd7bdd0"
+    },
+    {
+      "seed": 7,
+      "firstEncounterHours": 4.5,
+      "firstAutoHours": 16.56,
+      "firstPromotionHours": null,
+      "contacts": 15,
+      "autoFights": 6,
+      "wins": 5,
+      "wounded": 13,
+      "promotions": 0,
+      "hunts": 5,
+      "rearguards": 1,
+      "rests": 3,
+      "declined": 8,
+      "unreachablePlans": 0,
+      "blockedDefence": false,
+      "stashStart": 0,
+      "carriedStart": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "autoAmmoSpent": 0,
+      "promotionBarriers": {
+        "xpReady": 0,
+        "gearReady": 0,
+        "ready": 0,
+        "maxXp": 64
+      },
+      "elapsedHours": 336,
+      "huntsPerDay": 0.357,
+      "stashEnd": 20,
+      "carriedEnd": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "stashGrowth": 20,
+      "goodsEnd": 0,
+      "responseTier": 0,
+      "simulatedMapSeconds": 560,
+      "finalStateHash": "321252b45379c8560ccb8db19b997c597644681f043aeb84586016a21393f377"
+    },
+    {
+      "seed": 8,
+      "firstEncounterHours": 4.5,
+      "firstAutoHours": 16.56,
+      "firstPromotionHours": null,
+      "contacts": 17,
+      "autoFights": 5,
+      "wins": 5,
+      "wounded": 14,
+      "promotions": 0,
+      "hunts": 5,
+      "rearguards": 2,
+      "rests": 2,
+      "declined": 10,
+      "unreachablePlans": 0,
+      "blockedDefence": false,
+      "stashStart": 0,
+      "carriedStart": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "autoAmmoSpent": 0,
+      "promotionBarriers": {
+        "xpReady": 0,
+        "gearReady": 0,
+        "ready": 0,
+        "maxXp": 60
+      },
+      "elapsedHours": 336,
+      "huntsPerDay": 0.357,
+      "stashEnd": 20,
+      "carriedEnd": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "stashGrowth": 20,
+      "goodsEnd": 0,
+      "responseTier": 0,
+      "simulatedMapSeconds": 560,
+      "finalStateHash": "e2acb3421dba0a85577f4823de7f904fc73df01e33e038223cf47977a43cc219"
+    },
+    {
+      "seed": 9,
+      "firstEncounterHours": 4.5,
+      "firstAutoHours": 16.56,
+      "firstPromotionHours": null,
+      "contacts": 19,
+      "autoFights": 7,
+      "wins": 5,
+      "wounded": 16,
+      "promotions": 0,
+      "hunts": 2,
+      "rearguards": 2,
+      "rests": 5,
+      "declined": 10,
+      "unreachablePlans": 0,
+      "blockedDefence": false,
+      "stashStart": 0,
+      "carriedStart": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "autoAmmoSpent": 0,
+      "promotionBarriers": {
+        "xpReady": 0,
+        "gearReady": 0,
+        "ready": 0,
+        "maxXp": 68
+      },
+      "elapsedHours": 336,
+      "huntsPerDay": 0.143,
+      "stashEnd": 20,
+      "carriedEnd": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "stashGrowth": 20,
+      "goodsEnd": 0,
+      "responseTier": 0,
+      "simulatedMapSeconds": 560,
+      "finalStateHash": "02d1344242525b6d0c3b2c1d46d2f50a90ff4ce337eb2fbd68cfbb36447b6c89"
+    },
+    {
+      "seed": 10,
+      "firstEncounterHours": 4.5,
+      "firstAutoHours": 16.56,
+      "firstPromotionHours": null,
+      "contacts": 13,
+      "autoFights": 6,
+      "wins": 5,
+      "wounded": 16,
+      "promotions": 0,
+      "hunts": 2,
+      "rearguards": 2,
+      "rests": 6,
+      "declined": 5,
+      "unreachablePlans": 0,
+      "blockedDefence": false,
+      "stashStart": 0,
+      "carriedStart": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "autoAmmoSpent": 0,
+      "promotionBarriers": {
+        "xpReady": 0,
+        "gearReady": 0,
+        "ready": 0,
+        "maxXp": 64
+      },
+      "elapsedHours": 336,
+      "huntsPerDay": 0.143,
+      "stashEnd": 20,
+      "carriedEnd": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "stashGrowth": 20,
+      "goodsEnd": 0,
+      "responseTier": 0,
+      "simulatedMapSeconds": 560,
+      "finalStateHash": "af22df6ed8dffd02eaa59a39ef1e5a5467b09429dee8a751b99fc3d4a20d7a0d"
+    },
+    {
+      "seed": 11,
+      "firstEncounterHours": 4.5,
+      "firstAutoHours": 16.56,
+      "firstPromotionHours": null,
+      "contacts": 11,
+      "autoFights": 6,
+      "wins": 4,
+      "wounded": 19,
+      "promotions": 0,
+      "hunts": 0,
+      "rearguards": 0,
+      "rests": 6,
+      "declined": 5,
+      "unreachablePlans": 0,
+      "blockedDefence": false,
+      "stashStart": 0,
+      "carriedStart": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "autoAmmoSpent": 0,
+      "promotionBarriers": {
+        "xpReady": 0,
+        "gearReady": 0,
+        "ready": 0,
+        "maxXp": 56
+      },
+      "elapsedHours": 336,
+      "huntsPerDay": 0,
+      "stashEnd": 16,
+      "carriedEnd": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "stashGrowth": 16,
+      "goodsEnd": 0,
+      "responseTier": 0,
+      "simulatedMapSeconds": 560,
+      "finalStateHash": "9e07d0f20290aca359839b6885070b37366e233455a6a4a205d5ec4e101df21b"
+    },
+    {
+      "seed": 12,
+      "firstEncounterHours": 4.5,
+      "firstAutoHours": 16.56,
+      "firstPromotionHours": null,
+      "contacts": 12,
+      "autoFights": 5,
+      "wins": 4,
+      "wounded": 13,
+      "promotions": 0,
+      "hunts": 0,
+      "rearguards": 0,
+      "rests": 4,
+      "declined": 7,
+      "unreachablePlans": 0,
+      "blockedDefence": false,
+      "stashStart": 0,
+      "carriedStart": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "autoAmmoSpent": 0,
+      "promotionBarriers": {
+        "xpReady": 0,
+        "gearReady": 0,
+        "ready": 0,
+        "maxXp": 52
+      },
+      "elapsedHours": 336,
+      "huntsPerDay": 0,
+      "stashEnd": 16,
+      "carriedEnd": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "stashGrowth": 16,
+      "goodsEnd": 0,
+      "responseTier": 0,
+      "simulatedMapSeconds": 560,
+      "finalStateHash": "2577c818e48d72266050d2efc6877fae6209d3bdbb95fde7b737f357ffd3f818"
+    },
+    {
+      "seed": 13,
+      "firstEncounterHours": 4.5,
+      "firstAutoHours": 16.56,
+      "firstPromotionHours": null,
+      "contacts": 12,
+      "autoFights": 8,
+      "wins": 2,
+      "wounded": 30,
+      "promotions": 0,
+      "hunts": 0,
+      "rearguards": 0,
+      "rests": 12,
+      "declined": 4,
+      "unreachablePlans": 0,
+      "blockedDefence": false,
+      "stashStart": 0,
+      "carriedStart": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "autoAmmoSpent": 0,
+      "promotionBarriers": {
+        "xpReady": 0,
+        "gearReady": 0,
+        "ready": 0,
+        "maxXp": 48
+      },
+      "elapsedHours": 336,
+      "huntsPerDay": 0,
+      "stashEnd": 8,
+      "carriedEnd": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "stashGrowth": 8,
+      "goodsEnd": 0,
+      "responseTier": 0,
+      "simulatedMapSeconds": 560,
+      "finalStateHash": "d25b512a1681109b95383d5eb1851e54342d5bad9c3dd3820010a721e69ca013"
+    },
+    {
+      "seed": 14,
+      "firstEncounterHours": 4.5,
+      "firstAutoHours": 16.56,
+      "firstPromotionHours": null,
+      "contacts": 14,
+      "autoFights": 5,
+      "wins": 5,
+      "wounded": 12,
+      "promotions": 0,
+      "hunts": 3,
+      "rearguards": 1,
+      "rests": 4,
+      "declined": 8,
+      "unreachablePlans": 0,
+      "blockedDefence": false,
+      "stashStart": 0,
+      "carriedStart": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "autoAmmoSpent": 0,
+      "promotionBarriers": {
+        "xpReady": 0,
+        "gearReady": 0,
+        "ready": 0,
+        "maxXp": 60
+      },
+      "elapsedHours": 336,
+      "huntsPerDay": 0.214,
+      "stashEnd": 20,
+      "carriedEnd": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "stashGrowth": 20,
+      "goodsEnd": 0,
+      "responseTier": 0,
+      "simulatedMapSeconds": 560,
+      "finalStateHash": "69ccd4d4ccee490e1194fda92238e23fc4e8229ec55c5ad73663de413983fdcd"
+    },
+    {
+      "seed": 15,
+      "firstEncounterHours": 4.5,
+      "firstAutoHours": 16.56,
+      "firstPromotionHours": null,
+      "contacts": 11,
+      "autoFights": 5,
+      "wins": 4,
+      "wounded": 19,
+      "promotions": 0,
+      "hunts": 0,
+      "rearguards": 0,
+      "rests": 5,
+      "declined": 6,
+      "unreachablePlans": 0,
+      "blockedDefence": false,
+      "stashStart": 0,
+      "carriedStart": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "autoAmmoSpent": 0,
+      "promotionBarriers": {
+        "xpReady": 0,
+        "gearReady": 0,
+        "ready": 0,
+        "maxXp": 52
+      },
+      "elapsedHours": 336,
+      "huntsPerDay": 0,
+      "stashEnd": 16,
+      "carriedEnd": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "stashGrowth": 16,
+      "goodsEnd": 0,
+      "responseTier": 0,
+      "simulatedMapSeconds": 560,
+      "finalStateHash": "0f565db563ff0a75d3c0c3b90d9d072718e7b0f11cfb25316410408e003935c7"
+    },
+    {
+      "seed": 16,
+      "firstEncounterHours": 4.5,
+      "firstAutoHours": 16.56,
+      "firstPromotionHours": null,
+      "contacts": 15,
+      "autoFights": 5,
+      "wins": 4,
+      "wounded": 16,
+      "promotions": 0,
+      "hunts": 0,
+      "rearguards": 0,
+      "rests": 4,
+      "declined": 10,
+      "unreachablePlans": 0,
+      "blockedDefence": false,
+      "stashStart": 0,
+      "carriedStart": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "autoAmmoSpent": 0,
+      "promotionBarriers": {
+        "xpReady": 0,
+        "gearReady": 0,
+        "ready": 0,
+        "maxXp": 52
+      },
+      "elapsedHours": 336,
+      "huntsPerDay": 0,
+      "stashEnd": 16,
+      "carriedEnd": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "stashGrowth": 16,
+      "goodsEnd": 0,
+      "responseTier": 0,
+      "simulatedMapSeconds": 560,
+      "finalStateHash": "0bb025b4dd0f345c86d2552cd26fc292644fc8f62326429949c044250a00628a"
+    },
+    {
+      "seed": 17,
+      "firstEncounterHours": 4.5,
+      "firstAutoHours": 16.56,
+      "firstPromotionHours": null,
+      "contacts": 17,
+      "autoFights": 5,
+      "wins": 5,
+      "wounded": 14,
+      "promotions": 0,
+      "hunts": 4,
+      "rearguards": 2,
+      "rests": 3,
+      "declined": 10,
+      "unreachablePlans": 0,
+      "blockedDefence": false,
+      "stashStart": 0,
+      "carriedStart": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "autoAmmoSpent": 0,
+      "promotionBarriers": {
+        "xpReady": 0,
+        "gearReady": 0,
+        "ready": 0,
+        "maxXp": 60
+      },
+      "elapsedHours": 336,
+      "huntsPerDay": 0.286,
+      "stashEnd": 20,
+      "carriedEnd": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "stashGrowth": 20,
+      "goodsEnd": 0,
+      "responseTier": 0,
+      "simulatedMapSeconds": 560,
+      "finalStateHash": "17683e1146eb2d2f8fb44c46df9f1549c5d74349bfc2ab2f3f01a5d442b657bc"
+    },
+    {
+      "seed": 18,
+      "firstEncounterHours": 4.5,
+      "firstAutoHours": 16.56,
+      "firstPromotionHours": null,
+      "contacts": 14,
+      "autoFights": 5,
+      "wins": 5,
+      "wounded": 8,
+      "promotions": 0,
+      "hunts": 2,
+      "rearguards": 1,
+      "rests": 2,
+      "declined": 8,
+      "unreachablePlans": 0,
+      "blockedDefence": false,
+      "stashStart": 0,
+      "carriedStart": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "autoAmmoSpent": 0,
+      "promotionBarriers": {
+        "xpReady": 0,
+        "gearReady": 0,
+        "ready": 0,
+        "maxXp": 60
+      },
+      "elapsedHours": 336,
+      "huntsPerDay": 0.143,
+      "stashEnd": 20,
+      "carriedEnd": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "stashGrowth": 20,
+      "goodsEnd": 0,
+      "responseTier": 0,
+      "simulatedMapSeconds": 560,
+      "finalStateHash": "51a446bc51ecb4ce20e7462cddb425c5e7672e88f958455abdd9de36b24c0f97"
+    },
+    {
+      "seed": 19,
+      "firstEncounterHours": 4.5,
+      "firstAutoHours": 16.56,
+      "firstPromotionHours": null,
+      "contacts": 12,
+      "autoFights": 7,
+      "wins": 2,
+      "wounded": 33,
+      "promotions": 0,
+      "hunts": 0,
+      "rearguards": 0,
+      "rests": 10,
+      "declined": 5,
+      "unreachablePlans": 0,
+      "blockedDefence": false,
+      "stashStart": 0,
+      "carriedStart": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "autoAmmoSpent": 0,
+      "promotionBarriers": {
+        "xpReady": 0,
+        "gearReady": 0,
+        "ready": 0,
+        "maxXp": 44
+      },
+      "elapsedHours": 336,
+      "huntsPerDay": 0,
+      "stashEnd": 8,
+      "carriedEnd": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "stashGrowth": 8,
+      "goodsEnd": 0,
+      "responseTier": 0,
+      "simulatedMapSeconds": 560,
+      "finalStateHash": "5d88616824dab7a3603832964a4081f75e6b9fd1948cf7d8d7ba00cb2d64cd17"
+    },
+    {
+      "seed": 20,
+      "firstEncounterHours": 4.5,
+      "firstAutoHours": 16.56,
+      "firstPromotionHours": null,
+      "contacts": 14,
+      "autoFights": 7,
+      "wins": 2,
+      "wounded": 29,
+      "promotions": 0,
+      "hunts": 0,
+      "rearguards": 0,
+      "rests": 8,
+      "declined": 7,
+      "unreachablePlans": 0,
+      "blockedDefence": false,
+      "stashStart": 0,
+      "carriedStart": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "autoAmmoSpent": 0,
+      "promotionBarriers": {
+        "xpReady": 0,
+        "gearReady": 0,
+        "ready": 0,
+        "maxXp": 44
+      },
+      "elapsedHours": 336,
+      "huntsPerDay": 0,
+      "stashEnd": 8,
+      "carriedEnd": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "stashGrowth": 8,
+      "goodsEnd": 0,
+      "responseTier": 0,
+      "simulatedMapSeconds": 560,
+      "finalStateHash": "5dc8687b91142e2c220d9d0581357be7e098423d34b05dcb9188351d7706e111"
+    },
+    {
+      "seed": 21,
+      "firstEncounterHours": 4.5,
+      "firstAutoHours": 16.56,
+      "firstPromotionHours": null,
+      "contacts": 14,
+      "autoFights": 6,
+      "wins": 3,
+      "wounded": 25,
+      "promotions": 0,
+      "hunts": 1,
+      "rearguards": 2,
+      "rests": 7,
+      "declined": 6,
+      "unreachablePlans": 0,
+      "blockedDefence": false,
+      "stashStart": 0,
+      "carriedStart": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "autoAmmoSpent": 0,
+      "promotionBarriers": {
+        "xpReady": 0,
+        "gearReady": 0,
+        "ready": 0,
+        "maxXp": 48
+      },
+      "elapsedHours": 336,
+      "huntsPerDay": 0.071,
+      "stashEnd": 12,
+      "carriedEnd": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "stashGrowth": 12,
+      "goodsEnd": 0,
+      "responseTier": 0,
+      "simulatedMapSeconds": 560,
+      "finalStateHash": "b8cdd6066089c792c77512053a225fac39d216ae89ebf47ad47a5cef36cbaa55"
+    },
+    {
+      "seed": 22,
+      "firstEncounterHours": 4.5,
+      "firstAutoHours": 16.56,
+      "firstPromotionHours": null,
+      "contacts": 15,
+      "autoFights": 5,
+      "wins": 5,
+      "wounded": 11,
+      "promotions": 0,
+      "hunts": 5,
+      "rearguards": 0,
+      "rests": 2,
+      "declined": 10,
+      "unreachablePlans": 0,
+      "blockedDefence": false,
+      "stashStart": 0,
+      "carriedStart": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "autoAmmoSpent": 0,
+      "promotionBarriers": {
+        "xpReady": 0,
+        "gearReady": 0,
+        "ready": 0,
+        "maxXp": 60
+      },
+      "elapsedHours": 336,
+      "huntsPerDay": 0.357,
+      "stashEnd": 20,
+      "carriedEnd": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "stashGrowth": 20,
+      "goodsEnd": 0,
+      "responseTier": 0,
+      "simulatedMapSeconds": 560,
+      "finalStateHash": "751c9ddadd6ebfe3972b357ad12a94725cb010f3f7cc8525532ff4ac042abccc"
+    },
+    {
+      "seed": 23,
+      "firstEncounterHours": 4.5,
+      "firstAutoHours": 16.56,
+      "firstPromotionHours": null,
+      "contacts": 15,
+      "autoFights": 6,
+      "wins": 5,
+      "wounded": 15,
+      "promotions": 0,
+      "hunts": 2,
+      "rearguards": 2,
+      "rests": 5,
+      "declined": 7,
+      "unreachablePlans": 0,
+      "blockedDefence": false,
+      "stashStart": 0,
+      "carriedStart": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "autoAmmoSpent": 0,
+      "promotionBarriers": {
+        "xpReady": 0,
+        "gearReady": 0,
+        "ready": 0,
+        "maxXp": 64
+      },
+      "elapsedHours": 336,
+      "huntsPerDay": 0.143,
+      "stashEnd": 20,
+      "carriedEnd": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "stashGrowth": 20,
+      "goodsEnd": 0,
+      "responseTier": 0,
+      "simulatedMapSeconds": 560,
+      "finalStateHash": "580cecab55915a39f84212893a766f03083f19fd36445bdc00999003aac88750"
+    },
+    {
+      "seed": 24,
+      "firstEncounterHours": 4.5,
+      "firstAutoHours": 16.56,
+      "firstPromotionHours": null,
+      "contacts": 12,
+      "autoFights": 6,
+      "wins": 4,
+      "wounded": 19,
+      "promotions": 0,
+      "hunts": 0,
+      "rearguards": 0,
+      "rests": 5,
+      "declined": 6,
+      "unreachablePlans": 0,
+      "blockedDefence": false,
+      "stashStart": 0,
+      "carriedStart": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "autoAmmoSpent": 0,
+      "promotionBarriers": {
+        "xpReady": 0,
+        "gearReady": 0,
+        "ready": 0,
+        "maxXp": 56
+      },
+      "elapsedHours": 336,
+      "huntsPerDay": 0,
+      "stashEnd": 16,
+      "carriedEnd": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "stashGrowth": 16,
+      "goodsEnd": 0,
+      "responseTier": 0,
+      "simulatedMapSeconds": 560,
+      "finalStateHash": "c51df1c2ef198390499d62340d1e4b4bc5bb636d9003b0dad934cdea5b640fde"
+    },
+    {
+      "seed": 25,
+      "firstEncounterHours": 4.5,
+      "firstAutoHours": 16.56,
+      "firstPromotionHours": null,
+      "contacts": 14,
+      "autoFights": 8,
+      "wins": 3,
+      "wounded": 28,
+      "promotions": 0,
+      "hunts": 0,
+      "rearguards": 0,
+      "rests": 10,
+      "declined": 6,
+      "unreachablePlans": 0,
+      "blockedDefence": false,
+      "stashStart": 0,
+      "carriedStart": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "autoAmmoSpent": 0,
+      "promotionBarriers": {
+        "xpReady": 0,
+        "gearReady": 0,
+        "ready": 0,
+        "maxXp": 56
+      },
+      "elapsedHours": 336,
+      "huntsPerDay": 0,
+      "stashEnd": 12,
+      "carriedEnd": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "stashGrowth": 12,
+      "goodsEnd": 0,
+      "responseTier": 0,
+      "simulatedMapSeconds": 560,
+      "finalStateHash": "b485d0b92db4b1e7358654638180faa7f4eeec473a6f7cb15ca97a4602234251"
+    },
+    {
+      "seed": 26,
+      "firstEncounterHours": 4.5,
+      "firstAutoHours": 16.56,
+      "firstPromotionHours": null,
+      "contacts": 14,
+      "autoFights": 5,
+      "wins": 5,
+      "wounded": 15,
+      "promotions": 0,
+      "hunts": 3,
+      "rearguards": 1,
+      "rests": 4,
+      "declined": 8,
+      "unreachablePlans": 0,
+      "blockedDefence": false,
+      "stashStart": 0,
+      "carriedStart": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "autoAmmoSpent": 0,
+      "promotionBarriers": {
+        "xpReady": 0,
+        "gearReady": 0,
+        "ready": 0,
+        "maxXp": 60
+      },
+      "elapsedHours": 336,
+      "huntsPerDay": 0.214,
+      "stashEnd": 20,
+      "carriedEnd": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "stashGrowth": 20,
+      "goodsEnd": 0,
+      "responseTier": 0,
+      "simulatedMapSeconds": 560,
+      "finalStateHash": "662b07ca770f174d7dac955c42c0e2e1cd075797a2d9dd527ba8b55ca67bc0ce"
+    },
+    {
+      "seed": 27,
+      "firstEncounterHours": 4.5,
+      "firstAutoHours": 16.56,
+      "firstPromotionHours": null,
+      "contacts": 14,
+      "autoFights": 5,
+      "wins": 5,
+      "wounded": 10,
+      "promotions": 0,
+      "hunts": 3,
+      "rearguards": 1,
+      "rests": 3,
+      "declined": 8,
+      "unreachablePlans": 0,
+      "blockedDefence": false,
+      "stashStart": 0,
+      "carriedStart": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "autoAmmoSpent": 0,
+      "promotionBarriers": {
+        "xpReady": 0,
+        "gearReady": 0,
+        "ready": 0,
+        "maxXp": 60
+      },
+      "elapsedHours": 336,
+      "huntsPerDay": 0.214,
+      "stashEnd": 20,
+      "carriedEnd": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "stashGrowth": 20,
+      "goodsEnd": 0,
+      "responseTier": 0,
+      "simulatedMapSeconds": 560,
+      "finalStateHash": "678789b5557f0ce28173955f1329123b4fdb2551202c98367ab7c35034f73f02"
+    },
+    {
+      "seed": 28,
+      "firstEncounterHours": 4.5,
+      "firstAutoHours": 16.56,
+      "firstPromotionHours": null,
+      "contacts": 11,
+      "autoFights": 5,
+      "wins": 4,
+      "wounded": 16,
+      "promotions": 0,
+      "hunts": 0,
+      "rearguards": 0,
+      "rests": 4,
+      "declined": 6,
+      "unreachablePlans": 0,
+      "blockedDefence": false,
+      "stashStart": 0,
+      "carriedStart": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "autoAmmoSpent": 0,
+      "promotionBarriers": {
+        "xpReady": 0,
+        "gearReady": 0,
+        "ready": 0,
+        "maxXp": 52
+      },
+      "elapsedHours": 336,
+      "huntsPerDay": 0,
+      "stashEnd": 16,
+      "carriedEnd": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "stashGrowth": 16,
+      "goodsEnd": 0,
+      "responseTier": 0,
+      "simulatedMapSeconds": 560,
+      "finalStateHash": "574754f8fe33efee49b29e76552daaa9dc5db51d58b77a9d1180d3fc96c7a952"
+    },
+    {
+      "seed": 29,
+      "firstEncounterHours": 4.5,
+      "firstAutoHours": 16.56,
+      "firstPromotionHours": null,
+      "contacts": 10,
+      "autoFights": 6,
+      "wins": 4,
+      "wounded": 20,
+      "promotions": 0,
+      "hunts": 0,
+      "rearguards": 0,
+      "rests": 6,
+      "declined": 4,
+      "unreachablePlans": 0,
+      "blockedDefence": false,
+      "stashStart": 0,
+      "carriedStart": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "autoAmmoSpent": 0,
+      "promotionBarriers": {
+        "xpReady": 0,
+        "gearReady": 0,
+        "ready": 0,
+        "maxXp": 56
+      },
+      "elapsedHours": 336,
+      "huntsPerDay": 0,
+      "stashEnd": 16,
+      "carriedEnd": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "stashGrowth": 16,
+      "goodsEnd": 0,
+      "responseTier": 0,
+      "simulatedMapSeconds": 560,
+      "finalStateHash": "33856fe344d1bbd96619d00e301ef3487e2919b47876f44e2b483f913bfd080a"
+    },
+    {
+      "seed": 30,
+      "firstEncounterHours": 4.5,
+      "firstAutoHours": 16.56,
+      "firstPromotionHours": null,
+      "contacts": 15,
+      "autoFights": 6,
+      "wins": 5,
+      "wounded": 19,
+      "promotions": 0,
+      "hunts": 2,
+      "rearguards": 2,
+      "rests": 5,
+      "declined": 7,
+      "unreachablePlans": 0,
+      "blockedDefence": false,
+      "stashStart": 0,
+      "carriedStart": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "autoAmmoSpent": 0,
+      "promotionBarriers": {
+        "xpReady": 0,
+        "gearReady": 0,
+        "ready": 0,
+        "maxXp": 64
+      },
+      "elapsedHours": 336,
+      "huntsPerDay": 0.143,
+      "stashEnd": 20,
+      "carriedEnd": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "stashGrowth": 20,
+      "goodsEnd": 0,
+      "responseTier": 0,
+      "simulatedMapSeconds": 560,
+      "finalStateHash": "281088227afb256fdd3d91bdabf0b02d38c9cb7b7ef71632b4aac72ce00119d2"
+    },
+    {
+      "seed": 31,
+      "firstEncounterHours": 4.5,
+      "firstAutoHours": 16.56,
+      "firstPromotionHours": null,
+      "contacts": 14,
+      "autoFights": 5,
+      "wins": 4,
+      "wounded": 18,
+      "promotions": 0,
+      "hunts": 1,
+      "rearguards": 0,
+      "rests": 5,
+      "declined": 9,
+      "unreachablePlans": 0,
+      "blockedDefence": false,
+      "stashStart": 0,
+      "carriedStart": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "autoAmmoSpent": 0,
+      "promotionBarriers": {
+        "xpReady": 0,
+        "gearReady": 0,
+        "ready": 0,
+        "maxXp": 52
+      },
+      "elapsedHours": 336,
+      "huntsPerDay": 0.071,
+      "stashEnd": 16,
+      "carriedEnd": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "stashGrowth": 16,
+      "goodsEnd": 0,
+      "responseTier": 0,
+      "simulatedMapSeconds": 560,
+      "finalStateHash": "de9591b85855e7bf830c68666665aeb2d00b9ee6e63c07baae949dc2e9e4c3e4"
+    },
+    {
+      "seed": 32,
+      "firstEncounterHours": 4.5,
+      "firstAutoHours": 16.56,
+      "firstPromotionHours": null,
+      "contacts": 14,
+      "autoFights": 5,
+      "wins": 5,
+      "wounded": 9,
+      "promotions": 0,
+      "hunts": 2,
+      "rearguards": 1,
+      "rests": 3,
+      "declined": 8,
+      "unreachablePlans": 0,
+      "blockedDefence": false,
+      "stashStart": 0,
+      "carriedStart": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "autoAmmoSpent": 0,
+      "promotionBarriers": {
+        "xpReady": 0,
+        "gearReady": 0,
+        "ready": 0,
+        "maxXp": 60
+      },
+      "elapsedHours": 336,
+      "huntsPerDay": 0.143,
+      "stashEnd": 20,
+      "carriedEnd": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "stashGrowth": 20,
+      "goodsEnd": 0,
+      "responseTier": 0,
+      "simulatedMapSeconds": 560,
+      "finalStateHash": "f6d7440e1f5afa5deef4c9b400f0be4f2cf6347776cc76cd281efdb557872a4c"
+    },
+    {
+      "seed": 33,
+      "firstEncounterHours": 4.5,
+      "firstAutoHours": 16.56,
+      "firstPromotionHours": null,
+      "contacts": 12,
+      "autoFights": 5,
+      "wins": 4,
+      "wounded": 14,
+      "promotions": 0,
+      "hunts": 1,
+      "rearguards": 0,
+      "rests": 3,
+      "declined": 7,
+      "unreachablePlans": 0,
+      "blockedDefence": false,
+      "stashStart": 0,
+      "carriedStart": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "autoAmmoSpent": 0,
+      "promotionBarriers": {
+        "xpReady": 0,
+        "gearReady": 0,
+        "ready": 0,
+        "maxXp": 52
+      },
+      "elapsedHours": 336,
+      "huntsPerDay": 0.071,
+      "stashEnd": 16,
+      "carriedEnd": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "stashGrowth": 16,
+      "goodsEnd": 0,
+      "responseTier": 0,
+      "simulatedMapSeconds": 560,
+      "finalStateHash": "efbadea3e824305772b77a4d867cbbcf5774829b7441f20cc4445f9d0235611e"
+    },
+    {
+      "seed": 34,
+      "firstEncounterHours": 4.5,
+      "firstAutoHours": 16.56,
+      "firstPromotionHours": null,
+      "contacts": 14,
+      "autoFights": 5,
+      "wins": 5,
+      "wounded": 12,
+      "promotions": 0,
+      "hunts": 2,
+      "rearguards": 1,
+      "rests": 4,
+      "declined": 8,
+      "unreachablePlans": 0,
+      "blockedDefence": false,
+      "stashStart": 0,
+      "carriedStart": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "autoAmmoSpent": 0,
+      "promotionBarriers": {
+        "xpReady": 0,
+        "gearReady": 0,
+        "ready": 0,
+        "maxXp": 60
+      },
+      "elapsedHours": 336,
+      "huntsPerDay": 0.143,
+      "stashEnd": 20,
+      "carriedEnd": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "stashGrowth": 20,
+      "goodsEnd": 0,
+      "responseTier": 0,
+      "simulatedMapSeconds": 560,
+      "finalStateHash": "5218c93ac9a0f114de4fd858bac5d53ae3db989154d4c7f290192c76eb8be004"
+    },
+    {
+      "seed": 35,
+      "firstEncounterHours": 4.5,
+      "firstAutoHours": 16.56,
+      "firstPromotionHours": null,
+      "contacts": 14,
+      "autoFights": 5,
+      "wins": 5,
+      "wounded": 13,
+      "promotions": 0,
+      "hunts": 3,
+      "rearguards": 1,
+      "rests": 4,
+      "declined": 8,
+      "unreachablePlans": 0,
+      "blockedDefence": false,
+      "stashStart": 0,
+      "carriedStart": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "autoAmmoSpent": 0,
+      "promotionBarriers": {
+        "xpReady": 0,
+        "gearReady": 0,
+        "ready": 0,
+        "maxXp": 60
+      },
+      "elapsedHours": 336,
+      "huntsPerDay": 0.214,
+      "stashEnd": 20,
+      "carriedEnd": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "stashGrowth": 20,
+      "goodsEnd": 0,
+      "responseTier": 0,
+      "simulatedMapSeconds": 560,
+      "finalStateHash": "0eae778ead5f9bdd15ca48393aee16df9621d357ea3a6157bed4af20d5668445"
+    },
+    {
+      "seed": 36,
+      "firstEncounterHours": 4.5,
+      "firstAutoHours": 16.56,
+      "firstPromotionHours": null,
+      "contacts": 13,
+      "autoFights": 6,
+      "wins": 3,
+      "wounded": 19,
+      "promotions": 0,
+      "hunts": 0,
+      "rearguards": 0,
+      "rests": 4,
+      "declined": 7,
+      "unreachablePlans": 0,
+      "blockedDefence": false,
+      "stashStart": 0,
+      "carriedStart": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "autoAmmoSpent": 0,
+      "promotionBarriers": {
+        "xpReady": 0,
+        "gearReady": 0,
+        "ready": 0,
+        "maxXp": 48
+      },
+      "elapsedHours": 336,
+      "huntsPerDay": 0,
+      "stashEnd": 12,
+      "carriedEnd": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "stashGrowth": 12,
+      "goodsEnd": 0,
+      "responseTier": 0,
+      "simulatedMapSeconds": 560,
+      "finalStateHash": "04c538ea59470a33f42240fdfc7623a4c07d9ddcde2ebee19603a701c52108a5"
+    },
+    {
+      "seed": 37,
+      "firstEncounterHours": 4.5,
+      "firstAutoHours": 16.56,
+      "firstPromotionHours": null,
+      "contacts": 14,
+      "autoFights": 5,
+      "wins": 4,
+      "wounded": 16,
+      "promotions": 0,
+      "hunts": 1,
+      "rearguards": 0,
+      "rests": 4,
+      "declined": 9,
+      "unreachablePlans": 0,
+      "blockedDefence": false,
+      "stashStart": 0,
+      "carriedStart": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "autoAmmoSpent": 0,
+      "promotionBarriers": {
+        "xpReady": 0,
+        "gearReady": 0,
+        "ready": 0,
+        "maxXp": 52
+      },
+      "elapsedHours": 336,
+      "huntsPerDay": 0.071,
+      "stashEnd": 16,
+      "carriedEnd": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "stashGrowth": 16,
+      "goodsEnd": 0,
+      "responseTier": 0,
+      "simulatedMapSeconds": 560,
+      "finalStateHash": "58fd2e5b93d3e96dc2452538b3af6e7fb314dd9adc2accf24acec6e6736805a7"
+    },
+    {
+      "seed": 38,
+      "firstEncounterHours": 4.5,
+      "firstAutoHours": 16.56,
+      "firstPromotionHours": null,
+      "contacts": 12,
+      "autoFights": 6,
+      "wins": 4,
+      "wounded": 25,
+      "promotions": 0,
+      "hunts": 0,
+      "rearguards": 0,
+      "rests": 6,
+      "declined": 6,
+      "unreachablePlans": 0,
+      "blockedDefence": false,
+      "stashStart": 0,
+      "carriedStart": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "autoAmmoSpent": 0,
+      "promotionBarriers": {
+        "xpReady": 0,
+        "gearReady": 0,
+        "ready": 0,
+        "maxXp": 56
+      },
+      "elapsedHours": 336,
+      "huntsPerDay": 0,
+      "stashEnd": 16,
+      "carriedEnd": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "stashGrowth": 16,
+      "goodsEnd": 0,
+      "responseTier": 0,
+      "simulatedMapSeconds": 560,
+      "finalStateHash": "88a43bfb41e845107446a7601fd11c68e0600df70066ba48a48d9d5bf9fc10a9"
+    },
+    {
+      "seed": 39,
+      "firstEncounterHours": 4.5,
+      "firstAutoHours": 16.56,
+      "firstPromotionHours": null,
+      "contacts": 15,
+      "autoFights": 5,
+      "wins": 4,
+      "wounded": 17,
+      "promotions": 0,
+      "hunts": 1,
+      "rearguards": 0,
+      "rests": 5,
+      "declined": 10,
+      "unreachablePlans": 0,
+      "blockedDefence": false,
+      "stashStart": 0,
+      "carriedStart": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "autoAmmoSpent": 0,
+      "promotionBarriers": {
+        "xpReady": 0,
+        "gearReady": 0,
+        "ready": 0,
+        "maxXp": 52
+      },
+      "elapsedHours": 336,
+      "huntsPerDay": 0.071,
+      "stashEnd": 16,
+      "carriedEnd": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "stashGrowth": 16,
+      "goodsEnd": 0,
+      "responseTier": 0,
+      "simulatedMapSeconds": 560,
+      "finalStateHash": "35d9a723c3afe16c247983e07112c3c0af1749b0fbd36cba6301f0a7dff41da2"
+    },
+    {
+      "seed": 40,
+      "firstEncounterHours": 4.5,
+      "firstAutoHours": 16.56,
+      "firstPromotionHours": null,
+      "contacts": 16,
+      "autoFights": 7,
+      "wins": 4,
+      "wounded": 21,
+      "promotions": 0,
+      "hunts": 0,
+      "rearguards": 0,
+      "rests": 4,
+      "declined": 9,
+      "unreachablePlans": 0,
+      "blockedDefence": false,
+      "stashStart": 0,
+      "carriedStart": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "autoAmmoSpent": 0,
+      "promotionBarriers": {
+        "xpReady": 0,
+        "gearReady": 0,
+        "ready": 0,
+        "maxXp": 60
+      },
+      "elapsedHours": 336,
+      "huntsPerDay": 0,
+      "stashEnd": 16,
+      "carriedEnd": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "stashGrowth": 16,
+      "goodsEnd": 0,
+      "responseTier": 0,
+      "simulatedMapSeconds": 560,
+      "finalStateHash": "c7352a4f3ebda50b5755dceed67e104dee0d60fb2df1fd3c3fbadfe5bc0935a4"
+    },
+    {
+      "seed": 41,
+      "firstEncounterHours": 4.5,
+      "firstAutoHours": 16.56,
+      "firstPromotionHours": null,
+      "contacts": 14,
+      "autoFights": 5,
+      "wins": 4,
+      "wounded": 18,
+      "promotions": 0,
+      "hunts": 1,
+      "rearguards": 0,
+      "rests": 5,
+      "declined": 9,
+      "unreachablePlans": 0,
+      "blockedDefence": false,
+      "stashStart": 0,
+      "carriedStart": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "autoAmmoSpent": 0,
+      "promotionBarriers": {
+        "xpReady": 0,
+        "gearReady": 0,
+        "ready": 0,
+        "maxXp": 52
+      },
+      "elapsedHours": 336,
+      "huntsPerDay": 0.071,
+      "stashEnd": 16,
+      "carriedEnd": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "stashGrowth": 16,
+      "goodsEnd": 0,
+      "responseTier": 0,
+      "simulatedMapSeconds": 560,
+      "finalStateHash": "6facd9b796d47568fce2f1a760f3433cbaff182a53ffc875a9674f3134fc1557"
+    },
+    {
+      "seed": 42,
+      "firstEncounterHours": 4.5,
+      "firstAutoHours": 16.56,
+      "firstPromotionHours": null,
+      "contacts": 14,
+      "autoFights": 5,
+      "wins": 5,
+      "wounded": 6,
+      "promotions": 0,
+      "hunts": 2,
+      "rearguards": 1,
+      "rests": 2,
+      "declined": 8,
+      "unreachablePlans": 0,
+      "blockedDefence": false,
+      "stashStart": 0,
+      "carriedStart": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "autoAmmoSpent": 0,
+      "promotionBarriers": {
+        "xpReady": 0,
+        "gearReady": 0,
+        "ready": 0,
+        "maxXp": 60
+      },
+      "elapsedHours": 336,
+      "huntsPerDay": 0.143,
+      "stashEnd": 20,
+      "carriedEnd": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "stashGrowth": 20,
+      "goodsEnd": 0,
+      "responseTier": 0,
+      "simulatedMapSeconds": 560,
+      "finalStateHash": "fb6c05eae58bfb57081bee5dd99f5e21bbc12d14805cfaa703c5a1b7ed67287f"
+    },
+    {
+      "seed": 43,
+      "firstEncounterHours": 4.5,
+      "firstAutoHours": 16.56,
+      "firstPromotionHours": null,
+      "contacts": 13,
+      "autoFights": 7,
+      "wins": 4,
+      "wounded": 29,
+      "promotions": 0,
+      "hunts": 0,
+      "rearguards": 0,
+      "rests": 8,
+      "declined": 6,
+      "unreachablePlans": 0,
+      "blockedDefence": false,
+      "stashStart": 0,
+      "carriedStart": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "autoAmmoSpent": 0,
+      "promotionBarriers": {
+        "xpReady": 0,
+        "gearReady": 0,
+        "ready": 0,
+        "maxXp": 60
+      },
+      "elapsedHours": 336,
+      "huntsPerDay": 0,
+      "stashEnd": 16,
+      "carriedEnd": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "stashGrowth": 16,
+      "goodsEnd": 0,
+      "responseTier": 0,
+      "simulatedMapSeconds": 560,
+      "finalStateHash": "fb919bd3abaec91a0c5b32c2d3fa53361f4f9d40284da348e2cdad1bb1e726d9"
+    },
+    {
+      "seed": 44,
+      "firstEncounterHours": 4.5,
+      "firstAutoHours": 16.56,
+      "firstPromotionHours": null,
+      "contacts": 15,
+      "autoFights": 6,
+      "wins": 4,
+      "wounded": 22,
+      "promotions": 0,
+      "hunts": 2,
+      "rearguards": 2,
+      "rests": 5,
+      "declined": 7,
+      "unreachablePlans": 0,
+      "blockedDefence": false,
+      "stashStart": 0,
+      "carriedStart": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "autoAmmoSpent": 0,
+      "promotionBarriers": {
+        "xpReady": 0,
+        "gearReady": 0,
+        "ready": 0,
+        "maxXp": 56
+      },
+      "elapsedHours": 336,
+      "huntsPerDay": 0.143,
+      "stashEnd": 16,
+      "carriedEnd": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "stashGrowth": 16,
+      "goodsEnd": 0,
+      "responseTier": 0,
+      "simulatedMapSeconds": 560,
+      "finalStateHash": "67163bcffb16fca386ce49cd624c23ed314394f62d796a0026479a0eaa79dac4"
+    },
+    {
+      "seed": 45,
+      "firstEncounterHours": 4.5,
+      "firstAutoHours": 16.56,
+      "firstPromotionHours": null,
+      "contacts": 17,
+      "autoFights": 6,
+      "wins": 6,
+      "wounded": 7,
+      "promotions": 0,
+      "hunts": 5,
+      "rearguards": 1,
+      "rests": 1,
+      "declined": 10,
+      "unreachablePlans": 0,
+      "blockedDefence": false,
+      "stashStart": 0,
+      "carriedStart": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "autoAmmoSpent": 0,
+      "promotionBarriers": {
+        "xpReady": 0,
+        "gearReady": 0,
+        "ready": 0,
+        "maxXp": 72
+      },
+      "elapsedHours": 336,
+      "huntsPerDay": 0.357,
+      "stashEnd": 24,
+      "carriedEnd": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "stashGrowth": 24,
+      "goodsEnd": 0,
+      "responseTier": 0,
+      "simulatedMapSeconds": 560,
+      "finalStateHash": "5cc9f876313e2aa44830feb3ad0e925e2b1c086054cf5ada9f6e8db4842f171e"
+    },
+    {
+      "seed": 46,
+      "firstEncounterHours": 4.5,
+      "firstAutoHours": 16.56,
+      "firstPromotionHours": null,
+      "contacts": 15,
+      "autoFights": 5,
+      "wins": 4,
+      "wounded": 13,
+      "promotions": 0,
+      "hunts": 3,
+      "rearguards": 1,
+      "rests": 3,
+      "declined": 9,
+      "unreachablePlans": 0,
+      "blockedDefence": false,
+      "stashStart": 0,
+      "carriedStart": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "autoAmmoSpent": 0,
+      "promotionBarriers": {
+        "xpReady": 0,
+        "gearReady": 0,
+        "ready": 0,
+        "maxXp": 52
+      },
+      "elapsedHours": 336,
+      "huntsPerDay": 0.214,
+      "stashEnd": 16,
+      "carriedEnd": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "stashGrowth": 16,
+      "goodsEnd": 0,
+      "responseTier": 0,
+      "simulatedMapSeconds": 560,
+      "finalStateHash": "1d46eb9a6ac6b6a122ecb98366bccd7b99f7e6a48d167cf3c8b62c331d524e20"
+    },
+    {
+      "seed": 47,
+      "firstEncounterHours": 4.5,
+      "firstAutoHours": 16.56,
+      "firstPromotionHours": null,
+      "contacts": 13,
+      "autoFights": 6,
+      "wins": 4,
+      "wounded": 17,
+      "promotions": 0,
+      "hunts": 0,
+      "rearguards": 0,
+      "rests": 5,
+      "declined": 7,
+      "unreachablePlans": 0,
+      "blockedDefence": false,
+      "stashStart": 0,
+      "carriedStart": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "autoAmmoSpent": 0,
+      "promotionBarriers": {
+        "xpReady": 0,
+        "gearReady": 0,
+        "ready": 0,
+        "maxXp": 56
+      },
+      "elapsedHours": 336,
+      "huntsPerDay": 0,
+      "stashEnd": 16,
+      "carriedEnd": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "stashGrowth": 16,
+      "goodsEnd": 0,
+      "responseTier": 0,
+      "simulatedMapSeconds": 560,
+      "finalStateHash": "cac8c55a0873b2ae4d5af1cf576a2dbbb6eb8bf8c94b1ad1d39760dacc577f3f"
+    },
+    {
+      "seed": 48,
+      "firstEncounterHours": 4.5,
+      "firstAutoHours": 16.56,
+      "firstPromotionHours": null,
+      "contacts": 17,
+      "autoFights": 6,
+      "wins": 5,
+      "wounded": 10,
+      "promotions": 0,
+      "hunts": 3,
+      "rearguards": 2,
+      "rests": 2,
+      "declined": 9,
+      "unreachablePlans": 0,
+      "blockedDefence": false,
+      "stashStart": 0,
+      "carriedStart": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "autoAmmoSpent": 0,
+      "promotionBarriers": {
+        "xpReady": 0,
+        "gearReady": 0,
+        "ready": 0,
+        "maxXp": 64
+      },
+      "elapsedHours": 336,
+      "huntsPerDay": 0.214,
+      "stashEnd": 20,
+      "carriedEnd": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "stashGrowth": 20,
+      "goodsEnd": 0,
+      "responseTier": 0,
+      "simulatedMapSeconds": 560,
+      "finalStateHash": "035362ec8712914e5cf5c16c908de47ede4f9f87b1da0c511f739862ca060e08"
+    },
+    {
+      "seed": 49,
+      "firstEncounterHours": 4.5,
+      "firstAutoHours": 16.56,
+      "firstPromotionHours": null,
+      "contacts": 16,
+      "autoFights": 7,
+      "wins": 5,
+      "wounded": 16,
+      "promotions": 0,
+      "hunts": 4,
+      "rearguards": 2,
+      "rests": 4,
+      "declined": 7,
+      "unreachablePlans": 0,
+      "blockedDefence": false,
+      "stashStart": 0,
+      "carriedStart": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "autoAmmoSpent": 0,
+      "promotionBarriers": {
+        "xpReady": 0,
+        "gearReady": 0,
+        "ready": 0,
+        "maxXp": 68
+      },
+      "elapsedHours": 336,
+      "huntsPerDay": 0.286,
+      "stashEnd": 20,
+      "carriedEnd": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "stashGrowth": 20,
+      "goodsEnd": 0,
+      "responseTier": 0,
+      "simulatedMapSeconds": 560,
+      "finalStateHash": "3bd65f6a7d8511ef7e31f997a77c7e2766d7c3c4c10b0d7ae232bd448b528c1f"
+    },
+    {
+      "seed": 50,
+      "firstEncounterHours": 4.5,
+      "firstAutoHours": 16.56,
+      "firstPromotionHours": null,
+      "contacts": 14,
+      "autoFights": 5,
+      "wins": 5,
+      "wounded": 10,
+      "promotions": 0,
+      "hunts": 2,
+      "rearguards": 1,
+      "rests": 3,
+      "declined": 8,
+      "unreachablePlans": 0,
+      "blockedDefence": false,
+      "stashStart": 0,
+      "carriedStart": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "autoAmmoSpent": 0,
+      "promotionBarriers": {
+        "xpReady": 0,
+        "gearReady": 0,
+        "ready": 0,
+        "maxXp": 60
+      },
+      "elapsedHours": 336,
+      "huntsPerDay": 0.143,
+      "stashEnd": 20,
+      "carriedEnd": {
+        "rounds": 80,
+        "weapons": 8
+      },
+      "stashGrowth": 20,
+      "goodsEnd": 0,
+      "responseTier": 0,
+      "simulatedMapSeconds": 560,
+      "finalStateHash": "dd660d4de72cc404775acb5736edf851f256b5e74fb56e92ad4f5569f4d56e68"
+    }
+  ]
+}
