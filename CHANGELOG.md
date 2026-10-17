@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-10-17 — inventory and body-looting Foley
+
+- Play prominent recorded gun-handling Foley when opening/closing body loot, caches and campaign kits, picking up/placing items, quick-looting, rotating, unloading and ejecting magazines.
+- Use quieter feedback for failed placements; bound overlapping voices and honor the tactical SFX mute/volume controls, including active sound tails. Recorded samples load once on interaction, with immediate fallback when unavailable.
+
 ## 2026-10-17 — W23 scarce-opening audit
 
 - Add carried weapon/ammunition counts and per-fight ammunition expenditure to the campaign balance harness.

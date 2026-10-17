@@ -6,6 +6,7 @@ import {createCatalogue} from '../shared/inventory/catalogue.js';
 import {createKit} from '../shared/inventory/kit.js';
 import {add} from '../shared/inventory/grid.js';
 import {roundsCarried} from '../shared/inventory/ammo.js';
+import {inventoryFoley} from '../shared/inventory/foley.js';
 import {mountInventory} from '../shared/inventory/grid-ui.js';
 import {useMed} from '../shared/inventory/meds.js';
 import {newArmoury} from '../shared/campaign/state.js';
@@ -104,6 +105,7 @@ export function createKitScreen({campaign, save, names = {}, onClose = () => {}}
   function shut() {
     if (!isOpen) return;
     isOpen = false;
+    inventoryFoley('close');
     box.hidden = true;
     save();
     onClose(current);

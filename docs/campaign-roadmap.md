@@ -410,3 +410,10 @@ harness's strategic reproducibility, not ammunition scarcity or tactical sustain
 unarmed/dry bands, and one-time settlement/reload conservation, followed by the existing human-play comparison.
 **W23 testing remains assigned to Codex:** add real-ammunition tactical and barter policies in ten-seed chunks,
 then compare with human outcomes. Endings/onboarding and physical-device acceptance remain open.
+
+
+### Inventory feedback — 17 October 2026
+
+Body searches, caches and campaign kits now use prominent gun-handling Foley for opening, closing and item
+operations, including keyboard transfers and magazine handling. Failed moves use quieter clicks. Playback
+respects tactical SFX mute/volume and caps overlapping voices; no demo modules are required.

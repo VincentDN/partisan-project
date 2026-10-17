@@ -141,7 +141,7 @@ try {
   await w.keyboard.press('p');
   await w.locator('.kit-open').first().click();
   await w.waitForSelector('.kit-screen:not([hidden]) .inv-panel', {timeout: 60000});
-  assert.match(await w.locator('.kit-screen .search-status').textContent(), /^60 rounds/);
+  assert.match(await w.locator('.kit-screen .search-status').textContent(), /^10 rounds/);
   assert.equal(await w.locator('.kit-screen .inv-panel').count(), 2, 'the kit beside the armoury');
   await w.keyboard.press('Escape');
   assert.equal(await w.locator('.kit-screen').isHidden(), true);

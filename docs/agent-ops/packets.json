@@ -1335,7 +1335,8 @@
     "convoy/sim.js",
     "convoy/levels/convoy.js"
    ],
-   "acceptance": "Body, cargo and cache contents roll once per seed from what the soldier carried (partial magazines, few loose rounds); exposed hold-E search reveals items as it goes and interrupts on movement, release or death; transfers validate range, line of sight, space and ownership; no duplicated corpse kit."
+   "acceptance": "Body, cargo and cache contents roll once per seed from what the soldier carried (partial magazines, few loose rounds); exposed hold-E search reveals items as it goes and interrupts on movement, release or death; transfers validate range, line of sight, space and ownership; no duplicated corpse kit.",
+   "progress_note": " 2026-10-17: Owner-requested prominent gun Foley added to shared inventory/body searches: open/close, mouse/keyboard transfers, pickup/rotate, magazine eject/unload, softer failed moves; shared tactical mute/volume, bounded voices and browser coverage."
   },
   {
    "id": "WP-S10",
@@ -1359,7 +1360,8 @@
     "convoy/index.html",
     "convoy/convoy.css"
    ],
-   "acceptance": "I opens the grid inventory; drag and drop with rotation (R), stack split, load/unload magazines with real round types shown; every action also works by keyboard; field loot shows the searched container beside the rebel; axe plus a browser journey pass."
+   "acceptance": "I opens the grid inventory; drag and drop with rotation (R), stack split, load/unload magazines with real round types shown; every action also works by keyboard; field loot shows the searched container beside the rebel; axe plus a browser journey pass.",
+   "progress_note": " 2026-10-17: Owner-requested prominent gun Foley added to shared inventory/body searches: open/close, mouse/keyboard transfers, pickup/rotate, magazine eject/unload, softer failed moves; shared tactical mute/volume, bounded voices and browser coverage."
   },
   {
    "id": "WP-S11",

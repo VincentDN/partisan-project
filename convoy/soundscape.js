@@ -989,5 +989,6 @@ export function createSoundscape() {
     try {
       localStorage.setItem(KEY, JSON.stringify(prefs));
     } catch {}
+    globalThis.dispatchEvent?.(new CustomEvent('parp-sfx-change', {detail: {...prefs}}));
   }
 }

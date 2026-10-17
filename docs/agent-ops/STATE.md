@@ -5,13 +5,12 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json).
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-17 · codex · W23 Mosin-start audit complete**
+**2026-10-17 · codex · inventory/body-looting Foley**
 
-- Main includes `a956a3c`: scarce Mosin opening, owned ammunition and right-click scope/left-click firing.
-- Codex reran 50 standard + 50 early-rest seeds, five ten-seed chunks each; standard resumed after chunk one.
-- `tools/campaign/inventory.mjs` audits carried tactical weapons/rounds; policy measures expenditure around real auto-resolve. New source-fingerprinted reports: `outbound/campaign-balance/mosin-start/`.
-- Across 565 fights, zero rounds spent; all bands retain 80 rounds and 8 rifles. Selected strategic metrics match old reports seed for seed. Existing auto-resolve uses class tiers and returns unchanged kits, so this cannot validate tactical scarcity.
-- W22 now explicitly tracks equipment/ammunition-aware preview and expenditure before its existing human comparison. W23 tactical-ammunition/barter policies remain assigned to Codex in ten-seed chunks. W21/W25 and device acceptance remain open.
+- Shared inventory plays recorded gun Foley on open/close, pickup/drop, quick transfer, rotation, use and magazine handling. Failed placements have quieter clicks. Both body searches and campaign kit screens use it.
+- `shared/inventory/foley.js` lazily warms a small selection of existing samples on user gestures; shared Web Audio compressor, prominent handling gain, four-voice cap, immediate fallback, tactical SFX settings including live mute.
+- `tests/e2e/inventory-foley.mjs` exercises body search, keyboard looting, magazine handling and live mute/volume. Inventory regression retains mouse transfer/conservation and campaign kits.
+- Previous milestone `396e338`: W23 100-run audit found 565 auto fights spend no ammunition. Equipment-aware auto-resolve and tactical scarcity/barter testing remain open; W23 testing stays Codex-owned. W21/W25 and device acceptance remain open.
 <!-- handoff:end -->
 
 ## Gameplay/demo module boundary — 13 October 2026

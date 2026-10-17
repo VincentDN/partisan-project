@@ -3,6 +3,7 @@
 // rounds, a better rifle's ammunition; load rounds into empty magazines; Escape (or Close) goes back to the fight.
 // The rebels fire what is in their kits (convoy/kit-ammo.js), so ammunition taken here is ammunition you have.
 import {attachAmmo, SEARCH_TIME} from './kit-ammo.js';
+import {inventoryFoley} from '../shared/inventory/foley.js';
 import {mountInventory} from '../shared/inventory/grid-ui.js';
 import {useMed} from '../shared/inventory/meds.js';
 import {trapTab} from '../shared/modal.js';
@@ -105,6 +106,7 @@ export function createFieldSearch(cat, {onOpen = () => {}, onClose = () => {}} =
   function shut() {
     if (!isOpen) return;
     isOpen = false;
+    inventoryFoley('close');
     box.hidden = true;
     if (sim?.player && A?.kitOf(sim.player)) A.sync(sim.player);
     onClose();

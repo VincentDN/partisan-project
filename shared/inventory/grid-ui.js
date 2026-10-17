@@ -3,6 +3,7 @@
 // Shift-drop splits, U unloads, E ejects, H uses medicine; a second long gun goes on the sling. A drop that misses lands
 // in the nearest free place; Ctrl-click (or T) moves an item straight to the other side: loot into the kit, kit out.
 // Keyboard: Enter picks up, arrows and [ ] move, Enter drops.
+import {inventoryFoley} from './foley.js';
 import {footprint, fits, remove, placeAt, add} from './grid.js';
 import {placeNear, quickPlace, kitBoxes} from './grid-moves.js';
 import {itemKeys} from './grid-keys.js';
@@ -23,7 +24,6 @@ export function mountInventory(root, {cat, panels, make, onChange = () => {}, on
   let carry = null; // {item, from, was: {g, x, y, rot}, rot, target: {container, g, x, y} | {weapon}, ghost}
   const grids = []; // {container, g, el} in screen order, for the keyboard's [ and ]
 
-  // ---------- what an item says ----------
   function label(item) {
     const d = cat.def(item.slug);
     if (d.kind === 'magazine') {
@@ -42,6 +42,7 @@ export function mountInventory(root, {cat, panels, make, onChange = () => {}, on
     const why = onUse?.(item);
     if (why === undefined) return;
     if (item.left <= 0 && from) remove(from, item.uid);
+    inventoryFoley('use', cat.def(item.slug).kind);
     render();
     onChange(why);
   }
@@ -51,7 +52,6 @@ export function mountInventory(root, {cat, panels, make, onChange = () => {}, on
     return `${d.name}${sub ? ', ' + sub : ''}, ${d.w} by ${d.h}${where ? ', in ' + where : ''}`;
   };
 
-  // ---------- drawing ----------
   function tile(item, container, where) {
     const d = cat.def(item.slug),
       [w, h] = footprint(cat, item),
@@ -142,7 +142,8 @@ export function mountInventory(root, {cat, panels, make, onChange = () => {}, on
       kit = kitOf();
     const putBack = () => restore(c.item, c.from, c.was);
     let done = false,
-      why = '';
+      why = '',
+      loaded = true;
     const w = t?.weapon && kit?.[t.weapon];
     if (w && d.kind === 'magazine') {
       if (cat.def(w.slug).calibre !== d.calibre) why = 'That magazine does not fit this weapon.';
@@ -167,6 +168,7 @@ export function mountInventory(root, {cat, panels, make, onChange = () => {}, on
       if (under && d.kind === 'ammo' && ud.kind === 'magazine') {
         const r = loadMag(cat, under, c.item);
         why = r.reason || `${r.loaded} loaded.`;
+        loaded = r.loaded > 0;
         if (c.item.count > 0) putBack();
         done = true;
       } else if (under && under.slug === c.item.slug && c.item.count && under.count < (d.stack || 99)) {
@@ -188,6 +190,7 @@ export function mountInventory(root, {cat, panels, make, onChange = () => {}, on
       putBack();
       if (!why) why = 'No room there.';
     }
+    inventoryFoley(done && loaded ? 'drop' : 'reject', d.kind);
     render();
     onChange(why);
   }
@@ -205,6 +208,7 @@ export function mountInventory(root, {cat, panels, make, onChange = () => {}, on
     else placeAt(cat, from, was.g, item, was.x, was.y, was.rot);
   }
   function pickUp(item, from) {
+    inventoryFoley('pickup', cat.def(item.slug).kind);
     carry = {item, from, was: take(item, from), rot: item.rot || 0, target: null};
     return carry;
   }
@@ -218,6 +222,7 @@ export function mountInventory(root, {cat, panels, make, onChange = () => {}, on
       was = take(item, from);
     const where = quickPlace(cat, item, {kit, container, toKit});
     if (!where) restore(item, from, was);
+    inventoryFoley(where ? 'drop' : 'reject', d.kind);
     render();
     root.querySelector(`[data-uid="${item.uid}"]`)?.focus();
     onChange(
@@ -267,6 +272,7 @@ export function mountInventory(root, {cat, panels, make, onChange = () => {}, on
     const key = ev => {
       if (ev.key.toLowerCase() === 'r' && carry) {
         carry.rot = carry.rot ? 0 : 1;
+        inventoryFoley('rotate', cat.def(carry.item.slug).kind);
         ghost.classList.toggle('turned-ghost', !!carry.rot);
       }
     };
@@ -288,5 +294,6 @@ export function mountInventory(root, {cat, panels, make, onChange = () => {}, on
   // keyboard (grid-keys.js)
   const keyOnItem = itemKeys({cat, make, grids, carry: () => carry, pickUp, updateTarget, drop, use, quick, render, onChange, kitOf});
   render();
+  inventoryFoley('open');
   return {render};
 }
