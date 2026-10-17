@@ -3,11 +3,12 @@
 // (`parp-band-v2`, band/band.js), which it migrates on first load. Each module keeps its own save outside a campaign.
 // Storage goes through a small adapter (any object with getItem/setItem/removeItem, localStorage in the browser), so
 // IndexedDB and transactions (WP-S29) can replace it later without touching the rules. docs/campaign-roadmap.md §8.
+import {starterKit} from './starter-kit.js';
 import {TROOPS, GEAR, LEADER, START_BAND} from '../../band/troops.js';
 import {loadSquad, newSquad, SQUAD_KEY} from '../../convoy/progression.js';
 
-// A small reserve; each fighter carries an issued kit separately. The generous depot belongs to the demo.
-export const CAMPAIGN_START_STASH = {ak74: 2, rig: 1, vest: 1, medkit: 2, grenades: 1, smoke: 1, binoculars: 1};
+// Fresh campaigns have no reserve equipment; each fighter owns a Mosin and ten rounds.
+export const CAMPAIGN_START_STASH = {};
 export const VERSION = 1;
 export const CAMPAIGN_KEY = 'parp-campaign-v1';
 export const BAND_KEY = 'parp-band-v2';
@@ -59,7 +60,7 @@ const fightersFromSquad = squad =>
     Object.keys(squad.classes).map(id => [id, {class: squad.classes[id], xp: squad.xp[id] || 0, wounded: false, healIn: 0, kit: null}]),
   );
 /** A fighter's grid kit (shared/inventory/kit.js, TAC-C-11): kept as it came back from the last mission. */
-const isKit = k => isObj(k) && isObj(k.primary) && isObj(k.pockets);
+const isKit = k => isObj(k) && (k.primary === null || isObj(k.primary)) && isObj(k.pockets);
 /** The band's armoury: a grid container of loose kit (placed by a page with the catalogue), and items not placed yet. */
 export const newArmoury = () => ({uid: 'armoury', slug: 'stash', label: 'Armoury', grids: [{w: 10, h: 30, items: []}], inbox: []});
 const isGrid = a => isObj(a) && Array.isArray(a.grids) && a.grids.every(g => isObj(g) && Array.isArray(g.items));
@@ -92,11 +93,11 @@ export function newCampaign({id = 'c1', seed = 1, now = 0} = {}) {
     },
     band: {
       leader: structuredClone(LEADER),
-      fighters: fightersFromSquad(squad),
+      fighters: Object.fromEntries(Object.entries(fightersFromSquad(squad)).map(([id, f]) => [id, {...f, kit: starterKit(id)}])),
       rosterVersion: 2,
       troops: structuredClone(START_BAND),
     },
-    stash: {...CAMPAIGN_START_STASH}, // nine reserve items; carried equipment is issued separately
+    stash: {...CAMPAIGN_START_STASH}, // all further equipment must be acquired
     armoury: newArmoury(), // loose grid kit: magazines, rounds, weapons set aside (TAC-C-11)
     goods: [],
     scrip: squad.scrip,

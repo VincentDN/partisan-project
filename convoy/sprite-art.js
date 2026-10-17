@@ -183,7 +183,7 @@ export async function loadGuns() {
 }
 // What each simulated weapon shows by default (a cosmetic gun replaces a rebel's first weapon).
 export const DEFAULT_GUN = {
-  partisan: {ak: 'ak74m', svd: 'set-sniper', pkm: 'set-lmg', rpg: 'set-rocket'},
+  partisan: {hunting: 'set-bolt', ak: 'ak74m', svd: 'set-sniper', pkm: 'set-lmg', rpg: 'set-rocket'},
   army: {ak: 'ak15k', svd: 'set-sniper', pkm: 'set-lmg', rpg: 'set-rocket', gp: 'ak15k'},
 };
 

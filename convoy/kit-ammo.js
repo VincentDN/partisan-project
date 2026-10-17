@@ -6,6 +6,8 @@
 import {createKit, everything} from '../shared/inventory/kit.js';
 import {roundsIn, fire, reload, loadedRounds, roundsCarried, reachable, loadMag, chamber} from '../shared/inventory/ammo.js';
 import {contents, add, remove} from '../shared/inventory/grid.js';
+import {starterKit} from '../shared/campaign/starter-kit.js';
+import {WEAPONS} from './weapons.js';
 import {ARMS} from '../shared/inventory/arms.js';
 
 export const SEARCH_RANGE = 2.2; // metres from a body or a wreck
@@ -16,15 +18,20 @@ export const SEARCH_TIME = 1.2; // seconds of holding E
  * army: the soldiers carry real kits too (the 60-round issue): they spend real rounds, and a body holds exactly what
  * its soldier had left. Without it they keep their own counters and a body's contents are rolled.
  */
-export function attachAmmo(sim, cat, {kits = {}, seed = 1, army = false} = {}) {
+export function attachAmmo(sim, cat, {kits = {}, seed = 1, army = false, campaign = false} = {}) {
   // ids unique across missions: kits carried in from earlier missions keep theirs
   const factory = createKit(cat, {prefix: `m${seed}-`});
   for (const u of sim.units) {
     const w = u.weapons?.[0];
     if (!ARMS[w] || (u.side !== 'partisan' && !(army && u.side === 'army'))) continue;
     // a kit for another weapon (the fighter was promoted into a new class) stays home; a new one is issued
-    if (!kits[u.id] || (kits[u.id].armsId && kits[u.id].armsId !== w)) kits[u.id] = factory.issue(w);
-    kits[u.id].armsId = w;
+    if (campaign && u.side === 'partisan') {
+      kits[u.id] ||= starterKit(`${seed}-${u.id}`);
+      u.grenades = 0;
+    } else {
+      if (!kits[u.id] || (kits[u.id].armsId && kits[u.id].armsId !== w)) kits[u.id] = factory.issue(w);
+      kits[u.id].armsId = w;
+    }
     // a soldier wears what his sprite shows (WP-W17): a helmet (the newer 6B47 for crews and radiomen), a flak vest
     if (u.side === 'army' && !kits[u.id].headwear) {
       kits[u.id].headwear = factory.make(u.role === 'turret' || u.role === 'rto' ? '6b47-helmet' : 'ssh-68-steel-helmet');
@@ -32,12 +39,35 @@ export function attachAmmo(sim, cat, {kits = {}, seed = 1, army = false} = {}) {
     }
   }
   const kitOf = u => kits[u.id];
-  const owns = (u, wid) => !!kitOf(u) && kitOf(u).armsId === wid && !!kitOf(u).primary;
+  const owns = (u, wid) => !!kitOf(u) && kitOf(u).armsId === wid && kitOf(u).primary?.slug === ARMS[wid]?.weapon;
   const calibreOf = k => cat.def(k.primary.slug).calibre;
   /** The unit's counters from its kit: rounds ready, and rounds carried besides. */
   function sync(u) {
     const k = kitOf(u),
-      wid = k.armsId;
+      owned = campaign && u.side === 'partisan';
+    if (owned) {
+      const wid = Object.keys(ARMS).find(id => WEAPONS[id] && ARMS[id].weapon === k.primary?.slug);
+      const previous = u.weapon;
+      k.armsId = wid || 'hunting';
+      if (previous !== k.armsId) {
+        u.reload = 0;
+        u.reloading = null;
+      }
+      u.mags = {[k.armsId]: 0};
+      u.reserve = {[k.armsId]: 0};
+      u.weapons = [k.armsId];
+      u.weapon = k.armsId;
+      if (!u.build) u.gun = k.armsId === 'hunting' ? 'set-bolt' : undefined;
+      u.grenades = reachable(k)
+        .flatMap(contents)
+        .filter(it => cat.def(it.slug).kind === 'grenade')
+        .reduce((n, it) => n + (it.count || 1), 0);
+    }
+    const wid = k.armsId;
+    if (!k.primary || (owned && !Object.values(ARMS).some(a => a.weapon === k.primary.slug))) {
+      u.mags[wid] = u.reserve[wid] = 0;
+      return 0;
+    }
     u.mags[wid] = loadedRounds(k.primary);
     u.reserve[wid] = roundsCarried(cat, k, calibreOf(k)) - u.mags[wid];
     return u.mags[wid];
@@ -59,9 +89,21 @@ export function attachAmmo(sim, cat, {kits = {}, seed = 1, army = false} = {}) {
   const drops = (sim.drops ||= []);
   sim.ammo = {
     owns,
+    grenade(u) {
+      if (!campaign || u.side !== 'partisan') return true;
+      for (const c of reachable(kitOf(u)))
+        for (const it of contents(c)) {
+          if (cat.def(it.slug).kind !== 'grenade') continue;
+          if ((it.count || 1) <= 1) remove(c, it.uid);
+          else it.count--;
+          return true;
+        }
+      return false;
+    },
     canReload(u, wid) {
       const k = kitOf(u),
-        w = k.primary;
+        w = k?.primary;
+      if (!w) return false;
       if (!w.usesMag) return !w.chamber && best(k) > 0;
       return best(k) > roundsIn(w.mag);
     },
@@ -78,7 +120,7 @@ export function attachAmmo(sim, cat, {kits = {}, seed = 1, army = false} = {}) {
       return d && base ? d.damage / base : 1;
     },
   };
-  for (const u of sim.units) if (owns(u, u.weapons[0])) sync(u);
+  for (const u of sim.units) if (kitOf(u) && (owns(u, u.weapons[0]) || (campaign && u.side === 'partisan'))) sync(u);
 
   const pile = item => ({
     uid: `drop-${item.uid}`,
@@ -231,7 +273,7 @@ export function attachAmmo(sim, cat, {kits = {}, seed = 1, army = false} = {}) {
   function lootTick(dt) {
     for (const [id, L] of looting) {
       const u = sim.units.find(x => x.id === id);
-      if (!u?.alive || !kitOf(u) || !['move', 'hold'].includes(u.order?.type)) {
+      if (!u?.alive || !kitOf(u)?.primary || !['move', 'hold'].includes(u.order?.type)) {
         looting.delete(id);
         continue;
       }

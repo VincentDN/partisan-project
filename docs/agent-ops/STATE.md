@@ -5,13 +5,13 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json).
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-16 · codex · WP-W23 · done**
+**2026-10-17 · codex · campaign starter / sniper follow-up**
 
-- Main includes Claude's owned builds/appearance/spoils and W24 revision protection through `c2638c0`.
-- Vincent assigns W23 harness/testing to Codex. Ownership and five ten-seed chunks are recorded in the roadmap and packet.
-- `tools/campaign/bench.mjs` produces source-fingerprinted resumable checkpoints, per-seed metrics and Markdown. Baseline and early-rest comparison: 50 seeds each, fourteen days; retained in `outbound/campaign-balance/`.
-- Promotion target misses in every run: both XP and promotion gear are short. Earlier recovery reduces hunts without fixing progression. No runtime tuning is justified from these auto-only policies; see the review for limitations.
-- Next: W21 endings, W25 onboarding; manual-combat/barter-inclusive balance and W22 human comparison remain open. W24 physical-device evidence remains open. Codex owns continued W23 testing.
+- Fresh campaign: eight healthy rebels, one Mosin-style rifle and ten rounds each, empty reserve. `starter-kit.js` creates owned kits once; spent ammo and empty primaries persist. Practice equipment is unchanged.
+- Campaign tactical weapons derive from carried inventory; class changes no longer issue free replacements or secondaries. Grenades consume real kit items. Field swaps do not recreate the old kit at settlement.
+- Marksmen with Mosins and SVD/Mk 14 users hold right-click to scope, left-click to fire. 2.4× reticle, 90 m directional sight, occlusion retained. Mouse edges pan; Escape/blur/search/soldier changes cancel.
+- Regression coverage includes ammunition exhaustion/redeployment, equipment swaps, directional visibility and real browser pointer lifecycle.
+- W23's existing reports predate this new opening and remain historical, source-fingerprinted evidence. Codex retains testing ownership; follow up with manual-combat scarcity/loot balance. W21/W25 and other previously open acceptance remain open.
 <!-- handoff:end -->
 
 ## Gameplay/demo module boundary — 13 October 2026

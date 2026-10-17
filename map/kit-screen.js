@@ -1,7 +1,7 @@
 // Kit between missions (TAC-C-11, WP-S10): from the band panel, a fighter's grid kit beside the band's armoury. Load
 // loose rounds into empty magazines, hand a fuller magazine over, set a looted rifle aside. Ammunition carried home
 // is all there is: what a fighter spent stays spent, so restock here before the next deployment. A fighter who has
-// never deployed is issued the 60-round kit of their class's weapon on first look. Saves on every change.
+// never deployed (legacy saves or recruits) receives a scarce Mosin starter kit. Saves on every change.
 import {createCatalogue} from '../shared/inventory/catalogue.js';
 import {createKit} from '../shared/inventory/kit.js';
 import {add} from '../shared/inventory/grid.js';
@@ -9,7 +9,7 @@ import {roundsCarried} from '../shared/inventory/ammo.js';
 import {mountInventory} from '../shared/inventory/grid-ui.js';
 import {useMed} from '../shared/inventory/meds.js';
 import {newArmoury} from '../shared/campaign/state.js';
-import {kitFor} from '../convoy/abilities.js';
+import {starterKit} from '../shared/campaign/starter-kit.js';
 
 const el = (tag, cls, text) => {
   const e = document.createElement(tag);
@@ -63,9 +63,7 @@ export function createKitScreen({campaign, save, names = {}, onClose = () => {}}
     // ids made here never meet a mission's (those start m<seed>-) or an earlier visit's
     const factory = createKit(cat, {prefix: `k${campaign.settled.length}-${Date.now() % 1e6}-`});
     if (!f.kit) {
-      const armsId = kitFor(f.class, id === 'player')[0];
-      f.kit = factory.issue(armsId);
-      f.kit.armsId = armsId;
+      f.kit = starterKit(`${campaign.id}-${id}`);
     }
     campaign.armoury ||= newArmoury();
     const inbox = campaign.armoury.inbox || [];
@@ -73,6 +71,7 @@ export function createKitScreen({campaign, save, names = {}, onClose = () => {}}
     save();
     const name = names[id] || id;
     const count = () => {
+      if (!f.kit.primary) return 'No rifle equipped';
       const cal = cat.def(f.kit.primary.slug).calibre;
       return `${roundsCarried(cat, f.kit, cal)} rounds for the ${cat.def(f.kit.primary.slug).short}`;
     };

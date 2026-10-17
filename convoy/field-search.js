@@ -46,9 +46,9 @@ export function createFieldSearch(cat, {onOpen = () => {}, onClose = () => {}} =
   trapTab(); // Tab stays in the search while it is open
 
   /** A new mission: kits for the rebels (or the ones they bring, by unit id) and the soldiers; nothing searched yet. */
-  function attach(s, {seed = 1, kits} = {}) {
+  function attach(s, {seed = 1, kits, campaign = false} = {}) {
     sim = s;
-    A = attachAmmo(s, cat, {seed, kits, army: true});
+    A = attachAmmo(s, cat, {seed, kits, army: true, campaign});
     target = null;
     progress = 0;
     if (isOpen) shut();

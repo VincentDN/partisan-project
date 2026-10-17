@@ -5,7 +5,7 @@ import {kitCounts, kitGains} from '../shared/campaign/loot-report.js';
 import {newCampaign, normalize, CAMPAIGN_START_STASH} from '../shared/campaign/state.js';
 import {deploy, writeResult, settle} from '../shared/campaign/encounter.js';
 
-test('fresh campaigns have a small reserve; existing acquired stock is preserved', () => {
+test('fresh campaigns have an empty reserve; existing acquired stock is preserved', () => {
   const c = newCampaign();
   assert.deepEqual(c.stash, CAMPAIGN_START_STASH);
   assert.equal(c.stash.atgm, undefined);
@@ -35,7 +35,7 @@ test('recovery detail persists in the debrief and never awards kit gains twice',
   const loaded = normalize(JSON.stringify(c));
   assert.deepEqual(loaded.deployment.result.kitGains, {round: 11});
   settle(loaded);
-  assert.equal(loaded.stash.medkit, CAMPAIGN_START_STASH.medkit + 2);
+  assert.equal(loaded.stash.medkit, (CAMPAIGN_START_STASH.medkit || 0) + 2);
   assert.equal(loaded.stash.round, undefined, 'carried gains are informational, not another stash grant');
   const once = structuredClone(loaded);
   settle(loaded, 'loot-test');

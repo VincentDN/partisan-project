@@ -16,7 +16,8 @@ const seed = (page, id, level) =>
       const store = createStore(localStorage);
       const {campaign} = store.load();
       for (const f of Object.values(campaign.band.fighters)) f.wounded = false;
-      const vests = campaign.stash.vest || 0;
+      campaign.stash.vest = Math.max(1, campaign.stash.vest || 0); // previously looted vest
+      const vests = campaign.stash.vest;
       deploy(campaign, {id, level, seed: 4242, fighters: ['player', 'mila'], kit: {vest: 1}});
       store.save(campaign);
       return vests;

@@ -173,9 +173,16 @@ At friendly or independent settlements within the service radius, Party offers 1
 fighters recover in 24 hours; fighters brought down take 48. Rest advances campaign time and reduces heat. The map runs the shared world simulation through that time, including convoy movement and hunter activity.
 The player-facing interruption and risk presentation still needs pacing acceptance.
 
-Fresh campaigns keep only nine reserve items: two AK-74s, a rig, a vest, two medkits, a grenade pack,
-a smoke pack and binoculars. Carried fighter kits are issued separately. Existing campaign and legacy-import
-inventories are preserved; reopening a save does not remove equipment.
+Fresh campaigns start with an empty reserve stash and eight healthy fighters, each owning one Mosin-Nagant-style
+bolt-action rifle and ten rounds (five loaded, five spare). There are no issued sidearms, launchers, grenades,
+armour or medical supplies. Recover better equipment and ammunition from combat; existing village barter remains
+available for exchanging recovered stock. Class changes do not grant a weapon or refill ammunition. Empty slings
+and spent magazines survive saves and completed missions. Existing acquired inventories are preserved.
+
+Marksman-class fighters carrying a Mosin, and fighters using an SVD or Mk 14, can hold right-click to scope and
+left-click to fire. The 2.4× view uses a sniper reticle and a directional 90-metre sight cone; cover and smoke
+still block sight. Move the mouse to adjust the target; screen edges pan farther downrange. Escape, focus loss,
+search and switching soldiers cancel the shot. Shift-right-click issues squad orders when using a sniper. Ordinary weapons retain click-to-fire controls.
 
 Campaign trade is item-for-item barter at neutral and liberated **villages only**. Camp and towns have no trader;
 practice mode keeps its existing shop. Choose quantities of supplies to receive and spare equipment or recovered
@@ -385,3 +392,7 @@ full-endgame balance and W22's human comparison remain open. W23 testing ownersh
 W23 dependency clarification: the harness consumes W22's implemented resolver. Its outstanding human-play
 comparison is a separate acceptance task, not a prerequisite to measuring the current code. W23 therefore
 retains W20 as its completion dependency; W22 remains open and is not declared balanced by these reports.
+
+The retained W23 baseline/comparison predates the Mosin-only, ten-round campaign start. Its source fingerprints
+make it historical evidence, not validation of this new opening balance. Codex owns the follow-up measurement;
+manual-combat ammunition scarcity and loot progression require played comparison beyond the auto-only harness.

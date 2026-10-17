@@ -3,6 +3,7 @@
 // then every object sorted by its south edge (cover, vehicles, pawns, trees), then effects and labels on top.
 // x runs east and z south in metres; the camera looks straight down, objects show their front faces (2.5-D).
 import {loadArt, loadGuns, buildPawn, lookFor, savedLook, DEFAULT_GUN, tinted, atlasCell} from './sprite-art.js';
+import {sightRange, drawScope, SCOPE_RANGE, SCOPE_ZOOM} from './sniper-scope.js';
 import {WEAPONS} from './weapons.js';
 import {ditherToMask} from '../assets/js/dither.js';
 import {inBox, isLow, segmentBox} from './sim.js';
@@ -1034,13 +1035,14 @@ export async function createSpriteRenderer(view) {
    * The visibility polygons from (ox, oz), [[x, z], ...] round the circle: `over` sees over low cover (sandbags,
    * logs), `clear` stops at it too; between the two the ground is half seen (peeking over shows it all).
    */
-  function sightFrom(sim, ox, oz, boxes) {
+  function sightFrom(sim, ox, oz, boxes, eye) {
     const over = [],
       clear = [];
     for (let i = 0; i < RAYS; i++) {
       const a = (i / RAYS) * Math.PI * 2,
-        ex = ox + Math.cos(a) * SIGHT,
-        ez = oz + Math.sin(a) * SIGHT;
+        range = sightRange(sim, eye, a),
+        ex = ox + Math.cos(a) * range,
+        ez = oz + Math.sin(a) * range;
       let t = 1,
         tl = 1;
       for (const b of boxes) {
@@ -1056,7 +1058,7 @@ export async function createSpriteRenderer(view) {
           dz = ez - oz,
           L = dx * dx + dz * dz,
           k = Math.max(0, Math.min(1, ((c.x - ox) * dx + (c.z - oz) * dz) / L));
-        if (Math.hypot(ox + dx * k - c.x, oz + dz * k - c.z) < c.r) t = Math.min(t, Math.max(0, k - c.r / SIGHT));
+        if (Math.hypot(ox + dx * k - c.x, oz + dz * k - c.z) < c.r) t = Math.min(t, Math.max(0, k - c.r / range));
       }
       tl = Math.min(t, tl);
       over.push([ox + (ex - ox) * t, oz + (ez - oz) * t]);
@@ -1072,7 +1074,12 @@ export async function createSpriteRenderer(view) {
     const fade = 1 - Math.exp(-dt * 10);
     for (const u of sim.units) {
       if (u.side !== 'army' || u.escaped) continue;
-      if (sim.time < (u.revealedUntil ?? -1) || eyes.some(e => Math.hypot(e.x - u.x, e.z - u.z) < SIGHT && sim.los(e.x, e.z, u.x, u.z)))
+      if (
+        sim.time < (u.revealedUntil ?? -1) ||
+        eyes.some(
+          e => Math.hypot(e.x - u.x, e.z - u.z) < sightRange(sim, e, Math.atan2(u.z - e.z, u.x - e.x)) && sim.los(e.x, e.z, u.x, u.z),
+        )
+      )
         u.seenAt = sim.time;
       const want = sim.time - (u.seenAt ?? -9) < 0.35 ? 1 : 0; // a moment's grace before a soldier fades out of sight
       const k = (sightFade.get(u) ?? 0) + (want - (sightFade.get(u) ?? 0)) * fade;
@@ -1099,10 +1106,11 @@ export async function createSpriteRenderer(view) {
         e.z,
         // the cover a rebel stands in or crouches right behind does not block their own view
         boxes.filter(b => !inBoxPad(e.x, e.z, b) && !(isLow(b) && inBox(e.x, e.z, b, 1.5))),
+        e,
       );
       const cx = sx(e.x) / 2,
         cy = sy(e.z) / 2,
-        R = (SIGHT * ppm) / 2;
+        R = ((sim.scope?.id === e.id ? Math.max(SIGHT, SCOPE_RANGE) : SIGHT) * ppm) / 2;
       const g = fn.createRadialGradient(cx, cy, R * 0.55, cx, cy, R);
       g.addColorStop(0, 'rgba(0,0,0,1)');
       g.addColorStop(1, 'rgba(0,0,0,0)');
@@ -1322,7 +1330,7 @@ export async function createSpriteRenderer(view) {
     Hh = view.height / dpr;
     // Right mouse held: a subtle zoom in and a longer lean toward the cursor (aiming down the sights).
     camera.aimK += ((aimZoom ? 1 : 0) - camera.aimK) * (1 - Math.exp(-rdt * 9));
-    ppm = PPM * camera.zoom * (1 + 0.14 * camera.aimK);
+    ppm = PPM * camera.zoom * (sim.scope ? SCOPE_ZOOM : 1 + 0.14 * camera.aimK);
     // The camera follows the active rebel and moves with the mouse: it leans toward the cursor's side of the screen.
     const p = sim.player;
     let lx = 0,
@@ -1332,7 +1340,11 @@ export async function createSpriteRenderer(view) {
       lx = clamp((pointer.x - W / 2) / (W / 2), -1, 1) * (W / 2 / ppm) * reach;
       lz = clamp((pointer.y - Hh / 2) / (Hh / 2), -1, 1) * (Hh / 2 / ppm) * reach;
     }
-    const follow = 1 - Math.exp(-rdt * 6);
+    if (sim.scope) {
+      lx = sim.scope.x - p.x;
+      lz = sim.scope.z - p.z;
+    }
+    const follow = sim.scope || matchMedia('(prefers-reduced-motion: reduce)').matches ? 1 : 1 - Math.exp(-rdt * 6);
     camera.x += (p.x + lx - camera.x) * follow;
     camera.z += (p.z + lz - camera.z) * follow;
     // camera shake: trauma squared, decaying
@@ -1419,10 +1431,11 @@ export async function createSpriteRenderer(view) {
       screen.a *= Math.exp(-rdt * 7);
     }
     if (slowmo > 0.01) ditherOverlay(slowmo);
+    if (sim.scope && aim) drawScope(ctx, W, Hh, sx(aim.x), sy(aim.z));
     hitReadout(sim, aim);
     if (aim) ammoHud(sim, aim);
     if (abilities?.length) abilityBar(abilities);
-    if (aim && p.alive) {
+    if (aim && p.alive && !sim.scope) {
       ctx.strokeStyle = 'rgba(255,255,255,.85)';
       ctx.lineWidth = 1.5;
       ctx.beginPath();

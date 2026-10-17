@@ -128,6 +128,7 @@ export const combatMethods = {
       a = Math.atan2(z - u.z, x - u.x);
     const x1 = u.x + (x - u.x) * k + Math.cos(a + Math.PI / 2) * s,
       z1 = u.z + (z - u.z) * k + Math.sin(a + Math.PI / 2) * s;
+    if (this.ammo?.grenade && !this.ammo.grenade(u)) return false;
     u.grenades--;
     u.grenadeAt = this.time + 1;
     u.facing = a;

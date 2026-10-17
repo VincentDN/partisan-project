@@ -5,6 +5,19 @@
 // lob: indirect fire that arcs over cover and lands near the aim point · reserve: spare rounds beyond the loaded one
 // speed: the projectile's flight speed in m/s (RimWorld-style: rounds are seen in flight, damage lands on arrival)
 export const WEAPONS = {
+  hunting: {
+    label: 'Mosin-Nagant',
+    mag: 5,
+    reload: 3.5,
+    cd: 1.5,
+    speed: 62,
+    damage: 80,
+    spread: 0.009,
+    range: 95,
+    supp: 0.3,
+    burst: [1, 1],
+    pause: [1.5, 2.2],
+  },
   ak: {
     label: 'AK-74',
     mag: 30,
@@ -97,6 +110,19 @@ export const WEAPONS = {
     pause: [0.5, 1],
   },
 };
+
+for (const [id, base] of Object.entries({
+  ak74: 'ak',
+  ak74m: 'ak',
+  ak15k: 'ak',
+  rpk: 'pkm',
+  mk14: 'svd',
+  smg: 'ak',
+  shotgun: 'hunting',
+  atgm: 'rpg',
+})) {
+  WEAPONS[id] = {...WEAPONS[base], label: id.toUpperCase()};
+}
 
 // What each army role carries and how it fights. sight: metres; suppressAt: belief confidence needed to fire blind
 // (Infinity: never suppresses); share: multiplier on squad callout delay while this soldier is alive.

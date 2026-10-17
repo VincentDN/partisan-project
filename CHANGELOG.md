@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-10-17 — scarce campaign start and sniper scope
+
+- Fresh campaigns start with eight healthy fighters carrying Mosin-style rifles and ten rounds each, with an empty reserve stash. Existing earned equipment remains.
+- Campaign weapons follow carried inventory: no free class replacement, secondary weapons or grenades; field swaps no longer duplicate the original kit at settlement.
+- Snipers hold right-click for a 2.4× scope and directional sight up to 90 metres, with left-click firing. Cover and smoke still block sight; Escape and interrupted controls cancel safely.
+
 ## 2026-10-16 — campaign balance harness (Codex)
 
 - Add a fifty-seed campaign harness with ten-seed resumable checkpoints, shared game rules, explicit non-reached milestones and machine-readable pacing reports.

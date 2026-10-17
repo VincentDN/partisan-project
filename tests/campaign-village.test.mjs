@@ -17,6 +17,7 @@ import {deploy} from '../shared/campaign/encounter.js';
 const village = SETTLEMENTS.find(s => s.kind === 'village' && s.faction === 'neutral');
 function atVillage(friendly = false) {
   const c = newCampaign();
+  c.stash = {ak74: 2, medkit: 2}; // acquired stock available for these barter tests
   c.world.party = {x: village.x, z: village.z};
   if (friendly) c.world.settlements[village.id] = {owner: 'resistance'};
   return c;

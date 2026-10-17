@@ -62,7 +62,7 @@ test('a new campaign is versioned and holds world, band, stash and log', () => {
   assert.deepEqual(c.stash, CAMPAIGN_START_STASH);
   assert.equal(
     Object.values(c.stash).reduce((a, b) => a + b, 0),
-    9,
+    0,
   );
   assert.deepEqual([c.log, c.settled, c.deployment], [[], [], null]);
   assert.deepEqual(normalize(JSON.stringify(c)), c, 'a fresh campaign survives a round trip unchanged');

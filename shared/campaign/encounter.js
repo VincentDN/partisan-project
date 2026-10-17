@@ -13,7 +13,7 @@ export const OUTCOMES = ['won', 'lost', 'withdrawn'];
 export const HEAL_WOUNDED = 24,
   HEAL_DOWN = 48;
 const isObj = o => !!o && typeof o === 'object' && !Array.isArray(o);
-const isKit = k => isObj(k) && isObj(k.primary) && isObj(k.pockets);
+const isKit = k => isObj(k) && (k.primary === null || isObj(k.primary)) && isObj(k.pockets);
 const count = n => (Number.isFinite(n) && n >= 1 ? Math.floor(n) : 0);
 
 /**
@@ -208,14 +208,13 @@ export function settle(c, encounterId = c.deployment?.id) {
   const from = d.enemy?.name || d.source || 'a fight';
   recordIn(c, r.loot, from);
   recordIn(c, cargo, `${from}’s cargo`);
-  // grid kits: each fighter keeps what they came home with; a kit they set off with and did not bring back (the
-  // mission issued another, for a new weapon) goes to the armoury's inbox, with everything in it
+  // Grid kits: keep exactly what came home. Replacing a rifle in the field does not duplicate its old kit.
   for (const f of d.fighters) {
     const fighter = c.band.fighters[f],
       left = d.kits?.[f] || null,
       back = r.kits?.[f] || left;
     if (fighter) fighter.kit = back;
-    if (left && back !== left && back?.primary?.uid !== left.primary?.uid) (c.armoury.inbox ||= []).push(...kitItems(left));
+    // A changed primary is a field transfer, not permission to recreate the original kit.
   }
   c.goods.push(...r.goods);
   if (c.record[d.level] && r.outcome !== 'withdrawn') {

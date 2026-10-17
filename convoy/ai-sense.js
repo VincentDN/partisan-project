@@ -1,5 +1,6 @@
 // What an army soldier knows (convoy/ai.js): beliefs about where threats are, what it sees and hears, and the small
 // helpers every AI module shares. Split out of ai.js (WP-QA17).
+import {sightRange} from './sniper-scope.js';
 import {dist} from './sim.js';
 import {ROLES} from './weapons.js';
 
@@ -72,7 +73,8 @@ export function perceive(sim, u) {
   u.visible = [];
   for (const e of sim.enemiesOf(u)) {
     const d = dist(u, e);
-    if (d > sight) continue;
+    const scopedSight = u === sim.player ? sightRange(sim, u, Math.atan2(e.z - u.z, e.x - u.x)) : sight;
+    if (d > scopedSight) continue;
     if (!sim.onScreen?.(u.side === 'army' ? u : e)) continue; // you see them, they see you: only on the player's screen
     let da = Math.atan2(e.z - u.z, e.x - u.x) - u.facing;
     da = Math.atan2(Math.sin(da), Math.cos(da));

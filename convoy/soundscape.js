@@ -85,6 +85,21 @@ export const RELOADS = {
     [0.8, 'click', 0.9],
   ],
 };
+for (const [id, base] of Object.entries({
+  hunting: 'svd',
+  ak74: 'ak',
+  ak74m: 'ak',
+  ak15k: 'ak',
+  rpk: 'pkm',
+  mk14: 'svd',
+  smg: 'ak',
+  shotgun: 'svd',
+  atgm: 'rpg',
+})) {
+  GUNS[id] = GUNS[base];
+  RELOADS[id] = RELOADS[base];
+  SHOT_SAMPLES[id] = SHOT_SAMPLES[base];
+}
 
 /**
  * Where a sound at (x, z) sits for a listener at (lx, lz): distance, gain, stereo pan, air low-pass and arrival delay.

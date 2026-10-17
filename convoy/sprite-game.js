@@ -2,6 +2,7 @@
 // view is archived in docs/archive/convoy-3d/). The squad's classes come from the Rebel Band tree (band/troops.js): they
 // set each rebel's weapons, passives and abilities (Z X V), and the rebels level up between missions
 // (convoy/progression.js). Switching rebel (Q) slows time and dithers the world; difficulty is a select in the panel.
+import {beginScope, canScope, validScope, moveScope, SCOPE_ZOOM} from './sniper-scope.js';
 import {lootReport} from '../shared/campaign/loot-report.js';
 import '../shared/frame.js';
 import {mountTopBar} from '../shared/topbar.js';
@@ -88,7 +89,7 @@ function newGame() {
     squad: cm?.action === 'play' ? cm.classes() : squad.classes,
     difficulty: diffId,
   });
-  search?.attach(sim, {seed, kits: cm?.action === 'play' ? cm.kits() : undefined});
+  search?.attach(sim, {seed, kits: cm?.action === 'play' ? cm.kits() : undefined, campaign: cm?.action === 'play'});
   if (cm?.action === 'play') arm(sim, cm.builds()); // the guns assigned in the Weapon Modder (WP-W16)
   dress();
   if (cm?.action === 'play' && search?.ammo) cm.rememberKits(search.ammo.kits);
@@ -218,7 +219,8 @@ let fire = false,
   reload = false,
   wantWeapon = null,
   pointer = null; // CSS pixels on the canvas
-const aimPoint = () => (pointer ? R.toWorld(pointer.x, pointer.y) : null);
+let scope = null;
+const aimPoint = () => scope || (pointer ? R.toWorld(pointer.x, pointer.y) : null);
 addEventListener('keydown', e => {
   if (document.querySelector('.spoils')) return; // the spoils screen has the keyboard (its buttons, Enter to hurry)
   if (search?.key(e)) return;
@@ -293,20 +295,43 @@ const enemyNear = p =>
     .sort((a, b) => Math.hypot(a.x - p.x, a.z - p.z) - Math.hypot(b.x - p.x, b.z - p.z))[0];
 view.addEventListener('pointermove', e => {
   const r = view.getBoundingClientRect();
-  pointer = {x: e.clientX - r.left, y: e.clientY - r.top};
+  const next = {x: e.clientX - r.left, y: e.clientY - r.top};
+  if (scope && pointer)
+    moveScope(
+      scope,
+      sim.player,
+      (next.x - pointer.x) / (32 * R.camera.zoom * SCOPE_ZOOM),
+      (next.y - pointer.y) / (32 * R.camera.zoom * SCOPE_ZOOM),
+    );
+  pointer = next;
 });
-// Right mouse held: aim down the sights (a subtle zoom and a longer lean); a right click still gives squad orders.
+// Right mouse aims; precision weapons scope. Shift-right-click preserves squad orders while using a sniper.
 let aimZoom = false;
-view.addEventListener('pointerdown', e => {
-  if (e.button === 0 && started && !sim.control.pending) fire = true;
-  if (e.button === 2) aimZoom = true;
+view.addEventListener('mousedown', e => {
+  if (!started || paused || sim.outcome || search?.open || sim.control.pending) return;
+  if (e.button === 0) fire = true;
+  if (e.button === 2 && !e.shiftKey) {
+    const r = view.getBoundingClientRect();
+    pointer = {x: e.clientX - r.left, y: e.clientY - r.top};
+    scope = beginScope(sim.player, aimPoint());
+    aimZoom = true;
+  }
 });
-addEventListener('pointerup', e => {
+addEventListener('mouseup', e => {
   if (e.button === 0) fire = false;
-  if (e.button === 2) aimZoom = false;
+  if (e.button === 2) {
+    scope = null;
+    sim.scope = null;
+    aimZoom = false;
+  }
+});
+addEventListener('pointercancel', () => clearInput());
+addEventListener('keydown', e => {
+  if (e.key === 'Escape') clearInput();
 });
 view.addEventListener('contextmenu', e => {
   e.preventDefault();
+  if (canScope(sim.player) && !e.shiftKey) return;
   const point = started && !sim.outcome && !sim.control.pending && selected.length ? aimPoint() : null;
   if (!point) return;
   const t = enemyNear(point);
@@ -327,6 +352,8 @@ function clearInput() {
   keys.clear();
   fire = false;
   aimZoom = false;
+  scope = null;
+  if (sim) sim.scope = null;
   reload = false;
   grenade = false;
   wantWeapon = null;
@@ -757,6 +784,13 @@ function frame() {
   if (started && !document.hidden) picker.update(elapsed);
   acc = Math.min(acc + elapsed * picker.scale, 0.25);
   const live = started && !paused && !sim.outcome && !search?.open;
+  if (!live || sim.control.pending || !validScope(scope, sim.player) || (wantWeapon && wantWeapon !== sim.player.weapon)) scope = null;
+  if (scope && pointer) {
+    const edge = (p, size) => (p < size * 0.1 ? -1 : p > size * 0.9 ? 1 : 0);
+    moveScope(scope, sim.player, edge(pointer.x, view.clientWidth) * elapsed * 25, edge(pointer.y, view.clientHeight) * elapsed * 25);
+  }
+  sim.scope = scope;
+  view.style.cursor = scope ? 'none' : '';
   if (started && !paused && !search?.open && !document.hidden)
     while (acc >= STEP) {
       sim.step(STEP, input());
@@ -778,7 +812,7 @@ function frame() {
     selected,
     pointer: started ? pointer : null,
     aimZoom: aimZoom && started,
-    peek: fire && started, // holding fire: the player peeks over low cover (sprite-render.js fog)
+    peek: (fire || !!scope) && started, // holding fire: the player peeks over low cover (sprite-render.js fog)
     abilities: started && !sim.control.pending ? abilityBar() : null,
     slowmo: slowmo < 0.01 ? 0 : slowmo,
   });

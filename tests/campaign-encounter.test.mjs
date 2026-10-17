@@ -120,7 +120,7 @@ test('grid kits travel with the fighters and come home as they are after the fig
   launch(c);
   assert.equal(c.band.fighters.player.kit, null, 'the kit is on the fighter in the field');
   assert.equal(c.deployment.kits.player.primary.rounds, 60);
-  assert.equal(c.deployment.kits.mila, null, 'none yet: the mission issues one');
+  assert.equal(c.deployment.kits.mila.armsId, 'hunting', 'the starter rifle is already owned');
   enter(c, 'e1');
   writeResult(c, 'e1', {outcome: 'won', kits: {player: kit('a1', 12), mila: kit('m5-1', 47), ghost: kit('x', 1)}});
   settle(c, 'e1');
@@ -147,7 +147,7 @@ test('withdrawn: the kits come back as they left; a kit replaced in the field go
   assert.equal(c.band.fighters.player.kit.primary.uid, 'b9');
   assert.deepEqual(
     c.armoury.inbox.map(i => i.uid),
-    ['a1'],
-    'the old rifle is set aside, not lost',
+    [],
+    'a field replacement does not recreate the original rifle',
   );
 });
