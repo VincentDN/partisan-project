@@ -2,6 +2,7 @@
 // view is archived in docs/archive/convoy-3d/). The squad's classes come from the Rebel Band tree (band/troops.js): they
 // set each rebel's weapons, passives and abilities (Z X V), and the rebels level up between missions
 // (convoy/progression.js). Switching rebel (Q) slows time and dithers the world; difficulty is a select in the panel.
+import {campaignApproach} from './levels/approach.js';
 import {raidCompletion} from './raid-completion.js';
 import {beginScope, canScope, validScope, moveScope, SCOPE_ZOOM} from './sniper-scope.js';
 import {lootReport} from '../shared/campaign/loot-report.js';
@@ -84,8 +85,9 @@ function newGame() {
   delete $('#card').dataset.outcome;
   const awareness = Number($('#aware').value) / 100;
   const seed = cm?.action === 'play' ? cm.deployment.seed : Number(params.get('seed')) || Math.floor(Math.random() * 1e6);
+  const battlefield = vary(LEVELS[levelId], conditions());
   sim = new Sim({
-    level: vary(LEVELS[levelId], conditions()),
+    level: cm?.action === 'play' ? campaignApproach(battlefield) : battlefield,
     seed,
     awareness,
     squad: cm?.action === 'play' ? cm.classes() : squad.classes,

@@ -5,14 +5,13 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json).
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-18 · codex · W32 campaign soundtrack**
+**2026-10-18 · codex · W31 campaign approaches**
 
-- `shared/campaign-score.js`: original synthesized 50 BPM minor-key plucked and soft bowed tones. No new recording downloads or demo module dependencies.
-- Shell and music UI select campaign mode from the page's campaign query, including direct links. Campaign mode retains mute/volume and does not overwrite the saved demo track. Map/combat/band navigation shares one score; return to demo/menu restores selection.
-- `Music.setTrack` halts the old source synchronously and disconnects the outgoing synth graph, removing delayed source-switch races. Muted-but-still-fading recordings also halt before a new track starts.
-- Browser test `tests/e2e/campaign-music.mjs`: actual shell map/combat/band/menu transitions, recording stopped, saved selection, mute/zero volume, rapid changes and finite/non-clipping offline score render. Full tests and build/static checks run for this milestone.
-- W28 field log and W30 inventory/Roadblock fixes remain on main (`b6edf9e`). Next W31 larger covered approach areas across missions, then W29 fullscreen A/B/C/D persuasion dialogue. W23 balance testing remains Codex-owned; previous W21/W22/W24/W25 acceptance limits still apply.
-- Continue owner-authorized commits/pushes to main. Do not touch intro, demo/gameplay isolation or historical balance baselines.
+- `convoy/levels/approach.js` expands six campaign raid/ambush staging areas by 32–44 metres, shifting all spawns, growing bounds and adding flanking cover. Applied after variants in campaign `sprite-game.js`; original level objects and practice layouts remain unchanged. Defence cave/hilltop retain preparation and positions.
+- Seven deterministic checks cover clearance, reachable attack lines, larger bounds, quiet staging and walking before alarm. Expanded Roadblock browser verifies deployment and successful explicit departure. Cloud simulation median CPU 0.0104–0.0392 ms/step; physical-device acceptance remains W24.
+- W32 soundtrack committed as `e8e55c4`: separate quiet synthesized campaign strings; no overlapping demo recording, preserved mute/volume and demo selection. Full 551 tests, audio lifecycle/offline render and gameplay/demo isolation passed for that milestone.
+- W28 event history and W30 inventory/Roadblock fixes remain on main (`b6edf9e`). Next W29 fullscreen A/B/C/D persuasion dialogue for village barter/recruitment. W23 testing stays Codex-owned; prior W21/W22/W24/W25 acceptance remains open.
+- Continue owner-authorized commits/pushes to main; no PR. Keep intro untouched and preserve gameplay/demo module separation.
 <!-- handoff:end -->
 
 ## Gameplay/demo module boundary — 13 October 2026

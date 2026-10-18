@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-10-18 — larger campaign approaches
+
+- Add 32–44 metres of covered staging ground to campaign Roadblock, convoy, forest-road, compound, checkpoint and village missions.
+- Start the whole rebel squad farther from contact and expand map bounds, keeping objective and extraction areas intact.
+- Preserve the authored cave/hilltop defence preparation phases and standalone practice layouts.
+
 ## 2026-10-18 — dedicated campaign ambience
 
 - Replace workbench/demo music on campaign entry with a quiet original minor-key plucked-string and soft-string score.

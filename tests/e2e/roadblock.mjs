@@ -33,6 +33,13 @@ try {
     }),
     [4, ['hunting', 'tt']],
   );
+  assert.ok(
+    await p.evaluate(() => {
+      const s = window.PARP_SPRITES.sim;
+      return s.level.approach.distance >= 32 && s.player.x < -60;
+    }),
+    'campaign has an extended approach',
+  );
   await p.locator('#start').click();
   await p.evaluate(() => {
     const g = window.PARP_SPRITES;

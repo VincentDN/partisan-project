@@ -4054,14 +4054,15 @@
    "milestone": "W",
    "size": "M",
    "bu": 20,
-   "status": "planned",
+   "status": "done",
    "deps": [],
    "agent": "any",
    "needs": [],
    "inputs": [
     "docs/campaign-roadmap.md"
    ],
-   "acceptance": "Expand mission approach areas and place rebel starts far enough from enemies to allow a meaningful covered walk before combat. Check every mission, sight ranges, routes, cover density and extraction pacing; preserve intentional defence pressure. Test normal browser performance and campaign deployment."
+   "acceptance": "Expand mission approach areas and place rebel starts far enough from enemies to allow a meaningful covered walk before combat. Check every mission, sight ranges, routes, cover density and extraction pacing; preserve intentional defence pressure. Test normal browser performance and campaign deployment.",
+   "progress_note": "2026-10-18: Six campaign raid/ambush maps gain 32\u201344m staging approaches, expanded bounds and flanking rock cover. Original objectives/extraction preserved; cave/hilltop retain authored defence preparation. Seven tests verify full-squad spawn clearance, reachability, larger area, quiet staging and a four-second walking approach. Expanded Roadblock browser deployment/completion checked. Median cloud simulation CPU 0.0104\u20130.0392 ms/step; real-device performance remains W24."
   },
   {
    "id": "WP-W32",
