@@ -17,6 +17,7 @@ try {
     M.setSpeed(0);
     Object.assign(M.travel.party, {x: s.x, z: s.z, route: null});
     M.travel.campaign.world.settlements[s.id] = {owner: 'resistance'};
+    M.travel.campaign.stash.ak74 = 2; // acquired loot for the barter scenario
     M.travel.save();
     M.campaign.toggleBand(true);
   });
@@ -42,7 +43,7 @@ try {
   await page.locator('#village-barter').focus();
   await page.keyboard.press('Enter');
   assert.equal(await page.evaluate(() => window.PARP_MAP.travel.campaign.stash.ak74), before.ak74 - 1);
-  assert.equal(await page.evaluate(() => window.PARP_MAP.travel.campaign.stash.medkit), before.medkit + 1);
+  assert.equal(await page.evaluate(() => window.PARP_MAP.travel.campaign.stash.medkit), (before.medkit || 0) + 1);
   await page.reload();
   await ready();
   await page.evaluate(() => window.PARP_MAP.campaign.toggleBand(true));
@@ -56,6 +57,23 @@ try {
     })),
   );
   assert.deepEqual(violations, []);
+  await page.locator('#village-talk').click();
+  await page.keyboard.press('c');
+  assert.match(await page.locator('.dialogue-result').innerText(), /one saved roll/);
+  await page.keyboard.press('a');
+  const decision = await page.locator('.dialogue-result').innerText();
+  assert.match(decision, /D20:.*target 12/);
+  await page.keyboard.press('a');
+  assert.equal(await page.locator('.dialogue-result').innerText(), decision);
+  const dialogueViolations = await page.evaluate(async () =>
+    (await window.axe.run('.village-dialogue', {runOnly: {type: 'tag', values: ['wcag2a', 'wcag2aa']}})).violations.map(v => v.id),
+  );
+  assert.deepEqual(dialogueViolations, []);
+  await page.setViewportSize({width: 390, height: 844});
+  assert.equal(await page.locator('.village-dialogue').evaluate(e => e.scrollWidth <= e.clientWidth), true);
+  await page.keyboard.press('Escape');
+  assert.equal(await page.locator('#village-talk').evaluate(e => e === document.activeElement), true);
+  await page.setViewportSize({width: 1280, height: 900});
   await page.keyboard.press('Escape');
   const recruited = await page.evaluate(() => {
     const M = window.PARP_MAP,

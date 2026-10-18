@@ -5,13 +5,13 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json).
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-18 · codex · W31 campaign approaches**
+**2026-10-18 · codex · W29 village dialogue**
 
-- `convoy/levels/approach.js` expands six campaign raid/ambush staging areas by 32–44 metres, shifting all spawns, growing bounds and adding flanking cover. Applied after variants in campaign `sprite-game.js`; original level objects and practice layouts remain unchanged. Defence cave/hilltop retain preparation and positions.
-- Seven deterministic checks cover clearance, reachable attack lines, larger bounds, quiet staging and walking before alarm. Expanded Roadblock browser verifies deployment and successful explicit departure. Cloud simulation median CPU 0.0104–0.0392 ms/step; physical-device acceptance remains W24.
-- W32 soundtrack committed as `e8e55c4`: separate quiet synthesized campaign strings; no overlapping demo recording, preserved mute/volume and demo selection. Full 551 tests, audio lifecycle/offline render and gameplay/demo isolation passed for that milestone.
-- W28 event history and W30 inventory/Roadblock fixes remain on main (`b6edf9e`). Next W29 fullscreen A/B/C/D persuasion dialogue for village barter/recruitment. W23 testing stays Codex-owned; prior W21/W22/W24/W25 acceptance remains open.
-- Continue owner-authorized commits/pushes to main; no PR. Keep intro untouched and preserve gameplay/demo module separation.
+- Fullscreen village representative uses keyboard/pointer ABCD choices, visible seeded weekly D20/trust/target/outcome, saved decisions and failed-save rollback.
+- Successful negotiation improves barter by ten percentage points for that week. Extra recruitment costs one village meal, requires liberation/capacity, adds a healthy unequipped volunteer and preserves ordinary weekly volunteers.
+- Validation: 561 tests, village browser (keyboard dialogue, repeated rolls, mobile width, focus return, axe accessibility, barter rollback and recruit deployment), lint/typecheck/format and build/link checks pass.
+- W27/W28/W30/W31/W32 remain complete. W21 endings, W22 human balance, W23 Codex-owned harness, W24 physical-device acceptance and W25 onboarding remain open.
+- Continue owner-authorized main commits; preserve intro and gameplay/demo separation.
 <!-- handoff:end -->
 
 ## Gameplay/demo module boundary — 13 October 2026

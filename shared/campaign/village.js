@@ -62,7 +62,9 @@ export function barterQuote(c, s, {offer = {}, goods = [], take = {}} = {}) {
     throw new Error('Choose available trade goods once each.');
   const value =
     Object.entries(offer).reduce((v, [id, n]) => v + barterValue(id) * n, 0) + goods.reduce((v, i) => v + scripFor(c.goods[i]), 0);
-  const rate = ownerOf(c, s) === 'resistance' ? 0.85 : 1;
+  const decision = c.world.settlements[s.id]?.dialogue;
+  const discount = decision?.week === Math.floor((c.world.clock.day - 1) / 7) && decision.barter?.success ? 0.1 : 0;
+  const rate = (ownerOf(c, s) === 'resistance' ? 0.85 : 1) - discount;
   const cost = Math.ceil(Object.entries(take).reduce((v, [id, n]) => v + barterValue(id) * n, 0) * rate);
   return {value, cost, excess: Math.max(0, value - cost), affordable: value >= cost};
 }

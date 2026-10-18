@@ -1,0 +1,9 @@
+/* Fullscreen static speaker portrait and readable keyboard/touch dialogue choices. */
+.village-dialogue {box-sizing:border-box; width:100vw; max-width:none; height:100dvh; max-height:none; margin:0; padding:clamp(16px,4vw,64px); border:0; background:#171d1a; color:#eee8d7; overflow:auto;}
+.village-dialogue[open] {display:grid; grid-template-columns:minmax(180px,1fr) minmax(300px,1.4fr); gap:4vw; align-items:center;}
+.village-portrait svg {display:block; width:100%; max-height:75vh; background:radial-gradient(ellipse,#62624a,#202823 70%);}
+.dialogue-copy {max-width:760px; font:18px/1.5 system-ui;}
+.dialogue-copy button {display:block; width:100%; text-align:left; padding:14px; margin:12px 0; font:inherit; background:#303b32; color:#f4efdf; border:1px solid #929b7a; cursor:pointer;}
+.dialogue-copy button:focus-visible {outline:3px solid #f6ce72; outline-offset:3px;}
+.dialogue-result {padding:18px; background:#242d26; min-height:100px;}
+@media(max-width:650px) {.village-dialogue[open] {grid-template-columns:1fr; align-items:start;} .village-portrait svg {height:28vh;} .dialogue-copy {font-size:16px;}}

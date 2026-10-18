@@ -1,4 +1,5 @@
 // Accessible village barter preview and recruitment controls backed by the campaign's saved services.
+import {villageDialogue} from './village-dialogue.js';
 import {GEAR} from '../band/troops.js';
 import {scripFor} from '../convoy/loot.js';
 import {ownerOf} from '../shared/campaign/contacts.js';
@@ -72,6 +73,11 @@ export function villageServices({el, campaign: c, settlement: s, save, refresh, 
     'section',
     {id: 'village-services'},
     el('h3', {}, `${s.name}: village services`),
+    el(
+      'button',
+      {id: 'village-talk', onclick: () => villageDialogue({el, campaign: c, settlement: s, save, refresh})},
+      'Talk to village representative',
+    ),
     el(
       'p',
       {},

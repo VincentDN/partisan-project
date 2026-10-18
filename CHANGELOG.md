@@ -1,5 +1,7 @@
 # Changelog
 
+- WP-W29: Fullscreen village dialogue with A/B/C/D choices, saved weekly persuasion rolls, better barter prices and extra healthy volunteers.
+
 ## 2026-10-18 — larger campaign approaches
 
 - Add 32–44 metres of covered staging ground to campaign Roadblock, convoy, forest-road, compound, checkpoint and village missions.

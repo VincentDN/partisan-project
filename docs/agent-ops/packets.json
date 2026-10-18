@@ -4022,14 +4022,15 @@
    "milestone": "W",
    "size": "M",
    "bu": 20,
-   "status": "planned",
+   "status": "done",
    "deps": [],
    "agent": "any",
    "needs": [],
    "inputs": [
     "docs/campaign-roadmap.md"
    ],
-   "acceptance": "Fullscreen character presentation offers keyboard/click A/B/C/D dialogue choices for town barter and recruitment. Show dice result, modifiers and outcome; persist resolved choices to prevent reload rerolls; validate inventory, volunteer availability and save rollback. Provide accessible focus, exit and reduced-motion behavior."
+   "acceptance": "Fullscreen character presentation offers keyboard/click A/B/C/D dialogue choices for town barter and recruitment. Show dice result, modifiers and outcome; persist resolved choices to prevent reload rerolls; validate inventory, volunteer availability and save rollback. Provide accessible focus, exit and reduced-motion behavior.",
+   "progress_note": "2026-10-18: Fullscreen village representative with keyboard/pointer ABCD choices, static portrait, visible seeded D20/trust/target/outcome. Weekly saved barter discount or extra healthy recruit; meal/capacity/ownership validation and failed-storage rollback. Unit persistence/reward checks and browser keyboard/mobile/accessibility coverage."
   },
   {
    "id": "WP-W30",
