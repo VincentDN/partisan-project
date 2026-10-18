@@ -12,7 +12,7 @@ export function itemKeys({cat, make, grids, carry, pickUp, updateTarget, drop, u
     if (k === 'h') return use(item, from);
     if (k === 't' && from) return quick(item, from);
     const kit = kitOf(),
-      places = [from, kit?.pockets, kit?.rig, kit?.backpack].filter(Boolean);
+      places = [from?.grids ? from : null, kit?.pockets, kit?.rig, kit?.backpack].filter(Boolean);
     if (k === 'u' && d.kind === 'magazine') {
       const before = roundsIn(item);
       const kept = unloadInto(cat, item, places, make);
@@ -21,7 +21,7 @@ export function itemKeys({cat, make, grids, carry, pickUp, updateTarget, drop, u
       return onChange(kept ? `No room for ${kept} rounds; they stay in the magazine.` : 'Unloaded.');
     }
     if (k === 'e' && d.kind === 'weapon' && item.mag) {
-      const out = ejectMag(cat, item, places.slice(1));
+      const out = ejectMag(cat, item, [kit?.rig, kit?.pockets, kit?.backpack].filter(Boolean));
       inventoryFoley(out ? 'eject' : 'reject', d.kind);
       render();
       return onChange(out ? 'Magazine out.' : 'No room to put the magazine.');

@@ -50,3 +50,16 @@ test('quick moves: a body looted into the kit and back', () => {
   assert.equal(quickPlace(cat, rifle, {kit: r, container: body, toKit: false}), 'there');
   assert.ok(contents(body).includes(rifle));
 });
+
+test('a starter can equip a looted rig and then carry a full-size 6L23 magazine', () => {
+  const factory = createKit(cat),
+    kit = {primary: null, secondary: null, rig: null, backpack: null, pockets: factory.place('pockets')};
+  const mag = factory.make('ak-74-545x39-6l23-30-round-magazine');
+  assert.equal(quickPlace(cat, mag, {kit, toKit: true}), null, 'small pockets cannot fit it');
+  const rig = factory.issue('ak').rig;
+  for (const grid of rig.grids) grid.items = [];
+  assert.ok(quickPlace(cat, rig, {kit, toKit: true}));
+  assert.equal(kit.rig, rig);
+  assert.ok(quickPlace(cat, mag, {kit, toKit: true}));
+  assert.ok(contents(kit.rig).includes(mag));
+});

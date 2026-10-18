@@ -3,6 +3,7 @@
 // (convoy/?campaign&encounter, shared/campaign/encounter.js). Coming back, the map reports each result once, takes
 // destroyed parties off the map and gives taken settlements to the Resistance. The campaign clock runs with the map
 // clock and heals the wounded. The Party button opens the band: promotions paid with experience and stolen kit.
+import {mountJournal} from './campaign-journal.js';
 import {mountCampaignHud, organiseBand, kitRounds} from './campaign-hud.js';
 import {
   fitFighters,
@@ -593,10 +594,17 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
     blocked: () => !!open || !bandPanel.hidden || kitScreen.isOpen,
   });
 
+  const journal = mountJournal(campaign, {
+    ...names,
+    ...NAMES,
+    ...Object.fromEntries(Object.entries(SOURCES).map(([id, s]) => [id, s.name])),
+  });
+
   // ---------- each frame ----------
   let sinceCard = 0;
   function update(dt) {
     hud.update();
+    journal.update();
     if (open || !bandPanel.hidden || kitScreen.isOpen) return;
     const step = world.step(dt), // time, the convoys, the band's march, the hunters (WP-W5, W6, W11)
       healed = step.healed;

@@ -34,7 +34,7 @@ export function quickPlace(cat, item, {kit, container, toKit}) {
   if (!toKit) return container && add(cat, container, item) ? 'there' : null;
   const kind = cat.def(item.slug).kind;
   // a weapon to the hands or the sling; a helmet or a vest is put on (WP-W17)
-  const slots = kind === 'weapon' ? ['primary', 'secondary'] : kind === 'headwear' || kind === 'armor' ? [kind] : [];
+  const slots = kind === 'weapon' ? ['primary', 'secondary'] : ['headwear', 'armor', 'rig', 'backpack'].includes(kind) ? [kind] : [];
   for (const slot of slots)
     if (!kit[slot]) {
       item.rot = 0;

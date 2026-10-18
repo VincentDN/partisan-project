@@ -9,7 +9,7 @@ import {roundsCarried} from '../shared/inventory/ammo.js';
 import {inventoryFoley} from '../shared/inventory/foley.js';
 import {mountInventory} from '../shared/inventory/grid-ui.js';
 import {useMed} from '../shared/inventory/meds.js';
-import {newArmoury} from '../shared/campaign/state.js';
+import {newArmoury, logEvent} from '../shared/campaign/state.js';
 import {starterKit} from '../shared/campaign/starter-kit.js';
 
 const el = (tag, cls, text) => {
@@ -89,7 +89,10 @@ export function createKitScreen({campaign, save, names = {}, onClose = () => {}}
       onUse: item => {
         const r = useMed(cat, item, f.wounded ? f.healIn * 2 : 0);
         f.healIn = Math.max(0, f.healIn - r.healed / 2);
-        if (f.wounded && !f.healIn) f.wounded = false;
+        if (f.wounded && !f.healIn) {
+          f.wounded = false;
+          logEvent(campaign, {kind: 'healed', fighters: [id]});
+        }
         return r.healed ? `${r.why} ${f.wounded ? `${Math.ceil(f.healIn)}h to heal.` : `${name} is fit.`}` : r.why;
       },
       onChange: why => {

@@ -41,9 +41,7 @@ try {
   });
   await p.waitForFunction(() => window.PARP_SPRITES.sim.objectives[0].state === 'done');
   assert.equal(await p.evaluate(() => window.PARP_SPRITES.sim.outcome), null, 'can loot before extraction');
-  await p.evaluate(() => {
-    for (const u of window.PARP_SPRITES.sim.units.filter(u => u.side === 'partisan')) Object.assign(u, {x: -35, z: 22, moveTo: null});
-  });
+  await p.locator('#raid-complete button').click();
   await p.waitForSelector('.spoils');
   assert.match(await p.locator('.spoils-title').innerText(), /VICTORY/);
   assert.equal(await p.evaluate(() => window.PARP_SPRITES.sound.stats.outcomes), 1);

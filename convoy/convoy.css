@@ -102,3 +102,9 @@ button.primary{background:var(--accent);color:#14100a;border-color:var(--accent)
 .card[data-outcome="won"] #card-title { color: #cfe8a1; }
 .card[data-outcome="lost"] #card-title { color: #ffb8a1; }
 .spoils-title { font-size: clamp(28px, 4vw, 44px); color: #cfe8a1; }
+
+/* A completed Roadblock remains lootable until the player explicitly departs. */
+#raid-complete { position: fixed; z-index: 25; bottom: 100px; left: 50%; transform: translateX(-50%); width: min(460px, 90vw); padding: 12px; background: #20271f; color: #e5ebd7; border: 1px solid #acbf85; text-align: center; }
+#raid-complete[hidden] { display: none; }
+#raid-complete p { margin: 0 0 8px; }
+#raid-complete button { padding: 10px 16px; font: inherit; cursor: pointer; }

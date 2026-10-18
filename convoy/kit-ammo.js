@@ -66,6 +66,8 @@ export function attachAmmo(sim, cat, {kits = {}, seed = 1, army = false, campaig
     const wid = k.armsId;
     if (!k.primary || (owned && !Object.values(ARMS).some(a => a.weapon === k.primary.slug))) {
       u.mags[wid] = u.reserve[wid] = 0;
+      u.reload = 0;
+      u.reloading = null;
       return 0;
     }
     u.mags[wid] = loadedRounds(k.primary);
@@ -148,8 +150,13 @@ export function attachAmmo(sim, cat, {kits = {}, seed = 1, army = false, campaig
   function bodyOf(u) {
     const k = kitOf(u),
       c = factory.place('body', u.name || 'Fallen soldier');
+    c.grids = [{w: 8, h: 8, items: []}];
     for (const it of [k.primary, k.secondary, k.headwear, k.armor].filter(Boolean)) add(cat, c, it);
     for (const box of reachable(k)) for (const it of contents(box)) add(cat, c, it);
+    for (const box of [k.rig, k.backpack].filter(Boolean)) {
+      for (const grid of box.grids) grid.items = [];
+      add(cat, c, box);
+    }
     kits[u.id] = null; // it is all on the ground now
     return c;
   }

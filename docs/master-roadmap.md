@@ -196,7 +196,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | **H27** 2027 horizon | — | 0/3 | 48 BU | 0% |
 | **S** Partisan Tactical: extraction PvE, campaign and gated online research | v0.8.0 | 15/44 | 673 BU | 34% |
 | **V** Graphics: 2.5D top-down sprites for the shooter (the overworld moved to W) | v0.9.0 | 2/20 | 251 BU | 11% |
-| **W** World campaign: the Bannerlord loop (map, missions, loot, upgrades) | v0.10.0 | 24/29 | 419 BU | 82% |
+| **W** World campaign: the Bannerlord loop (map, missions, loot, upgrades) | v0.10.0 | 26/32 | 479 BU | 80% |
 | **QA** Bug hunt and optimisation (docs/quality-roadmap.md) | — | 18/23 | 294 BU | 74% |
 
 ### M0 · Foundation
@@ -408,8 +408,11 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-W25` | First-campaign prompts, design doc campaign section, changelog and index entry | S (8) | planned | — | `WP-W21`, `WP-W24` |
 | `WP-W26` | Campaign decisions: 2.5D default overworld, 3D dev demo, village trade and camp overrun as setback | XS (3) | done | — | — |
 | `WP-W27` | Priority: rebel follow spacing and cover use | M (20) | done | — | — |
-| `WP-W28` | Campaign event log: recovery, rumours and intercepted intelligence | M (20) | planned | — | — |
+| `WP-W28` | Campaign event log: recovery, rumours and intercepted intelligence | M (20) | done | — | — |
 | `WP-W29` | Fullscreen character dialogue and persuasion rolls | M (20) | planned | — | — |
+| `WP-W30` | Inventory usability and explicit Roadblock departure | M (20) | done | — | — |
+| `WP-W31` | Larger mission approach areas before first contact | M (20) | planned | — | — |
+| `WP-W32` | Dedicated campaign ambient music and workbench handoff | M (20) | planned | — | — |
 
 ### QA · Bug hunt and optimisation (docs/quality-roadmap.md)
 

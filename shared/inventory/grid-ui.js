@@ -3,8 +3,10 @@
 // Shift-drop splits, U unloads, E ejects, H uses medicine; a second long gun goes on the sling. A drop that misses lands
 // in the nearest free place; Ctrl-click (or T) moves an item straight to the other side: loot into the kit, kit out.
 // Keyboard: Enter picks up, arrows and [ ] move, Enter drops.
+import {pointerDrag} from './grid-pointer.js';
+import {inventoryIcon} from './icons.js';
 import {inventoryFoley} from './foley.js';
-import {footprint, fits, remove, placeAt, add} from './grid.js';
+import {footprint, fits, remove, placeAt} from './grid.js';
 import {placeNear, quickPlace, kitBoxes} from './grid-moves.js';
 import {itemKeys} from './grid-keys.js';
 import {loadMag, roundsIn, loadedRounds, chamber} from './ammo.js';
@@ -16,6 +18,8 @@ const SLOTS = {
   secondary: {label: 'Sling', kind: 'weapon', where: 'the sling', put: 'on the sling'},
   headwear: {label: 'Head', kind: 'headwear', where: 'on the head', put: 'worn'},
   armor: {label: 'Body', kind: 'armor', where: 'worn', put: 'worn'},
+  rig: {label: 'Rig', kind: 'rig', where: 'worn', put: 'worn'},
+  backpack: {label: 'Pack', kind: 'backpack', where: 'worn', put: 'worn'},
 };
 const el = (tag, cls = '', text = '') => Object.assign(document.createElement(tag), {className: cls, textContent: text});
 
@@ -61,7 +65,7 @@ export function mountInventory(root, {cat, panels, make, onChange = () => {}, on
     t.dataset.uid = item.uid;
     t.style.width = `${w * CELL - 4}px`;
     t.style.height = `${h * CELL - 4}px`;
-    const img = icon(item.slug);
+    const img = icon(item.slug) || inventoryIcon(d.kind);
     if (img) {
       const i = el('img');
       i.src = img;
@@ -74,7 +78,7 @@ export function mountInventory(root, {cat, panels, make, onChange = () => {}, on
     t.title = d.name;
     t.onpointerdown = e => startDrag(e, item, container);
     t.onkeydown = e => keyOnItem(e, item, container);
-    t.ondblclick = () => use(item, container);
+    t.ondblclick = () => container && quick(item, container);
     return t;
   }
   function drawGrid(container, g, where) {
@@ -99,15 +103,14 @@ export function mountInventory(root, {cat, panels, make, onChange = () => {}, on
     sec.append(...(title ? [el('h3', '', title)] : []), row);
     return sec;
   }
-  /** A kit slot (SLOTS): the primary stays in the hands in this screen; the sling, head and body take and give. */
+  /** Equipment slots support dragging out, dropping in and exchanging occupied slots. */
   function drawWeapon(kit, which) {
     const slot = el('div', 'inv-slot');
     slot.dataset.weapon = which;
     slot.append(el('span', 'slot-name', SLOTS[which].label));
     const w = kit[which];
     if (w) {
-      const t = tile(w, which === 'primary' ? null : {slot: which, kit}, SLOTS[which].where);
-      if (which === 'primary') t.onpointerdown = null;
+      const t = tile(w, {slot: which, kit}, SLOTS[which].where);
       slot.append(t);
     }
     return slot;
@@ -146,20 +149,29 @@ export function mountInventory(root, {cat, panels, make, onChange = () => {}, on
       loaded = true;
     const w = t?.weapon && kit?.[t.weapon];
     if (w && d.kind === 'magazine') {
-      if (cat.def(w.slug).calibre !== d.calibre) why = 'That magazine does not fit this weapon.';
+      if (!w.usesMag || cat.def(w.slug).calibre !== d.calibre)
+        why = `${d.name} needs a compatible ${d.calibre} weapon; ${cat.def(w.slug).short} uses ${cat.def(w.slug).calibre}.`;
       else {
         const old = w.mag;
-        w.mag = c.item;
-        chamber(w);
-        if (old && !placeNear(cat, c.from, c.was.g, old, c.was.x, c.was.y, 0)) add(cat, c.from, old);
-        done = true;
+        if (!old || placeNear(cat, c.from, c.was.g, old, c.was.x, c.was.y, 0)) {
+          w.mag = c.item;
+          chamber(w);
+          done = true;
+          why = `${d.short} inserted.`;
+        } else why = 'No room for the old magazine. Make space first.';
       }
-    } else if (t?.weapon && kit && !w && d.kind === SLOTS[t.weapon].kind) {
+    } else if (
+      t?.weapon &&
+      kit &&
+      d.kind === SLOTS[t.weapon].kind &&
+      w !== c.from &&
+      (!w || (c.from.slot ? (c.from.kit[c.from.slot] = w) : placeNear(cat, c.from, c.was.g, w, c.was.x, c.was.y, 0)))
+    ) {
       c.item.rot = 0;
       kit[t.weapon] = c.item;
       why = `${d.name} ${SLOTS[t.weapon].put}.`;
       done = true;
-    } else if (t?.container) {
+    } else if (t?.container && t.container !== c.item) {
       const under = t.container.grids[t.g].items.find(e => {
         const [w, h] = footprint(cat, e.item);
         return t.x >= e.x && t.x < e.x + w && t.y >= e.y && t.y < e.y + h;
@@ -230,7 +242,7 @@ export function mountInventory(root, {cat, panels, make, onChange = () => {}, on
         ? toKit
           ? `Took the ${d.name}${where === 'there' ? '' : ` (${where})`}.`
           : `Left the ${d.name}.`
-        : `No room for the ${d.name}.`,
+        : `No room for the ${d.name}. Loot and equip a rig or backpack for larger items.`,
     );
   }
   function updateTarget(gi, x, y) {
@@ -246,50 +258,7 @@ export function mountInventory(root, {cat, panels, make, onChange = () => {}, on
     G.el.append(hint);
   }
 
-  // pointer
-  function startDrag(e, item, from) {
-    if (e.button !== 0 || carry) return;
-    e.preventDefault();
-    if (e.ctrlKey || e.metaKey) return quick(item, from);
-    const c = pickUp(item, from);
-    const ghost = e.currentTarget.cloneNode(true);
-    ghost.classList.add('inv-ghost');
-    document.body.append(ghost);
-    c.ghost = ghost;
-    e.currentTarget.style.opacity = '0.25';
-    const moveTo = ev => {
-      ghost.style.left = `${ev.clientX - CELL / 2}px`;
-      ghost.style.top = `${ev.clientY - CELL / 2}px`;
-      const under = document.elementsFromPoint(ev.clientX, ev.clientY);
-      const g = under.find(n => n.dataset?.grid !== undefined),
-        w = under.find(n => n.dataset?.weapon);
-      if (w) carry.target = {weapon: w.dataset.weapon};
-      else if (g) {
-        const r = g.getBoundingClientRect();
-        updateTarget(+g.dataset.grid, Math.floor((ev.clientX - r.left) / CELL), Math.floor((ev.clientY - r.top) / CELL));
-      } else carry.target = null;
-    };
-    const key = ev => {
-      if (ev.key.toLowerCase() === 'r' && carry) {
-        carry.rot = carry.rot ? 0 : 1;
-        inventoryFoley('rotate', cat.def(carry.item.slug).kind);
-        ghost.classList.toggle('turned-ghost', !!carry.rot);
-      }
-    };
-    const up = ev => {
-      for (const [t, f] of on) removeEventListener(t, f);
-      if (ev.type === 'pointercancel') carry.target = null; // a cancelled drag puts the item back
-      drop(ev.shiftKey);
-    };
-    const on = [
-      ['pointermove', moveTo],
-      ['pointerup', up],
-      ['pointercancel', up],
-      ['keydown', key],
-    ];
-    moveTo(e);
-    for (const [t, f] of on) addEventListener(t, f);
-  }
+  const startDrag = (e, item, from) => pointerDrag(e, item, from, {cat, root, carry: () => carry, pickUp, quick, updateTarget, drop});
 
   // keyboard (grid-keys.js)
   const keyOnItem = itemKeys({cat, make, grids, carry: () => carry, pickUp, updateTarget, drop, use, quick, render, onChange, kitOf});

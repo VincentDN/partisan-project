@@ -84,6 +84,7 @@ export function newCampaign({id = 'c1', seed = 1, now = 0} = {}) {
       parties: [], // Invader patrols, convoys, hunter columns (WP-W5 onward)
       settlements: {}, // per-settlement state by id: owner, garrison, heat (WP-W19)
       heat: 0,
+      rumourDay: 0,
       seen: 0, // the last log entry (by seq) the map has shown: it reports mission results once
       aftermath: [], // what fights left on the map: {id, kind: wreck|fight|raid, x, z, day, hour} (WP-W13)
       camp: null, // after an overrun: {id: the settlement that is the camp now, ready: {day, hour}} (WP-W11)
@@ -157,6 +158,7 @@ export function normalize(raw) {
         ]),
     );
   c.world.seen = num(w.seen, 0, 0);
+  c.world.rumourDay = num(w.rumourDay, 0, 0);
   if (isObj(w.camp) && typeof w.camp.id === 'string')
     c.world.camp = {id: w.camp.id, ready: isObj(w.camp.ready) ? {day: num(w.camp.ready.day, 1), hour: num(w.camp.ready.hour, 0)} : null};
   if (isObj(w.hunters))

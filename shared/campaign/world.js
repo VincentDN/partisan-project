@@ -3,6 +3,7 @@
 // band or home (defence.js), and the clock (wounds heal). Everything it moves lives in the campaign save, so a
 // reload carries on where it was, mid-route included; the same save and the same orders give the same world
 // whatever the frame rate. Pure, no DOM.
+import {rumour} from './journal.js';
 import {stepTerritory} from './territory.js';
 import {advance, groundAt} from './nav.js';
 import {bandSight, spotRange} from './hunt.js';
@@ -34,6 +35,7 @@ export function createWorld(c, {nav = null, party = null, hunters = {}, vehicles
   let acc = 0;
   /** One fixed step. Returns {healed: [ids], arrived, resupplied: [{id, settlement, added, garrison}], respawned: [ids]}. */
   function tick(dt) {
+    rumour(c);
     const resupplied = [],
       respawned = [];
     for (const id of Object.keys(CONVOY_ROADS)) {

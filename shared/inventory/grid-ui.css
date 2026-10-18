@@ -56,3 +56,8 @@
 .inv-overlay .search-status { flex: 1; margin: 0; color: var(--lcd); min-height: 1.3em; }
 
 .inv-overlay .search-close { color: var(--lcd); background: var(--panel); border: 1px solid var(--line); padding: 4px 10px; font: inherit; cursor: pointer; }
+
+.inv-item img { position: absolute; inset: 16px 4px 14px; width: calc(100% - 8px); height: calc(100% - 30px); object-fit: contain; pointer-events: none; }
+.inv-slot .inv-item img { inset: 3px 50px; width: 75px; height: 36px; opacity: .65; }
+.inv-item .nm, .inv-item .sub { position: relative; z-index: 1; text-shadow: 0 1px 2px #111; }
+.inv-ghost { z-index: 10000; }

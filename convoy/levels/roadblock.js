@@ -4,7 +4,7 @@ export default {
   title: 'Roadblock',
   summary: 'Four occupiers at a makeshift barrier. Raid with two to four rebels and recover their equipment.',
   brief:
-    'Four ordinary soldiers hold this roadblock. There is no radio team or reinforcement wave. Bring two to four rebels, approach through cover and eliminate or rout the guards. Search their bodies for weapons and ammunition then regroup at the southwest exit.',
+    'Four ordinary soldiers hold this roadblock. There is no radio team or reinforcement wave. Bring two to four rebels, approach through cover and eliminate or rout the guards. Search their bodies for weapons and ammunition then use Finish raid to return with your loot (or regroup at the southwest exit).',
   bounds: {minX: -45, maxX: 45, minZ: -32, maxZ: 32},
   ground: {color: 0x67683f, patches: [], roads: [{x: 0, z: 4, w: 100, d: 6, color: 0x6a6252}]},
   avoid: [{x: 0, z: 4, w: 100, d: 6}],
@@ -32,7 +32,7 @@ export default {
       type: 'extract',
       after: ['guards'],
       zone: {x: -35, z: 22, w: 16, d: 16},
-      label: 'Search bodies (hold E nearby), then regroup at the southwest exit',
+      label: 'Search bodies (hold E nearby), then Finish raid or use the southwest exit',
     },
   ],
 };

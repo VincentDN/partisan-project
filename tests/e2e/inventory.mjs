@@ -29,10 +29,13 @@ try {
 
   // drag a stack of loose 5.45 from the cache into the backpack
   const drag = async (from, to, dx = 10, dy = 10) => {
-    const a = await page.locator(from).boundingBox(),
-      b = await page.locator(to).boundingBox();
+    await page.locator(from).scrollIntoViewIfNeeded();
+    const a = await page.locator(from).boundingBox();
     await page.mouse.move(a.x + 10, a.y + 10);
     await page.mouse.down();
+    await page.mouse.move(a.x + 17, a.y + 17);
+    await page.locator(to).scrollIntoViewIfNeeded();
+    const b = await page.locator(to).boundingBox();
     await page.mouse.move(b.x + dx, b.y + dy, {steps: 4});
     await page.mouse.up();
   };
@@ -91,8 +94,8 @@ try {
   await m.keyboard.down('e');
   await m.waitForFunction(() => window.PARP_SPRITES.search.open, null, {timeout: 60000});
   await m.keyboard.up('e');
-  assert.equal(await m.locator('.field-search .inv-panel').count(), 2, 'your kit beside the body');
-  assert.ok((await m.locator('.field-search .inv-panel:last-child .k-weapon').count()) >= 1, 'his weapon on him');
+  assert.equal(await m.locator('.field-search .inv-panel').count(), 3, 'your kit beside the body and ground');
+  assert.ok((await m.locator('.field-search .inv-panel:nth-child(2) .k-weapon').count()) >= 1, 'his weapon on him');
   const hp0 = await m.evaluate(() => window.PARP_SPRITES.sim.player.hp);
   await m.locator('.field-search .inv-panel:first-child .k-meds').first().focus();
   await m.keyboard.press('h');
@@ -103,28 +106,37 @@ try {
   const mine = () =>
     m.evaluate(() => [...document.querySelectorAll('.field-search .inv-panel:first-child .inv-item')].map(i => i.dataset.uid));
   const his = () =>
-    m.evaluate(() => [...document.querySelectorAll('.field-search .inv-panel:last-child .inv-item')].map(i => i.dataset.uid));
+    m.evaluate(() => [...document.querySelectorAll('.field-search .inv-panel:nth-child(2) .inv-item')].map(i => i.dataset.uid));
   const mDrag = async (from, to) => {
-    const a = await m.locator(from).boundingBox(),
-      b = await m.locator(to).first().boundingBox();
+    await m.locator(from).scrollIntoViewIfNeeded();
+    const a = await m.locator(from).boundingBox();
     await m.mouse.move(a.x + 6, a.y + 6);
     await m.mouse.down();
+    await m.mouse.move(a.x + 15, a.y + 15);
+    await m.locator(to).first().scrollIntoViewIfNeeded();
+    const b = await m.locator(to).first().boundingBox();
     await m.mouse.move(b.x + 6, b.y + 6, {steps: 4});
     await m.mouse.up();
   };
-  const rifle = await m.locator('.field-search .inv-panel:last-child .k-weapon').first().getAttribute('data-uid');
+  const rifle = await m.locator('.field-search .inv-panel:nth-child(2) .k-weapon').first().getAttribute('data-uid');
   await mDrag(`[data-uid="${rifle}"]`, '.field-search [data-weapon="secondary"]');
   assert.ok((await mine()).includes(rifle), 'his rifle on your sling');
   assert.match(await m.locator('.field-search .search-status').textContent(), /on the sling/);
-  const next = await m.locator('.field-search .inv-panel:last-child .k-meds').first().getAttribute('data-uid'); // one cell
+  const next = await m.locator('.field-search .inv-panel:nth-child(2) .k-meds').first().getAttribute('data-uid'); // one cell
   await mDrag(`[data-uid="${next}"]`, '.field-search .inv-panel:first-child .inv-box:last-child .inv-grid .inv-item');
   assert.ok((await mine()).includes(next), 'a drop on a taken pocket lands in a free one');
   for (const uid of await his()) await m.locator(`[data-uid="${uid}"]`).click({modifiers: ['Control']});
-  assert.deepEqual(await his(), [], 'Ctrl-click takes everything that fits');
-  assert.match(await m.locator('.field-search .search-status').textContent(), /^Took the /);
+  const left = await his();
+  assert.equal(left.length, 1, 'only the additional bulky rig does not fit');
+  assert.ok(await m.locator(`.field-search .inv-panel:nth-child(2) .k-rig[data-uid="${left[0]}"]`).count());
   await m.locator(`.field-search [data-uid="${rifle}"]`).focus();
   await m.keyboard.press('t');
-  assert.deepEqual(await his(), [rifle], 'T leaves the rifle on him again');
+  assert.deepEqual((await his()).sort(), [...left, rifle].sort(), 'T leaves the rifle on him again');
+  const held = await m.locator('.field-search [data-weapon="primary"] .inv-item').getAttribute('data-uid');
+  await mDrag(`[data-uid="${held}"]`, '.field-search .inv-panel:nth-child(3) .inv-grid');
+  assert.equal(await m.locator('.field-search [data-weapon="primary"] .inv-item').count(), 0, 'rifle dropped onto ground');
+  await m.locator(`.field-search .inv-panel:nth-child(3) [data-uid="${held}"]`).dblclick();
+  assert.equal(await m.locator('.field-search [data-weapon="primary"] .inv-item').getAttribute('data-uid'), held, 'recover dropped rifle');
   if (process.env.SHOT2) await m.screenshot({path: process.env.SHOT2});
   const t0 = await m.evaluate(() => window.PARP_SPRITES.sim.time);
   await m.keyboard.press('Escape');

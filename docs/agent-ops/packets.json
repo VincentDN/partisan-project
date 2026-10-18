@@ -4005,14 +4005,15 @@
    "milestone": "W",
    "size": "M",
    "bu": 20,
-   "status": "planned",
+   "status": "done",
    "deps": [],
    "agent": "any",
    "needs": [],
    "inputs": [
     "docs/campaign-roadmap.md"
    ],
-   "acceptance": "Bounded saved event log on the campaign screen shows timestamped fighter recoveries with a quiet SFX respecting mute, enemy movement rumours and intercepted information with source and uncertainty. Reload does not repeat notifications; keyboard and mobile access supported."
+   "acceptance": "Bounded saved event log on the campaign screen shows timestamped fighter recoveries with a quiet SFX respecting mute, enemy movement rumours and intercepted information with source and uncertainty. Reload does not repeat notifications; keyboard and mobile access supported.",
+   "progress_note": "2026-10-18: Saved 200-entry campaign field history shows named recoveries, daily explicitly unconfirmed rumours, intercepted counterattack orders, rest and results. Quiet new-recovery cue respects SFX settings and activation; historical reports do not replay on reload. Includes medication recovery. Pure persistence/deduplication tests and desktop/mobile browser/audio checks."
   },
   {
    "id": "WP-W29",
@@ -4029,6 +4030,54 @@
     "docs/campaign-roadmap.md"
    ],
    "acceptance": "Fullscreen character presentation offers keyboard/click A/B/C/D dialogue choices for town barter and recruitment. Show dice result, modifiers and outcome; persist resolved choices to prevent reload rerolls; validate inventory, volunteer availability and save rollback. Provide accessible focus, exit and reduced-motion behavior."
+  },
+  {
+   "id": "WP-W30",
+   "title": "Inventory usability and explicit Roadblock departure",
+   "track": "Campaign",
+   "milestone": "W",
+   "size": "M",
+   "bu": 20,
+   "status": "done",
+   "deps": [],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/campaign-roadmap.md"
+   ],
+   "acceptance": "Icons; reliable double-click transfer and cancel-safe dragging; movable/swappable primary; ground drop storage; compatible magazine insertion without losing the old magazine; lootable wearable rigs and backpacks; Roadblock clear notice and explicit Finish raid after all guards defeated, retaining loot time. Browser and simulation regressions pass."
+  },
+  {
+   "id": "WP-W31",
+   "title": "Larger mission approach areas before first contact",
+   "track": "Campaign",
+   "milestone": "W",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/campaign-roadmap.md"
+   ],
+   "acceptance": "Expand mission approach areas and place rebel starts far enough from enemies to allow a meaningful covered walk before combat. Check every mission, sight ranges, routes, cover density and extraction pacing; preserve intentional defence pressure. Test normal browser performance and campaign deployment."
+  },
+  {
+   "id": "WP-W32",
+   "title": "Dedicated campaign ambient music and workbench handoff",
+   "track": "Campaign",
+   "milestone": "W",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/campaign-roadmap.md"
+   ],
+   "acceptance": "Stop workbench music when entering a campaign, including the shell iframe path. Use a subdued guitar/plucked-string and sad-string ambient score, with no overlapping tracks. Preserve music mute/volume, user activation and navigation lifecycle. Verify map, combat, band and return-to-demo transitions."
   }
  ]
 }

@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-10-18 — field reports, inventory handling and Roadblock departure
+
+- Add a saved campaign field log with recovery notices, quiet recovery SFX, unconfirmed rumours and intercepted orders.
+- Add inventory silhouettes and reliable double-click transfers. Unlock primary dragging/swapping, provide a ground-drop panel, make rigs/backpacks lootable and wearable, and preserve magazines during swaps.
+- Explain incompatible magazines and insufficient pocket space; allow Escape to cancel a drag.
+- Show Roadblock secured with an explicit Finish raid button after the guards are defeated, leaving time to loot.
+- Record larger mission approaches and a separate campaign guitar/string soundtrack as upcoming work.
+
 ## 2026-10-18 — rebel follow spacing and cover
 
 - Spread following rebels into staggered rows with separate reachable destinations; blocked slots no longer default to the player’s feet.

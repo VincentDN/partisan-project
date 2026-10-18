@@ -73,18 +73,28 @@ export function createFieldSearch(cat, {onOpen = () => {}, onClose = () => {}} =
     }
     if (t && progress >= SEARCH_TIME) show(t);
   }
+  function groundAt(p) {
+    let pile = A.drops.find(d => d.label === 'Dropped equipment' && Math.hypot(d.x - p.x, d.z - p.z) < 2);
+    if (!pile) {
+      pile = {x: p.x, z: p.z, label: 'Dropped equipment', container: A.factory.place('body', 'Ground')};
+      A.drops.push(pile);
+    }
+    return pile.container;
+  }
   function show(t) {
     const p = sim.player;
     isOpen = true;
     progress = 0;
     hint.hidden = true;
     title.textContent = `Searching: ${t.label}`;
-    status.textContent = 'Drag to your kit, or Ctrl-click (T) to take. A rifle goes on the sling.';
+    status.textContent =
+      'Double-click or T to transfer. Drag rifles onto Primary to swap; drag yours to the body or Ground to leave it. H uses medicine.';
     const ui = mountInventory(root, {
       cat,
       panels: [
         {title: p.name || 'Your rebel', kit: A.kitOf(p)},
         {title: t.label, container: t.container},
+        ...(t.label === 'Dropped equipment' ? [] : [{title: 'Ground · dropped items stay here', container: groundAt(p)}]),
       ],
       make: (slug, n) => A.factory.make(slug, n),
       // H on a bandage or a medkit: patch the rebel up here, mid-mission

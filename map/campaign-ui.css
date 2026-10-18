@@ -104,3 +104,10 @@ kbd { font: inherit; color: #e6eecf; background: #ffffff12; padding: 1px 4px; bo
 .band-jumps { position: sticky; top: 40px; background: #1b231c; display: flex; flex-wrap: wrap; gap: 6px; padding: 8px 0; z-index: 2; }
 .band-section { scroll-margin-top: 130px; }
 @media (max-width: 760px) { .band-jumps { top: 38px; } .band-jumps button { font-size: 12px; padding: 7px; } }
+
+#campaign-journal ol { max-height: 180px; overflow-y: auto; padding-left: 20px; font-size: 12px; }
+#campaign-journal li { margin: 8px 0; }
+#campaign-journal li p { margin: 3px 0; }
+#campaign-journal small { color: #c4cfb3; }
+.journal-latest { font-size: 12px; line-height: 1.35; margin: 7px 0; }
+@media (max-width: 760px) { .journal-latest { display: none; } #campaign-journal ol { max-height: 130px; } }

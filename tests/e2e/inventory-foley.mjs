@@ -27,7 +27,7 @@ try {
   assert.ok((await status()).recorded > 0, 'body opening uses decoded gun Foley');
   const before = (await status()).played;
   await frames(p, 5);
-  await p.locator('.field-search .inv-panel:last-child .k-weapon').first().focus();
+  await p.locator('.field-search .inv-panel:nth-child(2) .k-weapon').first().focus();
   await p.keyboard.press('t');
   assert.equal((await status()).lastAction, 'drop', 'keyboard quick-loot seats the rifle');
   assert.ok((await status()).played > before);

@@ -5,13 +5,14 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json).
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-18 · codex · W27 rebel follow AI**
+**2026-10-18 · codex · W28 field log / W30 playtest fixes**
 
-- Added W27 (highest priority AI), W28 (campaign recovery/intelligence event log with SFX), W29 (fullscreen A/B/C/D persuasion for trade/recruitment). W27 implemented; W28/W29 remain planned next.
-- `convoy/ai-follow.js` owns staggered reachable reservations, bounded cover search and brief cover memory. `ai-cover.js` gains optional protected-only/candidate constraints; default army behavior is preserved. Stationary followers clear stale moving flags.
-- Six focused regressions cover wall spacing, separate cover, low sandbags, loss of sight and leader switches/hold. Replays refreshed intentionally for movement changes. Full suite plus targeted final-change regressions, Chromium squad controls (both motion modes), lint/typecheck/format/build/link checks verified.
-- Two-minute/two-seed/eight-level soak: no stuck/inside-cover findings; thirteen unfinished-objective findings. Campaign roadmap records direct parent performance comparison and moving-follow CPU costs, including Hilltop increase from 0.0116 to 0.027 ms/step. Human tactical pacing and device acceptance remain open.
-- Previous `53c083a` ammo-aware resolver retained. W23 testing remains Codex-owned; W22 human comparison, tactical/barter policies, W21 ending and W25 onboarding remain open. Owner authorizes main commits/pushes.
+- W28: `shared/campaign/journal.js` and `map/campaign-journal.js` reuse the saved 200-entry history. Daily rumours use saved rumourDay; recovery, rest, results and intercepted counterattack orders are formatted without hidden coordinates. Audio is new-recovery-only and respects SFX/activation. Medication recovery logs too.
+- W30: thresholded/cancel-safe pointer module, double-click transfers, category silhouettes, primary slot swaps and ground panel. Lootable rigs/backpacks provide magazine capacity; 6L23 remains correctly restricted to 5.45 weapons. Old magazines cannot silently disappear when replacements do not fit. Dead soldiers' rig contents remain loose for AI scavenging; empty wearable rigs are also lootable.
+- Roadblock: explicit secured prompt and Finish raid after all guards dead/routed; retains body looting and extraction. `raid-completion.js` validates before ending.
+- Unit/full suite, inventory transfer/Foley and Roadblock browser regressions, saved/mobile journal and recovery audio checks; see latest commit for verification. Historical performance/balance baselines left unchanged.
+- User's additional requests recorded: W31 larger covered approach areas before combat; W32 separate sad guitar/string campaign ambience that stops shell workbench music. Both pending, followed by W29 fullscreen A/B/C/D persuasion dialogue. W27 follower improvements remain on main. W23 testing stays Codex-owned.
+- Continue owner-authorized main commits and pushes; no PR. Keep W21/W22/W24/W25 acceptance limits from previous handoffs.
 <!-- handoff:end -->
 
 ## Gameplay/demo module boundary — 13 October 2026
