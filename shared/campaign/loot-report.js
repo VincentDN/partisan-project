@@ -46,6 +46,7 @@ export function lootReport(result, {catalogue = null, title = 'Combat recovery r
   root.className = 'loot-report';
   root.setAttribute('aria-label', title);
   root.append(el('h2', title));
+  if (result.ammoSpent) root.append(el('p', `Ammunition spent: ${result.ammoSpent} carried rounds.`));
   if (!result) {
     root.append(el('p', 'No recovery report is available.'));
     return root;

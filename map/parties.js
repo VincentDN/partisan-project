@@ -51,7 +51,7 @@ export async function buildParties(field, layer, {figure, vehicle = vehicle3d}) 
       id: 'oros-roadblock',
       name: 'Oros roadblock',
       count: 4,
-      at: [-138, 60],
+      at: SOURCES['oros-roadblock'].at,
       facing: 2.6,
       men: [
         ['ready', 'alert'],

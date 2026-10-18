@@ -20,9 +20,11 @@ export function contacts(c, world) {
         ? world.convoy(id)?.[0]
         : source.kind === 'hunters'
           ? c.world.hunters[id]
-          : id === 'orion-patrol'
-            ? {x: PARTY_SPOTS.orion[0], z: PARTY_SPOTS.orion[1]}
-            : {x: PARTY_SPOTS.korfos[0], z: PARTY_SPOTS.korfos[1]};
+          : source.at
+            ? {x: source.at[0], z: source.at[1]}
+            : id === 'orion-patrol'
+              ? {x: PARTY_SPOTS.orion[0], z: PARTY_SPOTS.orion[1]}
+              : {x: PARTY_SPOTS.korfos[0], z: PARTY_SPOTS.korfos[1]};
     if (at && Number.isFinite(at.x)) out.push({id, source: sourceFor(c, id), at, radius: 12});
   }
   for (const s of SETTLEMENTS) if (ownerOf(c, s) === 'invader') out.push({id: s.id, source: settlementSource(s, c), at: s, radius: 22});

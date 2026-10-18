@@ -7,7 +7,7 @@ import {join} from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {carried} from '../tools/campaign/inventory.mjs';
 import {simulate} from '../tools/campaign/simulate.mjs';
-import {promoteAtHaven} from '../tools/campaign/policy.mjs';
+import {promoteAtHaven, contacts} from '../tools/campaign/policy.mjs';
 import {newCampaign} from '../shared/campaign/state.js';
 import {SETTLEMENTS} from '../map/island.js';
 import {TROOPS} from '../band/troops.js';
@@ -94,7 +94,7 @@ test('the policy pays real promotion requirements only at a haven and keeps woun
   assert.deepEqual(c.stash, {});
 });
 
-test('scarce-opening audit counts real carried rounds and exposes auto-resolve without ammunition spend', () => {
+test('scarce-opening audit counts real carried rounds and refuses unsupported auto-only progression', () => {
   const c = newCampaign();
   assert.deepEqual(carried(c), {rounds: 80, weapons: 8});
   const k = c.band.fighters.player.kit;
@@ -105,9 +105,15 @@ test('scarce-opening audit counts real carried rounds and exposes auto-resolve w
   c.stash.ak74 = 100;
   assert.deepEqual(carried(c), {rounds: 70, weapons: 8}, 'reserve rewards are not carried ammunition');
   const r = simulate({seed: 4, days: 14});
-  assert.ok(r.autoFights > 0);
+  assert.equal(r.autoFights, 0, 'this fresh-band policy must play tactical fights before it can auto-resolve');
   assert.deepEqual(r.carriedStart, {rounds: 80, weapons: 8});
   assert.deepEqual(r.carriedEnd, r.carriedStart);
   assert.equal(r.autoAmmoSpent, 0);
-  assert.deepEqual(aggregate([r]).ammunitionAudit, {campaigns: 1, roundsSpent: 0, campaignsWithCombatAndNoSpend: 1});
+  assert.deepEqual(aggregate([r]).ammunitionAudit, {campaigns: 1, roundsSpent: 0, campaignsWithCombatAndNoSpend: 0});
+});
+
+test('headless roadblock contact shares the real opening map position', () => {
+  const roadblock = contacts(newCampaign(), {convoy: () => null}).find(p => p.id === 'oros-roadblock');
+  assert.deepEqual(roadblock.at, {x: -138, z: 60});
+  assert.equal(roadblock.source.strength, 4);
 });

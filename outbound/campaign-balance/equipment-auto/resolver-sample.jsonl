@@ -1,0 +1,6 @@
+{"scenario":"fresh","source":"fuel-convoy","runs":1000,"offered":0,"wins":0,"wounded":0,"predictedWins":0,"predictedWounds":0,"ammunitionSpent":0}
+{"scenario":"fresh","source":"supply-convoy","runs":1000,"offered":0,"wins":0,"wounded":0,"predictedWins":0,"predictedWounds":0,"ammunitionSpent":0}
+{"scenario":"fresh","source":"orion-patrol","runs":1000,"offered":0,"wins":0,"wounded":0,"predictedWins":0,"predictedWounds":0,"ammunitionSpent":0}
+{"scenario":"equipped-veterans","source":"fuel-convoy","runs":1000,"offered":1000,"wins":916,"wounded":1695,"predictedWins":921.2092726985786,"predictedWounds":1667.8204458242042,"ammunitionSpent":32000}
+{"scenario":"equipped-veterans","source":"supply-convoy","runs":1000,"offered":1000,"wins":899,"wounded":2060,"predictedWins":883.2074375363019,"predictedWounds":2091.1098198721484,"ammunitionSpent":48000}
+{"scenario":"equipped-veterans","source":"orion-patrol","runs":1000,"offered":1000,"wins":787,"wounded":2854,"predictedWins":777.2583068959852,"predictedWounds":2952.613124060797,"ammunitionSpent":72000}

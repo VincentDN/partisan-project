@@ -1,5 +1,5 @@
 // Limited seeded auto-resolve (WP-W22): preview the selected fighters' odds, then use the normal settlement path.
-import {TROOPS} from '../../band/troops.js';
+import {equipmentPlan, spentKits} from './auto-equipment.js';
 import {SQUAD_MIN, SQUAD_MAX} from '../../convoy/roster.js';
 import {rng} from '../../convoy/sim-base.js';
 import {deploy, writeResult, settle} from './encounter.js';
@@ -13,7 +13,10 @@ export function autoPreview(c, e) {
       ids.length <= SQUAD_MAX &&
       new Set(ids).size === ids.length &&
       ids.every(id => c.band.fighters[id] && !c.band.fighters[id].wounded);
-  const strength = ids.reduce((n, id) => n + (TROOPS[c.band.fighters[id]?.class]?.tier || 0), 0);
+  const equipment = equipmentPlan(c, e);
+  const supplied = equipment.length > 0 && equipment.every(p => p.ready);
+  const ammunition = equipment.reduce((n, p) => n + p.required, 0);
+  const strength = equipment.reduce((n, p) => n + p.strength, 0);
   const ratio = strength / Math.max(1, enemy || 0);
   const combatRatio = ratio / (1 + 0.1 * (e.variant?.response?.tier || 0));
   const forbidden =
@@ -23,6 +26,7 @@ export function autoPreview(c, e) {
     e.source === 'fort-orion';
   const eligible =
     valid &&
+    supplied &&
     Number.isFinite(enemy) &&
     enemy > 0 &&
     !forbidden &&
@@ -31,13 +35,27 @@ export function autoPreview(c, e) {
     !c.settled.includes(e.id);
   const odds = Math.min(0.97, (0.95 * combatRatio * combatRatio) / (1 + combatRatio * combatRatio));
   const woundChance = Math.min(0.8, 0.1 + 0.4 / Math.max(0.1, combatRatio));
-  return {eligible, strength, enemy, ratio, odds, expectedWounds: ids.length * (odds * woundChance + (1 - odds) * 0.65), woundChance};
+  return {
+    eligible,
+    validEncounter: valid && !forbidden && Number.isFinite(enemy) && enemy > 0 && !c.deployment && !c.settled.includes(e.id),
+    supplied,
+    equipment,
+    ammunition,
+    reason: !supplied ? 'Equip every selected fighter with a supported firearm and enough compatible rounds.' : '',
+    strength,
+    enemy,
+    ratio,
+    odds,
+    expectedWounds: ids.length * (odds * woundChance + (1 - odds) * 0.65),
+    woundChance,
+  };
 }
 
 /** The encounter seed fixes the outcome across reloads. No rare cargo or random bonus reward roll. */
 export function resolveAuto(c, e) {
   const p = autoPreview(c, e);
-  if (!p.eligible) throw new Error('Auto-resolve requires six to nine fit fighters and a small, eligible fight.');
+  if (!p.eligible) throw new Error(p.reason || 'Auto-resolve requires six to nine fit fighters and a small, eligible fight.');
+  const kits = spentKits(c, p.equipment);
   const random = rng(e.seed);
   const won = random() < p.odds;
   const fighters = Object.fromEntries(
@@ -56,6 +74,8 @@ export function resolveAuto(c, e) {
   writeResult(c, e.id, {
     outcome: won ? 'won' : 'lost',
     kitGains: {},
+    kits,
+    ammoSpent: p.ammunition,
     fighters,
     loot: won ? {ak74: Math.floor((p.enemy / 4) * 0.75)} : {},
     vehicles: e.variant?.convoy?.vehicles.length || 0,

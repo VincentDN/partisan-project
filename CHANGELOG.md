@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-10-18 — ammunition-aware auto-resolve
+
+- Base auto-resolve strength on the selected fighters’ actual carried firearms and compatible ammunition, alongside experience tiers. Dry, unsupported or under-supplied kits cannot bypass combat scarcity.
+- Preview the exact ammunition cost and deduct it on both outcomes. Save failure leaves all rounds intact; settlement and reload cannot refund or spend them twice. Show ammunition spent in the recovery report.
+- Publish a new fifty-campaign W23 sample in ten-seed chunks and 3,000 equipped-veteran resolver outcomes. Preserve earlier reports as historical baselines; human-play comparison remains open.
+
 ## 2026-10-17 — gentler campaign opening and Roadblocks
 
 - Start routine occupiers with slower reactions, wider aim and 35% less incoming damage on the selected difficulty; escalate gradually with occupation response.

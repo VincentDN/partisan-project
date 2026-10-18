@@ -55,6 +55,16 @@ try {
   const settled = await page.evaluate(() => JSON.parse(localStorage.getItem('parp-campaign-v1')));
   assert.equal(settled.settled.length, 1);
   assert.equal(settled.deployment, null);
+  const ammoAfter = await page.evaluate(async () => {
+    const {kitCounts} = await import('/shared/campaign/loot-report.js');
+    const {AMMO_INDEX} = await import('/shared/campaign/ammo-index.js');
+    return Object.entries(
+      kitCounts(Object.fromEntries(Object.entries(window.PARP_MAP.travel.campaign.band.fighters).map(([id, f]) => [id, f.kit]))),
+    )
+      .filter(([slug]) => AMMO_INDEX[slug]?.[0] === 'ammo')
+      .reduce((n, [, count]) => n + count, 0);
+  });
+  assert.equal(ammoAfter, 40, 'failed-save retry spends exactly the previewed 40 rounds once');
   assert.equal(settled.log.filter(e => e.kind === 'result').length, 1);
   await page.reload();
   await ready(page);

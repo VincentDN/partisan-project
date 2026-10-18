@@ -164,6 +164,7 @@ export function cleanResult(d, raw) {
       kept: d.resolution === 'auto' ? 0.75 : 1,
     }),
     captured: !!r.captured && outcome === 'won',
+    ammoSpent: outcome === 'withdrawn' ? 0 : count(r.ammoSpent),
     // the kits the fighters carried home, as they are after the fight (withdrawn: the ones they left with)
     kits:
       outcome === 'withdrawn' || !isObj(r.kits)

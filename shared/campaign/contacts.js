@@ -13,7 +13,7 @@ import {alert} from './hunt.js';
 
 /** The enemies on the map: id -> what they are, and the mission meeting them starts. */
 export const SOURCES = {
-  'oros-roadblock': {name: 'Oros roadblock', kind: 'roadblock', level: 'roadblock', strength: 4},
+  'oros-roadblock': {name: 'Oros roadblock', kind: 'roadblock', level: 'roadblock', strength: 4, at: [-138, 60]},
   // a convoy's vehicles (map models, in column order) are the ones the ambush fields (convoy/levels/columns.js, WP-W9)
   'supply-convoy': {name: 'Supply convoy', kind: 'convoy', level: 'convoy', strength: 14, vehicles: ['matv', 'truck', 'truck']},
   'armoured-column': {

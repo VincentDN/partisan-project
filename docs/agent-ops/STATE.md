@@ -5,15 +5,14 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json).
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-17 · codex · campaign opening, Roadblock and result feedback**
+**2026-10-18 · codex · ammunition-aware auto-resolve**
 
-- Fresh eight-person kit: five Mosins, two TT-33 pistols, one AKM; ten rounds each, empty stash, existing saves unchanged. TT calibre normalization fixes spare-magazine reloads; tactical stats/sprites/audio support both new arms.
-- Response tiers now scale reaction 1.6→1.0, spread 1.9→1.2 and incoming damage 0.65→0.95 on chosen difficulty. Base health remains 180. Deterministic shot and damage regressions cover the curve.
-- Oros roadblock near the opening band: four riflemen regardless of difficulty/response, two-to-four-rebel campaign selection, clear/loot/extract objectives and normal idempotent settlement. No reinforcement waves or specialist upgrades.
-- VICTORY/DEFEAT headers and ascending/descending result cues through shared SFX mute/volume. Victory spoils also states VICTORY.
-- New `tests/campaign-opening.test.mjs` and `tests/e2e/roadblock.mjs`; existing scope/start tests updated for mixed kits. W23 testing remains Codex-owned; old auto-only reports are historical. Human pacing, equipment-aware auto-resolve, full W25 onboarding and W21 campaign endings remain open.
-- Verified: 535 tests; lint, typecheck, formatting, build/link checks; Roadblock browser flow and mixed-start/sniper controls. Roadblock screenshots committed. Added two new Roadblock golden replays; existing replay digests unchanged.
-- Fixed 30m shot sample: baseline 603/1000 hits; response tiers 0–3 yield 339, 402, 457, 517. Human play balance still needs feedback.
+- `auto-equipment.js` computes firearm-weighted strength and required compatible carried rounds. No class-only/free-ammo wins; unarmed, dry or under-supplied picks cannot resolve. Unknown primary weapons and launchers are excluded from this small-fight shortcut.
+- `ammo-index.js` is a small generated calibre index (regenerate with `node tools/campaign/ammo-index.mjs`); no full inventory catalogue or demo imports on the default map. Parity against the tactical catalogue is tested.
+- Preview states the exact cost; either outcome spends that many rounds on cloned kits before normal deploy/result/settle. Reports show ammunition spent. Wrong-calibre stores, unloaded weapons, failed saves, duplicate resolution and reload conserve inventory.
+- Fifty W23 campaigns in ten-seed batches and 3,000 equipped-veteran resolver cases are in `outbound/campaign-balance/equipment-auto/`. Fresh auto-only policy makes no progress, so this is not a human scarcity/pacing acceptance. Roadblock position now shares its source definition with the map and harness.
+- W23 testing remains Codex-owned; W22 human comparison, tactical/barter follow-up, W21 ending and W25 onboarding remain open. Previous main `fbe6fdf` provides the gentler opening, mixed weapons, Roadblock and audible results.
+- Verified: 540 tests, lint, typecheck, formatting and production build/link checks; browser failed-save/retry/reload conservation; completed 50-seed checkpoint fingerprint matches source. Resolver sample spent 152,000 rounds across 3,000 equipped-veteran fights.
 <!-- handoff:end -->
 
 ## Gameplay/demo module boundary — 13 October 2026

@@ -124,19 +124,22 @@ exact army seen on the map.
 
 ### Resolve a small fight
 
-WP-W22 offers auto-resolve when the selected six-to-nine fit fighters' summed tiers are at least 2.5 times the
-enemy strength, or when facing the designated Orion patrol. Reserve troop stacks do not count. Settlement
+WP-W22 offers auto-resolve when the selected six-to-nine fit fighters’ equipment-adjusted strength is at least
+2.5 times enemy strength, or when facing the designated Orion patrol. Every selected fighter must carry a supported
+firearm and enough compatible ammunition for the previewed cost. Reserve troop stacks do not count. Settlement
 captures, Fort Orion and all defence missions are excluded. Changing the selected squad updates the offer,
 victory odds and expected number wounded before the action is taken.
 
 The encounter seed fixes the result. Wounds last 24 hours, and loot/cargo recovery is reduced by 25%, rounded down
 per stack, with no rare bonus roll. The normal encounter settlement applies XP, wounds, kit return and map
-consequences once. A failed save leaves the encounter unchanged for retry. Auto-resolve leaves carried grid kits
-intact; ammunition expenditure is not simulated yet. The odds and wound formula are provisional balance values;
+consequences once. A failed save leaves the encounter unchanged for retry. Auto-resolve spends the exact previewed
+rounds on either outcome and returns the remaining owned kit. Chambered rounds, inserted magazines, reachable
+compatible spare magazines and loose rounds count; stash equipment, other weapons’ loaded rounds and wrong
+calibres do not. Empty stacks are removed, while magazine and weapon identities remain. The odds and wound formula are provisional balance values;
 the intended disadvantage against an average played fight still needs human comparison.
 
 `node tools/campaign-auto.mjs` samples the same resolver used by the map. This is a focused balance harness,
-not the planned 50-campaign simulation. Escalation, campaign endings and longitudinal balance remain open.
+separate from the existing 50-campaign simulation. Escalation, campaign endings and longitudinal balance remain open.
 
 ### Fight
 
@@ -445,3 +448,18 @@ pacing acceptance; W23’s older Mosin-only auto-resolve reports remain historic
 Combat results now headline VICTORY or DEFEAT, including the victory spoils overlay, with distinct ascending
 and descending sound cues through the existing SFX volume/mute controls. Roadblocks include a loot window
 before extraction so the last guard’s equipment remains recoverable. W21’s campaign-wide ending remains open.
+
+## W22/W23 ammunition-aware follow-up — 18 October 2026
+
+Auto-resolve uses class tier multiplied by owned-weapon effectiveness: Mosin 0.8, TT pistol 0.4, AK/AKM 1.0,
+AK-15K/SVD/Mk 14 1.1, RPK 1.2, PKM 1.3, SMG 0.7 and shotgun 0.6. Unsupported primary weapons block the offer.
+The per-fighter cost is at least two rounds, otherwise the rounded-up enemy count divided by squad size times
+2 for precision rifles, 3 for assault rifles/shotguns, 4 for pistols/SMGs/RPK, or 5 for PKM. Insufficient ammunition
+reduces preview strength and blocks resolution. These are provisional aggregate combat assumptions, not tactical
+ballistics or completed human-play calibration. Restrictions on captures, defences, Roadblocks and the finale remain.
+
+The [equipment-aware review](../outbound/campaign-balance/equipment-auto/review.md) records a new 50-seed run in
+five ten-seed batches. The fresh-band auto-only policy cannot progress, correctly requiring actual tactical play
+and looting first; zero fights must not be mistaken for validated scarcity. Separate equipped-veteran samples
+exercise 3,000 real resolutions with positive ammunition expenditure on wins and losses. W23 follow-up testing
+stays Codex-owned. W22’s average-human comparison, tactical/barter policy, W21 endings and W25 onboarding remain open.
