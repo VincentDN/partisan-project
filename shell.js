@@ -2,7 +2,7 @@
 // (?p=<page path>#<page hash>), so reloads and copied links come back to the same screen and build.
 import {soundLayer} from './shared/sound-layer.js';
 
-soundLayer(); // created here, before the frame's pages ask for it
+const sound = soundLayer(); // created here, before the frame's pages ask for it
 const view = /** @type {HTMLIFrameElement} */ (document.querySelector('#view'));
 const base = new URL('./', location.href);
 const DEFAULT = 'intro/';
@@ -19,6 +19,7 @@ export function safePath(p) {
 }
 
 const wanted = safePath(new URLSearchParams(location.search).get('p')) || new URL(DEFAULT, base);
+if (wanted.searchParams.has('campaign')) sound.scene('campaign');
 view.src = wanted.pathname + wanted.search + location.hash;
 
 function sync() {
@@ -29,6 +30,8 @@ function sync() {
     return;
   }
   if (!inner.href || inner.href === 'about:blank') return;
+  if (new URLSearchParams(inner.search).has('campaign')) sound.scene('campaign');
+  else if (sound.sceneName === 'campaign') sound.scene('viewer');
   const rel = inner.pathname.slice(base.pathname.length);
   const want = base.pathname + (rel && rel !== DEFAULT ? '?p=' + rel + encodeURIComponent(inner.search) : '') + inner.hash;
   if (location.pathname + location.search + location.hash !== want) history.replaceState(null, '', want);

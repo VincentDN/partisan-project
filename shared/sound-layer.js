@@ -43,6 +43,9 @@ function createLayer() {
     music,
     prefs,
     TRACKS,
+    get sceneName() {
+      return where;
+    },
     get bench() {
       return bench;
     },
@@ -80,7 +83,9 @@ function createLayer() {
     },
     scene(name) {
       if (name === where) return;
+      const wasCampaign = where === 'campaign';
       where = name;
+      if (name === 'campaign' || wasCampaign) music.setTrack(name === 'campaign' ? 'campaign' : prefs.track);
       if (where === 'bench' && music.playing && !tuned) {
         tuned = true;
         bench?.tune();
@@ -97,6 +102,7 @@ function createLayer() {
       music.setVolume(prefs.volume * (ducked ? 0.6 : 1));
     },
     setTrack(id) {
+      if (where === 'campaign') return; // campaign score never overwrites the saved demo selection
       prefs.track = id;
       music.setTrack(id);
     },

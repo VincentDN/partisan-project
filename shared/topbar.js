@@ -55,7 +55,11 @@ export function mountTopBar({
     `<span class="music-wrap"><button id="music-menu" aria-haspopup="true" aria-expanded="false" aria-controls="music-player" title="Music"><span class="dot" aria-hidden="true"></span>♪<span class="sr-only"> Music player</span></button>` +
     `<div class="player" id="music-player" role="group" aria-label="Music player" hidden>` +
     `<div class="row"><button id="music-toggle" aria-pressed="false" aria-label="Background music">Music</button></div>` +
-    `<div class="tracks">${TRACKS.map(t => `<button data-track="${t.id}" aria-pressed="false">${t.label || t.id}</button>`).join('')}</div>` +
+    `<div class="tracks">${TRACKS.filter(t =>
+      new URLSearchParams(location.search).has('campaign') ? t.id === 'campaign' : t.id !== 'campaign',
+    )
+      .map(t => `<button data-track="${t.id}" aria-pressed="false">${t.label || t.id}</button>`)
+      .join('')}</div>` +
     `<label>Vol<input id="music-volume" type="range" min="0" max="100" step="1" value="36" aria-label="Music volume"><output id="music-level">36%</output></label></div></span>`;
   const old = replaceHeader && document.querySelector('body > header');
   if (old) old.replaceWith(bar);

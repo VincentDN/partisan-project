@@ -4070,14 +4070,15 @@
    "milestone": "W",
    "size": "M",
    "bu": 20,
-   "status": "planned",
+   "status": "done",
    "deps": [],
    "agent": "any",
    "needs": [],
    "inputs": [
     "docs/campaign-roadmap.md"
    ],
-   "acceptance": "Stop workbench music when entering a campaign, including the shell iframe path. Use a subdued guitar/plucked-string and sad-string ambient score, with no overlapping tracks. Preserve music mute/volume, user activation and navigation lifecycle. Verify map, combat, band and return-to-demo transitions."
+   "acceptance": "Stop workbench music when entering a campaign, including the shell iframe path. Use a subdued guitar/plucked-string and sad-string ambient score, with no overlapping tracks. Preserve music mute/volume, user activation and navigation lifecycle. Verify map, combat, band and return-to-demo transitions.",
+   "progress_note": "2026-10-18: Original synthesized 50 BPM minor-key plucked-string/soft-string campaign score replaces demo music in shell and standalone campaign pages. Saved demo selection is preserved. Map/combat/band transitions retain campaign mode and mute/volume; returning to demos restores selection. Source switching stops old recordings and disconnects scheduled synth tails; no delayed switches. Chromium shell lifecycle and offline rendered signal checks pass."
   }
  ]
 }

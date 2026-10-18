@@ -5,14 +5,14 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json).
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-18 · codex · W28 field log / W30 playtest fixes**
+**2026-10-18 · codex · W32 campaign soundtrack**
 
-- W28: `shared/campaign/journal.js` and `map/campaign-journal.js` reuse the saved 200-entry history. Daily rumours use saved rumourDay; recovery, rest, results and intercepted counterattack orders are formatted without hidden coordinates. Audio is new-recovery-only and respects SFX/activation. Medication recovery logs too.
-- W30: thresholded/cancel-safe pointer module, double-click transfers, category silhouettes, primary slot swaps and ground panel. Lootable rigs/backpacks provide magazine capacity; 6L23 remains correctly restricted to 5.45 weapons. Old magazines cannot silently disappear when replacements do not fit. Dead soldiers' rig contents remain loose for AI scavenging; empty wearable rigs are also lootable.
-- Roadblock: explicit secured prompt and Finish raid after all guards dead/routed; retains body looting and extraction. `raid-completion.js` validates before ending.
-- Unit/full suite, inventory transfer/Foley and Roadblock browser regressions, saved/mobile journal and recovery audio checks; see latest commit for verification. Historical performance/balance baselines left unchanged.
-- User's additional requests recorded: W31 larger covered approach areas before combat; W32 separate sad guitar/string campaign ambience that stops shell workbench music. Both pending, followed by W29 fullscreen A/B/C/D persuasion dialogue. W27 follower improvements remain on main. W23 testing stays Codex-owned.
-- Continue owner-authorized main commits and pushes; no PR. Keep W21/W22/W24/W25 acceptance limits from previous handoffs.
+- `shared/campaign-score.js`: original synthesized 50 BPM minor-key plucked and soft bowed tones. No new recording downloads or demo module dependencies.
+- Shell and music UI select campaign mode from the page's campaign query, including direct links. Campaign mode retains mute/volume and does not overwrite the saved demo track. Map/combat/band navigation shares one score; return to demo/menu restores selection.
+- `Music.setTrack` halts the old source synchronously and disconnects the outgoing synth graph, removing delayed source-switch races. Muted-but-still-fading recordings also halt before a new track starts.
+- Browser test `tests/e2e/campaign-music.mjs`: actual shell map/combat/band/menu transitions, recording stopped, saved selection, mute/zero volume, rapid changes and finite/non-clipping offline score render. Full tests and build/static checks run for this milestone.
+- W28 field log and W30 inventory/Roadblock fixes remain on main (`b6edf9e`). Next W31 larger covered approach areas across missions, then W29 fullscreen A/B/C/D persuasion dialogue. W23 balance testing remains Codex-owned; previous W21/W22/W24/W25 acceptance limits still apply.
+- Continue owner-authorized commits/pushes to main. Do not touch intro, demo/gameplay isolation or historical balance baselines.
 <!-- handoff:end -->
 
 ## Gameplay/demo module boundary — 13 October 2026

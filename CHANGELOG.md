@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-10-18 — dedicated campaign ambience
+
+- Replace workbench/demo music on campaign entry with a quiet original minor-key plucked-string and soft-string score.
+- Keep campaign ambience across map, combat and band pages, preserving mute/volume and the separate saved demo selection.
+- Stop outgoing recordings and synthesized tails on track changes; rapid navigation can no longer restart an old source.
+
 ## 2026-10-18 — field reports, inventory handling and Roadblock departure
 
 - Add a saved campaign field log with recovery notices, quiet recovery SFX, unconfirmed rumours and intercepted orders.

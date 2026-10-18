@@ -2,6 +2,7 @@
 // 86 BPM, 8 bars: Am9 | Am9 | Fmaj7 | Fmaj7 | Cmaj7 | Cmaj7 | Em7 | Em7, then repeat.
 // Layers: detuned saw pad, sine bass, delayed triangle arpeggio, soft kick/hat/rim, shared reverb.
 // scheduleBar() is pure scheduling, so the same score renders offline for previews.
+import {CAMPAIGN_BAR, scheduleCampaignBar} from './campaign-score.js';
 const BPM = 86,
   BEAT = 60 / BPM,
   BAR = BEAT * 4,
@@ -188,6 +189,7 @@ export const TRACKS = [
   },
   {id: 'abdulena', label: 'Abdulena', src: new URL('../assets/audio/abdulena.mp3', import.meta.url).href},
   {id: 'ambient', label: 'Ambient loop'},
+  {id: 'campaign', label: 'Campaign · quiet strings'},
 ];
 
 // Handoff between pages: the workbench intro saves where the file track is before it navigates
@@ -221,7 +223,7 @@ export class Music {
     this.master.connect(this.route?.(this.ctx) || this.ctx.destination);
     this.mainGain = this.ctx.createGain(); // the recording
     this.mainGain.connect(this.master);
-    this.graph = createGraph(this.ctx, this.master);
+    this.graph = null;
     this.bar = 0;
     this.next = this.ctx.currentTime + 0.1;
   }
@@ -247,12 +249,14 @@ export class Music {
         () => false,
       ); // false: blocked until a user gesture
     } else {
+      this.graph ||= createGraph(this.ctx, this.master);
       if (this.next < this.ctx.currentTime) this.next = this.ctx.currentTime + 0.05;
       this.timer ??= setInterval(() => {
         if (this.next < this.ctx.currentTime) this.next = this.ctx.currentTime + 0.05;
         while (this.next < this.ctx.currentTime + LOOKAHEAD) {
-          scheduleBar(this.graph, this.bar++, this.next);
-          this.next += BAR;
+          const campaign = this.track === 'campaign';
+          (campaign ? scheduleCampaignBar : scheduleBar)(this.graph, this.bar++, this.next);
+          this.next += campaign ? CAMPAIGN_BAR : BAR;
         }
       }, 200);
       return Promise.resolve(true);
@@ -262,6 +266,10 @@ export class Music {
     this.audio?.pause();
     clearInterval(this.timer);
     this.timer = null;
+    this.graph?.out.disconnect(); // silence scheduled notes and reverb from the previous score
+    this.graph = null;
+    this.bar = 0;
+    if (this.ctx) this.next = this.ctx.currentTime + 0.05;
   }
   // Resolves true once sound is actually running; false if the browser is still blocking autoplay.
   // `fade` is the fade-in time constant in seconds (about 3× that to reach full volume).
@@ -291,17 +299,17 @@ export class Music {
   setTrack(id) {
     if (!TRACKS.some(t => t.id === id) || id === this.track) return;
     this.track = id;
-    if (!this.playing) return;
-    // Quick crossfade through silence: dip, swap sources, come back up.
+    if (!this.playing) {
+      this.halt(); // also stop a source still fading out after mute
+      return;
+    }
+    // Stop the old source before starting the new one; no delayed switch can restart a stale track.
     const now = this.ctx.currentTime;
     this.master.gain.cancelScheduledValues(now);
-    this.master.gain.setTargetAtTime(0, now, 0.12);
-    setTimeout(() => {
-      if (!this.playing) return;
-      this.halt();
-      this.play();
-      this.master.gain.setTargetAtTime(this.volume, this.ctx.currentTime, 0.3);
-    }, 450);
+    this.master.gain.setValueAtTime(0, now);
+    this.halt();
+    this.play();
+    this.master.gain.setTargetAtTime(this.volume, now, 0.3);
   }
   // True when sound is actually coming out (not just switched on but blocked by autoplay rules).
   audible() {

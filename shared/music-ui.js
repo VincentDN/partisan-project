@@ -9,13 +9,15 @@ import {soundLayer} from './sound-layer.js';
 export function bindMusicUI({scene = 'viewer'} = {}) {
   const sound = soundLayer(),
     prefs = sound.prefs;
-  sound.scene(scene);
+  const campaign = new URLSearchParams(location.search).has('campaign');
+  sound.scene(campaign ? 'campaign' : scene);
   const toggle = document.querySelector('#music-toggle'),
     volume = document.querySelector('#music-volume');
   const FADE = 1.5;
   const show = () => {
     toggle?.setAttribute('aria-pressed', String(prefs.on));
-    for (const b of document.querySelectorAll('[data-track]')) b.setAttribute('aria-pressed', String(b.dataset.track === prefs.track));
+    for (const b of document.querySelectorAll('[data-track]'))
+      b.setAttribute('aria-pressed', String(b.dataset.track === sound.music.track));
     if (volume) volume.value = String(Math.round(prefs.volume * 100));
     const level = document.querySelector('#music-level');
     if (level) level.textContent = Math.round(prefs.volume * 100) + '%';
@@ -30,6 +32,7 @@ export function bindMusicUI({scene = 'viewer'} = {}) {
   addEventListener('pageshow', e => {
     if (e.persisted) {
       unsubscribe = sound.subscribe(show);
+      sound.scene(campaign ? 'campaign' : scene);
       show();
     }
   });

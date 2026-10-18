@@ -490,4 +490,10 @@ A direct current-main comparison with three-run median CPU measurements found st
 
 **W32 queued:** stop the workbench soundtrack on campaign entry, including embedded navigation. Add a separate subdued guitar/plucked-string and sad-string ambient score. Preserve mute/volume and browser audio activation; check map/combat/band/demo transitions without overlapping playback.
 
-Next: W32 soundtrack handoff, W31 approach pacing, then W29 fullscreen A/B/C/D persuasion dialogue. These pending features are not included in the delivered inventory/event-log milestone.
+After the inventory/event-log milestone, W32 soundtrack handoff was completed below. Next: W31 approach pacing, then W29 fullscreen A/B/C/D persuasion dialogue.
+
+### W32 soundtrack handoff delivered — 18 October 2026
+
+Campaign pages now use an original synthesized 50 BPM minor-key score: sparse plucked strings over soft bowed tones, without percussion or extra recording downloads. The shared shell stops the demo recording when entering a campaign; direct campaign links select the same mode. Map, combat, band and campaign equipment pages share it without restarting it. Campaign music controls retain mute and volume, show the campaign score and leave the saved demo track untouched. Returning to a demo/menu restores that selection.
+
+Track changes stop the outgoing recording and disconnect its synthesized output, including scheduled notes and reverb tails. Removing delayed track-switch callbacks prevents rapid navigation from resurrecting the previous song. Browser coverage exercises shell → map → combat → band → menu, mute/zero volume, rapid switches and preservation of the demo selection. An offline render checks a non-silent, finite signal below clipping. This establishes playback behavior; the instruments are synthesized rather than a recorded guitar performance.
