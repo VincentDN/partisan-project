@@ -156,7 +156,7 @@ test('orders: follow keeps teammates in slots behind the player, at the playerâ€
   const p = sim.player;
   for (const id of ['mila', 'dragan']) {
     const u = mate(sim, id);
-    assert.ok(Math.hypot(u.x - p.x, u.z - p.z) < 5, `${id} keeps up`);
+    assert.ok(Math.hypot(u.x - p.x, u.z - p.z) < 6, `${id} keeps up with the wider formation`);
     assert.ok(u.x < p.x, `${id} stays behind`);
   }
   steps(sim, 1, {mx: 1, sneak: true});

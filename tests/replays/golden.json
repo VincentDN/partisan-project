@@ -1,74 +1,74 @@
 {
-  "convoy#1": {
-    "digest": "b4e603baafa84555",
-    "summary": "running at 90s, 4 down, 7 rebels standing"
-  },
-  "convoy#2": {
-    "digest": "a1ed86b8fbdb966a",
-    "summary": "running at 90s, 3 down, 7 rebels standing"
-  },
-  "compound#1": {
-    "digest": "1d38fa8ff301f06f",
-    "summary": "running at 90s, 0 down, 8 rebels standing"
-  },
-  "compound#2": {
-    "digest": "98f0526d421b1a5c",
-    "summary": "running at 90s, 3 down, 8 rebels standing"
-  },
-  "cave#1": {
-    "digest": "3d8b1434b3653e1b",
-    "summary": "running at 90s, 4 down, 8 rebels standing"
-  },
-  "cave#2": {
-    "digest": "7430ad2c53782124",
-    "summary": "running at 90s, 4 down, 8 rebels standing"
-  },
-  "forest-road#1": {
-    "digest": "09d7342fc28baa5b",
-    "summary": "running at 90s, 1 down, 8 rebels standing"
-  },
-  "forest-road#2": {
-    "digest": "9d4fe9ddeb7453bb",
-    "summary": "running at 90s, 2 down, 7 rebels standing"
-  },
-  "checkpoint#1": {
-    "digest": "30033b22110f217c",
-    "summary": "running at 90s, 3 down, 8 rebels standing"
-  },
-  "checkpoint#2": {
-    "digest": "000439dede3f2af4",
-    "summary": "running at 90s, 3 down, 8 rebels standing"
-  },
-  "village#1": {
-    "digest": "cdd9efe900188e76",
-    "summary": "running at 90s, 2 down, 8 rebels standing"
-  },
-  "village#2": {
-    "digest": "602d9c14963e5cfe",
-    "summary": "running at 90s, 3 down, 8 rebels standing"
-  },
-  "hilltop#1": {
-    "digest": "5d8b0876d0d2941e",
-    "summary": "running at 90s, 2 down, 7 rebels standing"
-  },
-  "hilltop#2": {
-    "digest": "1dbe2e74921c035e",
-    "summary": "running at 90s, 3 down, 8 rebels standing"
-  },
-  "convoy#1+kits": {
-    "digest": "f32903434f9a31c9",
-    "summary": "running at 90s, 4 down, 7 rebels standing"
-  },
-  "compound#1+kits": {
-    "digest": "2e413f413c3411b4",
-    "summary": "running at 90s, 1 down, 7 rebels standing"
-  },
   "roadblock#1": {
-    "digest": "b7a96c0ab2f3d999",
+    "digest": "9c1f52fe879f67f2",
     "summary": "running at 90s, 2 down, 8 rebels standing"
   },
   "roadblock#2": {
-    "digest": "87c2b1949fea77b5",
+    "digest": "94abe47b29238b6e",
     "summary": "running at 90s, 4 down, 8 rebels standing"
+  },
+  "convoy#1": {
+    "digest": "e67f259198561a9f",
+    "summary": "running at 90s, 4 down, 7 rebels standing"
+  },
+  "convoy#2": {
+    "digest": "e308b69d9a4fb9a1",
+    "summary": "running at 90s, 3 down, 8 rebels standing"
+  },
+  "compound#1": {
+    "digest": "98a4a7a2c5f8f31e",
+    "summary": "running at 90s, 2 down, 8 rebels standing"
+  },
+  "compound#2": {
+    "digest": "2e0f8c7655c20a95",
+    "summary": "running at 90s, 4 down, 8 rebels standing"
+  },
+  "cave#1": {
+    "digest": "11274c39101d3947",
+    "summary": "running at 90s, 4 down, 8 rebels standing"
+  },
+  "cave#2": {
+    "digest": "3f271b0f5814dd3d",
+    "summary": "running at 90s, 4 down, 8 rebels standing"
+  },
+  "forest-road#1": {
+    "digest": "05b36e304a25d6de",
+    "summary": "running at 90s, 1 down, 8 rebels standing"
+  },
+  "forest-road#2": {
+    "digest": "191aed3d394f3a5c",
+    "summary": "running at 90s, 1 down, 8 rebels standing"
+  },
+  "checkpoint#1": {
+    "digest": "9a3439d08692b691",
+    "summary": "running at 90s, 1 down, 6 rebels standing"
+  },
+  "checkpoint#2": {
+    "digest": "feb7210b3f2aebe7",
+    "summary": "running at 90s, 2 down, 7 rebels standing"
+  },
+  "village#1": {
+    "digest": "705ca2670dfd6f10",
+    "summary": "running at 90s, 2 down, 8 rebels standing"
+  },
+  "village#2": {
+    "digest": "dc3bcd48bf620b5e",
+    "summary": "running at 90s, 3 down, 8 rebels standing"
+  },
+  "hilltop#1": {
+    "digest": "ae78a545412e356b",
+    "summary": "running at 90s, 1 down, 6 rebels standing"
+  },
+  "hilltop#2": {
+    "digest": "66c91357cbaa7262",
+    "summary": "running at 90s, 4 down, 8 rebels standing"
+  },
+  "convoy#1+kits": {
+    "digest": "5c3d42fb6dec4d31",
+    "summary": "running at 90s, 2 down, 6 rebels standing"
+  },
+  "compound#1+kits": {
+    "digest": "416da6ef02bb5604",
+    "summary": "running at 90s, 2 down, 7 rebels standing"
   }
 }

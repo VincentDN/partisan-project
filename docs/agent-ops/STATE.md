@@ -5,14 +5,13 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json).
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-18 · codex · ammunition-aware auto-resolve**
+**2026-10-18 · codex · W27 rebel follow AI**
 
-- `auto-equipment.js` computes firearm-weighted strength and required compatible carried rounds. No class-only/free-ammo wins; unarmed, dry or under-supplied picks cannot resolve. Unknown primary weapons and launchers are excluded from this small-fight shortcut.
-- `ammo-index.js` is a small generated calibre index (regenerate with `node tools/campaign/ammo-index.mjs`); no full inventory catalogue or demo imports on the default map. Parity against the tactical catalogue is tested.
-- Preview states the exact cost; either outcome spends that many rounds on cloned kits before normal deploy/result/settle. Reports show ammunition spent. Wrong-calibre stores, unloaded weapons, failed saves, duplicate resolution and reload conserve inventory.
-- Fifty W23 campaigns in ten-seed batches and 3,000 equipped-veteran resolver cases are in `outbound/campaign-balance/equipment-auto/`. Fresh auto-only policy makes no progress, so this is not a human scarcity/pacing acceptance. Roadblock position now shares its source definition with the map and harness.
-- W23 testing remains Codex-owned; W22 human comparison, tactical/barter follow-up, W21 ending and W25 onboarding remain open. Previous main `fbe6fdf` provides the gentler opening, mixed weapons, Roadblock and audible results.
-- Verified: 540 tests, lint, typecheck, formatting and production build/link checks; browser failed-save/retry/reload conservation; completed 50-seed checkpoint fingerprint matches source. Resolver sample spent 152,000 rounds across 3,000 equipped-veteran fights.
+- Added W27 (highest priority AI), W28 (campaign recovery/intelligence event log with SFX), W29 (fullscreen A/B/C/D persuasion for trade/recruitment). W27 implemented; W28/W29 remain planned next.
+- `convoy/ai-follow.js` owns staggered reachable reservations, bounded cover search and brief cover memory. `ai-cover.js` gains optional protected-only/candidate constraints; default army behavior is preserved. Stationary followers clear stale moving flags.
+- Six focused regressions cover wall spacing, separate cover, low sandbags, loss of sight and leader switches/hold. Replays refreshed intentionally for movement changes. Full suite plus targeted final-change regressions, Chromium squad controls (both motion modes), lint/typecheck/format/build/link checks verified.
+- Two-minute/two-seed/eight-level soak: no stuck/inside-cover findings; thirteen unfinished-objective findings. Campaign roadmap records direct parent performance comparison and moving-follow CPU costs, including Hilltop increase from 0.0116 to 0.027 ms/step. Human tactical pacing and device acceptance remain open.
+- Previous `53c083a` ammo-aware resolver retained. W23 testing remains Codex-owned; W22 human comparison, tactical/barter policies, W21 ending and W25 onboarding remain open. Owner authorizes main commits/pushes.
 <!-- handoff:end -->
 
 ## Gameplay/demo module boundary — 13 October 2026

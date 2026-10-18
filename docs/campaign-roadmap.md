@@ -463,3 +463,19 @@ five ten-seed batches. The fresh-band auto-only policy cannot progress, correctl
 and looting first; zero fights must not be mistaken for validated scarcity. Separate equipped-veteran samples
 exercise 3,000 real resolutions with positive ammunition expenditure on wins and losses. W23 follow-up testing
 stays Codex-owned. W22’s average-human comparison, tactical/barter policy, W21 endings and W25 onboarding remain open.
+
+## New priorities — 18 October 2026
+
+1. **WP-W27 — rebel battle AI (highest priority).** Followers should spread out, take reachable nearby cover against visible threats, and advance when the leader moves on. Cover destinations must not be shared; explicit hold and sector orders remain authoritative. Verify obstacles, sustained following, leader changes and combat performance.
+2. **WP-W28 — campaign event log.** Add a bounded, saved campaign-screen history of fighter recovery, enemy movement rumours and intercepted intelligence. Recovery plays a small sound once, respecting SFX settings. Include time, source and uncertainty; rumours must not become an omniscient enemy tracker. Support keyboard and narrow screens.
+3. **WP-W29 — character dialogue and persuasion.** Show the speaker fullscreen with A/B/C/D choices, usable by keyboard or pointer. Town barter and recruitment use visible persuasion dice rolls with explained modifiers and consequences. Save resolved decisions to prevent reload rerolls, validate costs/stock and retain transaction rollback. Accessible focus, exit and reduced motion are part of acceptance.
+
+These are additional campaign milestones; W21 endings, W22 human balance comparison, W23 tactical/barter policies, W24 device acceptance and W25 onboarding remain open. Implement W27 first, then W28 and W29.
+
+### W27 first AI milestone delivered
+
+Followers now use staggered rows with destinations reserved at least 2.4 metres apart. Blocked slots search reachable nearby ground instead of collapsing onto the player. In combat they seek distinct protected cover within six metres of their slot and twelve metres of the leader, using visible enemies rather than hidden enemy positions. Cover searches are limited to once per 0.6 simulated seconds per follower. Brief cover memory avoids immediately leaving a position because it broke enemy sight; moving the leader three metres releases it. Explicit hold and sector orders remain unchanged. This is follow-position coordination, not a new squad bounding/fireteam system or hard body collision.
+
+Regression coverage includes eight-person wall layouts, separate cover reservations, thin sandbag protection, leader switching and hold orders. Golden replays were intentionally refreshed because changed rebel movement and corrected stationary movement flags alter combat outcomes. The two-minute, two-seed soak across eight levels found no stuck units or units inside cover; thirteen unfinished-objective findings remain because this firing/movement script does not perform mission interactions. Normal/reduced-motion browser squad controls pass.
+
+A direct current-main comparison with three-run median CPU measurements found standard stationary-player benchmark costs no higher. A separate 60-second moving-follow combat probe across eight levels measured 0.018–0.1514 ms CPU per simulation step. Hilltop increased from 0.0116 to 0.0270 ms; other per-level changes ranged from lower costs to an 8% increase. These are cloud simulation measurements, not browser/device or human-play acceptance, and the historical performance baseline is unchanged. W28 event history and W29 dialogue remain planned next.

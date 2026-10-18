@@ -1,7 +1,7 @@
 // Your teammates (convoy/ai.js): orders, follow slots, holding fire until the ambush, picking targets. Split out of
 // ai.js (WP-QA17).
 import {between, setState} from './ai-sense.js';
-import {openNear} from './pathfind.js';
+import {followPosition} from './ai-follow.js';
 import {dist} from './sim.js';
 import {WEAPONS} from './weapons.js';
 
@@ -11,22 +11,6 @@ import {WEAPONS} from './weapons.js';
 //   cover   watch the sector toward `angle` and only engage what is inside it (about 100 degrees wide)
 // Before the ambush is sprung they hold fire, unless ordered to attack.
 const SECTOR = 0.9; // half-width of a cover sector, radians
-
-/** Where follower number k stands: behind the player, alternating left and right. */
-function followSlot(sim, u) {
-  const p = sim.player;
-  const followers = sim.units.filter(o => o.side === 'partisan' && o.alive && o !== p && o.order?.type === 'follow');
-  const k = followers.indexOf(u);
-  // behind the way the player is going (not where he aims, or the squad would circle him as he turns)
-  const h = (sim.followHeading ||= {x: p.x, z: p.z, a: p.facing});
-  if (Math.hypot(p.x - h.x, p.z - h.z) > 0.6) Object.assign(h, {a: Math.atan2(p.z - h.z, p.x - h.x), x: p.x, z: p.z});
-  const back = h.a + Math.PI,
-    side = (k % 2 ? 1 : -1) * (1 + Math.floor(k / 2)) * 1.4;
-  // a slot that falls in a wall or off the map moves to the nearest ground a body can stand on
-  const x = p.x + Math.cos(back) * 2.2 - Math.sin(back) * side,
-    z = p.z + Math.sin(back) * 2.2 + Math.cos(back) * side;
-  return openNear(sim, x, z) || {x: p.x, z: p.z};
-}
 
 export function partisanThink(sim, u) {
   // The squad moves up with you unless told otherwise. By default it keeps its starting (ambush) positions until the
@@ -38,11 +22,11 @@ export function partisanThink(sim, u) {
   }
   if (o.type === 'follow' && o.settled) u.moveTo = null;
   else if (o.type === 'follow') {
-    const slot = followSlot(sim, u);
+    const slot = followPosition(sim, u);
     const behind = Math.hypot(slot.x - u.x, slot.z - u.z);
     // at the player's pace, running only to catch up when left behind
     u.speed = behind > 8 ? Math.max(sim.player.speed, 5.8) : sim.player.speed;
-    u.moveTo = behind > 1.2 ? slot : null;
+    u.moveTo = behind > (u.followCover ? 0.4 : 1.2) ? slot : null;
   } else if (o.type === 'move') {
     if (Math.hypot(o.x - u.x, o.z - u.z) < 0.5) {
       u.order = {type: 'hold', x: o.x, z: o.z};
@@ -65,6 +49,7 @@ export function partisanThink(sim, u) {
 }
 
 export function partisanAct(sim, u, dt) {
+  u.moving = false;
   if (u.moveTo) sim.move(u, dt);
   if (u.state !== 'fight') return;
   if (u.pause > 0) {

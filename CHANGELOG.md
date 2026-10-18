@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-10-18 — rebel follow spacing and cover
+
+- Spread following rebels into staggered rows with separate reachable destinations; blocked slots no longer default to the player’s feet.
+- Seek nearby protected cover against visible enemies, hold it briefly after breaking sight, and move on with the leader. Preserve explicit hold/sector orders and reset formation heading when switching characters.
+- Record campaign recovery/intelligence event history and fullscreen A/B/C/D persuasion dialogue as the next roadmap milestones.
+
 ## 2026-10-18 — ammunition-aware auto-resolve
 
 - Base auto-resolve strength on the selected fighters’ actual carried firearms and compatible ammunition, alongside experience tiers. Dry, unsupported or under-supplied kits cannot bypass combat scarcity.

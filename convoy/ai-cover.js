@@ -1,11 +1,11 @@
 // Where a unit goes to be safe (convoy/ai.js): the best covered spot it can reach, and the next bound of an assault.
 // Split out of ai.js (WP-QA17).
 import {PAD} from './cover-grid.js';
-import {reachable} from './pathfind.js';
+import {openNear, reachable} from './pathfind.js';
 import {inBox} from './sim.js';
 
 /** Best spot near u that hides it from `threat`: behind boxes, away from the threat, not crowded. */
-export function findCover(sim, u, threat) {
+export function findCover(sim, u, threat, options = {}) {
   let best = null,
     bestScore = -Infinity;
   // the cover near u (in level order, as a scan of every box would meet it) and what moves; only these can matter
@@ -24,15 +24,22 @@ export function findCover(sim, u, threat) {
     // reach: half the box's extent along the away direction, plus a body and a little air
     const reach = Math.abs(ax) * (b.w / 2) + Math.abs(az) * (b.d / 2) + u.r + 0.5;
     for (const lateral of [0, -0.6, 0.6]) {
-      const px = b.x + ax * reach - az * lateral * (b.w / 2),
+      let px = b.x + ax * reach - az * lateral * (b.w / 2),
         pz = b.z + az * reach + ax * lateral * (b.d / 2);
-      if (blocked(px, pz)) continue;
+      if (options.protectedOnly) {
+        const at = openNear(sim, px, pz);
+        if (!at) continue;
+        px = at.x;
+        pz = at.z;
+      }
+      if (blocked(px, pz) || (options.accept && !options.accept({x: px, z: pz}))) continue;
       const far = Math.hypot(px - u.x, pz - u.z) * 1.2;
       if (40 - far <= bestScore) continue; // even covered and alone it cannot beat the best: skip the sight check
       if (!reachable(sim, u.x, u.z, px, pz)) continue; // off the map, or shut in a house or a walled yard
       // hidden, or behind low cover (sandbags, logs: seen over, but a body behind one is harder to hit)
       const covered = !sim.los(threat.x, threat.z, px, pz),
         low = !covered && !!sim.lowCover(threat.x, threat.z, px, pz);
+      if (options.protectedOnly && !covered && !low) continue;
       const crowd = sim.units.filter(
         o => o !== u && o.alive && o.side === u.side && Math.hypot((o.moveTo || o).x - px, (o.moveTo || o).z - pz) < 1.6,
       ).length;

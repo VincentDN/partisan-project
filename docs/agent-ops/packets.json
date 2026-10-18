@@ -3653,7 +3653,7 @@
    "inputs": [
     "docs/quality-roadmap.md"
    ],
-   "acceptance": "Property tests over garbage and truncated saves; settle is idempotent across a reload at every step; a second tab never loses the other tab’s writes silently (it warns or merges); quota errors are reported, not swallowed."
+   "acceptance": "Property tests over garbage and truncated saves; settle is idempotent across a reload at every step; a second tab never loses the other tab\u2019s writes silently (it warns or merges); quota errors are reported, not swallowed."
   },
   {
    "id": "WP-QA5",
@@ -3980,6 +3980,55 @@
     "convoy/sprite-game.js"
    ],
    "acceptance": "First a browser check that every sound category plays (shot, impact, explosion, reload, death, radio, engine, fire, footsteps, ambience) and that the renderer draws each layer (ground, cover, units, effects, fog, HUD) on a fixed seed; then each module under 300 lines, its closure state shared through one explicit object; the checks and every browser suite unchanged."
+  },
+  {
+   "id": "WP-W27",
+   "title": "Priority: rebel follow spacing and cover use",
+   "track": "Campaign",
+   "milestone": "W",
+   "size": "M",
+   "bu": 20,
+   "status": "done",
+   "deps": [],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/campaign-roadmap.md"
+   ],
+   "acceptance": "Following rebels advance in spaced reachable positions, choose distinct nearby cover against visible threats, release cover as the leader advances, and preserve explicit hold/sector orders. Deterministic obstacle, spacing and combat tests plus browser regression pass.",
+   "progress_note": "2026-10-18: Staggered reserved follow slots, reachable obstacle fallback, protected cover against visible threats, short cover memory and leader-change reset. Explicit hold/sector orders preserved. Six deterministic regressions, tactical/replay suites, normal/reduced-motion Chromium squad controls and two-minute/eight-level/two-seed movement soak checked. See campaign roadmap for measured CPU costs; human tactical pacing remains open."
+  },
+  {
+   "id": "WP-W28",
+   "title": "Campaign event log: recovery, rumours and intercepted intelligence",
+   "track": "Campaign",
+   "milestone": "W",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/campaign-roadmap.md"
+   ],
+   "acceptance": "Bounded saved event log on the campaign screen shows timestamped fighter recoveries with a quiet SFX respecting mute, enemy movement rumours and intercepted information with source and uncertainty. Reload does not repeat notifications; keyboard and mobile access supported."
+  },
+  {
+   "id": "WP-W29",
+   "title": "Fullscreen character dialogue and persuasion rolls",
+   "track": "Campaign",
+   "milestone": "W",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/campaign-roadmap.md"
+   ],
+   "acceptance": "Fullscreen character presentation offers keyboard/click A/B/C/D dialogue choices for town barter and recruitment. Show dice result, modifiers and outcome; persist resolved choices to prevent reload rerolls; validate inventory, volunteer availability and save rollback. Provide accessible focus, exit and reduced-motion behavior."
   }
  ]
 }
