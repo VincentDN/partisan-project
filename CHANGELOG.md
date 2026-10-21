@@ -1,5 +1,7 @@
 # Changelog
 
+- WP-W35/W36: Full-screen combat controls with visible inventory and weapon slots; fixed looted weapon ammunition/switching; added post-victory body recovery before departure. Loot rewards now use recorded handling Foley. Campaign map adds quiet countryside, travelling footsteps, radio and walla with persistent SFX controls.
+
 - WP-W33: Added Yantis culture/music direction, campfire and occupier scene briefs and three YouTube references to the design document. New campaigns fade into an island approach with the Resistance call to arms, dramatic pause, skip/pause and reduced-motion support; existing saves resume normally.
 
 - WP-W29: Fullscreen village dialogue with A/B/C/D choices, saved weekly persuasion rolls, better barter prices and extra healthy volunteers.

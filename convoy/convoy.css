@@ -108,3 +108,12 @@ button.primary{background:var(--accent);color:#14100a;border-color:var(--accent)
 #raid-complete[hidden] { display: none; }
 #raid-complete p { margin: 0 0 8px; }
 #raid-complete button { padding: 10px 16px; font: inherit; cursor: pointer; }
+/* Combat owns the screen; briefing settings remain available before deployment. */
+body.combat-active main{display:block;height:calc(100dvh - var(--topbar,40px));min-height:0}
+body.combat-active main>aside{display:none}
+body.combat-active #stage{position:relative;height:100%;min-height:0;top:auto}
+.combat-controls{display:none;position:absolute;top:10px;left:10px;right:10px;z-index:7;gap:8px;align-items:center;flex-wrap:wrap;padding:8px;background:#11190fe8;border:1px solid #70805a;border-radius:6px}
+.combat-active .combat-controls{display:flex}
+.combat-controls button{min-height:44px}
+#combat-objective{flex:1;min-width:160px;font-size:13px;color:#eef0db}
+#finish-mission{border-color:#edb55b;color:#ffe2ad}

@@ -32,6 +32,7 @@ export async function checkRoundTrip(browser, url) {
     const encounter = await page.evaluate(() => window.PARP_SPRITES.campaign.encounter);
     await page.locator('#start').click();
     await page.evaluate(() => (window.PARP_SPRITES.sim.outcome = 'won'));
+    await page.locator('#finish-mission').click();
     await page.locator('.spoils-foot:not([hidden])').waitFor({timeout: 30000});
     await notStale('mission');
     const fought = await saved();

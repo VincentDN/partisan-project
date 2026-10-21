@@ -29,6 +29,7 @@ try {
       kit.secondary = {...structuredClone(kit.primary), uid: 'looted-extra-rifle', mag: null, chamber: null};
       sim.outcome = 'won';
     });
+    await page.locator('#finish-mission').click();
     await page.locator('#combat-loot').waitFor();
     const text = await page.locator('#combat-loot').innerText();
     for (const heading of ['Mission loot → stash', 'Convoy cargo → stash', 'Valuables → trade goods', 'Net new equipment'])

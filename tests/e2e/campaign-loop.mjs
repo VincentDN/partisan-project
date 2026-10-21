@@ -89,6 +89,7 @@ try {
   await page.evaluate(() => {
     window.PARP_SPRITES.sim.outcome = 'won';
   });
+  await page.locator('#finish-mission').click();
   await page.waitForFunction(() => !document.querySelector('#card').hidden, null, {timeout: 10000});
   const result = (await saved(page)).deployment.result;
   assert.equal(result.outcome, 'won');

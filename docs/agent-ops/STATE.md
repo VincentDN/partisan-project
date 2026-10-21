@@ -5,14 +5,15 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json).
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-21 · codex · W33 Yantis music and island prologue**
+**2026-10-21 · codex · W35 combat recovery / W36 recorded audio**
 
-- Design document #culture records the owner's faction/music direction, both planned scene briefs and three embedded YouTube references.
-- New-campaign map opening: 22-second fade/approach, exact owner copy, two-second dramatic pause, paused world, skip/pause and static reduced-motion mode. `world.openingSeen` survives reload; missing legacy flag means already seen. Campaign dates now begin in occupation year six.
-- Validation: 563 tests; prologue browser (camera, story beats, pause/skip, saved completion, keyboard, mobile, reduced motion and axe), full campaign loop, built design-section layout/accessibility, lint/typecheck/format and build/link checks pass. External YouTube playback was not exercised; document checks used stubbed players.
-- Preview: `outbound/wip-images/2026-10-21_081357.png`.
-- W34 tracks acoustic replacement for the synthesized placeholder and production of both music scenes; they remain planned. W21/W22/W23/W24/W25 acceptance remains open, W23 Codex-owned.
-- Owner authorizes main commits/pushes. Original intro/ demo unchanged; gameplay remains separate from demo modules.
+- Combat sidebar is hidden after Start. Compact controls include inventory, both owned weapon slots, health/ammo/objective, pause, rebel switch and sound.
+- `kit-weapons.js` synchronizes physical primary/secondary weapons and cancels stale reloads; no old build/cosmetic survives a primary replacement. `recovery.js` allows survivor movement/search after victory without stepping combat. Finish mission commits recovered kits once; Roadblock's explicit Finish raid still departs.
+- Empty ground piles no longer mask nearby bodies. Spoils use recorded inventory Foley, no synthesized reward tones.
+- Map ambience uses existing recorded countryside, moving-only footsteps, quiet radio and command walla, with persisted SFX mute and bounded/cleaned-up voices. W34 acoustic score and authored music scenes remain planned.
+- Validation: 566 tests; browser combat inventory/slot switching/post-victory body loot/saved result, mobile width and scoped axe; all seven mission loot reports and reloads; recorded spoils/body Foley and map ambience/movement/mute/zero-volume checks; lint/typecheck/format, packet consistency and build/link checks pass.
+- Preview: `outbound/wip-images/2026-10-21_130759.png`.
+- Owner authorizes main commits/pushes. Original intro/ unchanged; keep gameplay separate from demos.
 <!-- handoff:end -->
 
 ## Gameplay/demo module boundary — 13 October 2026

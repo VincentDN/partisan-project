@@ -67,11 +67,12 @@ export function warmInventoryFoley() {
         bank = Object.fromEntries(entries);
       })
       .catch(() => {});
+    return loading;
   } catch {
     /* Audio support must never block inventory use. */
   }
 }
-export function inventoryFoley(action, kind = '') {
+export function inventoryFoley(action, kind = '', {recordedOnly = false} = {}) {
   const p = preferences();
   if (!p.on || p.volume <= 0) return;
   try {
@@ -86,6 +87,7 @@ export function inventoryFoley(action, kind = '') {
     const source = ctx.createBufferSource(),
       gain = ctx.createGain();
     const sample = takes?.length ? takes[Math.floor(Math.random() * takes.length)] : null;
+    if (!sample && recordedOnly) return;
     source.buffer = sample || noise;
     source.playbackRate.value = kind === 'weapon' ? 0.88 : 1;
     const t = ctx.currentTime;

@@ -7,7 +7,7 @@ import {createKit, everything} from '../shared/inventory/kit.js';
 import {roundsIn, fire, reload, loadedRounds, roundsCarried, reachable, loadMag, chamber} from '../shared/inventory/ammo.js';
 import {contents, add, remove} from '../shared/inventory/grid.js';
 import {starterKit} from '../shared/campaign/starter-kit.js';
-import {WEAPONS} from './weapons.js';
+import {syncWeapons, weaponItem, weaponId} from './kit-weapons.js';
 import {ARMS} from '../shared/inventory/arms.js';
 
 export const SEARCH_RANGE = 2.2; // metres from a body or a wreck
@@ -39,45 +39,19 @@ export function attachAmmo(sim, cat, {kits = {}, seed = 1, army = false, campaig
     }
   }
   const kitOf = u => kits[u.id];
-  const owns = (u, wid) => !!kitOf(u) && kitOf(u).armsId === wid && kitOf(u).primary?.slug === ARMS[wid]?.weapon;
+  const owns = (u, wid) => !!weaponItem(kitOf(u), u, wid);
   const calibreOf = k => cat.def(k.primary.slug).calibre;
-  /** The unit's counters from its kit: rounds ready, and rounds carried besides. */
   function sync(u) {
-    const k = kitOf(u),
-      owned = campaign && u.side === 'partisan';
-    if (owned) {
-      const wid = Object.keys(ARMS).find(id => WEAPONS[id] && ARMS[id].weapon === k.primary?.slug);
-      const previous = u.weapon;
-      k.armsId = wid || 'hunting';
-      if (previous !== k.armsId) {
-        u.reload = 0;
-        u.reloading = null;
-      }
-      u.mags = {[k.armsId]: 0};
-      u.reserve = {[k.armsId]: 0};
-      u.weapons = [k.armsId];
-      u.weapon = k.armsId;
-      if (!u.build) u.gun = k.armsId === 'hunting' ? 'set-bolt' : undefined;
-      u.grenades = reachable(k)
-        .flatMap(contents)
-        .filter(it => cat.def(it.slug).kind === 'grenade')
-        .reduce((n, it) => n + (it.count || 1), 0);
-    }
+    const k = kitOf(u);
+    if (u.side === 'partisan') return syncWeapons(cat, k, u, campaign);
     const wid = k.armsId;
-    if (!k.primary || (owned && !Object.values(ARMS).some(a => a.weapon === k.primary.slug))) {
-      u.mags[wid] = u.reserve[wid] = 0;
-      u.reload = 0;
-      u.reloading = null;
-      return 0;
-    }
     u.mags[wid] = loadedRounds(k.primary);
     u.reserve[wid] = roundsCarried(cat, k, calibreOf(k)) - u.mags[wid];
     return u.mags[wid];
   }
   /** The best thing to reload with: the fullest magazine of the calibre, or a loose round for a launcher. */
-  function best(k) {
-    const w = k.primary,
-      cal = calibreOf(k);
+  function best(k, w = k.primary) {
+    const cal = cat.def(w.slug).calibre;
     let n = 0;
     for (const c of reachable(k))
       for (const it of contents(c)) {
@@ -104,19 +78,20 @@ export function attachAmmo(sim, cat, {kits = {}, seed = 1, army = false, campaig
     },
     canReload(u, wid) {
       const k = kitOf(u),
-        w = k?.primary;
+        w = weaponItem(k, u, wid);
       if (!w) return false;
-      if (!w.usesMag) return !w.chamber && best(k) > 0;
-      return best(k) > roundsIn(w.mag);
+      if (!w.usesMag) return !w.chamber && best(k, w) > 0;
+      return best(k, w) > roundsIn(w.mag);
     },
-    reloaded(u) {
+    reloaded(u, wid = u.weapon) {
       const k = kitOf(u),
-        r = reload(cat, k, k.primary);
+        r = reload(cat, k, weaponItem(k, u, wid));
       if (r.dropped) drops.push({x: u.x, z: u.z, label: 'a dropped magazine', container: pile(r.dropped)});
-      return sync(u);
+      sync(u);
+      return u.mags[wid] || 0;
     },
     fired(u, wid) {
-      const d = fire(cat, kitOf(u).primary);
+      const d = fire(cat, weaponItem(kitOf(u), u, wid));
       sync(u);
       const base = cat.def(ARMS[wid].round).damage;
       return d && base ? d.damage / base : 1;
@@ -187,7 +162,7 @@ export function attachAmmo(sim, cat, {kits = {}, seed = 1, army = false, campaig
     scan();
     let out = null,
       bestD = Infinity;
-    for (const s of [...searched.values(), ...drops]) {
+    for (const s of [...searched.values(), ...drops.filter(d => contents(d.container).length)]) {
       const d = Math.hypot(s.x - x, s.z - z) - (s.r || 0);
       if (d <= r && d < bestD) [out, bestD] = [s, d];
     }
@@ -295,5 +270,15 @@ export function attachAmmo(sim, cat, {kits = {}, seed = 1, army = false, campaig
     if (remove(container, it.uid)) return;
     for (const w of everything(container)) if (w.mag === it) w.mag = null;
   }
-  return {kits, kitOf, sync, scan, near, searched, drops, factory, scavenge, orderLoot, looting};
+  function selectSlot(u, index) {
+    const slot = ['primary', 'secondary'][index],
+      item = kitOf(u)?.[slot],
+      wid = weaponId(item);
+    if (!wid) return false;
+    u.weaponSlot = slot;
+    u.weapon = wid;
+    sync(u);
+    return true;
+  }
+  return {selectSlot, kits, kitOf, sync, scan, near, searched, drops, factory, scavenge, orderLoot, looting};
 }

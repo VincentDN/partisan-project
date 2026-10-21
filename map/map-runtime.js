@@ -9,6 +9,7 @@ import {buildWater} from './water.js';
 import {buildProps} from './props.js';
 import {buildParties} from './parties.js';
 import {mountTravel} from './travel.js';
+import {campaignAmbience} from './campaign-ambience.js';
 import {mountOpening} from './campaign-opening.js';
 import {mountCampaign} from './campaign-ui.js';
 import {createAftermath} from './aftermath.js';
@@ -197,7 +198,8 @@ export async function mountMap({HD2D, createSpriteLayer, createHD2D, figure}) {
   // ---------- time ----------
   let speed = 1,
     campaignUi = null,
-    opening = null;
+    opening = null,
+    ambience = null;
   const day = {n: 14, season: 'Spring', year: 3, hours: 9};
   function setSpeed(s) {
     speed = (campaignUi?.blocked || opening?.active) && s ? 0 : s;
@@ -248,8 +250,12 @@ export async function mountMap({HD2D, createSpriteLayer, createHD2D, figure}) {
     toast,
     reduceMotion,
     params: new URLSearchParams(location.search),
-    onOrder: () => !speed && setSpeed(1), // an order to march starts the clock
+    onOrder: () => {
+      ambience?.acknowledge();
+      if (!speed) setSpeed(1);
+    }, // an order to march starts the clock
   });
+  if (travel.campaign) ambience = campaignAmbience();
   const rings = travel.campaign ? createSightRings({scene, field}) : null; // sight on the map (WP-W7)
   campaignUi = mountCampaign({
     travel,
@@ -303,7 +309,10 @@ export async function mountMap({HD2D, createSpriteLayer, createHD2D, figure}) {
   const v = new T.Vector3();
   renderer.setAnimationLoop(() => {
     const elapsed = clock.getDelta();
-    if (document.hidden) return;
+    if (document.hidden) {
+      ambience?.update(0, {active: false});
+      return;
+    }
     const frameStart = performance.now();
     const real = Math.min(elapsed, 0.1);
     const dt = real * (campaignUi?.blocked || opening?.active ? 0 : speed); // the world runs at the chosen speed; the camera never pauses
@@ -312,6 +321,7 @@ export async function mountMap({HD2D, createSpriteLayer, createHD2D, figure}) {
     if (!opening?.active) campaignUi?.update(dt); // the world moves first (WP-W5), then the map draws the band and follows it
     if (opening?.active) opening.update(Math.min(elapsed, 1));
     else travel.update(dt);
+    ambience?.update(real, {moving: dt > 0 && !!travel.party.route, active: !opening?.active});
     if (aftermath) syncAftermath();
     const hour = travel.campaign ? travel.campaign.world.clock.hour : day.hours,
       sight = sightRange(hour);
@@ -394,6 +404,7 @@ export async function mountMap({HD2D, createSpriteLayer, createHD2D, figure}) {
     hd2d,
     performance: performanceStats,
     opening,
+    ambience,
     ready: !opening?.active,
   };
 

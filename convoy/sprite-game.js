@@ -3,6 +3,7 @@
 // set each rebel's weapons, passives and abilities (Z X V), and the rebels level up between missions
 // (convoy/progression.js). Switching rebel (Q) slows time and dithers the world; difficulty is a select in the panel.
 import {campaignApproach} from './levels/approach.js';
+import {recoveryStep, recoverySwitch} from './recovery.js';
 import {raidCompletion} from './raid-completion.js';
 import {beginScope, canScope, validScope, moveScope, SCOPE_ZOOM} from './sniper-scope.js';
 import {lootReport} from '../shared/campaign/loot-report.js';
@@ -80,8 +81,14 @@ let sim,
   banter,
   started = false,
   paused = false,
-  selected = [];
+  selected = [],
+  departure = false,
+  victorySound = false;
+const recovering = () => started && sim.outcome === 'won' && !departure;
 function newGame() {
+  departure = false;
+  victorySound = false;
+  document.body.classList.remove('combat-active');
   delete $('#card').dataset.outcome;
   const awareness = Number($('#aware').value) / 100;
   const seed = cm?.action === 'play' ? cm.deployment.seed : Number(params.get('seed')) || Math.floor(Math.random() * 1e6);
@@ -215,6 +222,7 @@ $('#sound')?.addEventListener('click', () => {
 soundButton();
 
 function start() {
+  document.body.classList.add('combat-active');
   started = true;
   $('#card').hidden = true;
   stageEl.focus();
@@ -233,6 +241,19 @@ addEventListener('keydown', e => {
   if (document.querySelector('.spoils')) return; // the spoils screen has the keyboard (its buttons, Enter to hurry)
   if (search?.key(e)) return;
   if (picker.key(e)) return;
+  if (e.key.toLowerCase() === 'i' && started && (!sim.outcome || recovering())) {
+    e.preventDefault();
+    search?.inventory();
+    return;
+  }
+  if (e.key.toLowerCase() === 'q' && recovering()) {
+    e.preventDefault();
+    if (!e.repeat) {
+      recoverySwitch(sim);
+      clearInput();
+    }
+    return;
+  }
   if (e.key.toLowerCase() === 'q' && started && !sim.outcome) {
     e.preventDefault();
     if (!e.repeat) picker.open();
@@ -247,9 +268,13 @@ addEventListener('keydown', e => {
   if (k === 'r') reload = true;
   const slot = ABILITY_KEYS.indexOf(k);
   if (slot >= 0 && started && !sim.outcome && !paused && !sim.control.pending && !e.repeat) ability(slot);
-  if (['1', '2', '3'].includes(k)) wantWeapon = sim.player.weapons[Number(k) - 1];
+  if (['1', '2', '3'].includes(k) && !search?.ammo?.selectSlot(sim.player, Number(k) - 1)) wantWeapon = sim.player.weapons[Number(k) - 1];
   if (k === '+' || k === '=') zoom(1.15);
   if (k === '-') zoom(1 / 1.15);
+  if (recovering()) {
+    if (k === ' ') setPaused(!paused);
+    return;
+  }
   if (k === 'enter') started && !sim.outcome ? null : sim.outcome ? newGame() : start();
   if (!started || sim.outcome) return;
   if (k === ' ') setPaused(!paused);
@@ -397,9 +422,40 @@ function input() {
 // ---------- panel ----------
 $('#start').onclick = () => (cm && (cm.action !== 'play' || sim.outcome) ? cm.returnToMap() : sim.outcome ? newGame() : start());
 $('#restart').onclick = () => newGame();
-$('#switch-rebel').onclick = () => picker.open();
+$('#switch-rebel').onclick = () => {
+  if (recovering()) {
+    recoverySwitch(sim);
+    clearInput();
+    stageEl.focus();
+  } else picker.open();
+};
 $('#aware').oninput = e => ($('#aware-out').textContent = `${e.target.value}%`);
-const updateRaidCompletion = raidCompletion();
+const updateRaidCompletion = raidCompletion(() => {
+  departure = true;
+});
+const controls = document.createElement('nav');
+controls.className = 'combat-controls';
+controls.setAttribute('aria-label', 'Combat controls');
+controls.innerHTML =
+  '<button id="combat-inventory">Inventory (I)</button><button id="combat-pause">Pause / resume</button><button id="combat-primary">Primary (1)</button><button id="combat-secondary">Secondary (2)</button><span id="combat-kit"></span><span id="combat-objective" role="status"></span><button id="finish-mission" hidden>Finish mission · take loot</button>';
+stageEl.append(controls);
+controls.append($('#switch-rebel'), $('#sound'));
+for (const [i, id] of ['combat-primary', 'combat-secondary'].entries())
+  $('#' + id).onclick = () => {
+    search?.ammo?.selectSlot(sim.player, i);
+    clearInput();
+    stageEl.focus();
+  };
+$('#combat-inventory').onclick = () => search?.inventory();
+$('#combat-pause').onclick = () => {
+  setPaused(!paused);
+  stageEl.focus();
+};
+$('#finish-mission').onclick = () => {
+  search?.close();
+  departure = true;
+};
+
 let commsSeen = -1;
 function updatePanel() {
   updateRaidCompletion(sim);
@@ -414,7 +470,15 @@ function updatePanel() {
   }
   commsSeen = sim.callouts.at(-1)?.t ?? commsSeen;
   const p = sim.player;
-  $('#switch-rebel').disabled = !started || !!sim.outcome || !!sim.control.pending || sim.time < sim.control.readyAt || !teammates().length;
+  $('#combat-kit').textContent =
+    `${p.name} · HP ${Math.ceil(p.hp)} · ${WEAPONS[p.weapon]?.label || p.weapon} ${p.mags[p.weapon] || 0} + ${p.reserve[p.weapon] || 0}`;
+  for (const slot of ['primary', 'secondary']) {
+    const b = $('#combat-' + slot);
+    b.disabled = !started || !search?.ammo?.kitOf(p)?.[slot] || (!!sim.outcome && !recovering());
+    b.setAttribute('aria-pressed', String((p.weaponSlot || 'primary') === slot));
+  }
+  $('#switch-rebel').disabled =
+    !started || (!recovering() && (!!sim.outcome || !!sim.control.pending || sim.time < sim.control.readyAt)) || !teammates().length;
   const status = sim.outcome ? (sim.outcome === 'won' ? 'Mission accomplished' : 'Mission failed') : !sim.alarm ? 'Quiet' : 'Contact';
   const mark = {active: '○', locked: '·', done: '✓', failed: '✗'};
   const objectives = sim.objectives
@@ -489,7 +553,7 @@ function spoilsScreen() {
 function showDebrief(d) {
   $('#card-title').textContent = `${d.outcome === 'won' ? 'VICTORY' : 'DEFEAT'} — ${sim.level.title}`;
   $('#card').dataset.outcome = d.outcome;
-  sound.outcome(d.outcome === 'won');
+  if (d.outcome !== 'won' || !victorySound) sound.outcome(d.outcome === 'won');
   const text = $('#card-text');
   text.textContent = `${Math.floor(d.time / 60)}:${String(Math.floor(d.time % 60)).padStart(2, '0')} · ${d.armyDown} soldiers down, ${d.escaped} fled, ${d.vehiclesDestroyed} vehicles destroyed. ${d.byPartisan.map(u => `${u.name}: ${u.state}, ${u.kills} down`).join(' · ')}`;
   // experience and loot: paid once per mission, scaled by difficulty; promotions and the trader are right below
@@ -795,7 +859,19 @@ function frame() {
   last = now;
   if (started && !document.hidden) picker.update(elapsed);
   acc = Math.min(acc + elapsed * picker.scale, 0.25);
-  const live = started && !paused && !sim.outcome && !search?.open;
+  const recovery = recovering();
+  if (recovery && !victorySound) {
+    sound.outcome(true);
+    victorySound = true;
+  }
+  $('#combat-pause').disabled = !started || (!!sim.outcome && !recovery);
+  const live = started && !paused && (!sim.outcome || recovery) && !search?.open;
+  $('#finish-mission').hidden = !recovery;
+  $('#combat-inventory').disabled = !started || (!!sim.outcome && !recovery) || !sim.player?.alive;
+  const objectiveText = recovery
+    ? 'VICTORY — search bodies, then finish the mission.'
+    : sim.objectives.find(o => o.state !== 'done')?.label || 'Objectives complete';
+  if ($('#combat-objective').textContent !== objectiveText) $('#combat-objective').textContent = objectiveText;
   if (!live || sim.control.pending || !validScope(scope, sim.player) || (wantWeapon && wantWeapon !== sim.player.weapon)) scope = null;
   if (scope && pointer) {
     const edge = (p, size) => (p < size * 0.1 ? -1 : p > size * 0.9 ? 1 : 0);
@@ -805,13 +881,14 @@ function frame() {
   view.style.cursor = scope ? 'none' : '';
   if (started && !paused && !search?.open && !document.hidden)
     while (acc >= STEP) {
-      sim.step(STEP, input());
+      if (recovery) recoveryStep(sim, STEP, input());
+      else sim.step(STEP, input());
       acc -= STEP;
     }
   else acc = 0;
   search?.update(live ? elapsed : 0, live && keys.has('e'));
   if (live) banter.update();
-  if (sim.outcome && $('#card').hidden) {
+  if (sim.outcome && !recovering() && $('#card').hidden) {
     showDebrief(sim.debrief());
     $('#card').hidden = false;
   }

@@ -336,7 +336,10 @@ export async function createSpriteRenderer(view) {
    * otherwise the side's default.
    */
   function gunFor(u) {
-    const chosen = u.side === 'partisan' && u.weapon === u.weapons[0] ? u.gun || savedLook(u.id).gun : null;
+    const chosen =
+      u.side === 'partisan' && u.weaponSlot !== 'secondary' && u.weapon === u.weapons[0]
+        ? u.gun || (u.primaryUid === undefined ? savedLook(u.id).gun : null)
+        : null;
     return guns[chosen] || guns[DEFAULT_GUN[u.side]?.[u.weapon]] || Object.values(guns)[0];
   }
   function drawPawn(u, sim, opts) {

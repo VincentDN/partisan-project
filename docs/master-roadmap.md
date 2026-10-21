@@ -196,7 +196,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | **H27** 2027 horizon | — | 0/3 | 48 BU | 0% |
 | **S** Partisan Tactical: extraction PvE, campaign and gated online research | v0.8.0 | 15/44 | 673 BU | 34% |
 | **V** Graphics: 2.5D top-down sprites for the shooter (the overworld moved to W) | v0.9.0 | 2/20 | 251 BU | 11% |
-| **W** World campaign: the Bannerlord loop (map, missions, loot, upgrades) | v0.10.0 | 30/34 | 519 BU | 89% |
+| **W** World campaign: the Bannerlord loop (map, missions, loot, upgrades) | v0.10.0 | 32/36 | 547 BU | 90% |
 | **QA** Bug hunt and optimisation (docs/quality-roadmap.md) | — | 18/23 | 294 BU | 74% |
 
 ### M0 · Foundation
@@ -415,6 +415,8 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-W32` | Dedicated campaign ambient music and workbench handoff | M (20) | done | — | — |
 | `WP-W33` | Yantis music direction and campaign island prologue | M (20) | done | — | — |
 | `WP-W34` | Acoustic rebel soundtrack and faction music vignettes | M (20) | planned | — | `WP-W33` |
+| `WP-W35` | Combat controls, equipped weapon switching and post-victory recovery | M (20) | done | — | — |
+| `WP-W36` | Recorded loot Foley and campaign map ambience | S (8) | done | — | — |
 
 ### QA · Bug hunt and optimisation (docs/quality-roadmap.md)
 

@@ -80,6 +80,7 @@ try {
   for (const id of picked) assert.equal(m.classes[id], band[id].class, `${id} keeps the class`);
   await page.locator('#start').click();
   await page.evaluate(() => (window.PARP_SPRITES.sim.outcome = 'won'));
+  await page.locator('#finish-mission').click();
   await page.waitForFunction(() => !document.querySelector('#card').hidden, null, {timeout: 10000});
   await page.locator('.spoils-foot:not([hidden])').waitFor({timeout: 30000}); // a win: the spoils, then the map
   await Promise.all([
@@ -116,6 +117,7 @@ try {
     }
     await page.locator('#start').click();
     await page.evaluate(() => (window.PARP_SPRITES.sim.outcome = 'won'));
+    await page.locator('#finish-mission').click();
     await page.waitForFunction(() => !document.querySelector('#card').hidden, null, {timeout: 10000});
     await page.locator('.spoils-foot:not([hidden])').waitFor({timeout: 30000}); // a win: the spoils, then the map
     await Promise.all([

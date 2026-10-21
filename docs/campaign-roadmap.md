@@ -517,3 +517,17 @@ The [game design document](game-design-master-doc.html#culture) establishes Yant
 Fresh campaigns fade in over the real island and slowly approach the band for 22 seconds. The exact text appears in sequence: “YOU ARE THE RESISTANCE.”, “FIVE YEARS AGO, THE INVADERS TOOK YOUR LAND”, “YOU HAVE ONLY ONE OBJECTIVE”, a two-second dramatic pause, then “DRIVE OUT THE INVADER / AND FREE YANTIS!”. Campaign dates begin in occupation year six to match five elapsed years. World simulation stays paused; pause and skip are available. Reduced motion shows the complete text on a stationary map. Completing or skipping is saved, interrupted new openings can resume, and legacy campaigns do not replay the prologue.
 
 **WP-W34 — planned production work:** Replace the current synthesized campaign ambience with acoustic folk performances. Scene A is a rebel band playing folk guitar and strings around a campfire; Scene B is heavily equipped occupiers around an NPC listening to heavy synth dubstep. The document contains the staging, visual and emotional direction; these scenes and the acoustic soundtrack are not implemented by W33. Deliver soundtrack and scene staging as separate reviewable milestones. W21/W22/W23/W24/W25 remain open.
+
+### W35 — combat usability and victory recovery (21 October 2026)
+
+During combat the battlefield fills the available viewport; the explanatory sidebar is hidden. A compact control bar exposes Inventory (I), primary/secondary weapon selection (1/2), rebel switching, pause, SFX, current health/ammunition and the active objective. Briefing settings remain available before the mission begins. The inventory can open anywhere with a ground panel for dropped equipment.
+
+Equipped slots now feed the actual selected weapon's ammunition, including two rifles of the same type. Switching or replacing a physical weapon cancels its stale reload; replacing a modified primary removes its old build modifiers and visual override. Empty ground piles no longer take precedence over nearby bodies.
+
+Victory enters a recovery phase: battle time, enemies, projectiles and hazards freeze, while surviving rebels can move, switch control and search bodies. “Finish mission · take loot” closes recovery and commits the final carried kits and mission rewards once. Explicit Roadblock departure remains a departure; ordinary objective completion leaves the recovery window. Defeat still opens the debrief immediately. Leaving/reloading before explicit departure remains an unfinished deployment under the existing abandonment rules.
+
+### W36 — recorded loot and map audio (21 October 2026)
+
+The spoils screen now uses the same recorded gun-handling Foley as inventory, replacing synthesized reward blips/chords. Missing samples are silent on this screen; reveal timing, hurry controls and transfers do not depend on audio availability.
+
+The campaign map has quiet recorded countryside ambience, gravel footsteps only while the band travels, occasional distant radio chatter and brief walla acknowledgements for march orders and button actions. It reuses local recordings, starts after a user gesture, limits simultaneous voices, stops on hidden/unloaded pages and respects SFX volume/mute. The map's Ambience button persists the shared SFX preference. Music remains separately controlled. W34's acoustic score replacement and authored campfire/occupier music scenes remain planned.

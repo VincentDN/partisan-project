@@ -17,7 +17,7 @@ export function finishRoadblock(sim) {
   sim.checkOutcome();
   return sim.outcome === 'won';
 }
-export function raidCompletion() {
+export function raidCompletion(onDepart = () => {}) {
   const panel = document.createElement('section');
   panel.id = 'raid-complete';
   panel.hidden = true;
@@ -30,7 +30,9 @@ export function raidCompletion() {
   panel.append(text, button);
   document.body.append(panel);
   let current;
-  button.onclick = () => finishRoadblock(current);
+  button.onclick = () => {
+    if (finishRoadblock(current)) onDepart();
+  };
   return sim => {
     current = sim;
     panel.hidden = !securedRoadblock(sim);

@@ -56,7 +56,7 @@ export function createFieldSearch(cat, {onOpen = () => {}, onClose = () => {}} =
   }
   /** Each frame: the hint by a body or a wreck, and the search when E has been held long enough. */
   function update(dt, holding) {
-    if (A && dt > 0) A.scavenge(dt); // fighters out of rounds take magazines off the dead
+    if (A && dt > 0 && !sim.outcome) A.scavenge(dt); // fighters out of rounds take magazines off the dead
     const p = sim?.player;
     if (!A || isOpen || !p?.alive || p.searching || !A.kitOf(p)) {
       progress = 0;
@@ -135,6 +135,11 @@ export function createFieldSearch(cat, {onOpen = () => {}, onClose = () => {}} =
     update,
     key,
     show,
+    inventory() {
+      if (!sim?.player?.alive || !A?.kitOf(sim.player) || isOpen) return;
+      show({label: 'Dropped equipment', container: groundAt(sim.player)});
+      title.textContent = 'Your inventory';
+    },
     close: shut,
     get open() {
       return isOpen;

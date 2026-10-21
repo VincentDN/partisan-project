@@ -48,8 +48,10 @@ try {
   await page.evaluate(() => {
     window.PARP_SPRITES.sim.outcome = 'won';
   });
+  await page.locator('#finish-mission').click();
   await page.waitForFunction(() => !document.querySelector('#card').hidden, null, {timeout: 10000});
   assert.equal(await page.locator('#start').innerText(), 'Return to the map');
+  await page.locator('#combat-loot').waitFor();
   const written = (await save(page)).deployment.result;
   assert.equal(written.outcome, 'won');
   assert.deepEqual(Object.keys(written.fighters).sort(), ['mila', 'player'], 'only the deployed fighters');

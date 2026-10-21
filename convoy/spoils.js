@@ -1,8 +1,9 @@
 // The spoils of a won mission: a screen that deals the rewards out one by one, each with its picture (the rifle's own
-// sprite, the item's icon) and a bright "blip", then offers the way on: back to the world map, or to the Rebel Band to
+// sprite, the item's icon) and recorded handling Foley, then offers the way on: back to the world map, or to the Rebel Band to
 // spend it on the troops. It shows what the result already holds (shared/campaign/loot-report.js counts it); nothing
 // is awarded here. Reduced motion: no fly-in, the cards simply appear. Keyboard: Enter or Space deals the rest at once;
 // the buttons take focus at the end.
+import {inventoryFoley, warmInventoryFoley} from '../shared/inventory/foley.js';
 import {GEAR} from '../band/troops.js';
 import {ARMS} from '../shared/inventory/arms.js';
 
@@ -59,24 +60,6 @@ export function spoilsOf(result, {catalogue = null} = {}) {
   return {cards: merged, rest, goods};
 }
 
-/** A short rising "blip" (higher for each card dealt; a chord for a weapon). */
-function blip(ctx, i, weapon, volume) {
-  const t = ctx.currentTime,
-    base = 660 * Math.pow(2, Math.min(i, 12) / 12);
-  for (const [k, f] of (weapon ? [0, 4, 7] : [0, 7]).entries()) {
-    const o = ctx.createOscillator(),
-      g = ctx.createGain();
-    o.type = k ? 'triangle' : 'square';
-    o.frequency.setValueAtTime(base * Math.pow(2, f / 12), t + k * 0.04);
-    g.gain.setValueAtTime(0, t + k * 0.04);
-    g.gain.linearRampToValueAtTime(0.12 * volume, t + k * 0.04 + 0.01);
-    g.gain.exponentialRampToValueAtTime(0.0001, t + k * 0.04 + 0.22);
-    o.connect(g).connect(ctx.destination);
-    o.start(t + k * 0.04);
-    o.stop(t + k * 0.04 + 0.25);
-  }
-}
-
 /**
  * Show the spoils over the page. opts: {result, catalogue, guns: {id: {img}}, icons: (path) => Promise<img>, sound:
  * {on, volume}, reduceMotion, onMap, onBand}. Returns the overlay element.
@@ -119,10 +102,7 @@ export function showSpoils({
   box.append(title, cards.length ? grid : el('p', 'spoils-none', 'Nothing new to show this time.'), footer);
   document.body.append(box);
 
-  let ctx = null;
-  try {
-    if (sound.on) ctx = new AudioContext();
-  } catch {}
+  const warm = sound.on ? warmInventoryFoley() : null;
   /** The card for one reward: its picture drawn into a canvas, the name and count under it. */
   async function card(c) {
     const li = el('li', `spoils-card spoils-${c.kind || 'item'}`);
@@ -161,11 +141,13 @@ export function showSpoils({
   box.addEventListener('pointerdown', hurry);
   addEventListener('keydown', hurry, true);
   const done = (async () => {
-    for (const [i, c] of cards.entries()) {
+    await Promise.race([warm, new Promise(r => setTimeout(r, 600))]);
+    for (const c of cards) {
+      if (!box.isConnected) return;
       const li = await card(c);
       if (!reduceMotion) li.classList.add('dealt'); // reduced motion: each card simply appears, still one by one
       grid.append(li);
-      if (ctx) blip(ctx, i, c.kind === 'weapon', sound.volume ?? 0.5);
+      if (sound.on && (sound.volume ?? 0.5) > 0) inventoryFoley('drop', c.kind, {recordedOnly: true});
       await new Promise(r => setTimeout(r, pace));
     }
     footer.hidden = false;
@@ -175,7 +157,7 @@ export function showSpoils({
   box.done = done;
   box.close = () => {
     box.remove();
-    ctx?.close?.();
+    removeEventListener('keydown', hurry, true);
   };
   return box;
 }

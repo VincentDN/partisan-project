@@ -1,5 +1,5 @@
 // The spoils of a won campaign mission in the browser: the screen deals the rewards out (each card with its picture
-// and a blip), then offers the world map or the Rebel Band; a lost mission has no spoils screen.
+// and recorded handling Foley), then offers the world map or the Rebel Band; a lost mission has no spoils screen.
 import assert from 'node:assert/strict';
 import {launch, open, startServer} from './browser.mjs';
 
@@ -34,16 +34,6 @@ async function mission(page, id) {
 try {
   const page = await open(browser, server.url + 'map/?campaign=c1');
   await page.evaluate(() => ['parp-campaign-v1', 'parp-squad-v1', 'parp-band-v2'].forEach(k => localStorage.removeItem(k)));
-  // count the blips: every oscillator started
-  await page.addInitScript(() => {
-    window.__blips = 0;
-    const start = OscillatorNode.prototype.start;
-    OscillatorNode.prototype.start = function (...a) {
-      window.__blips++;
-      return start.apply(this, a);
-    };
-  });
-
   // a win: an SVDS and a helmet came home in the kits, the convoy's cargo in the stash
   await mission(page, 'spoils-1');
   await page.evaluate(() => {
@@ -54,6 +44,7 @@ try {
     k.backpack = A.factory.make('scav-backpack');
     sim.outcome = 'won';
   });
+  await page.locator('#finish-mission').click();
   await page.locator('.spoils').waitFor({timeout: 20000});
   await page.locator('.spoils-foot:not([hidden])').waitFor({timeout: 30000});
   const cards = await page.locator('.spoils-card').evaluateAll(cs =>
@@ -80,7 +71,9 @@ try {
     'the cargo',
   );
   for (const c of cards) assert.ok(c.drawn, `${c.label}: its picture is drawn`);
-  assert.ok((await page.evaluate(() => window.__blips)) >= cards.length * 2, 'a blip for every card');
+  const foley = await page.evaluate(async () => (await import('/shared/inventory/foley.js')).inventoryFoleyStatus());
+  assert.ok(foley.recorded > 0, 'recorded weapon handling accompanies loot');
+  assert.equal(foley.fallback, 0, 'no synthesized loot sounds');
   assert.equal(await page.evaluate(() => document.activeElement.textContent), 'Back to the world map', 'the way on has the focus');
   await Promise.all([
     page.waitForURL(/band\/\?campaign=c1$/, {timeout: 20000, waitUntil: 'commit'}),
@@ -93,6 +86,7 @@ try {
   // the map button goes back to the map
   await mission(page, 'spoils-2');
   await page.evaluate(() => (window.PARP_SPRITES.sim.outcome = 'won'));
+  await page.locator('#finish-mission').click();
   await page.locator('.spoils').waitFor({timeout: 20000});
   await page.keyboard.press('Enter'); // hurries the deal
   await page.locator('.spoils-foot:not([hidden])').waitFor({timeout: 10000});

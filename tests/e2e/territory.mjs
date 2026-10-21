@@ -33,6 +33,7 @@ try {
   await page.evaluate(() => {
     window.PARP_SPRITES.sim.outcome = 'won';
   });
+  await page.locator('#finish-mission').click();
   await page.locator('#combat-loot').waitFor();
   await leaveSpoils(page); // a win: the spoils screen, then the map
   await ready();

@@ -4117,6 +4117,40 @@
     "docs/game-design-master-doc.html"
    ],
    "acceptance": "Replace synthesized campaign placeholder with acoustic folk guitar/strings/voices without synths. Stage Scene A rebel campfire musicians and Scene B heavily equipped occupiers around an NPC with aggressive synth/dubstep playback. Preserve mute/volume, local runtime assets and gameplay/demo isolation. Deliver as separately reviewable audio and vignette milestones."
+  },
+  {
+   "id": "WP-W35",
+   "title": "Combat controls, equipped weapon switching and post-victory recovery",
+   "track": "Campaign",
+   "milestone": "W",
+   "size": "M",
+   "bu": 20,
+   "status": "done",
+   "deps": [],
+   "agent": "codex",
+   "needs": [],
+   "inputs": [
+    "docs/campaign-roadmap.md"
+   ],
+   "acceptance": "Full-screen combat with inventory and weapon-slot buttons, concise objective/health/ammo display. Both owned weapon slots synchronize physical rounds and cancel stale reloads. Victory freezes combat while survivors move and search; explicit departure commits loot. Empty ground piles no longer mask bodies.",
+   "progress_note": "2026-10-21: Full-screen combat with inventory and weapon-slot buttons, concise objective/health/ammo display. Both owned weapon slots synchronize physical rounds and cancel stale reloads. Victory freezes combat while survivors move and search; explicit departure commits loot. Empty ground piles no longer mask bodies."
+  },
+  {
+   "id": "WP-W36",
+   "title": "Recorded loot Foley and campaign map ambience",
+   "track": "Campaign",
+   "milestone": "W",
+   "size": "S",
+   "bu": 8,
+   "status": "done",
+   "deps": [],
+   "agent": "codex",
+   "needs": [],
+   "inputs": [
+    "docs/campaign-roadmap.md"
+   ],
+   "acceptance": "Loot cards use recorded weapon handling without chiptune fallback. Campaign map reuses recorded countryside, footsteps during travel, distant radio chatter and short walla acknowledgements. Gesture-activated, bounded voices, hidden-page cleanup and persistent SFX mute/volume.",
+   "progress_note": "2026-10-21: Loot cards use recorded weapon handling without chiptune fallback. Campaign map reuses recorded countryside, footsteps during travel, distant radio chatter and short walla acknowledgements. Gesture-activated, bounded voices, hidden-page cleanup and persistent SFX mute/volume."
   }
  ]
 }
