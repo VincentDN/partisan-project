@@ -79,6 +79,7 @@ export function newCampaign({id = 'c1', seed = 1, now = 0} = {}) {
     saved: now,
     rev: 0,
     world: {
+      openingSeen: false, // new campaigns begin with the island prologue
       clock: {day: 1, hour: 8, speed: 0}, // speed 0 = paused (WP-W4)
       party: null, // the band's place on the map, set when the map first opens (WP-W3)
       parties: [], // Invader patrols, convoys, hunter columns (WP-W5 onward)
@@ -129,6 +130,7 @@ export function normalize(raw) {
   c.saved = num(o.saved, c.created);
   c.rev = num(o.rev, 0, 0); // the save's revision: a tab writes only over the revision it loaded (store.js)
   const w = isObj(o.world) ? o.world : {};
+  c.world.openingSeen = w.openingSeen !== false; // older campaigns resume directly
   if (isObj(w.clock)) c.world.clock = {day: num(w.clock.day, 1, 1), hour: num(w.clock.hour, 8, 0) % 24, speed: num(w.clock.speed, 0, 0)};
   if (isObj(w.party) && Number.isFinite(w.party.x) && Number.isFinite(w.party.z)) c.world.party = {...w.party};
   if (Array.isArray(w.parties)) c.world.parties = w.parties.filter(isObj);

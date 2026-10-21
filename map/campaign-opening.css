@@ -1,0 +1,17 @@
+/* Cinematic text over the real island; native modal keeps gameplay controls out of the opening. */
+.campaign-opening {position:fixed; inset:0; width:100%; height:100%; max-width:none; max-height:none; margin:0; padding:clamp(20px,5vw,72px); box-sizing:border-box; border:0; background:transparent; color:#fff4dc; overflow:auto;}
+.campaign-opening::backdrop {background:transparent;}
+.opening-shade {position:absolute; inset:0; pointer-events:none; background:linear-gradient(#050806b8,#05080655 45%,#050806cc); animation:island-fade 2.8s ease-out both;}
+.opening-copy {position:relative; display:flex; align-items:center; justify-content:center; min-height:75%; max-width:1100px; margin:auto; white-space:pre-line; text-align:center; text-wrap:balance; font:800 clamp(27px,5.3vw,76px)/1.18 Impact,'Arial Narrow',system-ui,sans-serif; letter-spacing:.045em; text-shadow:0 3px 18px #000,0 1px 4px #000;}
+.opening-copy.opening-static {font-size:clamp(20px,3vw,38px);}
+.opening-reveal {animation:opening-reveal .9s ease-out both;}
+.opening-controls {position:relative; display:flex; justify-content:center; gap:16px; flex-wrap:wrap; margin:20px auto;}
+.opening-controls button {font:600 14px system-ui; padding:12px 20px; min-height:44px; background:#121b16e8; color:#fff4dc; border:1px solid #d4c9ac; cursor:pointer;}
+.opening-controls button:focus-visible {outline:3px solid #ffd37a; outline-offset:4px;}
+.opening-active .hud,.opening-active #labels,.opening-active .campaign-objective,.opening-active .pbar {visibility:hidden;}
+.opening-paused * {animation-play-state:paused;}
+@keyframes island-fade {from {background-color:#000;} to {background-color:transparent;}}
+@keyframes opening-reveal {from {opacity:0;} to {opacity:1;}}
+@media(prefers-reduced-motion:reduce) {.campaign-opening * {animation:none!important;}}
+/* Pausing must leave the current caption readable, even during its fade-in. */
+.opening-paused .opening-copy {animation:none; opacity:1;}

@@ -37,7 +37,7 @@ try {
   });
   const before = await saved(page);
   assert.deepEqual(before.settled, []);
-  assert.match(await page.locator('#date').innerText(), /Spring 1, Year 3 .* 08:00/, 'the campaign clock');
+  assert.match(await page.locator('#date').innerText(), /Spring 1, Year 6 .* 08:00/, 'the campaign clock');
 
   assert.equal(await page.locator('.plate-party.player .pcount').innerText(), '8', 'map strength matches the starting roster');
 
@@ -82,7 +82,8 @@ try {
   assert.equal(await page.evaluate(() => window.PARP_SPRITES.campaign.deployment.variant.convoy.escort), 14, 'its escort');
   assert.ok(column.crew <= 14 && column.crew >= 8, `the escort after the difficulty (${column.crew})`);
   assert.equal(column.mines, 1, 'the road charge is buried');
-  assert.match(column.brief, /^Supply convoy comes down the road: an MRAP and two trucks, 14 soldiers\. A demolition charge/);
+  assert.match(column.brief, /^Approach on foot from the staging area/);
+  assert.match(column.brief, /Supply convoy comes down the road: an MRAP and two trucks, 14 soldiers\. A demolition charge/);
   assert.equal((await saved(page)).stash.explosives || 0, charges - 1, 'the charge came out of the stash');
   await page.locator('#start').click();
   await page.evaluate(() => {

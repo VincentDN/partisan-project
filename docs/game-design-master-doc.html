@@ -72,6 +72,7 @@ figure{margin:0}figcaption{font:12px/1.5 var(--mono);color:var(--dim);margin-top
 .swatches{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:18px 0}
 .sw{border:1px solid var(--line);background:var(--panel);font:12px/1.4 var(--mono)}.sw i{display:block;height:54px}.sw span{display:block;padding:6px 8px;color:var(--dim)}.sw b{color:var(--text)}
 .rules{columns:2 340px;column-gap:30px;padding-left:22px}.rules li{margin:0 0 10px;break-inside:avoid;font-size:15.5px}
+.music-reference iframe{display:block;width:100%;aspect-ratio:16/9;border:0;margin:14px 0;background:#000}
 /* roster */
 .operator{display:flex;flex-direction:column;gap:6px}
 .operator .portrait{aspect-ratio:3/4;background:var(--panel-2);border:1px solid var(--line);overflow:hidden;position:relative}
@@ -93,7 +94,7 @@ footer a{color:var(--olive)}
 <a class="skip" href="#main">Skip to content</a>
 <header class="bar"><div class="bar-in">
   <b>Partisan Project</b><span>Field handbook n°03 · v0.3.1</span>
-  <nav aria-label="Sections"><a href="#dispatches">Dispatches</a><a href="#pillars">Pillars</a><a href="#loud">Low poly and loud</a><a href="#design">Design</a><a href="#operators">Operators</a><a href="#moodboard">Moodboard</a><a href="#roadmap">Roadmap</a><a href="#specs">Specs</a><a href="../menu/">Index</a></nav>
+  <nav aria-label="Sections"><a href="#dispatches">Dispatches</a><a href="#pillars">Pillars</a><a href="#loud">Low poly and loud</a><a href="#design">Design</a><a href="#culture">Yantis &amp; music</a><a href="#operators">Operators</a><a href="#moodboard">Moodboard</a><a href="#roadmap">Roadmap</a><a href="#specs">Specs</a><a href="../menu/">Index</a></nav>
   <button id="signal" aria-pressed="false" title="Render the images as a 1-bit dithered radio signal">Signal: clean</button>
 </div></header>
 
@@ -188,6 +189,32 @@ footer a{color:var(--olive)}
   </table></div>
   <h3 style="margin-top:20px">AI in one paragraph</h3>
   <p class="lede">Enemies hold beliefs about the player (last seen, likely routes, noise heard), act on them, and say what they are doing. Difficulty changes belief quality and learning rate, never health or aim. Full reasoning and the audience study: <a href="https://vincentdenil.com/docs/partisan-ai/">AI design compendium</a>.</p>
+</section>
+
+<section id="culture" aria-labelledby="h-culture">
+  <p class="eyebrow">The culture of Yantis · narrative and audio direction</p>
+  <h2 id="h-culture">A home worth defending</h2>
+  <p class="lede">You are the Resistance. Five years ago, a foreign army invaded Yantis. The rebels are the righteous defenders of their home; the occupying army is the villain. The people, music and environments must make the player feel what has been stolen, what survives, and why the island is worth fighting for.</p>
+  <p>Build Yantis as a lived-in fictional island with a musical culture blending Southern Balkan and Mediterranean influences. Neighbours know the same songs. Families keep instruments, songs travel between villages, and fighters carry those memories into the hills. Warm stone courtyards, worn domestic spaces, shared meals, firelight and handmade objects should give the Resistance a recognisable home. Occupation intrudes on that world through checkpoints, floodlights, military equipment and intimidation.</p>
+  <div class="grid g2" style="margin-top:22px">
+    <article class="card"><h3>The rebels · human and acoustic</h3><p>Traditional folk music, with no synthesizers: folk guitar, plucked and bowed string instruments, voices and hand-played percussion. Use intimate playing, communal singing, mournful strings and defiant melodies. Music can express grief, fellowship and joy as well as determination. The sound belongs to the people of Yantis and the homes they defend.</p></article>
+    <article class="card"><h3>The occupiers · digital and imposing</h3><p>Modern electronic music with an overtly synthetic sound: heavy synths, processed bass, hard programmed beats and aggressive dubstep. Skrillex is a tentative reference for the weight and abrasive energy. Loud playback from military spaces should feel like the occupation imposing itself on the island. These are the fictional foreign invaders: cruel, threatening antagonists whom the player wants to drive out.</p></article>
+  </div>
+  <h3 style="margin-top:30px">Scene A · the rebel campfire</h3>
+  <p>A small band of rebels sits around a campfire after a hard day. One plays folk guitar; others join with string instruments and familiar voices. Show hands playing, tired faces relaxing and friends listening. Firelight catches patched civilian clothing, hoods and shemaghs. The surrounding landscape is quiet enough to hear fingers on strings and the fire. This is a brief, warm picture of the community the player is defending, with music performed by characters in the scene.</p>
+  <h3 style="margin-top:26px">Scene B · the occupier gathering</h3>
+  <p>Heavily equipped invaders stand around an NPC at an occupied checkpoint or courtyard, listening to loud, heavy synth dubstep from a portable speaker. Olive-drab armour, army helmets and covered faces contrast with the rebel camp. Their body language and treatment of the NPC establish contempt and intimidation; the bass dominates a place that should belong to local people. The intended emotional response is direct: these are vile, evil foreign occupiers. Drive them from your land.</p>
+  <p class="note"><b>Production status</b> Both scenes are planned narrative vignettes. The current campaign ambience is a synthesized prototype; replacing it with acoustic folk performances is still required to meet this direction. These videos are listening references in the design document, not the campaign soundtrack.</p>
+  <h3 style="margin-top:30px">Music references</h3>
+  <div class="grid g3" style="margin-top:18px">
+    <article class="card music-reference"><h3>LADANIVA — Saraiman</h3><p>Reference for communal musical energy and a vivid, inhabited folk world.</p><iframe src="https://www.youtube-nocookie.com/embed/vGGbp88ziXU" title="LADANIVA — Saraiman (Official Video)" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe><a href="https://www.youtube.com/watch?v=vGGbp88ziXU" target="_blank" rel="noopener">Watch Saraiman on YouTube</a></article>
+    <article class="card music-reference"><h3>“Heroes” — Song of the Greek Partisans</h3><p>Reference for collective resolve and the emotional force of a resistance song.</p><iframe src="https://www.youtube-nocookie.com/embed/Crhai9Z7nxs" title="Heroes — Song of the Greek Partisans" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe><a href="https://www.youtube.com/watch?v=Crhai9Z7nxs" target="_blank" rel="noopener">Watch Heroes on YouTube</a></article>
+    <article class="card music-reference"><h3>Bosnian Bella Ciao</h3><p>Reference for a familiar resistance melody carried through local language and an intimate performance. Selected example: Bosnian/Italian cover.</p><iframe src="https://www.youtube-nocookie.com/embed/gmEy3eEc7-s" title="Bella Ciao — Bosnian/Italian version cover" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe><a href="https://www.youtube.com/watch?v=gmEy3eEc7-s" target="_blank" rel="noopener">Watch Bosnian/Italian Bella Ciao on YouTube</a></article>
+  </div>
+  <h3 style="margin-top:30px">Campaign opening · the promise</h3>
+  <p>Fade in from black over a wide view of the island. The camera slowly approaches the rebel band while large text appears in successive beats. After the third line, hold on the island for a dramatic pause, then deliver the final call:</p>
+  <blockquote><p>YOU ARE THE RESISTANCE.</p><p>FIVE YEARS AGO, THE INVADERS TOOK YOUR LAND</p><p>YOU HAVE ONLY ONE OBJECTIVE</p><p><em>Dramatic pause.</em></p><p>DRIVE OUT THE INVADER<br>AND FREE YANTIS!</p></blockquote>
+  <p class="note"><b>Playable</b> New test campaigns now open with this island approach. The world remains paused; the player can pause or skip the introduction. Reduced motion uses a stationary view and the full text. Returning campaigns resume without replaying the opening.</p>
 </section>
 
 <section id="operators" aria-labelledby="h-operators">

@@ -5,13 +5,14 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json).
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-18 · codex · W29 village dialogue**
+**2026-10-21 · codex · W33 Yantis music and island prologue**
 
-- Fullscreen village representative uses keyboard/pointer ABCD choices, visible seeded weekly D20/trust/target/outcome, saved decisions and failed-save rollback.
-- Successful negotiation improves barter by ten percentage points for that week. Extra recruitment costs one village meal, requires liberation/capacity, adds a healthy unequipped volunteer and preserves ordinary weekly volunteers.
-- Validation: 561 tests, village browser (keyboard dialogue, repeated rolls, mobile width, focus return, axe accessibility, barter rollback and recruit deployment), lint/typecheck/format and build/link checks pass.
-- W27/W28/W30/W31/W32 remain complete. W21 endings, W22 human balance, W23 Codex-owned harness, W24 physical-device acceptance and W25 onboarding remain open.
-- Continue owner-authorized main commits; preserve intro and gameplay/demo separation.
+- Design document #culture records the owner's faction/music direction, both planned scene briefs and three embedded YouTube references.
+- New-campaign map opening: 22-second fade/approach, exact owner copy, two-second dramatic pause, paused world, skip/pause and static reduced-motion mode. `world.openingSeen` survives reload; missing legacy flag means already seen. Campaign dates now begin in occupation year six.
+- Validation: 563 tests; prologue browser (camera, story beats, pause/skip, saved completion, keyboard, mobile, reduced motion and axe), full campaign loop, built design-section layout/accessibility, lint/typecheck/format and build/link checks pass. External YouTube playback was not exercised; document checks used stubbed players.
+- Preview: `outbound/wip-images/2026-10-21_081357.png`.
+- W34 tracks acoustic replacement for the synthesized placeholder and production of both music scenes; they remain planned. W21/W22/W23/W24/W25 acceptance remains open, W23 Codex-owned.
+- Owner authorizes main commits/pushes. Original intro/ demo unchanged; gameplay remains separate from demo modules.
 <!-- handoff:end -->
 
 ## Gameplay/demo module boundary — 13 October 2026

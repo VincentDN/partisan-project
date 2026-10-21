@@ -9,6 +9,7 @@ import {buildWater} from './water.js';
 import {buildProps} from './props.js';
 import {buildParties} from './parties.js';
 import {mountTravel} from './travel.js';
+import {mountOpening} from './campaign-opening.js';
 import {mountCampaign} from './campaign-ui.js';
 import {createAftermath} from './aftermath.js';
 import {modalOpen} from '../shared/modal.js';
@@ -195,10 +196,11 @@ export async function mountMap({HD2D, createSpriteLayer, createHD2D, figure}) {
 
   // ---------- time ----------
   let speed = 1,
-    campaignUi = null;
+    campaignUi = null,
+    opening = null;
   const day = {n: 14, season: 'Spring', year: 3, hours: 9};
   function setSpeed(s) {
-    speed = campaignUi?.blocked && s ? 0 : s;
+    speed = (campaignUi?.blocked || opening?.active) && s ? 0 : s;
     if (window.PARP_MAP?.travel.campaign) window.PARP_MAP.travel.campaign.world.clock.speed = speed;
     const state = document.querySelector('#clock-state');
     if (state) {
@@ -273,6 +275,20 @@ export async function mountMap({HD2D, createSpriteLayer, createHD2D, figure}) {
     }
   };
   if (aftermath) syncAftermath();
+  opening = HD2D
+    ? mountOpening({
+        campaign: travel.campaign,
+        cam,
+        party: travel.party,
+        save: travel.save,
+        reduceMotion,
+        onFinish: () => {
+          window.PARP_MAP.ready = true;
+          renderDirty = true;
+          setSpeed(0);
+        },
+      })
+    : null;
   $('#loading').hidden = true;
 
   const clock = new T.Clock();
@@ -290,16 +306,18 @@ export async function mountMap({HD2D, createSpriteLayer, createHD2D, figure}) {
     if (document.hidden) return;
     const frameStart = performance.now();
     const real = Math.min(elapsed, 0.1);
-    const dt = real * (campaignUi?.blocked ? 0 : speed); // the world runs at the chosen speed; the camera never pauses
+    const dt = real * (campaignUi?.blocked || opening?.active ? 0 : speed); // the world runs at the chosen speed; the camera never pauses
     worldT += dt;
-    keyPan(real);
-    campaignUi?.update(dt); // the world moves first (WP-W5), then the map draws the band and follows it
-    travel.update(dt);
+    if (!opening?.active) keyPan(real);
+    if (!opening?.active) campaignUi?.update(dt); // the world moves first (WP-W5), then the map draws the band and follows it
+    if (opening?.active) opening.update(Math.min(elapsed, 1));
+    else travel.update(dt);
     if (aftermath) syncAftermath();
     const hour = travel.campaign ? travel.campaign.world.clock.hour : day.hours,
       sight = sightRange(hour);
     if (daylightAt(hour)) renderDirty = true;
     const cameraMoving =
+      opening?.active ||
       Math.abs(cam.tx - cam.x) + Math.abs(cam.tz - cam.z) + Math.abs(cam.td - cam.d) + Math.abs(cam.tyaw - cam.yaw) > 0.001;
     if (!needsFrame(frameStart, {active: dt > 0, cameraMoving, dirty: renderDirty})) {
       performanceStats.skipped++;
@@ -375,7 +393,8 @@ export async function mountMap({HD2D, createSpriteLayer, createHD2D, figure}) {
     sprites,
     hd2d,
     performance: performanceStats,
-    ready: true,
+    opening,
+    ready: !opening?.active,
   };
 
   setSpeed(travel.campaign?.world.clock.speed ?? 1);

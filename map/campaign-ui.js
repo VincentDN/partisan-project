@@ -323,7 +323,7 @@ export function mountCampaign({travel, parties, townLabels, setSpeed, getSpeed =
   function clockText() {
     const k = campaign.world.clock,
       season = SEASONS[Math.floor((k.day - 1) / 30) % 4];
-    return `${season} ${((k.day - 1) % 30) + 1}, Year 3 of the Occupation · ${String(Math.floor(k.hour)).padStart(2, '0')}:00`;
+    return `${season} ${((k.day - 1) % 30) + 1}, Year ${6 + Math.floor((k.day - 1) / 120)} of the Occupation · ${String(Math.floor(k.hour)).padStart(2, '0')}:00`;
   }
 
   // ---------- the band: fighters, promotions, the stash ----------

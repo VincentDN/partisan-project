@@ -4081,6 +4081,42 @@
    ],
    "acceptance": "Stop workbench music when entering a campaign, including the shell iframe path. Use a subdued guitar/plucked-string and sad-string ambient score, with no overlapping tracks. Preserve music mute/volume, user activation and navigation lifecycle. Verify map, combat, band and return-to-demo transitions.",
    "progress_note": "2026-10-18: Original synthesized 50 BPM minor-key plucked-string/soft-string campaign score replaces demo music in shell and standalone campaign pages. Saved demo selection is preserved. Map/combat/band transitions retain campaign mode and mute/volume; returning to demos restores selection. Source switching stops old recordings and disconnects scheduled synth tails; no delayed switches. Chromium shell lifecycle and offline rendered signal checks pass."
+  },
+  {
+   "id": "WP-W33",
+   "title": "Yantis music direction and campaign island prologue",
+   "track": "Campaign",
+   "milestone": "W",
+   "size": "M",
+   "bu": 20,
+   "status": "done",
+   "deps": [],
+   "agent": "codex",
+   "needs": [],
+   "inputs": [
+    "docs/game-design-master-doc.html",
+    "docs/campaign-roadmap.md"
+   ],
+   "acceptance": "Design document records righteous home-defending rebels, fictional foreign occupier antagonists, acoustic folk versus modern synth music, both scene briefs and three embedded YouTube references. New campaign fades into a slow island approach with the exact owner text and dramatic pause. Simulation paused; pause/skip, reduced motion and saved completion supported; existing saves resume normally.",
+   "progress_note": "2026-10-21: Culture/music section and planned scene A/B briefs added. New-campaign 22-second island prologue; five-years-ago timeline reflected as occupation year six. Acoustic recording replacement and staged music scenes remain W34."
+  },
+  {
+   "id": "WP-W34",
+   "title": "Acoustic rebel soundtrack and faction music vignettes",
+   "track": "Campaign",
+   "milestone": "W",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-W33"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/game-design-master-doc.html"
+   ],
+   "acceptance": "Replace synthesized campaign placeholder with acoustic folk guitar/strings/voices without synths. Stage Scene A rebel campfire musicians and Scene B heavily equipped occupiers around an NPC with aggressive synth/dubstep playback. Preserve mute/volume, local runtime assets and gameplay/demo isolation. Deliver as separately reviewable audio and vignette milestones."
   }
  ]
 }
