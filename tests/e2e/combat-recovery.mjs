@@ -69,7 +69,7 @@ try {
   await page.addScriptTag({path: 'node_modules/axe-core/axe.min.js'});
   assert.deepEqual(
     await page.evaluate(async () =>
-      (await axe.run('.combat-controls', {preload: false, runOnly: {type: 'tag', values: ['wcag2a', 'wcag2aa']}})).violations.map(
+      (await window.axe.run('.combat-controls', {preload: false, runOnly: {type: 'tag', values: ['wcag2a', 'wcag2aa']}})).violations.map(
         v => v.id,
       ),
     ),
