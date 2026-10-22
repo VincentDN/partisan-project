@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-10-22 — Culture of Yantis direction (W41)
+
+- Recorded Mediterranean, southern Balkan and Caucasus influences; analogue, nature-connected homeland contrasted with technologically superior occupiers, reinforcing captured-weapon progression. Added Vincent’s visual-reference notes and Star Wars Rebels aside; art production is planned.
+
 ## 2026-10-22 — Loading feedback across gameplay and demos (W38)
 
 - Fixed top-left loader positioning caused by shared status styles. Loaders show phase/resource names, accessible progress and actionable failure messages.

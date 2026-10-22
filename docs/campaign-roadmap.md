@@ -552,3 +552,17 @@ H on a bandage already heals correctly. Medicine now also has visible Use button
 Shared loading bootstrap now covers map, 3-D map demo, combat, band, equipment wiki, weapon/operator/asset viewers and the three operator inspection pages. ID-specific legacy status styling no longer puts cards in the top-left corner. Cards show resource/stage names, accessible progress bars and clear reload guidance on loading failures. Three.js reports actual completed resource counts; the band tracks icon completion. Unknown-duration work remains explicitly indeterminate, never a timer-based fake percentage. Campaign terrain/sprites/vehicles/restoration, combat data and catalogue stages are named.
 
 Browser checks cover all eleven loader placements and progress/error states. Live shell → map → band → mission remains free of demo imports, and the standalone map, workbench and operator load successfully. The protected original intro code is unchanged.
+
+## Culture of Yantis — analogue homeland and technological occupation (22 October 2026)
+
+Yantis is a fictional setting drawing on southern Europe and neighbouring regions: the Mediterranean, the southern Balkans and the Caucasus. It should feel a little suspended in time, with less technology, more analogue objects and a closer relationship with nature. Its people, buildings, clothing and music establish a home worth defending.
+
+The central contrast is between the righteous Rebels and the evil Empire/occupiers. Their technological superiority should stand out against Yantis’s older, grounded way of life. This art direction reinforces the campaign’s scavenging loop: stealing the Empire’s superior weapons and using them to fight back should feel like a meaningful reversal of power.
+
+**W41 — planned art-direction implementation:** apply this contrast to settlements, civilian/rebel clothing, everyday props, faction equipment and environmental storytelling. Use Vincent’s two image references: old stone monastery architecture beneath snowy mountains, and red traditional clothing in a meadow of poppies and wildflowers. Carry their sense of place, colour and connection to nature into the fictional island. Coordinate with W34’s acoustic folk music and faction vignettes. Preserve the normal 3-D island view; the paper treatment remains a GUI treatment.
+
+Acceptance: a representative local settlement/rebel gathering and occupier position visibly communicate this contrast; starter equipment and captured occupier weapons make the progression from scarcity to fighting back legible. This is recorded direction and planned production, not a claim that new scene assets have been implemented.
+
+> **Note from Vincent:** “We could use *Star Wars Rebels* as a reference here too, but honestly I’m just so over Star Wars, man. They’re making more Star Wars than I can watch each year.”
+
+See the [Culture of Yantis design notes](game-design-master-doc.html#culture).

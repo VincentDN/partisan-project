@@ -4219,6 +4219,26 @@
    ],
    "acceptance": "Reproduce reported nonworking bandages. Verify reachable supplies, use control, consumption, healing and feedback; add regression for injured and full-health cases.",
    "progress_note": "2026-10-22: Existing H bandage healing confirmed. Added visible Use medicine buttons; browser verifies no consumption at full health, two 15 HP uses, depletion removal and keyboard use."
+  },
+  {
+   "id": "WP-W41",
+   "title": "Yantis analogue homeland and occupier technology art direction",
+   "track": "Campaign",
+   "milestone": "W",
+   "size": "M",
+   "bu": 20,
+   "status": "planned",
+   "deps": [
+    "WP-W33"
+   ],
+   "agent": "any",
+   "needs": [],
+   "inputs": [
+    "docs/game-design-master-doc.html",
+    "docs/campaign-roadmap.md"
+   ],
+   "acceptance": "Apply Mediterranean, southern Balkan and Caucasus influences to local architecture, textiles, props and natural environments. Contrast righteous rebels and their analogue homeland with technologically superior evil occupiers. A representative local/rebel scene and occupied position make the contrast legible; captured equipment reinforces fighting back with enemy weapons. Coordinate with W34; preserve normal island rendering.",
+   "progress_note": "2026-10-22: Owner direction and two visual-reference descriptions recorded in Culture of Yantis. Production remains planned; Vincent\u2019s optional Star Wars Rebels reference and aside preserved."
   }
  ]
 }
