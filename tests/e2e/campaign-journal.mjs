@@ -33,6 +33,7 @@ try {
   await p.locator('#campaign-journal summary').click();
   assert.equal(await p.locator('#campaign-journal li').filter({hasText: 'Mila recovered'}).count(), 1);
   await p.setViewportSize({width: 390, height: 844});
+  await p.locator('#reports-toggle').click();
   const bounds = await p.locator('#campaign-journal').boundingBox();
   assert.ok(bounds.x >= 0 && bounds.x + bounds.width <= 390);
   await p.close();

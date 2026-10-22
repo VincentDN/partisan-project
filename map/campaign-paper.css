@@ -1,0 +1,108 @@
+/* Approved paper command interface; styling is restricted to campaign UI, never terrain or the canvas. */
+.campaign-active {
+  --grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='p'><feTurbulence type='fractalNoise' baseFrequency='.65' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .045 0'/></filter><rect width='100%25' height='100%25' filter='url(%23p)'/></svg>");
+  --paper: #eee3c6;
+  --paper-dark: #dfcfaa;
+  --print: #292a22;
+  --muted: #575749;
+  --olive: #555d3c;
+  --bronze: #938469;
+  --bronze-hi: #555d3c;
+  --lcd-hi: #555d3c;
+  --parch: #292a22;
+  --sidebar: 284px;
+}
+.campaign-active .hud, .campaign-active .campaign-help > div {
+  color: var(--print);
+  background: var(--grain), radial-gradient(ellipse at 30% 20%, #f8f0d9, var(--paper) 65%, var(--paper-dark));
+  border: 1px solid #9d9073;
+  border-radius: 2px;
+  box-shadow: inset 0 0 15px #a48f6033, 0 5px 16px #0005;
+}
+.campaign-active button, .campaign-active a.band-screen, .campaign-active a.gun-open {
+  color: var(--print); background: var(--grain), linear-gradient(#f4ecd6, #e1d2ae);
+  border: 1px solid #9d9073; border-radius: 2px; min-height: 44px;
+}
+.campaign-active button:hover, .campaign-active a:hover { background-color: #d7c79f; color: #22261a; border-color: #555d3c; }
+.campaign-active button:focus-visible, .campaign-active summary:focus-visible, .campaign-active a:focus-visible { outline: 3px solid #66502b; outline-offset: 3px; }
+.campaign-active button[aria-pressed='true'], .campaign-active button[aria-current], .campaign-active .enc-actions .primary {
+  background: var(--grain), var(--olive); color: #fff8e3;
+}
+.campaign-active .command-panel { position: absolute; top: 32px; bottom: 0; left: 0; width: var(--sidebar); padding: 22px 20px; overflow-y: auto; z-index: 9; border-right: 3px double #918265; }
+.command-panel header { border-bottom: 1px solid #82785f; padding-bottom: 14px; }
+.command-panel header h2 { font: 900 38px/1 Georgia, serif; letter-spacing: .025em; margin: 0; }
+.command-panel header p { font: 11px/1.5 Georgia, serif; letter-spacing: .17em; margin: 8px 0 0; }
+.campaign-active .command-panel .party-card { position: static; width: auto; padding: 18px 0; border: 0; background: none; box-shadow: none; }
+.campaign-active .party-card h2 { color: var(--print); font: bold 21px Georgia, serif; }
+.campaign-active dt, .campaign-active .note, .campaign-active .empty-stash, .campaign-active .fighter-readiness { color: var(--muted); }
+.campaign-active dd { color: var(--print); }
+.command-nav { display: grid; border-block: 1px solid #9b8e72; padding: 10px 0; gap: 3px; }
+.campaign-active .command-nav button { display: flex; align-items: center; gap: 16px; border: 0; text-align: left; font: bold 18px Georgia, serif; padding: 12px; background: none; }
+.command-nav button span:first-child { width: 24px; text-align: center; font: 24px Georgia, serif; }
+.campaign-active .command-nav button[aria-current] { background: var(--grain), var(--olive); color: #fff8e3; }
+.campaign-active .command-panel .campaign-route { position: static; transform: none; width: auto; padding: 16px 0; border: 0; background: none; box-shadow: none; }
+.campaign-route strong, .campaign-active .campaign-route p { color: var(--muted); }
+.campaign-active .command-panel .legend { position: static; width: auto; padding: 0; background: none; border: 0; box-shadow: none; }
+.command-utilities { border-top: 1px solid #9b8e72; margin-top: 12px; padding-top: 12px; display: flex; flex-wrap: wrap; gap: 8px; }
+.campaign-active .campaign-help > div { position: fixed; bottom: 100px; left: 20px; width: 300px; max-width: calc(100vw - 40px); max-height: 65vh; overflow: auto; z-index: 12; }
+.campaign-active kbd { color: var(--print); background: #0001; }
+.campaign-active .campaign-reports { position: absolute; top: 50px; right: 18px; width: 310px; max-height: calc(100dvh - 180px); overflow-y: auto; z-index: 3; display: grid; gap: 14px; }
+.campaign-active .campaign-objective { position: static; width: auto; padding: 16px; }
+.campaign-active .campaign-objective h2 { color: var(--print); font: bold 22px/1.2 Georgia, serif; }
+.campaign-active .eyebrow, .field-reports h2 { color: #f7edcf; background: var(--grain), #303229; padding: 10px; font: bold 12px/1.4 Georgia, serif; text-transform: uppercase; letter-spacing: .12em; margin: 0 0 14px; }
+.campaign-active .objective-next { color: var(--muted); font-size: 13px; line-height: 1.5; }
+.campaign-active .campaign-objective .complete, .campaign-active .campaign-objective summary span { color: #485130; }
+.field-reports { position: static; padding: 14px; }
+.campaign-active .journal-latest { display: block; background: #fff4; padding: 10px; border-bottom: 1px solid #9b8e72; }
+.campaign-active #campaign-journal small { color: var(--muted); }
+.campaign-active #campaign-journal summary { cursor: pointer; padding: 10px 0; }
+.campaign-active #campaign-journal ol { max-height: 230px; padding-left: 20px; }
+.campaign-active .province-card { display: none; }
+.campaign-active .timebar { top: auto; bottom: 18px; left: calc(var(--sidebar) + (100% - var(--sidebar)) / 2); right: auto; transform: translateX(-50%); width: 560px; max-width: calc(100vw - var(--sidebar) - 30px); display: flex; flex-wrap: wrap; justify-content: center; padding: 7px 10px; gap: 5px 16px; z-index: 8; }
+.command-controls { display: flex; align-items: center; justify-content: center; width: 100%; gap: 4px; }
+.campaign-active .command-controls > button, .campaign-active .speeds button { min-height: 54px; min-width: 48px; padding: 8px; }
+.campaign-active #campaign-play { flex: none; width: 90px; height: 90px; border-radius: 50%; margin: -23px 6px -5px; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 6px; color: #fff4d5; background: var(--grain), #414735; border: 5px double #b4a17b; box-shadow: 0 0 0 4px #303229, 0 3px 10px #0006; }
+#campaign-play span:first-child { font-size: 28px; }
+#campaign-play span:last-child { text-transform: uppercase; letter-spacing: .1em; font: bold 11px Georgia, serif; }
+.campaign-active .timebar .date { flex: none; font: 11px/1.4 Georgia, serif; }
+.campaign-active .clock-state { color: #465330; font-size: 11px; }
+.campaign-active .clock-state[data-paused='true'] { color: #89382d; }
+.campaign-active .toast { bottom: 140px; color: var(--print); background: var(--paper); border-color: #938469; }
+.campaign-active .band-panel > h2, .campaign-active .encounter > h2, .campaign-active .band-jumps, .campaign-active .panel-footer, .campaign-active .encounter > .enc-actions { color: var(--print); background: var(--paper); }
+.campaign-active .band-panel h3, .campaign-active .band-panel .needs .ok { color: #465330; }
+.campaign-active .hurt, .campaign-active .enc-count.bad, .campaign-active .band-panel .needs .no { color: #88392e; }
+.campaign-active .enc-rearguard select { color: var(--print); background: var(--paper); }
+.campaign-active #command-toggle, .campaign-active #reports-toggle { display: none; }
+@media (max-width: 1100px) and (min-width: 761px) {
+  .campaign-active { --sidebar: 246px; }
+  .command-panel header h2 { font-size: 32px; }
+  .campaign-active .campaign-reports { width: 270px; }
+}
+@media (max-width: 760px) {
+  .campaign-active { --sidebar: 0px; }
+  .campaign-active #command-toggle, .campaign-active #reports-toggle { display: block; position: absolute; top: 42px; z-index: 11; }
+  #command-toggle { left: 10px; } #reports-toggle { right: 10px; }
+  .campaign-active .command-panel { display: none; top: 94px; bottom: 136px; width: min(320px, calc(100vw - 20px)); left: 10px; padding: 18px; }
+  .campaign-active.command-open .command-panel { display: block; }
+  .campaign-active .campaign-reports { display: none; top: 94px; bottom: 140px; right: 10px; width: min(310px, calc(100vw - 20px)); max-height: none; }
+  .campaign-active.reports-open .campaign-reports { display: grid; align-content: start; }
+  .campaign-active.command-open.reports-open .command-panel { display: none; }
+  .campaign-active .campaign-objective .eyebrow { display: block; }
+  .campaign-active .command-panel .legend { display: block; }
+  .campaign-active .command-panel .party-card dl { grid-template-columns: 1fr auto; font-size: 12px; }
+  .campaign-active .timebar { left: 50%; bottom: 10px; max-width: calc(100vw - 16px); width: 440px; padding: 6px; }
+  .command-controls { gap: 2px; }
+  .campaign-active .command-controls > button, .campaign-active .speeds button { min-width: 36px; padding: 4px; font-size: 10px; }
+  .campaign-active #campaign-play { width: 66px; height: 66px; margin: -12px 4px 0; }
+  .campaign-active .timebar .date { font-size: 10px; }
+}
+
+.campaign-active .journal-latest.sr-only { padding: 0; border: 0; margin: 0; }
+.journal-recent { list-style: none; padding: 0; font-size: 12px; line-height: 1.45; }
+.journal-recent li { padding: 8px; background: #fff4; border-bottom: 1px solid #9b8e7266; margin-bottom: 6px; }
+.journal-recent p { margin: 4px 0; }
+.journal-recent small { color: var(--muted); }
+.campaign-active .command-panel .campaign-help { width: 100%; }
+.campaign-active .command-panel .campaign-help > div { position: static; width: 100%; max-width: none; max-height: none; padding: 10px; box-shadow: none; font-size: 12px; }
+#campaign-play > span:first-child { width: 25px; height: 27px; background: #f7e9bf; clip-path: polygon(8% 0, 100% 50%, 8% 100%); }
+#campaign-play[data-running='true'] > span:first-child { clip-path: polygon(0 0, 35% 0, 35% 100%, 0 100%, 0 0, 65% 0, 100% 0, 100% 100%, 65% 100%, 65% 0); }

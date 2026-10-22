@@ -34,21 +34,25 @@ export function mountJournal(campaign, names) {
   const summary = document.createElement('summary'),
     list = document.createElement('ol'),
     status = document.createElement('p');
-  status.className = 'journal-latest';
+  status.className = 'journal-latest sr-only';
+  const recent = document.createElement('ol');
+  recent.className = 'journal-recent';
   status.setAttribute('role', 'status');
   summary.textContent = 'Field log';
   details.append(summary, list);
-  host.append(status, details);
+  host.append(status, recent, details);
   let last = campaign.log.at(-1)?.seq || 0,
     signature = '';
   function update() {
     const seq = campaign.log.at(-1)?.seq || 0;
-    if (signature === String(seq)) return;
-    signature = String(seq);
+    const filter = details.dataset.filter || '';
+    if (signature === `${seq}:${filter}`) return;
+    signature = `${seq}:${filter}`;
     const fresh = campaign.log.filter(e => e.seq > last);
     if (fresh.some(e => e.kind === 'healed')) recoverySound();
     last = seq;
     const entries = campaign.log
+      .filter(e => !filter || ['rumour', 'counterattack-out'].includes(e.kind))
       .map(e => journalEntry(e, names))
       .filter(Boolean)
       .reverse();
@@ -63,6 +67,9 @@ export function mountJournal(campaign, names) {
         return li;
       }),
     );
+    recent.replaceChildren(...[...list.children].slice(0, 3).map(li => li.cloneNode(true)));
+    if (!entries.length)
+      recent.textContent = filter ? 'No intelligence reports yet.' : 'No reports yet. Recoveries and field intelligence appear here.';
     summary.textContent = `Field log · ${entries.length} reports`;
     status.textContent = entries[0]?.text || 'No reports yet. Recoveries and field intelligence will appear here.';
   }

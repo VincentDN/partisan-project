@@ -5,15 +5,12 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json).
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-21 · codex · W35 combat recovery / W36 recorded audio**
+**2026-10-22 · codex · W37 paper campaign GUI**
 
-- Combat sidebar is hidden after Start. Compact controls include inventory, both owned weapon slots, health/ammo/objective, pause, rebel switch and sound.
-- `kit-weapons.js` synchronizes physical primary/secondary weapons and cancels stale reloads; no old build/cosmetic survives a primary replacement. `recovery.js` allows survivor movement/search after victory without stepping combat. Finish mission commits recovered kits once; Roadblock's explicit Finish raid still departs.
-- Empty ground piles no longer mask nearby bodies. Spoils use recorded inventory Foley, no synthesized reward tones.
-- Map ambience uses existing recorded countryside, moving-only footsteps, quiet radio and command walla, with persisted SFX mute and bounded/cleaned-up voices. W34 acoustic score and authored music scenes remain planned.
-- Validation: 566 tests; browser combat inventory/slot switching/post-victory body loot/saved result, mobile width and scoped axe; all seven mission loot reports and reloads; recorded spoils/body Foley and map ambience/movement/mute/zero-volume checks; lint/typecheck/format, packet consistency and build/link checks pass.
-- Preview: `outbound/wip-images/2026-10-21_130759.png`.
-- Owner authorizes main commits/pushes. Original intro/ unchanged; keep gameplay separate from demos.
+- Approved paper GUI implemented in campaign-shell.js/campaign-paper.css: left management, bottom circular Play/Pause and time dock, right live objectives/reports. Island renderer unchanged. Mobile uses collapsible management/report drawers.
+- Browser campaign GUI passes keyboard, travel, band kit, responsive bounds and scoped accessibility. Full unit run had only new packet BU sizing failures; corrected to M=20 and all eight packet checks pass. Lint/typecheck and build/link checks pass.
+- Owner reports logged before work: W38 project loaders/progress/centering; W39 looted primary firing/reloading; W40 suspected bandage bug. Continue combat blockers then loaders.
+- Owner authorizes milestone commits/pushes to main. Preserve original intro/ and gameplay/demo module isolation.
 <!-- handoff:end -->
 
 ## Gameplay/demo module boundary — 13 October 2026

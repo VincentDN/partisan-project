@@ -531,3 +531,12 @@ Victory enters a recovery phase: battle time, enemies, projectiles and hazards f
 The spoils screen now uses the same recorded gun-handling Foley as inventory, replacing synthesized reward blips/chords. Missing samples are silent on this screen; reveal timing, hurry controls and transfers do not depend on audio availability.
 
 The campaign map has quiet recorded countryside ambience, gravel footsteps only while the band travels, occasional distant radio chatter and brief walla acknowledgements for march orders and button actions. It reuses local recordings, starts after a user gesture, limits simultaneous voices, stops on hidden/unloaded pages and respects SFX volume/mute. The map's Ambience button persists the shared SFX preference. Music remains separately controlled. W34's acoustic score replacement and authored campfire/occupier music scenes remain planned.
+
+## Approved interface and reported blockers — 22 October 2026
+
+- **W37 delivered:** approved paper campaign GUI. Left management, bottom-centre circular Play/Pause and time controls, right objectives and reports; retain existing island rendering.
+- **W38 planned:** project-wide loaders: centred placement, named loading phases/assets, measurable progress bars, honest indeterminate fallback and useful failure messages.
+- **W39 planned:** primary weapon looted from a body reportedly cannot fire/reload after replacement. Reproduce through combat and repair physical weapon/ammunition synchronization.
+- **W40 planned:** bandages reportedly do not work. Verify use controls, reachable supply, consumption, healing and player feedback.
+
+Finish W37 first, then prioritize combat blockers W39/W40 and complete W38. These reports are logged before implementation; bandage failure remains unconfirmed pending reproduction.

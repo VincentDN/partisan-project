@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-10-22 — Paper campaign command interface (W37)
+
+- Approved paper menus: left management, bottom circular Play/Pause and time controls, right objectives and recent field reports. Intelligence filters rumours/intercepts; mobile drawers preserve map space.
+- Existing island rendering and campaign data/actions retained. W38 loaders, W39 looted primary firing/reload and W40 bandage investigation logged before follow-up work.
+
 - WP-W35/W36: Full-screen combat controls with visible inventory and weapon slots; fixed looted weapon ammunition/switching; added post-victory body recovery before departure. Loot rewards now use recorded handling Foley. Campaign map adds quiet countryside, travelling footsteps, radio and walla with persistent SFX controls.
 
 - WP-W33: Added Yantis culture/music direction, campfire and occupier scene briefs and three YouTube references to the design document. New campaigns fade into an island approach with the Resistance call to arms, dramatic pause, skip/pause and reduced-motion support; existing saves resume normally.

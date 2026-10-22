@@ -13,6 +13,8 @@ try {
   assert.match(await p.locator('.party-card').innerText(), /Carried rounds\s+80/);
   assert.match(await p.locator('.campaign-route').innerText(), /No travel order/);
   if (shots) await p.screenshot({path: shots + '/desktop.png'});
+  await p.locator('#campaign-play').click();
+  await p.waitForFunction(() => document.querySelector('#clock-state').textContent.includes('Running'));
   await p.locator('[data-speed="1"]').click();
   await p.locator('#stage').focus();
   await p.keyboard.press('w');
@@ -61,7 +63,7 @@ try {
   await p.waitForFunction(() => document.querySelector('.objective-next').textContent.includes('Foothold secured'));
   await p.addScriptTag({path: 'node_modules/axe-core/axe.min.js'});
   const violations = await p.evaluate(
-    async () => (await window.axe.run({include: ['.campaign-objective', '.party-card', '.timebar', '.menu-bar']})).violations,
+    async () => (await window.axe.run({include: ['.campaign-objective', '.party-card', '.timebar', '.command-panel']})).violations,
   );
   assert.deepEqual(
     violations.map(v => [v.id, v.nodes.map(n => n.target)]),
@@ -72,22 +74,15 @@ try {
   const mobile = await open(browser, 'about:blank', {viewport: {width: 390, height: 844}});
   await mobile.goto(server.url + 'map/?campaign=gui-mobile', {waitUntil: 'domcontentloaded', timeout: 120000});
   await mobile.waitForFunction(() => window.PARP_MAP?.ready, null, {timeout: 180000});
+  await mobile.locator('#command-toggle').click();
   const rectangles = await mobile.evaluate(() =>
-    ['.timebar', '.campaign-objective', '.party-card', '.campaign-route', '.menu-bar'].map(selector => {
+    ['.timebar', '.command-panel'].map(selector => {
       const r = document.querySelector(selector).getBoundingClientRect();
       return {selector, left: r.left, right: r.right, top: r.top, bottom: r.bottom};
     }),
   );
   for (const r of rectangles) assert.ok(r.left >= 0 && r.right <= 390 && r.top >= 30 && r.bottom <= 844, JSON.stringify(r));
-  for (let i = 0; i < rectangles.length; i++)
-    for (let j = i + 1; j < rectangles.length; j++) {
-      const a = rectangles[i],
-        b = rectangles[j];
-      assert.ok(
-        a.right <= b.left || b.right <= a.left || a.bottom <= b.top || b.bottom <= a.top,
-        `overlap: ${a.selector} and ${b.selector}`,
-      );
-    }
+  assert.ok(rectangles[1].bottom <= rectangles[0].top, 'drawer clears time controls');
   if (shots) await mobile.screenshot({path: shots + '/mobile.png'});
   await mobile.locator('.campaign-help summary').click();
   assert.ok(await mobile.locator('.campaign-help div').isVisible());
