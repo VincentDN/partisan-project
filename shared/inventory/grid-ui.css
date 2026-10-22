@@ -61,3 +61,6 @@
 .inv-slot .inv-item img { inset: 3px 50px; width: 75px; height: 36px; opacity: .65; }
 .inv-item .nm, .inv-item .sub { position: relative; z-index: 1; text-shadow: 0 1px 2px #111; }
 .inv-ghost { z-index: 10000; }
+/* Explicit medicine actions supplement H without changing double-click quick transfer. */
+.inv-medicine { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+.inv-medicine button { min-height: 44px; padding: 8px 12px; }

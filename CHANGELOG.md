@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-10-22 — Looted weapons and visible medicine actions (W39/W40)
+
+- Replacing Primary in inventory now selects the new weapon even when the sling was active. Verified firing/reloading through live combat inputs.
+- Added visible Use medicine buttons alongside H; full-health use preserves supplies and depleted bandages are removed.
+
 ## 2026-10-22 — Paper campaign command interface (W37)
 
 - Approved paper menus: left management, bottom circular Play/Pause and time controls, right objectives and recent field reports. Intelligence filters rumours/intercepts; mobile drawers preserve map space.

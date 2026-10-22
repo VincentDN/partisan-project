@@ -4192,14 +4192,15 @@
    "milestone": "W",
    "size": "M",
    "bu": 20,
-   "status": "planned",
+   "status": "done",
    "deps": [],
    "agent": "codex",
    "needs": [],
    "inputs": [
     "docs/campaign-roadmap.md"
    ],
-   "acceptance": "Reproduce replacement of primary from bodies; ensure physical weapon selection, firing and reload work with compatible rounds. Verify in combat, not only inventory counters."
+   "acceptance": "Reproduce replacement of primary from bodies; ensure physical weapon selection, firing and reload work with compatible rounds. Verify in combat, not only inventory counters.",
+   "progress_note": "2026-10-22: Primary replacement now selects that physical slot even when a sling weapon was active. Live browser drag/body swap fires and reloads the looted rifle. Ordinary primary swap already passed reproduction; no universal ammo failure reproduced."
   },
   {
    "id": "WP-W40",
@@ -4208,14 +4209,15 @@
    "milestone": "W",
    "size": "M",
    "bu": 20,
-   "status": "planned",
+   "status": "done",
    "deps": [],
    "agent": "codex",
    "needs": [],
    "inputs": [
     "docs/campaign-roadmap.md"
    ],
-   "acceptance": "Reproduce reported nonworking bandages. Verify reachable supplies, use control, consumption, healing and feedback; add regression for injured and full-health cases."
+   "acceptance": "Reproduce reported nonworking bandages. Verify reachable supplies, use control, consumption, healing and feedback; add regression for injured and full-health cases.",
+   "progress_note": "2026-10-22: Existing H bandage healing confirmed. Added visible Use medicine buttons; browser verifies no consumption at full health, two 15 HP uses, depletion removal and keyboard use."
   }
  ]
 }

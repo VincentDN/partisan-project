@@ -49,6 +49,7 @@ export function mountInventory(root, {cat, panels, make, onChange = () => {}, on
     inventoryFoley('use', cat.def(item.slug).kind);
     render();
     onChange(why);
+    (root.querySelector(`[data-uid="${item.uid}"]`) || root.querySelector('button'))?.focus();
   }
   const describe = (item, where) => {
     const d = cat.def(item.slug),
@@ -128,6 +129,22 @@ export function mountInventory(root, {cat, panels, make, onChange = () => {}, on
           col.append(drawContainer(k.pockets, 'Pockets'));
           if (k.backpack) col.append(drawContainer(k.backpack, cat.def(k.backpack.slug).short));
         } else col.append(drawContainer(p.container, '', p.title));
+        if (onUse) {
+          const boxes = k ? kitBoxes(k) : [p.container];
+          const actions = el('div', 'inv-medicine');
+          for (const box of boxes)
+            for (const grid of box.grids)
+              for (const {item} of grid.items) {
+                const d = cat.def(item.slug);
+                if (d.kind !== 'meds' || !d.charges) continue;
+                const b = el('button', '', `Use ${d.short} · ${item.left ?? d.charges}/${d.charges}`);
+                b.type = 'button';
+                b.dataset.use = item.uid;
+                b.onclick = () => use(item, box);
+                actions.append(b);
+              }
+          col.append(actions);
+        }
         return col;
       }),
     );

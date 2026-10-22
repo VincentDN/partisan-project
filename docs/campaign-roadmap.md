@@ -540,3 +540,9 @@ The campaign map has quiet recorded countryside ambience, gravel footsteps only 
 - **W40 planned:** bandages reportedly do not work. Verify use controls, reachable supply, consumption, healing and player feedback.
 
 Finish W37 first, then prioritize combat blockers W39/W40 and complete W38. These reports are logged before implementation; bandage failure remains unconfirmed pending reproduction.
+
+### W39/W40 — weapon selection and medicine follow-up (22 October 2026)
+
+A live-browser ordinary Primary swap already fired/reloaded correctly. The identified edge case was replacing Primary while the sling was selected: it left the sling active. Inventory Primary replacement now explicitly selects the new rifle; browser regression drags the corpse rifle onto Primary with a pistol selected beforehand, then fires and reloads it through real inputs. Post-victory recovery intentionally still freezes combat.
+
+H on a bandage already heals correctly. Medicine now also has visible Use buttons alongside inventory panels, preserving double-click transfer. Browser checks full-health use consumes nothing, two uses restore 15 HP each, the spent bandage disappears, and both pointer and H work.

@@ -89,6 +89,7 @@ export function createFieldSearch(cat, {onOpen = () => {}, onClose = () => {}} =
     title.textContent = `Searching: ${t.label}`;
     status.textContent =
       'Double-click or T to transfer. Drag rifles onto Primary to swap; drag yours to the body or Ground to leave it. H uses medicine.';
+    let primaryUid = A.kitOf(p).primary?.uid;
     const ui = mountInventory(root, {
       cat,
       panels: [
@@ -105,7 +106,10 @@ export function createFieldSearch(cat, {onOpen = () => {}, onClose = () => {}} =
       },
       onChange: why => {
         status.textContent = why || '';
-        A.sync(p);
+        const nextPrimary = A.kitOf(p).primary?.uid;
+        if (nextPrimary && nextPrimary !== primaryUid) A.selectSlot(p, 0);
+        else A.sync(p);
+        primaryUid = nextPrimary;
       },
     });
     box.hidden = false;
