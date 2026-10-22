@@ -196,7 +196,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | **H27** 2027 horizon | — | 0/3 | 48 BU | 0% |
 | **S** Partisan Tactical: extraction PvE, campaign and gated online research | v0.8.0 | 15/44 | 673 BU | 34% |
 | **V** Graphics: 2.5D top-down sprites for the shooter (the overworld moved to W) | v0.9.0 | 2/20 | 251 BU | 11% |
-| **W** World campaign: the Bannerlord loop (map, missions, loot, upgrades) | v0.10.0 | 35/40 | 627 BU | 88% |
+| **W** World campaign: the Bannerlord loop (map, missions, loot, upgrades) | v0.10.0 | 36/40 | 627 BU | 91% |
 | **QA** Bug hunt and optimisation (docs/quality-roadmap.md) | — | 18/23 | 294 BU | 74% |
 
 ### M0 · Foundation
@@ -418,7 +418,7 @@ Do not edit between the markers; edit `agent-ops/packets.json` and run `node too
 | `WP-W35` | Combat controls, equipped weapon switching and post-victory recovery | M (20) | done | — | — |
 | `WP-W36` | Recorded loot Foley and campaign map ambience | S (8) | done | — | — |
 | `WP-W37` | Paper campaign command interface | M (20) | done | — | — |
-| `WP-W38` | Project loading feedback and positioning | M (20) | planned | — | — |
+| `WP-W38` | Project loading feedback and positioning | M (20) | done | — | — |
 | `WP-W39` | Looted primary firing and reload regression | M (20) | done | — | — |
 | `WP-W40` | Bandage usability and healing investigation | M (20) | done | — | — |
 

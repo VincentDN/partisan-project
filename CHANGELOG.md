@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-10-22 — Loading feedback across gameplay and demos (W38)
+
+- Fixed top-left loader positioning caused by shared status styles. Loaders show phase/resource names, accessible progress and actionable failure messages.
+- Real Three.js resource completion counts and equipment-icon progress; unknown work stays visibly indeterminate. Map, combat, band and catalogue have named loading phases.
+
 ## 2026-10-22 — Looted weapons and visible medicine actions (W39/W40)
 
 - Replacing Primary in inventory now selects the new weapon even when the sling was active. Verified firing/reloading through live combat inputs.

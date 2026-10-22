@@ -1,6 +1,7 @@
 // Shared 3D stage for Partisan Project modules: renderer, orbit camera, HDR image-based lighting that follows
 // the camera, a shadow-catching floor and adaptive resolution. The Operator Customiser, the
 // Asset Viewer and the Weapon Workbench all use it.
+import './three-loading.js';
 import * as T from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {RGBELoader} from 'three/addons/loaders/RGBELoader.js';

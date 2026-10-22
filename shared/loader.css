@@ -148,3 +148,14 @@
     width: 3ch;
   }
 }
+/* ID-level page status rules must not move loader cards into a corner. */
+#status.nk-loader, #loading.nk-loader {
+  top: 50%; left: 50%; right: auto; bottom: auto; transform: translate(-50%, -50%);
+  width: min(380px, calc(100vw - 48px)); z-index: 60; padding: 18px;
+}
+.nk-cover > .nk-loader { width: min(380px, calc(100vw - 48px)); }
+.nk-progress-text { flex: 1 0 100%; margin: 8px 0 0 29px; font: 11px/1.4 system-ui, sans-serif; text-transform: none; letter-spacing: 0; }
+.nk-bar { height: 10px; }
+.nk-bar.indeterminate i { width: 32%; animation: nk-progress 1.4s ease-in-out infinite alternate; }
+@keyframes nk-progress { to { transform: translateX(210%); } }
+@media (prefers-reduced-motion: reduce) { .nk-bar.indeterminate i { animation: none; width: 45%; } }

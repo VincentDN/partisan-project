@@ -29,7 +29,7 @@ import {COSMETICS, buildPawn, lookFor, saveLook, resetLook, savedLook, loadSet} 
 import {showSpoils} from './spoils.js';
 import {wornLook, wornFields} from '../shared/campaign/looks.js';
 import {arm} from './builds-in-mission.js';
-import {setLoader} from '../shared/loader.js';
+import {setLoader, loaderProgress} from '../shared/loader.js';
 
 mountTopBar({title: 'Partisan Tactical', scene: 'viewer'});
 const $ = s => document.querySelector(s);
@@ -594,11 +594,15 @@ function showDebrief(d) {
 let awarded = false,
   lastEarned = null,
   lastLoot = null;
+setLoader($('#status'), 'Loading mission loot tables');
+loaderProgress($('#status'), 1 / 3);
 const POOL = await fetch(new URL('./data/loot-pool.json', import.meta.url))
   .then(r => r.json())
   .then(d => d.items)
   .catch(() => []);
 // The grid inventory (TAC-C-11): the rebels fire the rounds in their kits, and hold E by the dead to search them.
+setLoader($('#status'), 'Loading weapon, ammunition and medicine data');
+loaderProgress($('#status'), 2 / 3);
 const CAT = await fetch(new URL('./data/inventory-items.json', import.meta.url))
   .then(r => r.json())
   .then(createCatalogue)

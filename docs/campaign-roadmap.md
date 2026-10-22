@@ -535,14 +535,20 @@ The campaign map has quiet recorded countryside ambience, gravel footsteps only 
 ## Approved interface and reported blockers — 22 October 2026
 
 - **W37 delivered:** approved paper campaign GUI. Left management, bottom-centre circular Play/Pause and time controls, right objectives and reports; retain existing island rendering.
-- **W38 planned:** project-wide loaders: centred placement, named loading phases/assets, measurable progress bars, honest indeterminate fallback and useful failure messages.
-- **W39 planned:** primary weapon looted from a body reportedly cannot fire/reload after replacement. Reproduce through combat and repair physical weapon/ammunition synchronization.
-- **W40 planned:** bandages reportedly do not work. Verify use controls, reachable supply, consumption, healing and player feedback.
+- **W38 delivered:** project-wide loaders: centred placement, named loading phases/assets, measurable progress bars, honest indeterminate fallback and useful failure messages.
+- **W39 investigated/fixed:** primary weapon looted from a body reportedly cannot fire/reload after replacement. Reproduce through combat and repair physical weapon/ammunition synchronization.
+- **W40 investigated/improved:** bandages reportedly do not work. Verify use controls, reachable supply, consumption, healing and player feedback.
 
-Finish W37 first, then prioritize combat blockers W39/W40 and complete W38. These reports are logged before implementation; bandage failure remains unconfirmed pending reproduction.
+The reports above were logged before implementation. W37, W39/W40 and W38 were delivered in that order; reproduction findings and scope are recorded below.
 
 ### W39/W40 — weapon selection and medicine follow-up (22 October 2026)
 
 A live-browser ordinary Primary swap already fired/reloaded correctly. The identified edge case was replacing Primary while the sling was selected: it left the sling active. Inventory Primary replacement now explicitly selects the new rifle; browser regression drags the corpse rifle onto Primary with a pistol selected beforehand, then fires and reloads it through real inputs. Post-victory recovery intentionally still freezes combat.
 
 H on a bandage already heals correctly. Medicine now also has visible Use buttons alongside inventory panels, preserving double-click transfer. Browser checks full-health use consumes nothing, two uses restore 15 HP each, the spent bandage disappears, and both pointer and H work.
+
+### W38 — loading feedback delivered (22 October 2026)
+
+Shared loading bootstrap now covers map, 3-D map demo, combat, band, equipment wiki, weapon/operator/asset viewers and the three operator inspection pages. ID-specific legacy status styling no longer puts cards in the top-left corner. Cards show resource/stage names, accessible progress bars and clear reload guidance on loading failures. Three.js reports actual completed resource counts; the band tracks icon completion. Unknown-duration work remains explicitly indeterminate, never a timer-based fake percentage. Campaign terrain/sprites/vehicles/restoration, combat data and catalogue stages are named.
+
+Browser checks cover all eleven loader placements and progress/error states. Live shell → map → band → mission remains free of demo imports, and the standalone map, workbench and operator load successfully. The protected original intro code is unchanged.

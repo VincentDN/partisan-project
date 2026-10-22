@@ -4176,14 +4176,15 @@
    "milestone": "W",
    "size": "M",
    "bu": 20,
-   "status": "planned",
+   "status": "done",
    "deps": [],
    "agent": "codex",
    "needs": [],
    "inputs": [
     "docs/campaign-roadmap.md"
    ],
-   "acceptance": "Audit all page and demo loaders. Centre loading feedback, identify current phase/assets, show real progress when measurable and indeterminate state otherwise. Handle failures and reduced motion."
+   "acceptance": "Audit all page and demo loaders. Centre loading feedback, identify current phase/assets, show real progress when measurable and indeterminate state otherwise. Handle failures and reduced motion.",
+   "progress_note": "2026-10-22: Shared bootstrap/progress/error feedback across 11 maintained loader pages. Fixed ID-level centering overrides, live Three resource counts, campaign/combat/band/wiki phases, indeterminate work where totals unknown. Original intro code untouched. Browser 11-page placement/progress/error checks and live gameplay/demo isolation pass."
   },
   {
    "id": "WP-W39",

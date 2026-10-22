@@ -24,7 +24,7 @@ try {
   await frames(w, 6);
   await w.keyboard.up('d');
   const c0 = await cam();
-  await w.locator('.menu-bar [data-label="Party"]').click();
+  await w.locator('[data-label="Party"]').click();
   assert.ok(await shown('.band-panel'), 'Party opens the band panel');
   await w.keyboard.down('d');
   await frames(w, 6);
@@ -39,7 +39,7 @@ try {
   assert.match(await focused(), /data-label="Party"/, 'focus is back on the Party button');
 
   // the second fighter's kit on top of the band panel
-  await w.locator('.menu-bar [data-label="Party"]').click();
+  await w.locator('[data-label="Party"]').click();
   const id = await w.locator('.kit-open').nth(1).getAttribute('data-id');
   await w.locator('.kit-open').nth(1).click();
   await w.waitForSelector('.kit-screen:not([hidden]) .inv-item', {timeout: 60000});

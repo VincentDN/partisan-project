@@ -13,7 +13,7 @@ import {resolve, fits} from './rails.js';
 import {ATTACHMENT_FILES} from './attachments.js';
 import {blockedBy} from './stats.js';
 import * as mech from './mech.js';
-import {loaderError} from '../shared/loader.js';
+import {loaderError, setLoader} from '../shared/loader.js';
 import {mountCampaignBench} from './campaign-bench.js';
 
 const accent = 0xef8f39;
@@ -379,7 +379,7 @@ function writeHash() {
 // Swap in another rifle; the camera, lighting and music carry on untouched.
 async function mount(id) {
   if (rifle?.id === id) return;
-  status.hidden = false;
+  setLoader(status, `Loading rifle: ${id}`);
   const next = await loadRifle(id);
   if (rifle) disposeRifle(rifle);
   rifle = next;

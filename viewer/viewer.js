@@ -1,4 +1,5 @@
 // Partisan Project Asset Viewer: inspect any registered GLB against the budgets in assets/register.json.
+import {setLoader, loaderError} from '../shared/loader.js';
 import * as T from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
@@ -16,7 +17,7 @@ let current = null,
   spinning = false;
 
 async function show(path) {
-  $('#status').hidden = false;
+  setLoader($('#status'), `Loading ${path.split('/').pop()}`);
   if (current) {
     current.removeFromParent();
   }
@@ -53,7 +54,7 @@ $('#models').replaceChildren(
     b.textContent = a.label;
     b.dataset.path = a.path;
     b.setAttribute('aria-pressed', 'false');
-    b.onclick = () => show(a.path);
+    b.onclick = () => show(a.path).catch(() => loaderError($('#status'), 'Model could not load. Choose another model or reload.'));
     return b;
   }),
 );

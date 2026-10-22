@@ -2,6 +2,7 @@
 // The data is a placeholder copy of tarkov.dev's catalogue (tools/wiki/import-tarkov.mjs writes wiki/data/items.json);
 // the icons are placeholders from the project's own RimWorld-style art set, chosen by what the item is.
 import '../shared/frame.js';
+import {setLoader} from '../shared/loader.js';
 import {mountTopBar} from '../shared/topbar.js';
 import {loadGuns, loadSet} from '../convoy/sprite-art.js';
 import {iconFor, filterItems, LABELS} from './catalogue.js';
@@ -20,7 +21,9 @@ const el = (tag, attrs = {}, ...kids) => {
 };
 const fmt = n => (typeof n === 'number' ? n.toLocaleString('en-GB') : n);
 
+setLoader($('#loading'), 'Loading equipment catalogue');
 const data = await (await fetch(new URL('./data/items.json', import.meta.url))).json();
+setLoader($('#loading'), 'Loading equipment illustrations');
 const guns = await loadGuns();
 const cats = Object.fromEntries(data.categories.map(c => [c.id, c]));
 const byId = Object.fromEntries(data.items.map(i => [i.id, i]));

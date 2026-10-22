@@ -28,7 +28,7 @@ import {disposeModel, prefetchModels} from '../shared/model-cache.js';
 import {MODELS} from '../workbench/models.js';
 import {applyLoadout, emptyLoadout, installCamo} from '../workbench/apply-loadout.js';
 import {encode, decode, parseLegacy} from '../shared/loadout.js';
-import {loaderError} from '../shared/loader.js';
+import {loaderError, setLoader} from '../shared/loader.js';
 
 const $ = s => document.querySelector(s);
 const status = $('#status');
@@ -177,7 +177,7 @@ const nodeOf = mesh => {
 
 async function loadBase(id) {
   const next = BASES[id] || BASES[DEFAULT_BASE];
-  status.hidden = false;
+  setLoader(status, `Loading operator: ${next.id}`);
   if (!baseCache.has(next.id)) {
     const gltf = await loader.loadAsync(next.model);
     // The rig captures the rest pose, so it must be created once, before any pose is applied, and cached with the scene.

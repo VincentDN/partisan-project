@@ -1,4 +1,6 @@
 // Shared overworld renderer and campaign controls; each entry point supplies its own character renderer.
+import '../shared/three-loading.js';
+import {setLoader, loaderProgress} from '../shared/loader.js';
 import * as T from 'three';
 import {pickGround} from './picking.js';
 import {createRenderBudget} from './render-budget.js';
@@ -52,6 +54,9 @@ export async function mountMap({HD2D, createSpriteLayer, createHD2D, figure}) {
   const daylightAt = createDaylight({scene, sun, hemi, renderer}); // night tint from the clock (WP-W4, map/daylight.js)
 
   // ---------- the world ----------
+  setLoader($('#loading'), 'Building island terrain');
+  loaderProgress($('#loading'), 1 / 4);
+  await new Promise(resolve => requestAnimationFrame(resolve));
   const field = bakeHeights();
   const terrain = buildTerrain(field, {anisotropy: renderer.capabilities.getMaxAnisotropy()});
   const water = buildWater(field, sunDir);
@@ -235,10 +240,15 @@ export async function mountMap({HD2D, createSpriteLayer, createHD2D, figure}) {
   new ResizeObserver(resize).observe(stageEl);
   resize();
 
+  setLoader($('#loading'), 'Loading rebel sprites and equipment');
+  loaderProgress($('#loading'), 2 / 4);
   const sprites = HD2D ? await createSpriteLayer({ground: (x, z) => sample(field, x, z)}) : null;
+  setLoader($('#loading'), 'Loading settlements and convoy vehicles');
   const parties = await buildParties(field, labels, sprites?.makers || {figure});
   const hd2d = HD2D ? createHD2D(renderer) : null;
   scene.add(parties.group);
+  setLoader($('#loading'), 'Restoring campaign and preparing map');
+  loaderProgress($('#loading'), 3 / 4);
   const travel = mountTravel({
     scene,
     camera,

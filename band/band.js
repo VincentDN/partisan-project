@@ -3,6 +3,7 @@
 // the gun sprites. Troops gain experience on raids and upgrade along set paths; every step needs the equipment the new
 // troop carries, taken from the stash of stolen weapons. The state lives in this browser only (localStorage).
 import '../shared/frame.js';
+import {setLoader, loaderProgress} from '../shared/loader.js';
 import {mountTopBar} from '../shared/topbar.js';
 import {buildPawn, loadGuns, loadSet, lookFor} from '../convoy/sprite-art.js';
 import {GEAR, CLASSES, TROOPS, bandLimit, bandSize, ready, canUpgrade, upgrade, abilitiesOf} from './troops.js';
@@ -61,9 +62,18 @@ if (inCampaign) {
 }
 
 // ---------- art ----------
+setLoader($('#loading'), 'Loading weapon sprites');
 const guns = await loadGuns();
+setLoader($('#loading'), 'Loading equipment icons');
+let loadedIcons = 0;
 const icons = Object.fromEntries(
-  await Promise.all(Object.entries(GEAR).map(async ([id, g]) => [id, g.icon ? await loadSet(g.icon) : null])),
+  await Promise.all(
+    Object.entries(GEAR).map(async ([id, g]) => {
+      const icon = g.icon ? await loadSet(g.icon) : null;
+      loaderProgress($('#loading'), ++loadedIcons / Object.keys(GEAR).length);
+      return [id, icon];
+    }),
+  ),
 );
 const pawns = new Map();
 const lookOf = id =>

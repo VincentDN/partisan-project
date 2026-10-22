@@ -5,12 +5,14 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json).
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-22 · codex · W37 paper campaign GUI**
+**2026-10-22 · codex · W37–W40 interface, inventory and loaders**
 
-- Approved paper GUI implemented in campaign-shell.js/campaign-paper.css: left management, bottom circular Play/Pause and time dock, right live objectives/reports. Island renderer unchanged. Mobile uses collapsible management/report drawers.
-- Browser campaign GUI passes keyboard, travel, band kit, responsive bounds and scoped accessibility. Full unit run had only new packet BU sizing failures; corrected to M=20 and all eight packet checks pass. Lint/typecheck and build/link checks pass.
-- Owner reports logged before work: W38 project loaders/progress/centering; W39 looted primary firing/reloading; W40 suspected bandage bug. Continue combat blockers then loaders.
-- Owner authorizes milestone commits/pushes to main. Preserve original intro/ and gameplay/demo module isolation.
+- W37 paper GUI pushed as 58ee14d: left management, bottom circular Play/Pause/time controls, right objective and recent reports, mobile drawers. Normal island renderer unchanged. Intelligence filters rumours and intercepted orders.
+- W39/W40 pushed as 8aa0a51: Primary inventory replacement now selects the new rifle even if sling was active. Ordinary swaps already worked in reproduction. H bandages already healed; added explicit Use buttons. Browser checks real firing/reload, full-health no-consumption, two 15 HP uses and depletion removal.
+- W38 shared loader bootstrap covers 11 maintained pages. Correct centering despite ID rules; resource/phase text, real completion counts where known, indeterminate otherwise, accessible bars and failure feedback. Original intro source untouched.
+- Validation: 566 unit tests pass; campaign desktop/mobile GUI and scoped accessibility, journal persistence, overlay focus, combat looted-weapon/medicine, recorded Foley, 11-page loader placement/progress/error checks, gameplay/demo module isolation and live standalone map/workbench/operator pass. Lint/typecheck/format and build/link checks pass. No full all-page E2E claim.
+- Previews: outbound/wip-images/2026-10-22_080812.png, outbound/wip-images/2026-10-22_080953.png.
+- Owner authorizes milestone main commits/pushes. Earlier campaign W21/W22/W23/W24/W25 and acoustic W34 remain open. Site remains above historical 90 MB budget; no unrelated asset cleanup.
 <!-- handoff:end -->
 
 ## Gameplay/demo module boundary — 13 October 2026
