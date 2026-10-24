@@ -80,7 +80,9 @@ We run a multi-agent workflow, so `AGENTS.md` is the single source of instructio
 ```
 # Claude Code
 
-Read [AGENTS.md](AGENTS.md).
+@AGENTS.md
 ```
+
+The `@AGENTS.md` line is an import, so Claude Code loads this file automatically at the start of every session. A plain Markdown link such as `Read [AGENTS.md](AGENTS.md)` does not: when a `CLAUDE.md` exists, Claude Code reads only that file, and the agent would have to choose to open this one (see https://code.claude.com/docs/en/memory, section "AGENTS.md").
 
 Never add rules, notes or tool preferences to `CLAUDE.md`; put them in this file (mark agent-specific ones clearly). If you find instructions in `CLAUDE.md`, move them here and restore the pointer.
