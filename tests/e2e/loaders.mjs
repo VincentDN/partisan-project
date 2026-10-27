@@ -41,6 +41,7 @@ try {
     assert.ok(Math.abs(position.x - position.cx) < 3 && Math.abs(position.y - position.cy) < 3, `${path}: ${JSON.stringify(position)}`);
     assert.ok((await p.locator('.nk-text').innerText()).length > 8);
     if (process.env.LOADER_SHOT && path === 'workbench/index.html') await p.screenshot({path: process.env.LOADER_SHOT});
+    const size = await p.locator('.nk-loader').boundingBox();
     await p.evaluate(async () => {
       const {loaderProgress} = await import('/shared/loader.js');
       loaderProgress(document.querySelector('.nk-loader'), 0.5);
@@ -52,9 +53,63 @@ try {
     });
     assert.equal(await p.locator('.nk-loader').getAttribute('role'), 'alert');
     assert.equal(await p.locator('.nk-bar').isVisible(), false);
+    const errorSize = await p.locator('.nk-loader').boundingBox();
+    assert.equal(errorSize.width, size.width, `${path}: error width stays fixed`);
+    assert.equal(errorSize.height, size.height, `${path}: error height stays fixed`);
     release();
     await p.close();
     console.log(`${path}: centred phase, progress and error states passed`);
+  }
+  for (const width of [1280, 360]) {
+    const p = await browser.newPage({viewport: {width, height: 800}});
+    await p.goto(server.url + 'convoy/');
+    await p.waitForFunction(() => window.PARP_SPRITES?.ready);
+    assert.equal(await p.locator('#status').isVisible(), false, 'practice loader dismissed');
+    await p.evaluate(async () => {
+      const {newCampaign, createStore} = await import('/shared/campaign/state.js');
+      const {encounterFor} = await import('/shared/campaign/contacts.js');
+      const {deploy} = await import('/shared/campaign/encounter.js');
+      const c = newCampaign();
+      const e = encounterFor(c, 'oros-roadblock');
+      e.id = 'loader-regression';
+      deploy(c, e);
+      createStore(localStorage).save(c);
+    });
+    let release;
+    const gate = new Promise(resolve => (release = resolve));
+    await p.route('**/convoy/data/inventory-items.json', async route => {
+      await gate;
+      await route.continue();
+    });
+    try {
+      await p.goto(server.url + 'convoy/?campaign=c1&encounter=loader-regression', {waitUntil: 'commit'});
+      await p.waitForFunction(() => document.querySelector('.nk-text')?.textContent.includes('medicine'));
+      const initial = await p.locator('#status').boundingBox();
+      assert.ok(initial, 'campaign data fetch keeps the loader visible');
+      for (const text of [
+        'Loading',
+        'Loading weapon, ammunition and medicine data',
+        'Loading a very long resource name with multiple words that must wrap on a narrow screen',
+      ]) {
+        await p.evaluate(async text => {
+          const {setLoader, loaderProgress} = await import('/shared/loader.js');
+          const el = document.querySelector('#status');
+          setLoader(el, text);
+          loaderProgress(el, 0.5);
+        }, text);
+        const box = await p.locator('#status').boundingBox();
+        assert.deepEqual(box, initial, 'phase changes preserve the entire card rectangle');
+      }
+    } finally {
+      release();
+    }
+    await p.waitForFunction(() => window.PARP_SPRITES?.ready);
+    assert.equal(await p.locator('#status').isVisible(), false, 'campaign loader dismissed');
+    await p.locator('#start').click();
+    await p.waitForTimeout(250);
+    assert.equal(await p.locator('#status').isVisible(), false, 'loader stays hidden during combat');
+    await p.close();
+    console.log(`combat loader lifecycle and stable geometry at ${width}px passed`);
   }
 } finally {
   await browser.close();

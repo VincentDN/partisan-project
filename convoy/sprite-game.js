@@ -29,7 +29,7 @@ import {COSMETICS, buildPawn, lookFor, saveLook, resetLook, savedLook, loadSet} 
 import {showSpoils} from './spoils.js';
 import {wornLook, wornFields} from '../shared/campaign/looks.js';
 import {arm} from './builds-in-mission.js';
-import {setLoader, loaderProgress} from '../shared/loader.js';
+import {setLoader, loaderProgress, hideLoader} from '../shared/loader.js';
 
 mountTopBar({title: 'Partisan Tactical', scene: 'viewer'});
 const $ = s => document.querySelector(s);
@@ -53,7 +53,6 @@ if (cm?.action === 'play' && LEVELS[cm.deployment.level]) levelId = cm.deploymen
 
 setLoader($('#status'), 'Loading the sprites');
 const R = await createSpriteRenderer(view);
-$('#status').hidden = true;
 
 // The squad (classes and experience) and the difficulty are kept in this browser.
 const store = {
@@ -917,6 +916,7 @@ function frame() {
   requestAnimationFrame(frame);
 }
 newGame();
+hideLoader($('#status'));
 requestAnimationFrame(frame);
 // Test hook: lets browser tests drive the game.
 window.PARP_SPRITES = {

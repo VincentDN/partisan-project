@@ -108,14 +108,15 @@
 .nk-text::after {
   content: '...';
   display: inline-block;
-  width: 0;
+  width: 3ch;
+  clip-path: inset(0 100% 0 0);
   overflow: hidden;
   white-space: nowrap;
   vertical-align: bottom;
   animation: nk-dots 1.2s steps(4, jump-none) infinite;
 }
 @keyframes nk-dots {
-  to { width: 3ch; }
+  to { clip-path: inset(0); }
 }
 /* progress, when the page knows it: battery segments filling from the left */
 .nk-bar {
@@ -159,3 +160,22 @@
 .nk-bar.indeterminate i { width: 32%; animation: nk-progress 1.4s ease-in-out infinite alternate; }
 @keyframes nk-progress { to { transform: translateX(210%); } }
 @media (prefers-reduced-motion: reduce) { .nk-bar.indeterminate i { animation: none; width: 45%; } }
+
+/* Reserve every loading phase before JavaScript adds progress; only the text scrolls. */
+.nk-loader {
+  display: grid;
+  grid-template-columns: 17px minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) 10px 32px;
+  gap: 8px 12px;
+  width: min(380px, calc(100vw - 48px));
+  min-width: 0;
+  height: 160px;
+  padding: 18px;
+}
+.nk-spin { grid-column: 1; grid-row: 1; }
+.nk-text { grid-column: 2; grid-row: 1; max-height: 100%; overflow: auto; }
+.nk-bar { grid-column: 2; grid-row: 2; width: 100%; max-width: none; margin: 0; }
+.nk-progress-text { grid-column: 2; grid-row: 3; margin: 0; }
+.nk-loader[data-state='error'] .nk-spin { display: block; visibility: hidden; }
+.nk-loader[data-state='error'] .nk-text { grid-row: 1 / -1; }
+@media (prefers-reduced-motion: reduce) { .nk-text::after { clip-path: none; } }

@@ -566,3 +566,25 @@ Acceptance: a representative local settlement/rebel gathering and occupier posit
 > **Note from Vincent:** “We could use *Star Wars Rebels* as a reference here too, but honestly I’m just so over Star Wars, man. They’re making more Star Wars than I can watch each year.”
 
 See the [Culture of Yantis design notes](game-design-master-doc.html#culture).
+
+
+## 27 October 2026 — loading correction and W34 guitar shortlist
+
+W38: Combat loading remains visible until sprite, loot, inventory and initial game setup finish,
+then disappears before play. Cards reserve the same rectangle for phase text, progress and errors.
+Browser regression covers all 11 maintained pages and practice/campaign combat at desktop and phone widths.
+
+W34 music discovery (owner explicitly requested CC0 and real guitars):
+
+- **First audition: [3 Acoustic Guitars (Instrumental), Aussens@iter](https://ccmixter.org/files/tobias_weber/56668)**.
+  1:29, 108 BPM; artist explicitly identifies a recorded Walden steel-string guitar and CC0.
+  Suggested for travel/camp based on its instrumental acoustic/chill description.
+- **[Prelude For Classical Guitar (Instrumental), Aussens@iter](https://ccmixter.org/files/tobias_weber/57952)**.
+  2:17, 110 BPM; artist identifies a recorded Yamaha CX40 acoustic guitar, DADGAD tuning and CC0.
+  Candidate for quieter reflective scenes; amp processing is disclosed by the artist.
+- **[A Small Fire Will Do, Trex0n](https://opengameart.org/content/a-small-fire-will-do-calming-loop)**.
+  CC0 acoustic-guitar-tagged calming loop, a potential camp theme. Source does not confirm live guitar recording.
+
+These are a source-verified listening shortlist, not an auditory review or a shipped replacement.
+No audio was downloaded or wired into playback. W34 stays open for selection, local audio integration,
+loop/level review and the separately scoped faction vignettes. Existing music lifecycle must remain intact.

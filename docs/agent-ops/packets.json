@@ -4116,7 +4116,8 @@
    "inputs": [
     "docs/game-design-master-doc.html"
    ],
-   "acceptance": "Replace synthesized campaign placeholder with acoustic folk guitar/strings/voices without synths. Stage Scene A rebel campfire musicians and Scene B heavily equipped occupiers around an NPC with aggressive synth/dubstep playback. Preserve mute/volume, local runtime assets and gameplay/demo isolation. Deliver as separately reviewable audio and vignette milestones."
+   "acceptance": "Replace synthesized campaign placeholder with acoustic folk guitar/strings/voices without synths. Stage Scene A rebel campfire musicians and Scene B heavily equipped occupiers around an NPC with aggressive synth/dubstep playback. Preserve mute/volume, local runtime assets and gameplay/demo isolation. Deliver as separately reviewable audio and vignette milestones.",
+   "progress_note": "2026-10-27: Owner requests online CC0 music with real guitars. Candidate shortlist recorded in campaign roadmap; no new audio integrated. Acoustic recording selection and faction vignettes remain open."
   },
   {
    "id": "WP-W35",
@@ -4184,7 +4185,7 @@
     "docs/campaign-roadmap.md"
    ],
    "acceptance": "Audit all page and demo loaders. Centre loading feedback, identify current phase/assets, show real progress when measurable and indeterminate state otherwise. Handle failures and reduced motion.",
-   "progress_note": "2026-10-22: Shared bootstrap/progress/error feedback across 11 maintained loader pages. Fixed ID-level centering overrides, live Three resource counts, campaign/combat/band/wiki phases, indeterminate work where totals unknown. Original intro code untouched. Browser 11-page placement/progress/error checks and live gameplay/demo isolation pass."
+   "progress_note": "2026-10-22: Shared bootstrap/progress/error feedback across 11 maintained loader pages. Fixed ID-level centering overrides, live Three resource counts, campaign/combat/band/wiki phases, indeterminate work where totals unknown. Original intro code untouched. Browser 11-page placement/progress/error checks and live gameplay/demo isolation pass. 2026-10-27: Combat loader now stays visible through sprite, loot and inventory initialization and dismisses after newGame. Shared card reserves fixed geometry across short/long phases, progress and errors. Browser checks pass on 11 pages plus practice/campaign combat at 1280px and 360px."
   },
   {
    "id": "WP-W39",
