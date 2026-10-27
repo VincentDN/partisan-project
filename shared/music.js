@@ -2,7 +2,6 @@
 // 86 BPM, 8 bars: Am9 | Am9 | Fmaj7 | Fmaj7 | Cmaj7 | Cmaj7 | Em7 | Em7, then repeat.
 // Layers: detuned saw pad, sine bass, delayed triangle arpeggio, soft kick/hat/rim, shared reverb.
 // scheduleBar() is pure scheduling, so the same score renders offline for previews.
-import {CAMPAIGN_BAR, scheduleCampaignBar} from './campaign-score.js';
 const BPM = 86,
   BEAT = 60 / BPM,
   BAR = BEAT * 4,
@@ -189,7 +188,11 @@ export const TRACKS = [
   },
   {id: 'abdulena', label: 'Abdulena', src: new URL('../assets/audio/abdulena.mp3', import.meta.url).href},
   {id: 'ambient', label: 'Ambient loop'},
-  {id: 'campaign', label: 'Campaign · quiet strings'},
+  {
+    id: 'campaign',
+    label: 'Campaign · acoustic guitars',
+    src: new URL('../assets/audio/campaign-acoustic-guitars.mp3', import.meta.url).href,
+  },
 ];
 
 // Handoff between pages: the workbench intro saves where the file track is before it navigates
@@ -254,9 +257,8 @@ export class Music {
       this.timer ??= setInterval(() => {
         if (this.next < this.ctx.currentTime) this.next = this.ctx.currentTime + 0.05;
         while (this.next < this.ctx.currentTime + LOOKAHEAD) {
-          const campaign = this.track === 'campaign';
-          (campaign ? scheduleCampaignBar : scheduleBar)(this.graph, this.bar++, this.next);
-          this.next += campaign ? CAMPAIGN_BAR : BAR;
+          scheduleBar(this.graph, this.bar++, this.next);
+          this.next += BAR;
         }
       }, 200);
       return Promise.resolve(true);

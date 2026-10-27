@@ -585,6 +585,15 @@ W34 music discovery (owner explicitly requested CC0 and real guitars):
 - **[A Small Fire Will Do, Trex0n](https://opengameart.org/content/a-small-fire-will-do-calming-loop)**.
   CC0 acoustic-guitar-tagged calming loop, a potential camp theme. Source does not confirm live guitar recording.
 
-These are a source-verified listening shortlist, not an auditory review or a shipped replacement.
-No audio was downloaded or wired into playback. W34 stays open for selection, local audio integration,
-loop/level review and the separately scoped faction vignettes. Existing music lifecycle must remain intact.
+### W34 audio milestone — 27 October
+
+Integrated **3 Acoustic Guitars** as the campaign default on `codex/campaign-acoustic-recording`.
+The artist's page confirms a recorded Walden steel-string guitar and CC0. The local asset is
+`assets/audio/campaign-acoustic-guitars.mp3`; no external audio requests are needed during play.
+The original 88.97-second recording is encoded at 128 kbps stereo, attenuated by 6 dB, with a 0.12-second
+fade-in and a 1.27-second fade-out beginning at 87.7 seconds. This is a repeated complete performance,
+not a claim of a musically seamless loop. Source URL remains the first shortlist link above.
+
+Preparation with FFmpeg: `-map_metadata -1 -af "volume=-6dB,afade=t=in:d=0.12,afade=t=out:st=87.7:d=1.27" -codec:a libmp3lame -b:a 128k -ar 44100`.
+Campaign mode keeps the saved demo selection, mute and volume; shell navigation retains the same music player.
+Owner listening acceptance and the separate faction vignettes remain open; W34 as a whole is not complete.
