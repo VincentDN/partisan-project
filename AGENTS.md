@@ -86,3 +86,9 @@ We run a multi-agent workflow, so `AGENTS.md` is the single source of instructio
 The `@AGENTS.md` line is an import, so Claude Code loads this file automatically at the start of every session. A plain Markdown link such as `Read [AGENTS.md](AGENTS.md)` does not: when a `CLAUDE.md` exists, Claude Code reads only that file, and the agent would have to choose to open this one (see https://code.claude.com/docs/en/memory, section "AGENTS.md").
 
 Never add rules, notes or tool preferences to `CLAUDE.md`; put them in this file (mark agent-specific ones clearly). If you find instructions in `CLAUDE.md`, move them here and restore the pointer.
+
+## Murky provenance: deliver for human rights review (standing rule)
+
+When the provenance or rights of a file (image, scan, font, dataset, document) are unclear, do not publish it, add it to a shipping catalogue as cleared, or leave it as a bare link. Deliver the files as references into `outbound/rights-review/<source-name>/` (create `outbound/` if the repository has none), with human-legible file names (a readable title, reference number and date, never a hash or ID-only name). Add a `rights-review-sheet.csv` beside them with, for each file: the source page, the rights statement the source itself makes, why the provenance is murky, and blank reviewer, decision (CLEARED / NOT CLEARED / ASK SOURCE), date and notes columns. Human operators go through the sheet and clear the rights.
+
+Until a human marks a file CLEARED it must not ship. Never use search-engine image results (Google Images and similar) as a source for files that will be published or sold; use archives, museums and other sources that state their terms.
