@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-11-09 — Yantis culture and marketing notes
+
+- Added Vincent’s emotional core, resistance stakes and typography influences to the culture section; preserved the marketing idea as a short stub.
+- Saved six supplied typography images for human review outside the shipped site.
+
 ## 2026-10-27 — Stable combat loading feedback (W38)
 
 - Combat loading now ends after mission data and game initialization, preventing a loader from remaining over the scenario.
