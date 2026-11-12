@@ -1,135 +1,43 @@
-// StG 44 (2044) bench: the swappable attachments per slot. Each builder returns a group whose origin is its mount point.
-import * as THREE from 'three';
-import {box, profile, rail, tube} from './finish.js';
-import {FURNITURE} from './parts-furniture.js';
+// StG 44 (2044) bench: the slot catalogue. Rail parts are the Weapon Workbench's real attachment models; stocks and magazines are nodes of the rifle.
+import {real, Z_FWD} from '../attachment-model.js';
+import {buildScope} from '../attachment-mounts.js';
 
-const grp = (...m) => {
-  const g = new THREE.Group();
-  g.add(...m.filter(Boolean));
-  return g;
-};
-const clamp = (M, x0, x1) => [
-  box(M.steel, x0, x1, 0, 0.011, 0.0125, 0.001),
-  tube(M.steel, 0.0125, 0.019, (x0 + x1) / 2, 0.004, {axis: 'z', z: 0.0055, seg: 8}),
-];
+const S = 0.103763; // metres per unit in the shared attachment sets
+const ON_TOP = ['c', 'min', 'c'],
+  UNDER = ['c', 'max', 'c'],
+  ON_SIDE = ['c', 'c', 'min'];
+const none = label => ({id: 'none', label, grams: 0, len: 0, build: () => null});
 
-// id, label, grams (handling sound weight), len (half-length kept inside the rail), build(M, state)
+// id, label, grams (handling-sound weight), len (length kept on the rail), build(M) or `show` (a rifle node prefix;
+// an option whose nodes the current rifle lacks is greyed out)
 export const SLOTS = {
   optic: {
     label: 'Optic',
     options: [
       {
         id: 'reddot',
-        label: 'Reflex sight on riser',
-        grams: 190,
-        len: 0.04,
-        build: M =>
-          grp(
-            ...clamp(M, -0.03, 0.03),
-            box(M.steel, -0.02, 0.02, 0.011, 0.03, 0.01, 0.001),
-            tube(M.steel, -0.036, 0.036, 0.05, 0.021, {seg: 18}),
-            tube(M.glass, -0.0365, 0.0365, 0.05, 0.0165, {seg: 18}),
-            tube(M.steel, -0.008, 0.008, 0.074, 0.008, {seg: 10}),
-            tube(M.steel, 0.02, 0.03, 0.006, 0.007, {axis: 'z', z: 0.05, seg: 10}),
-          ),
+        label: 'Micro red dot',
+        grams: 130,
+        len: 0.06,
+        build: real('collimator-set.glb', {nodes: ['holosun_403r_1'], scale: S, anchor: ON_TOP}),
       },
       {
         id: 'holo',
         label: 'Holographic sight',
         grams: 320,
-        len: 0.05,
-        build: M =>
-          grp(
-            ...clamp(M, -0.045, 0.045),
-            box(M.steel, -0.045, 0.045, 0.011, 0.028, 0.019, 0.002),
-            profile(
-              M.steel,
-              [
-                [-0.012, 0.028],
-                [0.042, 0.028],
-                [0.042, 0.07],
-                [0.0, 0.07],
-              ],
-              0.02,
-              0.002,
-            ),
-            profile(
-              M.glass,
-              [
-                [0.0425, 0.032],
-                [0.0435, 0.032],
-                [0.0435, 0.066],
-                [0.0425, 0.066],
-              ],
-              0.015,
-              0,
-            ),
-            profile(
-              M.glass,
-              [
-                [-0.0, 0.034],
-                [0.001, 0.034],
-                [0.001, 0.066],
-                [-0.0, 0.066],
-              ],
-              0.015,
-              0,
-            ),
-          ),
-      },
-      {
-        id: 'zf',
-        label: 'ZF 1-6× scope',
-        grams: 560,
         len: 0.09,
-        build: M =>
-          grp(
-            ...clamp(M, -0.07, -0.04),
-            ...clamp(M, 0.04, 0.07),
-            box(M.steel, -0.068, -0.042, 0.011, 0.034, 0.008, 0.001),
-            box(M.steel, 0.042, 0.068, 0.011, 0.034, 0.008, 0.001),
-            tube(M.steel, -0.13, 0.11, 0.05, 0.0155, {seg: 18}),
-            tube(M.steel, 0.09, 0.15, 0.05, 0.0155, {r2: 0.023, seg: 18}),
-            tube(M.steel, -0.17, -0.12, 0.05, 0.021, {seg: 18}),
-            tube(M.glass, 0.1505, 0.1515, 0.05, 0.021, {seg: 18}),
-            tube(M.steel, 0.066, 0.086, 0.0, 0.012, {axis: 'y', z: 0, seg: 12}),
-            tube(M.steel, 0.012, 0.03, 0.0, 0.011, {axis: 'z', z: 0.05, seg: 12}),
-          ),
+        build: real('eotech.glb', {scale: 1.0, rotation: Z_FWD, anchor: ON_TOP}),
       },
-      {id: 'none', label: 'Iron sights only', grams: 0, len: 0, build: () => null},
+      {id: 'scope', label: '4× scope in rings', grams: 460, len: 0.2, build: M => buildScope({materials: {'h-190': M.steel}})},
+      none('Iron sights only'),
     ],
   },
   laser: {
     label: 'Laser',
     options: [
-      {
-        id: 'blitz',
-        label: 'Blitzstrahl laser-lamp',
-        grams: 210,
-        len: 0.045,
-        build: M =>
-          grp(
-            box(M.steel, -0.03, 0.03, 0, 0.006, 0.012, 0.0008),
-            box(M.body, -0.045, 0.045, 0.006, 0.03, 0.023, 0.0025),
-            tube(M.black, 0.045, 0.05, 0.02, 0.006, {z: 0.011, seg: 10}),
-            tube(M.glass, 0.045, 0.051, 0.02, 0.007, {z: -0.01, seg: 10}),
-            box(M.black, -0.03, -0.01, 0.03, 0.0335, 0.006, 0.0006, 0.008),
-            box(M.red, -0.002, 0.012, 0.03, 0.033, 0.004, 0.0005, -0.008),
-          ),
-      },
-      {
-        id: 'compact',
-        label: 'Compact aiming laser',
-        grams: 90,
-        len: 0.025,
-        build: M =>
-          grp(
-            box(M.steel, -0.02, 0.02, 0, 0.005, 0.011, 0.0008),
-            box(M.black, -0.025, 0.025, 0.005, 0.024, 0.014, 0.002),
-            tube(M.glass, 0.025, 0.027, 0.015, 0.005, {seg: 10}),
-          ),
-      },
-      {id: 'none', label: 'None', grams: 0, len: 0, build: () => null},
+      {id: 'peq15', label: 'Aiming laser / illuminator', grams: 210, len: 0.11, build: real('peq15.glb', {scale: S, anchor: ON_TOP})},
+      {id: 'peq2', label: 'Laser, older pattern', grams: 250, len: 0.12, build: real('peq2.glb', {scale: S, anchor: ON_TOP})},
+      none('None'),
     ],
   },
   light: {
@@ -137,45 +45,82 @@ export const SLOTS = {
     options: [
       {
         id: 'scout',
-        label: 'Scout light',
-        grams: 140,
-        len: 0.055,
-        build: M =>
-          grp(
-            box(M.steel, -0.02, 0.02, -0.009, 0.009, 0.004, 0.0008, 0.004),
-            tube(M.steel, -0.055, 0.035, 0.0, 0.0125, {z: 0.02, seg: 14}),
-            tube(M.steel, 0.035, 0.07, 0.0, 0.0125, {z: 0.02, r2: 0.0175, seg: 14}),
-            tube(M.amber, 0.0705, 0.0715, 0.0, 0.015, {z: 0.02, seg: 14}),
-            tube(M.black, -0.066, -0.055, 0.0, 0.011, {z: 0.02, seg: 12}),
-          ),
+        label: 'Weapon light',
+        grams: 110,
+        len: 0.09,
+        build: real('light-surefire.glb', {
+          scale: 0.00638423,
+          rotation: [-Math.PI / 2, -Math.PI / 2, 0],
+          stretch: [0.7, 1.4, 1.4],
+          anchor: ON_SIDE,
+        }),
       },
-      {
-        id: 'long',
-        label: 'Long-range spotting lamp',
-        grams: 260,
-        len: 0.07,
-        build: M =>
-          grp(
-            box(M.steel, -0.03, 0.03, -0.009, 0.009, 0.004, 0.0008, 0.004),
-            tube(M.steel, -0.08, 0.06, 0.0, 0.0145, {z: 0.023, seg: 14}),
-            tube(M.steel, 0.06, 0.105, 0.0, 0.0145, {z: 0.023, r2: 0.0215, seg: 14}),
-            tube(M.amber, 0.1055, 0.1065, 0.0, 0.019, {z: 0.023, seg: 14}),
-            tube(M.black, -0.092, -0.08, 0.0, 0.0125, {z: 0.023, seg: 12}),
-          ),
-      },
-      {id: 'none', label: 'None', grams: 0, len: 0, build: () => null},
+      none('None'),
     ],
   },
-  ...FURNITURE,
+  under: {
+    label: 'Underbarrel',
+    options: [
+      {
+        id: 'angled',
+        label: 'Angled foregrip',
+        grams: 110,
+        len: 0.1,
+        build: real('grip-afg.glb', {nodes: ['normal_0'], scale: 0.9, rotation: Z_FWD, anchor: UNDER}),
+      },
+      {
+        id: 'vertical',
+        label: 'Vertical grip',
+        grams: 150,
+        len: 0.05,
+        build: real('grip-rvg.glb', {scale: 1.46184, rotation: Z_FWD, anchor: UNDER}),
+      },
+      {
+        id: 'bipod',
+        label: 'Folding bipod',
+        grams: 320,
+        len: 0.12,
+        build: real('g3-bipod.glb', {scale: 0.995917, rotation: [0, Math.PI / 2, 0], anchor: UNDER}),
+      },
+      none('Bare rail'),
+    ],
+  },
+  muzzle: {
+    label: 'Muzzle',
+    options: [
+      {id: 'brake', label: "The rifle's own muzzle device", grams: 90, show: 'muzzle_'},
+      {
+        id: 'supp',
+        label: 'Sound suppressor',
+        grams: 540,
+        build: real('muzzle-set.glb', {nodes: ['sil_556m_8'], scale: S, anchor: ['min', 'c', 'c']}),
+      },
+      {id: 'none', label: 'Bare muzzle', grams: 0, build: () => null},
+    ],
+  },
+  stock: {
+    label: 'Stock',
+    slide: {range: [0, 0.06], start: 0.03, label: 'Length of pull', only: 'adjustable'},
+    options: [
+      {id: 'fixed', label: 'Fixed polymer stock', grams: 380, show: 'stock_fixed'},
+      {id: 'adjustable', label: 'Haenel adjustable, model 2043', grams: 330, show: 'stock_adj'},
+    ],
+  },
+  mag: {
+    label: 'Magazine',
+    options: [
+      {id: 'kurz25', label: '25 rounds, 7.92×33 Kurz', grams: 420, show: 'mag_25'},
+      {id: 'kurz40', label: '40 rounds, extended', grams: 610, show: 'mag_40'},
+    ],
+  },
 };
 export const DEFAULT_BUILD = {
   optic: 'reddot',
-  laser: 'blitz',
+  laser: 'peq15',
   light: 'scout',
   under: 'angled',
   muzzle: 'brake',
-  stock: 'haenel',
+  stock: 'fixed',
   mag: 'kurz25',
 };
 export const optionOf = (slot, id) => SLOTS[slot].options.find(o => o.id === id) || SLOTS[slot].options[0];
-export {rail};

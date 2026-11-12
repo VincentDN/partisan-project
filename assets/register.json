@@ -1005,6 +1005,29 @@
    }
   },
   {
+   "id": "stg44-2044-a",
+   "label": "StG 44 (2044), rebuild A: LLM-Rebuild",
+   "path": "assets/models/weapons/stg44-2044-a.glb",
+   "kind": "weapon",
+   "status": "real",
+   "generator": "tools/assets/build-stg44-2044-a.py",
+   "budget": {
+    "triangles": 51000
+   },
+   "note": "Over the 30,000-triangle weapon budget (about 46,700 fitted with one magazine and stock); a hero test, to be cut down if it ships."
+  },
+  {
+   "id": "stg44-2044-b",
+   "label": "StG 44 (2044), rebuild B: Neuro-Bash",
+   "path": "assets/models/weapons/stg44-2044-b.glb",
+   "kind": "weapon",
+   "status": "real",
+   "generator": "tools/assets/build-stg44-2044-b.py",
+   "budget": {
+    "triangles": 27000
+   }
+  },
+  {
    "id": "ppsh41",
    "label": "low-poly PPSH-41",
    "path": "assets/models/weapons/ppsh41.glb",
@@ -1222,7 +1245,9 @@
    "kind": "character",
    "status": "real",
    "notes": "CM6 closed, UV-mapped magazine (264), utility (220) and owned radio/cable (376) templates, seated on the measured carrier webbing. The 1,400-triangle template allocation does not cap repeated copies: six radios allocate 2,256 and total 8,940 with foundation/carrier, leaving 6,060 under the complete-operator ceiling. Rebuild with assets:recon-pouches.",
-   "budget": {"triangles": 1400},
+   "budget": {
+    "triangles": 1400
+   },
    "triangles": 860
   }
  ],

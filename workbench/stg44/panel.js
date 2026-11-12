@@ -4,16 +4,32 @@ const el = (tag, props = {}, ...kids) => {
   n.append(...kids);
   return n;
 };
-export function buildPanel({state, SLOTS, MOUNTS, PALETTES, WEAR, setOption, slideTo, setPalette, setWear, view, reset}) {
+export function buildPanel(o) {
+  const {state, SLOTS, MOUNTS, PALETTES, WEAR, RIFLES, available, setVariant, setOption, slideTo, setPalette, setWear, view, reset} = o;
   const root = document.getElementById('slots'),
     syncers = [];
+  // the two competing rebuilds of the same rifle
+  const pick = document.getElementById('variant'),
+    note = document.getElementById('variant-note');
+  for (const [v, r] of Object.entries(RIFLES)) {
+    const b = el('button', {textContent: r.label, onclick: () => (setVariant(v), sync())});
+    syncers.push(() => b.setAttribute('aria-pressed', String(state.variant === v)));
+    pick.append(b);
+  }
+  syncers.push(
+    () => (note.textContent = RIFLES[state.variant].note + ' ' + document.getElementById('stage').dataset.triangles + ' triangles.'),
+  );
   for (const [slot, def] of Object.entries(SLOTS)) {
     const sec = el('section', {className: 'slot'}, el('h2', {textContent: def.label}));
     const row = el('div', {className: 'tools', role: 'group'});
     row.setAttribute('aria-label', def.label);
-    for (const o of def.options) {
-      const b = el('button', {textContent: o.label, onclick: () => setOption(slot, o.id)});
-      syncers.push(() => b.setAttribute('aria-pressed', String(state.build[slot] === o.id)));
+    for (const opt of def.options) {
+      const b = el('button', {textContent: opt.label, onclick: () => setOption(slot, opt.id)});
+      syncers.push(() => {
+        b.setAttribute('aria-pressed', String(state.build[slot] === opt.id));
+        b.disabled = !available(opt);
+        b.title = b.disabled ? 'Not on this rebuild' : '';
+      });
       row.append(b);
     }
     sec.append(row);
@@ -26,7 +42,7 @@ export function buildPanel({state, SLOTS, MOUNTS, PALETTES, WEAR, setOption, sli
       syncers.push(() => {
         input.value = String(Math.round(state.pos[slot] * 100));
         out.textContent = Math.round((state.pos[slot] - range[0]) * 1000) + ' mm';
-        input.disabled = state.build[slot] === 'none';
+        input.disabled = state.build[slot] === 'none' || (def.slide?.only && state.build[slot] !== def.slide.only);
       });
       sec.append(el('label', {className: 'slider'}, el('span', {textContent: def.slide?.label || 'Rail position'}), out, input));
     }
