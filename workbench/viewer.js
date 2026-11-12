@@ -2,6 +2,7 @@ import {installCamo as installRifleCamo, applyFinishState} from './rifle-finishe
 import {loadRifle as loadRifleInstance, applySlotState} from './rifle-instance.js';
 import * as T from 'three';
 import {mountTopBar} from '../shared/topbar.js';
+import {addShowroom} from './stg44/showroom.js';
 import {createStage} from '../shared/stage.js';
 import {disposeModel, prefetchModels} from '../shared/model-cache.js';
 import {warehouseAmbience} from '../shared/warehouse-ambience.js';
@@ -19,7 +20,7 @@ import {mountCampaignBench} from './campaign-bench.js';
 const accent = 0xef8f39;
 // Launch look: the sunset HDR as a blurred backdrop, turned so the sun keys the rifle from front-left.
 // Lights follow the camera, so this relationship holds from every angle; lightOffset is in degrees.
-const LAUNCH = {environment: 'sunset', backdrop: true, lightOffset: 255};
+const LAUNCH = {environment: 'studio', backdrop: false, lightOffset: 0};
 // The hero view the launch lighting was set up from: azimuth and elevation in radians.
 const HERO = {azimuth: -0.2, elevation: 0.1};
 // Reduced motion: camera moves and part swaps jump straight to their end state.
@@ -560,10 +561,13 @@ try {
   ({scene, renderer, camera, controls, floor} = st);
   controls.minDistance = 0.15;
   controls.maxDistance = 3.5;
-  floor.material.opacity = 0.28;
-  // The rifle is ~1 m: a tighter shadow frustum than the default keeps the shadow crisp.
-  Object.assign(st.key.shadow.camera, {left: -1.3, right: 1.3, top: 1.3, bottom: -1.3, near: 0.5, far: 8});
-  st.key.shadow.camera.updateProjectionMatrix();
+  scene.remove(floor, st.key, st.key.target);
+  floor.geometry.dispose();
+  floor.material.dispose();
+  const showroom = addShowroom(scene, renderer);
+  floor = st.floor = showroom.floor;
+  st.onFrame(() => { showroom.lights.rotation.y = scene.environmentRotation.y; });
+  stageEl.style.background = 'radial-gradient(ellipse at 50% 38%, #27313c 0%, #10151b 45%, #06080b 80%)';
   scene.add(socketMarkers);
   // The backdrop is the Operator Customiser's warehouse, baked to a 360° panorama from the camera side of the room
   // (tools/assets/bake-warehouse-pano.mjs): a place that stays put as the camera orbits, softly out of focus. The rifle
@@ -582,7 +586,7 @@ try {
     scene.userData.fixedBackground = on;
     document.querySelector('#room')?.setAttribute('aria-pressed', String(on));
     ambience.set(on);
-    if (!on) return st.setBackdrop(true);
+    if (!on) return st.setBackdrop(false);
     const t = await loadPano().catch(() => null);
     if (!t || !room.on) return;
     scene.background = t;
@@ -592,13 +596,15 @@ try {
     document.querySelector('#backdrop')?.setAttribute('aria-pressed', 'false');
     st.wake();
   }
-  setRoom(true);
+  ambience.set(false);
   document.querySelector('#room')?.addEventListener('click', () => setRoom(!room.on));
   const backdropButton = document.querySelector('#backdrop');
   if (backdropButton)
     backdropButton.onclick = () => {
-      if (room.on) setRoom(false);
-      else st.setBackdrop(!scene.background);
+      if (room.on) {
+        setRoom(false);
+        st.setBackdrop(true);
+      } else st.setBackdrop(!scene.background);
     };
   const ambienceButton = document.querySelector('#ambience');
   ambienceButton?.setAttribute('aria-pressed', String(ambience.on));
