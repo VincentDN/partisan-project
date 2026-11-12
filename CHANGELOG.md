@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-11-11 — StG 44 (2044) gunsmith bench
+
+- New bench at `workbench/stg44/`, linked from the Weapon Workbench: a modernised StG 44 built from parts in code, with rails on the receiver, handguard top, underside and both sides.
+- Seven slots (optic, laser, weapon light, underbarrel, muzzle, stock, magazine) with 20 parts. Rail parts slide in 10 mm steps by slider or by dragging the part; the stock has a length-of-pull slider.
+- Feldgrau, dark grey and two-tone finishes with a wear control that chips paint to bare steel on chamfers and in patches.
+- Showroom lighting (warm key, cold rim, studio reflections), a canted default view, and handling sounds from `shared/mech.js` when the rifle is turned or a part is fitted or moved. The build is stored in the page address.
+
 ## 2026-11-09 — Yantis culture and marketing notes
 
 - Added Vincent’s emotional core, resistance stakes and typography influences to the culture section; preserved the marketing idea as a short stub.
