@@ -1,36 +1,25 @@
 // StG 44 (2044) gunsmith bench: stage, lighting, the canted rifle you turn by hand, sliding/swapping attachments and handling foley.
 import * as THREE from 'three';
-import {RGBELoader} from 'three/addons/loaders/RGBELoader.js';
 import * as mech from '../../shared/mech.js';
 import {WEAR, PALETTES, applyPalette, materials} from './finish.js';
-import {MOUNTS, buildRifle} from './rifle.js';
+import {RIFLES, loadRifles} from './rifle.js';
+import {readBuild, writeBuild} from './build-state.js';
 import {DEFAULT_BUILD, SLOTS, optionOf} from './parts.js';
 import {buildPanel} from './panel.js';
-import {floorTexture} from './floor.js';
+import {buildStage} from './stage.js';
 
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const stageEl = document.getElementById('stage'),
   status = document.getElementById('status');
-const state = {build: {...DEFAULT_BUILD}, pos: {}, palette: 'feldgrau', sound: true};
-for (const [k, m] of Object.entries(MOUNTS)) if (m.range) state.pos[k] = m.start;
-state.pos.stock = SLOTS.stock.slide.start;
-try {
-  const saved = JSON.parse(decodeURIComponent(location.hash.slice(1)) || 'null');
-  if (saved) {
-    for (const k in saved.b || {}) if (SLOTS[k] && SLOTS[k].options.some(o => o.id === saved.b[k])) state.build[k] = saved.b[k];
-    for (const k in saved.p || {}) if (k in state.pos && Number.isFinite(saved.p[k])) state.pos[k] = saved.p[k];
-    if (PALETTES[saved.f]) state.palette = saved.f;
-    if (Number.isFinite(saved.w)) WEAR.value = Math.min(1, Math.max(0, saved.w));
-  }
-} catch {
-  /* a bad link falls back to the default build */
-}
-const save = () =>
-  history.replaceState(
-    null,
-    '',
-    '#' + encodeURIComponent(JSON.stringify({b: state.build, p: state.pos, f: state.palette, w: +WEAR.value.toFixed(2)})),
-  );
+const state = {variant: 'a', build: {...DEFAULT_BUILD}, pos: {}, palette: 'feldgrau', sound: true};
+const MOUNTS = RIFLES.a.mounts; // rail ranges are shared; heights differ per rebuild
+const resetPos = () => {
+  for (const [k, m] of Object.entries(MOUNTS)) if (m.range) state.pos[k] = m.start;
+  state.pos.stock = SLOTS.stock.slide.start;
+};
+resetPos();
+readBuild(state, {SLOTS, PALETTES, RIFLES, WEAR});
+const save = () => writeBuild(state, WEAR);
 const play = fn => {
   if (!state.sound) return;
   try {
@@ -40,84 +29,71 @@ const play = fn => {
   }
 };
 
-const renderer = new THREE.WebGLRenderer({antialias: true, alpha: true, preserveDrawingBuffer: true});
-renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-renderer.outputColorSpace = THREE.SRGBColorSpace;
-renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.05;
-renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-stageEl.prepend(renderer.domElement);
-const scene = new THREE.Scene();
-scene.fog = new THREE.Fog(0x06080b, 2.2, 5.5);
-const camera = new THREE.PerspectiveCamera(30, 1, 0.05, 20);
+const {renderer, scene, camera} = buildStage(stageEl);
 let dist = 2.25;
-
-// lighting: a warm key from above the shooter's side, a cold rim from behind, studio reflections for the steel
-const key = new THREE.SpotLight(0xffe2bd, 38, 6, 0.5, 0.6, 1.4);
-key.position.set(-0.7, 1.5, 1.5);
-key.castShadow = true;
-key.shadow.mapSize.set(2048, 2048);
-key.shadow.bias = -0.0003;
-key.shadow.radius = 4;
-const rim = new THREE.DirectionalLight(0x7fb4ff, 2.6);
-rim.position.set(1.2, 0.9, -1.6);
-const kick = new THREE.DirectionalLight(0xff9a5c, 0.7);
-kick.position.set(-1.5, -0.2, -0.6);
-scene.add(key, key.target, rim, kick, new THREE.HemisphereLight(0x8fa6c4, 0x0a0806, 0.35));
-new RGBELoader().load('../../assets/lighting/studio.hdr', hdr => {
-  hdr.mapping = THREE.EquirectangularReflectionMapping;
-  scene.environment = new THREE.PMREMGenerator(renderer).fromEquirectangular(hdr).texture;
-  scene.environmentIntensity = 0.55;
-  hdr.dispose();
-});
-// dusty floor that catches the shadow and a pool of light
-const floorTex = floorTexture();
-const floor = new THREE.Mesh(
-  new THREE.CircleGeometry(4, 48),
-  new THREE.MeshStandardMaterial({map: floorTex, roughness: 0.92, metalness: 0}),
-);
-floor.rotation.x = -Math.PI / 2;
-floor.position.y = -0.34;
-floor.receiveShadow = true;
-scene.add(floor);
 
 // the rifle on a pivot you turn by hand; `cant` keeps the showroom roll
 const M = materials();
 applyPalette(M, state.palette);
 const pivot = new THREE.Group(),
-  rifle = buildRifle(M);
-rifle.position.x = -0.27; // centre of mass over the pivot
+  rifles = await loadRifles(M).catch(err => {
+    console.error(err);
+    status.textContent = 'The rifle could not load. Please reload.';
+    throw err;
+  }),
+  rifle = new THREE.Group();
+rifle.add(rifles.a.root, rifles.b.root);
+rifle.position.x = -0.1; // centre of mass over the pivot
+let rifleData = rifles[state.variant];
 pivot.add(rifle);
 scene.add(pivot);
 const VIEWS = {hero: [-0.42, 0.14, 0.2], left: [Math.PI, 0.04, 0], right: [0, 0.04, 0], top: [-0.2, 1.15, 0], muzzle: [-1.25, 0.1, 0.1]};
 const rot = {yaw: VIEWS.hero[0], pitch: VIEWS.hero[1], cant: VIEWS.hero[2], vy: 0, vp: 0, ty: null, tp: null, tc: null};
 const groups = {};
 function mountSlot(slot) {
+  const opt = optionOf(slot, state.build[slot]);
+  // stocks, magazines and the muzzle device are nodes of the rifle: show the chosen set, hide the others
+  for (const r of Object.values(rifles))
+    for (const o of SLOTS[slot].options) if (o.show) for (const n of r.nodes(o.show)) n.visible = o === opt;
+  for (const n of rifleData.nodes('stock_adj_')) if (!n.name.endsWith('tube')) n.position.x = SLOTS.stock.slide.start - state.pos.stock;
   if (groups[slot]) rifle.remove(groups[slot]);
-  const opt = optionOf(slot, state.build[slot]),
-    g = opt.build(M, state.pos.stock) || new THREE.Group();
+  delete groups[slot];
+  if (!opt.build) return opt;
+  const g = opt.build(M) || new THREE.Group();
   g.userData.slot = slot;
   groups[slot] = g;
   rifle.add(g);
   placeSlot(slot);
   return opt;
 }
+// an option shown by rifle nodes is only offered when the current rebuild has them (A has no adjustable stock)
+const available = o => !o.show || rifleData.nodes(o.show).length > 0;
+function showRifle(v) {
+  state.variant = v;
+  rifleData = rifles[v];
+  for (const r of Object.values(rifles)) r.root.visible = r === rifleData;
+  for (const [slot, def] of Object.entries(SLOTS))
+    if (!available(optionOf(slot, state.build[slot]))) state.build[slot] = def.options.find(available).id;
+  Object.keys(SLOTS).forEach(mountSlot);
+  stageEl.dataset.triangles = String(rifleData.triangles);
+  stageEl.dataset.variant = v;
+}
 function placeSlot(slot) {
-  const m = MOUNTS[slot],
+  const m = rifleData.mounts[slot],
     g = groups[slot],
     opt = optionOf(slot, state.build[slot]);
+  if (!g) return;
   if (m.range) {
-    const half = opt.len || 0;
-    state.pos[slot] = Math.min(m.range[1] - half * 0.5, Math.max(m.range[0] + half * 0.5, state.pos[slot]));
+    const half = (opt.len || 0) / 2;
+    state.pos[slot] = Math.min(m.range[1] - half * 0.3, Math.max(m.range[0] + half * 0.3, state.pos[slot]));
     g.position.set(state.pos[slot], m.y, m.z || 0);
-  } else if (slot !== 'stock') g.position.set(m.x, m.y, 0); // the stock builder places itself on the buffer tube
+  } else g.position.set(m.x, m.y, 0);
 }
-Object.keys(SLOTS).forEach(mountSlot);
+showRifle(state.variant);
 
 function setOption(slot, id) {
   const prev = optionOf(slot, state.build[slot]);
-  if (prev.id === id) return;
+  if (prev.id === id || !available(optionOf(slot, id))) return;
   state.build[slot] = id;
   const opt = mountSlot(slot);
   const w = Math.min(1, (opt.grams || prev.grams || 100) / 600);
@@ -141,8 +117,17 @@ const panel = buildPanel({
   MOUNTS,
   PALETTES,
   WEAR,
+  RIFLES,
+  available,
   setOption,
   slideTo,
+  setVariant(v) {
+    if (v === state.variant) return;
+    showRifle(v);
+    play(() => mech.charge());
+    panel.sync();
+    save();
+  },
   setPalette(id) {
     state.palette = id;
     applyPalette(M, id);
@@ -160,9 +145,8 @@ const panel = buildPanel({
   },
   reset() {
     Object.assign(state.build, DEFAULT_BUILD);
-    for (const [k, m] of Object.entries(MOUNTS)) if (m.range) state.pos[k] = m.start;
-    state.pos.stock = SLOTS.stock.slide.start;
-    Object.keys(SLOTS).forEach(mountSlot);
+    resetPos();
+    showRifle(state.variant);
     play(() => mech.charge());
     save();
   },
@@ -180,7 +164,7 @@ const slotAt = e => {
   for (const hit of ray.intersectObject(rifle, true)) {
     let o = hit.object;
     while (o && !o.userData.slot) o = o.parent;
-    return o && (MOUNTS[o.userData.slot].range || o.userData.slot === 'stock') ? o.userData.slot : null;
+    return o && MOUNTS[o.userData.slot]?.range ? o.userData.slot : null;
   }
   return null;
 };
@@ -209,7 +193,7 @@ renderer.domElement.addEventListener('pointermove', e => {
     return;
   }
   if (drag.slot) {
-    const d = ((e.clientX - drag.x) * drag.ux + (e.clientY - drag.y) * drag.uy) * drag.perPx * (drag.slot === 'stock' ? -1 : 1);
+    const d = ((e.clientX - drag.x) * drag.ux + (e.clientY - drag.y) * drag.uy) * drag.perPx;
     slideTo(drag.slot, Math.round((drag.start + d) * 100) / 100);
     return;
   }
@@ -264,9 +248,6 @@ function resize() {
 }
 new ResizeObserver(resize).observe(stageEl);
 resize();
-let tris = 0;
-rifle.traverse(o => o.isMesh && (tris += o.geometry.attributes.position.count / 3));
-stageEl.dataset.triangles = String(Math.round(tris));
 status.hidden = true;
 panel.sync();
 

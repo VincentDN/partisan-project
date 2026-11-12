@@ -1,0 +1,11 @@
+{
+ "id": "ak-47-4k-many-pieces",
+ "for": [
+  "weapon: StG 44 (2044) test B kitbash donor"
+ ],
+ "uid": "8a764a84c90b40a98999b05e79a34e52",
+ "name": "AK-47 4K RIFLE many pieces",
+ "author": "Stonaaa",
+ "unit": "m",
+ "dir": "weapons"
+}

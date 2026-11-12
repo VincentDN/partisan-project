@@ -1,0 +1,10 @@
+{
+ "id": "stg44-2044-base",
+ "for": [
+  "weapon: StG 44 (2044) A/B test base"
+ ],
+ "name": "StG 44 (2044) base (image-to-3D)",
+ "author": "owner (Magnific / Tripo generation)",
+ "unit": "tripo unit, rifle length 1.78",
+ "dir": "weapons"
+}

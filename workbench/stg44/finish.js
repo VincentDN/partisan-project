@@ -1,4 +1,4 @@
-// StG 44 (2044) bench: paint finishes with noise-driven wear and bare-steel edges, plus the shape helpers that tag chamfers.
+// StG 44 (2044) bench: paint finishes with noise-driven wear; chamfers tagged in the model (aEdge) chip to bare steel first.
 import * as THREE from 'three';
 
 export const WEAR = {value: 0.45};
@@ -42,78 +42,6 @@ export function finish(color, {rough = 0.62, metal = 0.15, bare = 0x8d8f92, chip
       .replace('#include <metalnessmap_fragment>', '#include <metalnessmap_fragment>\nmetalnessFactor=mix(metalnessFactor,.95,wearK);');
   };
   return m;
-}
-
-// Mark faces that are not axis-aligned (the chamfers of extruded parts) so the finish wears them first.
-function tagEdges(g, on = true) {
-  const n = g.attributes.normal,
-    a = new Float32Array(n.count);
-  if (on) for (let i = 0; i < n.count; i++) a[i] = Math.max(Math.abs(n.getX(i)), Math.abs(n.getY(i)), Math.abs(n.getZ(i))) < 0.97 ? 1 : 0;
-  g.setAttribute('aEdge', new THREE.BufferAttribute(a, 1));
-  return g;
-}
-
-// Side profile [[x, y], ...] extruded across the rifle (z from -half to +half) with a small chamfer.
-export function profile(mat, pts, half, bevel = 0.0012) {
-  const s = new THREE.Shape(pts.map(([x, y]) => new THREE.Vector2(x, y)));
-  const g = new THREE.ExtrudeGeometry(s, {
-    depth: 2 * (half - bevel),
-    bevelEnabled: bevel > 0,
-    bevelThickness: bevel,
-    bevelSize: bevel,
-    bevelSegments: 1,
-    steps: 1,
-  });
-  g.translate(0, 0, -(half - bevel));
-  const m = new THREE.Mesh(tagEdges(g.toNonIndexed()), mat);
-  m.castShadow = m.receiveShadow = true;
-  return m;
-}
-export const box = (mat, x0, x1, y0, y1, half, bevel = 0.001, z = 0) => {
-  const m = profile(
-    mat,
-    [
-      [x0, y0],
-      [x1, y0],
-      [x1, y1],
-      [x0, y1],
-    ],
-    half,
-    bevel,
-  );
-  m.position.z = z;
-  return m;
-};
-// Cylinder along the bore (x); r2 tapers the far end.
-export function tube(mat, x0, x1, y, r, {z = 0, r2 = r, seg = 20, axis = 'x'} = {}) {
-  const g = new THREE.CylinderGeometry(r2, r, Math.abs(x1 - x0), seg);
-  if (axis === 'x') g.rotateZ(-Math.PI / 2);
-  else if (axis === 'z') g.rotateX(Math.PI / 2);
-  const m = new THREE.Mesh(tagEdges(g.toNonIndexed(), false), mat);
-  if (axis === 'x') m.position.set((x0 + x1) / 2, y, z);
-  else if (axis === 'z') m.position.set(y, r2 === r ? z : z, (x0 + x1) / 2);
-  else m.position.set(z, (x0 + x1) / 2, y);
-  m.castShadow = m.receiveShadow = true;
-  return m;
-}
-// Picatinny rail: a base strip with teeth every 10 mm. `dir` is +1 (top), -1 (underside) or 'side'.
-export function rail(mat, x0, x1, y, {dir = 1, z = 0} = {}) {
-  const g = new THREE.Group(),
-    side = dir === 'side';
-  const teeth = Math.floor((x1 - x0) / 0.01);
-  for (let i = 0; i < teeth; i++) {
-    const x = x0 + i * 0.01 + 0.002;
-    const t = side
-      ? box(mat, x, x + 0.0055, y - 0.0105, y + 0.0105, 0.0022, 0.0006, z)
-      : box(mat, x, x + 0.0055, dir > 0 ? y : y - 0.0045, dir > 0 ? y + 0.0045 : y, 0.0105, 0.0006);
-    g.add(t);
-  }
-  g.add(
-    side
-      ? box(mat, x0, x1, y - 0.008, y + 0.008, 0.002, 0.0005, z - Math.sign(z) * 0.003)
-      : box(mat, x0, x1, dir > 0 ? y - 0.004 : y, dir > 0 ? y : y + 0.004, 0.008, 0.0005),
-  );
-  return g;
 }
 
 export const PALETTES = {

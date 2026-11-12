@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-11-12 — StG 44 (2044): two competing rebuilds
+
+- The StG bench now loads a detailed rifle in two versions built from the same base model, with a Rebuild switch: **A · LLM-Rebuild** (rebuilt part by part in code, checked against reference rifles for bolt, ejection port, selector, pins and sights; chamfered throughout) and **B · Neuro-Bash** (the base hull kept, with its blobby parts replaced by parts from free donor rifles).
+- The switch keeps the build, finish and wear; attachments re-seat on each rifle's rails. B adds the adjustable stock, which A greys out. The muzzle slot now shows each rifle's own muzzle device.
+- Generators: `tools/assets/build-stg44-2044-a.py`, `build-stg44-2044-b.py`, shared `stg44_kit.py` (Blender as a Python module). The earlier rifle built in the browser is retired.
+
 ## 2026-11-11 — StG 44 (2044) gunsmith bench
 
 - New bench at `workbench/stg44/`, linked from the Weapon Workbench: a modernised StG 44 built from parts in code, with rails on the receiver, handguard top, underside and both sides.
