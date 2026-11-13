@@ -486,12 +486,18 @@ await check('workbench: loads, swapping a part writes the hash, both rifles load
   await page.waitForFunction(() => document.querySelector('#title').textContent.includes('AK-15K'), null, {timeout: 60000});
   assert.equal(await page.locator('.fire').count(), 0, 'no test-fire control remains');
   assert.equal(await page.locator('#copy-code').count(), 1);
+  // launch look: the gunsmith-bench studio (no room, dark stage, bench lights) with the rifle canted
+  assert.equal(await page.evaluate(() => window.PARP_WORKBENCH.room.on), false, 'the bench studio is the launch look');
+  assert.equal(await page.evaluate(() => document.querySelector('#stage').classList.contains('bench-look')), true);
+  await page.waitForFunction(() => window.PARP_WORKBENCH.rifle.model.rotation.x > 0.1, null, {timeout: 5000}); // canted in the hero view
   // the warehouse backdrop is a baked panorama that stays put; Backdrop swaps in the HDR sky, Warehouse brings it back
+  await page.locator('#room').click();
   await page.waitForFunction(
     () => window.PARP_WORKBENCH.room.texture && window.PARP_WORKBENCH.stage.scene.background === window.PARP_WORKBENCH.room.texture,
     null,
     {timeout: 30000},
   );
+  assert.equal(await page.evaluate(() => document.querySelector('#stage').classList.contains('bench-look')), false);
   await page.locator('#backdrop').click();
   assert.equal(await page.evaluate(() => window.PARP_WORKBENCH.room.on), false);
   await page.locator('#room').click();

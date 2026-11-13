@@ -329,6 +329,8 @@ export async function createStage(container, opts = {}) {
     floor,
     key,
     useEnvironment,
+    /** The HDR lighting in use ('studio', 'outdoor' or 'sunset'). */
+    environment: () => envName,
     setBackdrop,
     rotateLights,
     moveCamera,

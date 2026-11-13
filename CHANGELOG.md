@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-11-13 — Weapon Workbench: gunsmith-bench studio look
+
+- The Weapon Workbench now opens every rifle in the StG bench's studio look: warm key, cold rim and orange kick lights that follow the camera, studio reflections, a dusty floor with a pool of light, the dark vignetted stage, and the rifle canted in the hero, 3/4 and muzzle views (level in left, right and top).
+- The sidebar is unchanged. Studio is now the launch lighting; Warehouse, Outdoor, Sunset and Backdrop work as before, and picking an HDR lighting clears the warehouse room.
+
 ## 2026-11-12 — StG 44 (2044): two competing rebuilds
 
 - The StG bench now loads a detailed rifle in two versions built from the same base model, with a Rebuild switch: **A · LLM-Rebuild** (rebuilt part by part in code, checked against reference rifles for bolt, ejection port, selector, pins and sights; chamfered throughout) and **B · Neuro-Bash** (the base hull kept, with its blobby parts replaced by parts from free donor rifles).

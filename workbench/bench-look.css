@@ -1,0 +1,4 @@
+/* Weapon Workbench: the gunsmith-bench stage behind the canvas (bench-look.js toggles it with the Studio lighting). */
+#stage.bench-look{background:radial-gradient(ellipse at 50% 38%,#27313c 0%,#10151b 45%,#06080b 80%)}
+#stage.bench-look::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 50%,transparent 45%,#000000b3 100%)}
+#stage.bench-look::after{z-index:1}#stage.bench-look .hint,#stage.bench-look .socket,#stage.bench-look .stage-button{z-index:2}

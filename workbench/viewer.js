@@ -15,13 +15,15 @@ import {blockedBy} from './stats.js';
 import * as mech from './mech.js';
 import {loaderError, setLoader} from '../shared/loader.js';
 import {mountCampaignBench} from './campaign-bench.js';
+import {installBenchLook} from './bench-look.js';
 
 const accent = 0xef8f39;
-// Launch look: the sunset HDR as a blurred backdrop, turned so the sun keys the rifle from front-left.
-// Lights follow the camera, so this relationship holds from every angle; lightOffset is in degrees.
-const LAUNCH = {environment: 'sunset', backdrop: true, lightOffset: 255};
-// The hero view the launch lighting was set up from: azimuth and elevation in radians.
-const HERO = {azimuth: -0.2, elevation: 0.1};
+// Launch look: the gunsmith-bench studio (bench-look.js): studio HDR reflections, warm key, cold rim, dusty floor, dark
+// stage and a canted rifle. Lights follow the camera, so this holds from every angle; lightOffset is in degrees.
+const LAUNCH = {environment: 'studio', backdrop: false, lightOffset: 255};
+// The hero view the launch lighting was set up from: azimuth and elevation in radians (muzzle a little toward you).
+const HERO = {azimuth: 0.42, elevation: 0.2};
+let look = null;
 // Reduced motion: camera moves and part swaps jump straight to their end state.
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 // Camera presets are sized for a rifle this long (m); longer or shorter builds scale them.
@@ -496,7 +498,7 @@ function view(name) {
   const aspect = stageEl.clientWidth / stageEl.clientHeight,
     d = Math.max(1.3, 1.6 / aspect) * fit;
   controls.target.set(center.x, 0, 0);
-  const hero = new T.Vector3().setFromSphericalCoords(d * 1.08, Math.PI / 2 - HERO.elevation, HERO.azimuth);
+  const hero = new T.Vector3().setFromSphericalCoords(d * 1.22, Math.PI / 2 - HERO.elevation, HERO.azimuth);
   const at = {
     hero: hero.toArray(),
     three: [d * 0.55, d * 0.32, d * 0.8],
@@ -506,6 +508,7 @@ function view(name) {
     muzzle: [d * 0.65, 0.06, d * 0.28],
   }[name];
   if (name === 'muzzle') controls.target.set(buildBox.max.x - 0.14, 0, 0);
+  look?.view(name);
   camera.position.set(...at).add(controls.target);
   controls.update();
 }
@@ -516,6 +519,7 @@ function showRifle() {
   if (rifle.model.parent !== scene) scene.add(rifle.model);
   rifle.model.position.set(0, 0, 0);
   rifle.model.quaternion.identity();
+  look?.update(0, rifle.model, [socketMarkers]); // canted from its first frame
   rifle.model.visible = true;
   document.querySelector('#title').innerHTML = `${rifle.config.title},<br>low-poly.`;
 }
@@ -577,12 +581,12 @@ try {
       t.colorSpace = T.SRGBColorSpace;
       return (room.texture = t);
     }));
-  async function setRoom(on) {
+  async function setRoom(on, backdropAfter = true) {
     room.on = on;
     scene.userData.fixedBackground = on;
     document.querySelector('#room')?.setAttribute('aria-pressed', String(on));
     ambience.set(on);
-    if (!on) return st.setBackdrop(true);
+    if (!on) return st.setBackdrop(backdropAfter);
     const t = await loadPano().catch(() => null);
     if (!t || !room.on) return;
     scene.background = t;
@@ -592,7 +596,9 @@ try {
     document.querySelector('#backdrop')?.setAttribute('aria-pressed', 'false');
     st.wake();
   }
-  setRoom(true);
+  // the room is one click away (Warehouse); picking an HDR lighting clears it back to that lighting's own look
+  for (const b of document.querySelectorAll('[data-env]')) b.addEventListener('click', () => room.on && setRoom(false, false));
+  look = installBenchLook(st, {stageEl, isOn: () => st.environment() === 'studio' && !room.on, lightOffset: LAUNCH.lightOffset});
   document.querySelector('#room')?.addEventListener('click', () => setRoom(!room.on));
   const backdropButton = document.querySelector('#backdrop');
   if (backdropButton)
@@ -763,8 +769,9 @@ try {
     if (e.key === 'Escape' && selected) select(selected);
   });
 
-  st.setAnimated(() => spinning || tweens.length > 0);
+  st.setAnimated(() => spinning || tweens.length > 0 || look.animating);
   st.onFrame(dt => {
+    look.update(dt, rifle?.model, [socketMarkers]);
     if (spinning) {
       rifle.model.rotation.y += dt * 0.5;
       socketMarkers.rotation.y = rifle.model.rotation.y;
