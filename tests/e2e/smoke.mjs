@@ -486,7 +486,11 @@ await check('workbench: loads, swapping a part writes the hash, both rifles load
   await page.waitForFunction(() => document.querySelector('#title').textContent.includes('AK-15K'), null, {timeout: 60000});
   assert.equal(await page.locator('.fire').count(), 0, 'no test-fire control remains');
   assert.equal(await page.locator('#copy-code').count(), 1);
+  // the StG bench's canted showroom view
+  await page.waitForFunction(() => window.PARP_WORKBENCH.rifle.model.rotation.x > 0.1, null, {timeout: 5000});
   // the warehouse backdrop is a baked panorama that stays put; Backdrop swaps in the HDR sky, Warehouse brings it back
+  assert.equal(await page.evaluate(() => window.PARP_WORKBENCH.room.on), false, 'the showroom studio is the launch look');
+  await page.locator('#room').click();
   await page.waitForFunction(
     () => window.PARP_WORKBENCH.room.texture && window.PARP_WORKBENCH.stage.scene.background === window.PARP_WORKBENCH.room.texture,
     null,
