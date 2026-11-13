@@ -396,8 +396,10 @@ async function mount(id) {
     if (lock && !lock.ok) (b.setAttribute('aria-disabled', 'true'), (b.title = lock.reason));
     else b.removeAttribute('aria-disabled');
   }
-  document.querySelector('#source').innerHTML =
-    `Model: <a href="${config.source.url}">${config.source.title}</a> by <a href="${config.author.url}">${config.author.name}</a>, <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Loose rounds and spare magazine removed.`;
+  if (config.sourceNote) document.querySelector('#source').textContent = config.sourceNote;
+  else
+    document.querySelector('#source').innerHTML =
+      `Model: <a href="${config.source.url}">${config.source.title}</a> by <a href="${config.author.url}">${config.author.name}</a>, <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Loose rounds and spare magazine removed.`;
   for (const part of rifle.parts) {
     const entry = document.createElement('button');
     entry.className = 'part';
@@ -566,7 +568,9 @@ try {
   floor.material.dispose();
   const showroom = addShowroom(scene, renderer);
   floor = st.floor = showroom.floor;
-  st.onFrame(() => { showroom.lights.rotation.y = scene.environmentRotation.y; });
+  st.onFrame(() => {
+    showroom.lights.rotation.y = scene.environmentRotation.y;
+  });
   stageEl.style.background = 'radial-gradient(ellipse at 50% 38%, #27313c 0%, #10151b 45%, #06080b 80%)';
   scene.add(socketMarkers);
   // The backdrop is the Operator Customiser's warehouse, baked to a 360° panorama from the camera side of the room

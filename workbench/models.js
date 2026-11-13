@@ -317,5 +317,41 @@ export const MODELS = {
 };
 
 Object.assign(MODELS, EXTRA);
+for (const variant of ['a', 'b']) {
+  const title = 'StG 44 (2044) · Astra ' + variant.toUpperCase();
+  MODELS['stg44-astra-' + variant] = {
+    label: title,
+    title,
+    scale: 1,
+    url: '../assets/models/weapons/stg44-2044-astra-' + variant + '.glb',
+    sourceNote: 'Partisan concept model · ' + (variant === 'a' ? 'side-profile pass' : 'three-quarter pass'),
+    stats: {...EXTRA.stg44.stats},
+    baseGrams: EXTRA.stg44.baseGrams,
+    specs: [['Design', 'Yantis · 2044']],
+    defaults: {build: {}, finish: {}},
+    sockets: [],
+    parts: [
+      {id: 'receiver', label: 'Body', detail: 'Olive and graphite finish.', nodes: ['receiver_body', 'receiver_steel']},
+      {id: 'stock', label: 'Stock', detail: 'Fixed concept stock.', nodes: ['stock_fixed_body']},
+      {id: 'magazine', label: 'Magazine', detail: 'Dark finish with a red recognition band.', nodes: ['mag_25_black', 'mag_25_red']},
+    ],
+    mounts: [
+      ['buis', 'Backup sight', [0.12, 0.121, 0], [0, 1, 0]],
+      ['trigger', 'Trigger', [-0.12, 0.02, 0], [0, -1, 0]],
+      ['charging', 'Handle', [-0.06, 0.075, 0.03], [0, 0, 1]],
+      ['sling', 'Sling', [-0.43, 0.06, 0], [-1, 0, 0]],
+      ['muzzle', 'Muzzle', [0.49, 0.053, 0], [1, 0, 0]],
+      ['optic', 'Optic', [-0.02, 0.12, 0], [0, 1, 0]],
+      ['side', 'Side', [0.25, 0.055, 0.026], [0, 0, 1]],
+      ['foregrip', 'Under rail', [0.22, 0.031, 0], [0, -1, 0]],
+      ['stock', 'Stock', [-0.28, 0.055, 0], [-1, 0, 0]],
+      ['magazine', 'Magazine', [0, 0, 0], [0, -1, 0]],
+    ],
+    slots: {
+      stock: {factory: [{id: 'extended', label: 'Fixed stock', original: true, grams: 380}], library: []},
+      magazine: {factory: [{id: '30', label: 'Factory magazine', original: true, grams: 420}], library: ['none']},
+    },
+  };
+}
 for (const config of Object.values(MODELS)) complete(config);
 export const DEFAULT_MODEL = 'ak74m';

@@ -1,0 +1,11 @@
+{
+ "id": "low-poly-akb-15",
+ "for": [
+  "weapon: StG 44 (2044) test B kitbash donor (magazine)"
+ ],
+ "uid": "3d085c97637c46ce8f15c173430de971",
+ "name": "Low-Poly AKB-15",
+ "author": "TastyTony",
+ "unit": "source units",
+ "dir": "weapons"
+}

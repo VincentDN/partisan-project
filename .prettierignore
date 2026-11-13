@@ -5,6 +5,7 @@ build/
 docs/archive/
 docs/moodboard/
 *.glb
+*.gltf
 *.json
 *.md
 *.html
