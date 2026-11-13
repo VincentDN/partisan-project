@@ -3,6 +3,7 @@ import {loadRifle as loadRifleInstance, applySlotState} from './rifle-instance.j
 import * as T from 'three';
 import {mountTopBar} from '../shared/topbar.js';
 import {addShowroom} from './stg44/showroom.js';
+import {createCant} from './cant.js';
 import {createStage} from '../shared/stage.js';
 import {disposeModel, prefetchModels} from '../shared/model-cache.js';
 import {warehouseAmbience} from '../shared/warehouse-ambience.js';
@@ -22,7 +23,8 @@ const accent = 0xef8f39;
 // Lights follow the camera, so this relationship holds from every angle; lightOffset is in degrees.
 const LAUNCH = {environment: 'studio', backdrop: false, lightOffset: 0};
 // The hero view the launch lighting was set up from: azimuth and elevation in radians.
-const HERO = {azimuth: -0.2, elevation: 0.1};
+const HERO = {azimuth: 0.42, elevation: 0.2}; // the StG bench's angle: muzzle a little toward you, seen from above
+const cant = createCant(); // and its roll about the bore (cant.js)
 // Reduced motion: camera moves and part swaps jump straight to their end state.
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 // Camera presets are sized for a rifle this long (m); longer or shorter builds scale them.
@@ -388,7 +390,7 @@ async function mount(id) {
   tweens = [];
   scene.add(rifle.model);
   const config = rifle.config;
-  floor.position.y = new T.Box3().setFromObject(rifle.model).min.y - 0.002;
+  floor.position.y = new T.Box3().setFromObject(rifle.model).min.y - 0.015; // clear of the canted magazine
   for (const b of document.querySelectorAll('[data-rifle]')) {
     b.setAttribute('aria-pressed', String(b.dataset.rifle === id));
     const lock = bench?.rifle(b.dataset.rifle); // a campaign: rifles the band does not have are locked
@@ -499,7 +501,7 @@ function view(name) {
   const aspect = stageEl.clientWidth / stageEl.clientHeight,
     d = Math.max(1.3, 1.6 / aspect) * fit;
   controls.target.set(center.x, 0, 0);
-  const hero = new T.Vector3().setFromSphericalCoords(d * 1.08, Math.PI / 2 - HERO.elevation, HERO.azimuth);
+  const hero = new T.Vector3().setFromSphericalCoords(d * 1.4, Math.PI / 2 - HERO.elevation, HERO.azimuth);
   const at = {
     hero: hero.toArray(),
     three: [d * 0.55, d * 0.32, d * 0.8],
@@ -509,6 +511,8 @@ function view(name) {
     muzzle: [d * 0.65, 0.06, d * 0.28],
   }[name];
   if (name === 'muzzle') controls.target.set(buildBox.max.x - 0.14, 0, 0);
+  cant.view(name);
+  st?.wake(1200);
   camera.position.set(...at).add(controls.target);
   controls.update();
 }
@@ -519,6 +523,7 @@ function showRifle() {
   if (rifle.model.parent !== scene) scene.add(rifle.model);
   rifle.model.position.set(0, 0, 0);
   rifle.model.quaternion.identity();
+  cant.apply(0, [rifle.model, socketMarkers]); // canted from its first frame
   rifle.model.visible = true;
   document.querySelector('#title').innerHTML = `${rifle.config.title},<br>low-poly.`;
 }
@@ -773,8 +778,9 @@ try {
     if (e.key === 'Escape' && selected) select(selected);
   });
 
-  st.setAnimated(() => spinning || tweens.length > 0);
+  st.setAnimated(() => spinning || tweens.length > 0 || cant.moving);
   st.onFrame(dt => {
+    cant.apply(dt, [rifle?.model, socketMarkers]);
     if (spinning) {
       rifle.model.rotation.y += dt * 0.5;
       socketMarkers.rotation.y = rifle.model.rotation.y;
