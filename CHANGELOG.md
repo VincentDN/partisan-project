@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-11-13 — Weapon Workbench: canted showroom view
+
+- Every rifle in the Weapon Workbench now sits in the StG bench's canted view: rolled 0.2 rad about the bore in the hero and 3/4 views (0.1 at the muzzle, level in left, right and top), from the StG's camera angle, with its vignette over the showroom stage. The sidebar is unchanged.
+
 ## 2026-11-13 — StG 44 concept comparison
 
 - Added Astra A and Astra B beside Claude Opus A and Claude Opus B. Both Astra models also open in the main weapon modder, which now starts with the comparison viewer’s studio lighting and floor.
