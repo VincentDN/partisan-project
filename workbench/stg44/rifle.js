@@ -14,14 +14,14 @@ const mounts = ({rail, under, muzzle}) => ({
 export const RIFLES = {
   'astra-a': {
     file: 'stg44-2044-astra-a.glb',
-    label: 'Astra A',
-    note: 'Side-profile concept pass. Selected for its straight silhouette and closer match to the base drawing.',
+    label: 'Magnific · Tripo P2 A',
+    note: 'Side-profile concept pass. Generated with Tripo P2 via Magnific’s image-to-3D API. Selected for its straight silhouette and closer match to the base drawing.',
     mounts: mounts({rail: 0.12, under: 0.031, muzzle: 0.561}),
   },
   'astra-b': {
     file: 'stg44-2044-astra-b.glb',
-    label: 'Astra B',
-    note: 'Three-quarter concept pass. The front sight sits lower and the fore-end slopes more.',
+    label: 'Magnific · Tripo P2 B',
+    note: 'Three-quarter concept pass. Generated with Tripo P2 via Magnific’s image-to-3D API. The front sight sits lower and the fore-end slopes more.',
     mounts: mounts({rail: 0.118, under: 0.023, muzzle: 0.554}),
   },
   a: {

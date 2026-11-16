@@ -1252,7 +1252,7 @@
   },
   {
    "id": "stg44-2044-astra-a",
-   "label": "StG 44 (2044) · Astra A",
+   "label": "StG 44 (2044) · Magnific · Tripo P2 A",
    "path": "assets/models/weapons/stg44-2044-astra-a.glb",
    "kind": "weapon",
    "status": "real",
@@ -1262,7 +1262,7 @@
   },
   {
    "id": "stg44-2044-astra-b",
-   "label": "StG 44 (2044) · Astra B",
+   "label": "StG 44 (2044) · Magnific · Tripo P2 B",
    "path": "assets/models/weapons/stg44-2044-astra-b.glb",
    "kind": "weapon",
    "status": "real",

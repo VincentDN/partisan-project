@@ -6,7 +6,7 @@
 
 ## 2026-11-13 — StG 44 concept comparison
 
-- Added Astra A and Astra B beside Claude Opus A and Claude Opus B. Both Astra models also open in the main weapon modder, which now starts with the comparison viewer’s studio lighting and floor.
+- Added Magnific · Tripo P2 A and Magnific · Tripo P2 B beside Claude Opus A and Claude Opus B. Both Tripo P2 models also open in the main weapon modder, which now starts with the comparison viewer’s studio lighting and floor.
 
 ## 2026-11-12 — StG 44 (2044): two competing rebuilds
 

@@ -318,13 +318,13 @@ export const MODELS = {
 
 Object.assign(MODELS, EXTRA);
 for (const variant of ['a', 'b']) {
-  const title = 'StG 44 (2044) · Astra ' + variant.toUpperCase();
+  const title = 'StG 44 (2044) · Magnific · Tripo P2 ' + variant.toUpperCase();
   MODELS['stg44-astra-' + variant] = {
     label: title,
     title,
     scale: 1,
     url: '../assets/models/weapons/stg44-2044-astra-' + variant + '.glb',
-    sourceNote: 'Partisan concept model · ' + (variant === 'a' ? 'side-profile pass' : 'three-quarter pass'),
+    sourceNote: 'Tripo P2 via Magnific’s image-to-3D API · ' + (variant === 'a' ? 'side-profile pass' : 'three-quarter pass'),
     stats: {...EXTRA.stg44.stats},
     baseGrams: EXTRA.stg44.baseGrams,
     specs: [['Design', 'Yantis · 2044']],
