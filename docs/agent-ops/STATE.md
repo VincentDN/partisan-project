@@ -5,13 +5,14 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json).
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-27 · codex · W38 combat loader follow-up and W34 music discovery**
+**2026-10-27 · codex · W34 recorded acoustic campaign music**
 
-- Branch: `codex/loading-campaign-guitar`. Current owner agreement forbids main/master pushes or merges; older main-target instructions below are superseded.
-- W38: loader no longer hides after sprites only to reappear permanently for mission data. Dismiss after newGame; shared card reserves stable geometry for phases, progress and errors.
-- Browser regression: 11 maintained pages plus practice/campaign combat at 1280px and 360px pass. Lint/typecheck/build/link checks pass. Unit suite 565/566: existing downloader test rejects Windows CRLF. Global format check reports 409 unrelated existing files; changed JS files pass.
-- W34: CC0 guitar shortlist in campaign roadmap, led by Aussens@iter's 3 Acoustic Guitars and Prelude For Classical Guitar, with explicit recorded-instrument details. Discovery only: no new audio installed, listening/selection and integration remain open, as do faction vignettes.
-- Next: audition the shortlist, select the campaign recording and verify playback lifecycle if integrating it. No broad campaign milestone is declared complete.
+- Owner explicitly requested merging the prior loading fix; main was fast-forwarded and pushed to `33a727f`. This was a specific exception, not blanket authorization for future main updates.
+- New work branch: `codex/campaign-acoustic-recording`. W34 audio milestone replaces the synthesized campaign playback with Aussens@iter's CC0 recording, 3 Acoustic Guitars. Source and encoding notes are in the campaign roadmap.
+- Local 128 kbps MP3, -6 dB level, short edge fades; 88.97-second whole-performance loop. Existing music controls and saved demo preference retained; no external runtime audio requests.
+- Browser campaign music regression passes shell/map/combat/band, rapid switches, mute/volume, standalone playback, audio decode/level and actual loop wrapping. Lint/typecheck/changed-JS-format/build/link checks pass. Unit suite remains 565/566: pre-existing Windows CRLF downloader assertion.
+- W34 remains open for owner listening acceptance and separately reviewable faction music vignettes. No claim of a musically seamless loop or completed staged scenes.
+- Next: review the recording in-game, then continue W34 faction scenes or the owner's next selected packet. Future production merges still require an explicit exception.
 <!-- handoff:end -->
 
 ## Gameplay/demo module boundary — 13 October 2026

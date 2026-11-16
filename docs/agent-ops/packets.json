@@ -4117,7 +4117,7 @@
     "docs/game-design-master-doc.html"
    ],
    "acceptance": "Replace synthesized campaign placeholder with acoustic folk guitar/strings/voices without synths. Stage Scene A rebel campfire musicians and Scene B heavily equipped occupiers around an NPC with aggressive synth/dubstep playback. Preserve mute/volume, local runtime assets and gameplay/demo isolation. Deliver as separately reviewable audio and vignette milestones.",
-   "progress_note": "2026-10-27: Owner requests online CC0 music with real guitars. Candidate shortlist recorded in campaign roadmap; no new audio integrated. Acoustic recording selection and faction vignettes remain open."
+   "progress_note": "2026-10-27: Owner requests online CC0 music with real guitars. Candidate shortlist recorded in campaign roadmap; no new audio integrated. Acoustic recording selection and faction vignettes remain open. Audio milestone: 3 Acoustic Guitars by Aussens@iter is now the local campaign recording, replacing synthesized playback. Runtime encode 128 kbps MP3, -6 dB gain, short edge fades; source https://ccmixter.org/files/tobias_weber/56668. Faction vignettes and owner listening acceptance remain open."
   },
   {
    "id": "WP-W35",

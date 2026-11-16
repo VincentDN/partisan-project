@@ -26,6 +26,11 @@
 - Added Vincent’s emotional core, resistance stakes and typography influences to the culture section; preserved the marketing idea as a short stub.
 - Saved six supplied typography images for human review outside the shipped site.
 
+## 2026-10-27 — Recorded campaign acoustic guitar (W34 audio milestone)
+
+- Replaced the synthesized campaign score with a local recording of 3 Acoustic Guitars by Aussens@iter.
+- Quieter playback and short loop-edge fades retain campaign music preferences and demo handoff.
+
 ## 2026-10-27 — Stable combat loading feedback (W38)
 
 - Combat loading now ends after mission data and game initialization, preventing a loader from remaining over the scenario.
