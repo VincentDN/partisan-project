@@ -11,6 +11,8 @@ export default [
       'build/**',
       'assets-incoming/**',
       'docs/archive/**',
+      'docs/handbook-viewer/*.glb.js',
+      'docs/handbook-viewer/viewer.bundle.js',
       'intro/**',
       'tests/legacy/**',
     ],
@@ -19,6 +21,7 @@ export default [
   {
     files: [
       'shell.js',
+      'docs/handbook-models.js',
       'menu/**',
       'workbench/**',
       'operator/**',

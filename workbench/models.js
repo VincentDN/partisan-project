@@ -357,6 +357,12 @@ const neuro = structuredClone(MODELS['stg44-astra-b']);
 neuro.label = neuro.title = 'StG 44 (2044) · Neuro-Bash';
 neuro.url = '../assets/models/weapons/stg44-2044-b.glb';
 neuro.sourceNote = 'Neuro-Bash rebuild with corrected magazine proportions.';
+neuro.mounts = neuro.mounts.filter(([id]) => id !== 'muzzle');
+neuro.sockets = [['muzzle', 'Muzzle', [0.53, 0.05, 0], [1, 0, 0]]];
+neuro.slots.muzzle = {
+  factory: [{id: 'factory', label: 'Factory muzzle device', original: true}],
+  library: [],
+};
 neuro.parts = [
   {
     id: 'receiver',
@@ -374,9 +380,9 @@ neuro.parts = [
       'grip',
       'handguard',
       'trigger',
-      'muzzle_device',
     ],
   },
+  {id: 'muzzle', label: 'Muzzle device', detail: 'Neuro-Bash factory muzzle device.', nodes: ['muzzle_device']},
   {id: 'stock', label: 'Stock', detail: 'Fixed or adjustable stock.', nodes: ['stock_fixed', 'stock_adj_body', 'stock_adj_tube']},
   {id: 'magazine', label: 'Magazine', detail: 'Kurz magazine.', nodes: ['mag_25', 'mag_40']},
 ];

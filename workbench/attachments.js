@@ -220,7 +220,7 @@ function cncGrip({original}) {
   ).translate(0, 0, (b.min.z + b.max.z) / 2);
   return group([g, new T.MeshStandardMaterial({name: 'polymer', color: '#1d1e1f', roughness: 0.6})]);
 }
-function clearMagazine({original}) {
+function clearMagazine({original, slot}) {
   const g = new T.Group(),
     container = original.parent;
   container.updateWorldMatrix(true, true);
@@ -233,13 +233,16 @@ function clearMagazine({original}) {
       opacity: 0.6,
       depthWrite: false,
     });
-  original.traverse(m => {
-    if (!m.isMesh) return;
-    const c = new T.Mesh(m.geometry, smoke);
-    c.matrixAutoUpdate = false;
-    c.matrix.copy(inv).multiply(m.matrixWorld);
-    g.add(c);
-  });
+  const show = slot.factory[0]?.showNodes;
+  const sources = show ? original.children.filter(node => show.includes(node.name)) : [original];
+  for (const source of sources)
+    source.traverse(m => {
+      if (!m.isMesh) return;
+      const c = new T.Mesh(m.geometry, smoke);
+      c.matrixAutoUpdate = false;
+      c.matrix.copy(inv).multiply(m.matrixWorld);
+      g.add(c);
+    });
   return g;
 }
 // Illustrative masses in grams; each rifle adds its own base mass. Magazines are empty.

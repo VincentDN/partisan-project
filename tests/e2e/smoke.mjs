@@ -757,12 +757,15 @@ await check('viewer: lists registered models and reports triangles and licence',
 });
 
 await check('design doc: culture follows the introduction and the keyframes advance', async () => {
-  const page = await open(browser, server.url + 'docs/game-design-master-doc.html');
+  const context = await browser.newContext();
+  await context.route(/https:\/\/(www\.)?youtube(-nocookie)?\.com\//, route => route.fulfill({body: ''}));
+  const page = await open(browser, server.url + 'docs/game-design-master-doc.html', {context});
   assert.equal(await page.locator('main > section').nth(1).getAttribute('id'), 'culture');
   await page.getByRole('button', {name: 'Next keyframe'}).click();
   await page.waitForFunction(() => document.getElementById('keyframes').scrollLeft > 0);
   noProblems(page);
   await page.close();
+  await context.close();
 });
 
 await check('rebel band: the band idles, the stash, an upgrade that plays a promotion, and the character under your hands', async () => {

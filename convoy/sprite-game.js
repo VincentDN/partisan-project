@@ -147,7 +147,10 @@ function campaignCard() {
  * the ground where it was met, the enemy's strength); in practice they come from the pickers (or ?time=&weather=).
  */
 function conditions() {
-  if (cm?.action === 'play') return {...cm.deployment.variant, seed: cm.deployment.seed};
+  if (cm?.action === 'play') {
+    const {variant, seed, source} = cm.deployment;
+    return {...variant, seed, convoyLeaderWeapon: source === 'supply-convoy' ? 'stg44-neuro-bash' : undefined};
+  }
   const time = TIMES.includes(params.get('time')) ? params.get('time') : null,
     weather = WEATHERS.includes(params.get('weather')) ? params.get('weather') : 'clear';
   return {time, weather};

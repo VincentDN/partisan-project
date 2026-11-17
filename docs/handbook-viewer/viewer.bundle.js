@@ -85,10 +85,10 @@
 #endif`,of=`#ifdef USE_AOMAP
 	float ambientOcclusion = ( texture2D( aoMap, vAoMapUv ).r - 1.0 ) * aoMapIntensity + 1.0;
 	reflectedLight.indirectDiffuse *= ambientOcclusion;
-	#if defined( USE_CLEARCOAT ) 
+	#if defined( USE_CLEARCOAT )
 		clearcoatSpecularIndirect *= ambientOcclusion;
 	#endif
-	#if defined( USE_SHEEN ) 
+	#if defined( USE_SHEEN )
 		sheenSpecularIndirect *= ambientOcclusion;
 	#endif
 	#if defined( USE_ENVMAP ) && defined( STANDARD )
@@ -541,7 +541,7 @@ vec4 LinearTosRGB( in vec4 value ) {
 	#else
 		uniform sampler2D envMap;
 	#endif
-	
+
 #endif`,Df=`#ifdef USE_ENVMAP
 	uniform float reflectivity;
 	#if defined( USE_BUMPMAP ) || defined( USE_NORMALMAP ) || defined( PHONG ) || defined( LAMBERT )
@@ -558,7 +558,7 @@ vec4 LinearTosRGB( in vec4 value ) {
 		#define ENV_WORLDPOS
 	#endif
 	#ifdef ENV_WORLDPOS
-		
+
 		varying vec3 vWorldPosition;
 	#else
 		varying vec3 vReflect;
@@ -1375,7 +1375,7 @@ IncidentLight directLight;
 	vec4 sampledDiffuseColor = texture2D( map, vMapUv );
 	#ifdef DECODE_VIDEO_TEXTURE
 		sampledDiffuseColor = vec4( mix( pow( sampledDiffuseColor.rgb * 0.9478672986 + vec3( 0.0521327014 ), vec3( 2.4 ) ), sampledDiffuseColor.rgb * 0.0773993808, vec3( lessThanEqual( sampledDiffuseColor.rgb, vec3( 0.04045 ) ) ) ), sampledDiffuseColor.w );
-	
+
 	#endif
 	diffuseColor *= sampledDiffuseColor;
 #endif`,cp=`#ifdef USE_MAP

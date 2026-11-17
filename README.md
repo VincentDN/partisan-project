@@ -23,7 +23,7 @@ npm ci                 # dev tools only; the site has no runtime dependencies
 npm run serve          # http://localhost:8123/   (ES modules need http, not file://)
 npm test               # unit, plan and site-build tests
 npm run build && npm run check     # build _site/ and verify every link
-npm run test:e2e       # headless-browser smoke test (CHROMIUM=/path/to/chrome if needed)
+npm run test:e2e       # browser regressions, including handbook radio and Neuro-Bash (set CHROMIUM if needed)
 npm run test:operator  # generated operator geometry, equipment, animation and browser checks
 npm run test:comparison # unchanged original Recon and synchronized comparison view
 ```

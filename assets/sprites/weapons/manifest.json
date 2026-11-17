@@ -50,7 +50,7 @@
     "length": 1.143
   },
   "rpk": {
-    "label": "RPK (7.62\u00d739)",
+    "label": "RPK (7.62×39)",
     "file": "rpk.png",
     "length": 1.059
   },
@@ -58,5 +58,20 @@
     "label": "MCX retro textures",
     "file": "spear.png",
     "length": 1.209
+  },
+  "stg44-astra-a": {
+    "label": "StG 44 (2044) · Magnific · Tripo P2 A",
+    "file": "stg44-astra-a.png",
+    "length": 1
+  },
+  "stg44-astra-b": {
+    "label": "StG 44 (2044) · Magnific · Tripo P2 B",
+    "file": "stg44-astra-b.png",
+    "length": 0.96
+  },
+  "stg44-neuro-bash": {
+    "label": "StG 44 (2044) · Neuro-Bash",
+    "file": "stg44-neuro-bash.png",
+    "length": 0.962
   }
 }

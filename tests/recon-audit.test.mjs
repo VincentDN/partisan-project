@@ -8,7 +8,7 @@ const audit = read('assets/models/operators/recon-source-audit.json');
 const contract = read('tools/assets/recon-modular-contract.json');
 const digest = p => createHash('sha256').update(fs.readFileSync(p)).digest('hex');
 test('source inspection is an exact copy; audit pins all three local model baselines', () => {
-  assert.equal(digest(audit.source.path), audit.source.sha256);
+  assert.equal(digest(audit.source.path.replace('inbound/', 'inbound/_old/')), audit.source.sha256);
   assert.equal(digest('assets/models/operators/recon-split-reference.glb'), audit.source.sha256);
   assert.equal(digest('assets/models/operators/recon-original.glb'), audit.complete.sha256);
   assert.equal(digest('assets/models/operators/generated-recon.glb'), audit.current.sha256);

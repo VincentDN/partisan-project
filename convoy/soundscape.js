@@ -95,6 +95,7 @@ for (const [id, base] of Object.entries({
   ak74: 'ak',
   ak74m: 'ak',
   ak15k: 'ak',
+  'stg44-neuro-bash': 'ak',
   rpk: 'pkm',
   mk14: 'svd',
   smg: 'ak',

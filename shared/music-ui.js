@@ -42,8 +42,12 @@ export function bindMusicUI({scene = 'viewer', sound = soundLayer()} = {}) {
   };
   function firstGesture(e) {
     if (e.target === toggle || e.target.closest?.('[data-track]')) return;
-    stopWaiting();
-    if (prefs.on) sound.start(FADE);
+    if (!sound.music.retryGesture) stopWaiting();
+    if (prefs.on) {
+      sound.start(FADE).then(playing => {
+        if (playing) stopWaiting();
+      });
+    }
   }
   addEventListener('pointerdown', firstGesture, true);
   addEventListener('keydown', firstGesture, true);
@@ -55,8 +59,8 @@ export function bindMusicUI({scene = 'viewer', sound = soundLayer()} = {}) {
   if (toggle)
     toggle.onclick = () => {
       // Music "on" but still blocked by autoplay policy: the button starts it rather than switching it off.
-      if (prefs.on && !sound.music.audible()) {
-        stopWaiting();
+      if (prefs.on && !sound.music.audible() && sound.music.retryToggle !== false) {
+        if (!sound.music.retryGesture) stopWaiting();
         sound.start(FADE);
         return;
       }

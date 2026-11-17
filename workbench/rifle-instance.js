@@ -8,6 +8,7 @@ import {MODELS} from './models.js';
 import {paintSurface, paintRetro} from './surface.js';
 import {applyFinishState} from './rifle-finishes.js';
 import {correctNeuroMagazines} from './neuro-magazines.js';
+import {materials as stgMaterials} from './stg44/finish.js';
 // Lay the longest axis along x with the muzzle (the slimmer end) at +x, scale to meters, center. `stretch` [x, y, z]
 // corrects a source whose proportions are off (the M16's is too tall and too thin), in the laid-out axes.
 export function normalize(root, scale, stretch = null) {
@@ -84,8 +85,12 @@ export async function loadRifle(id, {decorate = () => {}} = {}) {
   partitionSource(model, id);
   if (config.surface) paintSurface(model, config);
   // Clone materials so highlighting, finishes and wireframe only touch this rifle's meshes.
+  const palette = id === 'stg44-neuro-bash' ? stgMaterials() : null;
   model.traverse(o => {
-    if (o.isMesh) o.material = o.material.clone();
+    if (!o.isMesh) return;
+    const name = o.material.name;
+    o.material = (palette?.[name] || o.material).clone();
+    if (palette) o.material.name = name === 'furniture' ? 'polymer' : name;
   });
   // A node claimed by one part is skipped when collecting another part's meshes.
   const claimed = new Set(config.parts.flatMap(p => p.nodes.map(nodeName)));

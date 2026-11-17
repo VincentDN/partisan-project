@@ -42,6 +42,6 @@ test('every item gets a placeholder icon', () => {
   for (const i of data.items) {
     const ic = iconFor(i, cats);
     assert.ok(ic.gun || ic.path, i.slug);
-    if (ic.path) assert.ok(fs.existsSync('inbound/Placeholder Assets/' + ic.path), ic.path);
+    if (ic.path) assert.ok(fs.existsSync('inbound/_old/Placeholder Assets/' + ic.path), ic.path);
   }
 });

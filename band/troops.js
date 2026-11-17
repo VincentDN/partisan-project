@@ -10,7 +10,7 @@
 
 /** Equipment in the stash. gun: a gun sprite id; icon: an image path in the placeholder set. */
 export const GEAR = {
-  'stg44-neuro-bash': {label: 'StG 44 (2044) Neuro-Bash', kind: 'weapon', gun: 'set-assault'},
+  'stg44-neuro-bash': {label: 'StG 44 (2044) Neuro-Bash', kind: 'weapon', gun: 'stg44-neuro-bash'},
   ak74: {label: 'AK-74', kind: 'weapon', gun: 'set-assault'},
   ak74m: {label: 'AK-74M', kind: 'weapon', gun: 'ak74m'},
   ak15k: {label: 'AK-15K', kind: 'weapon', gun: 'ak15k'},

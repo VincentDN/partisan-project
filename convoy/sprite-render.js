@@ -340,7 +340,7 @@ export async function createSpriteRenderer(view) {
       u.side === 'partisan' && u.weaponSlot !== 'secondary' && u.weapon === u.weapons[0]
         ? u.gun || (u.primaryUid === undefined ? savedLook(u.id).gun : null)
         : null;
-    return guns[chosen] || guns[DEFAULT_GUN[u.side]?.[u.weapon]] || Object.values(guns)[0];
+    return guns[chosen] || guns[DEFAULT_GUN[u.side]?.[u.weapon] || u.weapon] || Object.values(guns)[0];
   }
   function drawPawn(u, sim, opts) {
     if (u.escaped || u.state === 'mounted' || u.state === 'turret' || (u.role === 'turret' && !u.alive)) return;
