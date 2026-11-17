@@ -28,12 +28,6 @@ a{color:#9fd0e6}a:hover{color:#fff}
 :focus-visible{outline:2px solid var(--spark);outline-offset:3px}
 .skip{position:absolute;left:-999px;top:8px;background:var(--spark);color:#000;padding:8px 12px;z-index:50;font:700 13px var(--mono)}
 .skip:focus{left:8px}
-/* top bar */
-.bar{position:sticky;top:var(--topbar,40px);z-index:20;background:#0d100cf0;backdrop-filter:blur(4px);border-bottom:1px solid var(--line)}
-.bar-in{max-width:1180px;margin:0 auto;padding:9px var(--gutter);display:flex;align-items:center;gap:18px;flex-wrap:wrap;font:12px/1.3 var(--mono);letter-spacing:.1em;text-transform:uppercase}
-.bar b{color:var(--olive)}.bar nav{display:flex;gap:16px;flex-wrap:wrap;margin-left:auto}.bar nav a{color:var(--dim);text-decoration:none}.bar nav a:hover{color:var(--spark)}
-.bar button{font:inherit;color:var(--olive);background:transparent;border:1px solid var(--line);padding:4px 9px;cursor:pointer;text-transform:uppercase;letter-spacing:.1em}
-.bar button[aria-pressed=true]{background:var(--lcd-1);color:var(--lcd-0);border-color:var(--lcd-1)}
 /* layout */
 main{max-width:1180px;margin:0 auto;padding:0 var(--gutter) 90px}
 section{padding:68px 0 10px;scroll-margin-top:46px}
@@ -54,7 +48,7 @@ h3{font-size:22px;color:var(--olive);margin-bottom:6px;letter-spacing:.06em}
 .btn:hover{background:#fff;color:#000}.btn.ghost{background:transparent;color:var(--olive);border:1px solid var(--olive-2)}.btn.ghost:hover{background:var(--olive);color:#000}
 .row{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}
 /* hero */
-.hero{padding-top:46px;display:grid;gap:30px;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);align-items:center}
+.hero{padding-top:46px}
 .hero figure{margin:0;position:relative}.hero .war-room{max-width:58ch;margin:4px 0 18px}
 .hero h1{font-size:clamp(48px,7vw,96px)}.hero .tagline{margin:6px 0 16px;color:var(--spark);font-weight:650}.hero-body{max-width:58ch;color:var(--text);line-height:1.6;margin:0 0 14px}
 .bulletin{font:12px/1.5 var(--mono);color:var(--dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:18px}
@@ -88,43 +82,96 @@ code{font:.9em var(--mono);background:var(--panel-2);padding:.1em .35em}
 footer{border-top:1px solid var(--line);padding:30px var(--gutter) 60px;max-width:1180px;margin:0 auto;font:12px/1.7 var(--mono);color:var(--dim)}
 footer a{color:var(--olive)}
 .stamp{position:absolute;top:14px;right:14px;font:700 12px var(--mono);letter-spacing:.2em;border:2px solid var(--spark);color:var(--spark);padding:4px 10px;transform:rotate(4deg);background:#0d100ccc}
+.vincent{display:flex;gap:12px;align-items:flex-start;max-width:78ch}
+.vincent img{flex:none;border-radius:50%;object-fit:cover}.vincent p{margin:0}
+.retired :is(h2,h3,p,li,td,th,a,span,small){text-decoration:line-through}
+.concept{margin-top:24px}.concept h2{font-size:18px;margin-bottom:8px}
+#keyframes{display:flex;overflow-x:auto;scroll-snap-type:x mandatory}
+#keyframes img{flex:0 0 100%;width:100%;height:auto;aspect-ratio:16/9;object-fit:contain;scroll-snap-align:start;background:var(--panel)}
+.gallery-controls{display:flex;gap:8px;justify-content:flex-end;margin-top:8px}
+.gallery-controls button{font-size:18px;min-width:44px;min-height:40px;background:var(--panel);color:var(--text);border:1px solid var(--line);cursor:pointer}
 </style>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
-<header class="bar"><div class="bar-in">
-  <b>Partisan Project</b><span>Field handbook n°03 · v0.3.1</span>
-  <nav aria-label="Sections"><a href="#dispatches">Dispatches</a><a href="#pillars">Pillars</a><a href="#loud">Low poly and loud</a><a href="#design">Design</a><a href="#culture">Yantis &amp; music</a><a href="#marketing">Marketing</a><a href="#operators">Operators</a><a href="#moodboard">Moodboard</a><a href="#roadmap">Roadmap</a><a href="#specs">Specs</a><a href="../menu/">Index</a></nav>
-  <button id="signal" aria-pressed="false" title="Render the images as a 1-bit dithered radio signal">Signal: clean</button>
-</div></header>
-
 <main id="main">
-
 <section class="hero" id="top" aria-labelledby="h-title">
   <div>
-    <p class="bulletin">Transmission 0.3.1 · 5 October 2026 · clandestine design bureau</p>
+
     <h1 id="h-title">Partisan Project</h1>
-    <p class="note" id="vincent-note"><b>NOTE from vincent:</b> Dont read this roadmap as its very sloppy atm. I essentially had claude write out the roadmap for me to see how the agent does. The results are interesting: the model is <em>directionally</em> correct, but Claude feels like a highly autistics brilliant developer - it overfocuses on unimportant aspects of the game design, while only lightly touching the true emotional core of the idea. Will fix later ¯\_(ツ)_/¯</p>
+    <aside class="note vincent" id="vincent-note"><img src="moodboard/vincent-chibi.jpg" width="48" height="48" alt=""><p><b>Note from Vincent:</b> Dont read this roadmap as its very sloppy atm. I essentially had claude write out the roadmap for me to see how the agent does. The results are interesting: the model is <em>directionally</em> correct, but Claude feels like a highly autistics brilliant developer - it overfocuses on unimportant aspects of the game design, while only lightly touching the true emotional core of the idea. Will fix later ¯\_(ツ)_/¯</p></aside>
     <p class="lede tagline">Escape from Tarkov meets Mount and Blade with guns</p>
     <p class="hero-body">Inspired by the Antistasi mod for Arma 3. The basic idea is a PvE loop much like SP Tarkov. Instead of looting guns just for yourself, however, you play as a group of units and level up your characters and your Resistance through a Mount and Blade style overworld game. This makes gun and attachment collecting mean something at a gameplay level: stealing weapons lets you level up different characters and expand your Resistance.</p>
     <p class="hero-body">The metagame then escalates from small engagements, ambushes and supply raids to all-out warfare with vehicles, as you finally drive the Invader off your island.</p>
-    <figure class="war-room"><div class="frame"><img src="moodboard/keyframe-3-war-room.jpg" alt="Concept keyframe: four low-poly rebels around a map table in a lamp-lit hideout, the hooded recon pointing at the objective, a radio, compass and coffee among the papers, supply crates behind" width="2000" height="1125" loading="lazy"></div><figcaption>Between raids: the squad plans the next ambush over the island map. The overworld and loot metagame. Concept art, reference only.</figcaption></figure>
-    <div class="row">
-      <a class="btn" href="../operator/">Dress an operator</a>
-      <a class="btn ghost" href="../workbench/">Strip a rifle</a>
-      <a class="btn ghost" href="../convoy/">Lead an ambush</a>
-      <a class="btn ghost" href="campaign-roadmap.html">The campaign plan</a>
-    </div>
-    <p class="note"><b>Design note</b> This page is both the in-universe handbook and the game design document. Grey boxes like this one step outside the fiction to say what is real, what is a placeholder and what is waiting on a decision.</p>
   </div>
-  <figure>
-    <div class="frame"><img src="moodboard/keyframe-2-firefight.jpg" alt="Concept keyframe: two low-poly operators behind concrete barriers in hazy backlight, sparks and casings flying" width="1600" height="893" fetchpriority="high"></div>
-    <figcaption>Target keyframe. Concept art, reference only; not a game asset.</figcaption>
-  </figure>
+  <div class="concept"><h2>Visual target concept art:</h2><div id="keyframes" tabindex="0" role="region" aria-label="Visual target concept art"><img src="moodboard/keyframe-2-firefight.jpg" alt="Concept keyframe: two low-poly operators behind concrete barriers in hazy backlight, sparks and casings flying" width="1600" height="893" fetchpriority="high">
+<img src="moodboard/keyframe-3-war-room.jpg" alt="Concept keyframe: four low-poly rebels around a map table in a lamp-lit hideout, the hooded recon pointing at the objective, a radio, compass and coffee among the papers, supply crates behind" width="2000" height="1125" loading="lazy">
+<img src="moodboard/keyframe-1-nvg-plaid.jpg" alt="Operator in a tan helmet with night-vision tubes, green face cover and plaid shirt" loading="lazy" style="object-position:30% 30%"></div><div class="gallery-controls"><button type="button" data-step="-1" aria-label="Previous keyframe">←</button> <button type="button" data-step="1" aria-label="Next keyframe">→</button></div></div>
+</section>
+
+<section id="culture" aria-labelledby="h-culture">
+
+  <h2 id="h-culture">A home worth defending</h2>
+  <p class="lede">You are the Resistance. Five years ago, a foreign army invaded Yantis. The rebels are the righteous defenders of their home; the occupying army is the villain. The people, music and environments must make the player feel what has been stolen, what survives, and why the island is worth fighting for.</p>
+  <p>Build Yantis as a lived-in fictional island with a musical culture blending Southern Balkan, Mediterranean and Caucasus influences. Neighbours know the same songs. Families keep instruments, songs travel between villages, and fighters carry those memories into the hills. Warm stone courtyards, worn domestic spaces, shared meals, firelight and handmade objects should give the Resistance a recognisable home. Occupation intrudes on that world through checkpoints, floodlights, military equipment and intimidation.</p>
+  <h3 style="margin-top:26px">The feeling of Yantis</h3>
+  <p>A large part of expressing the culture of Yantis must be the <em>feeling</em> of Yantis as the &ldquo;other&rdquo; place. Rather than the typical post-Soviet scavenger feel, the player must feel that they are defending something unique, something special, something precious. The occupier, by contrast, represents exaggerated perversions of imperialist, capitalist and hawkish society.</p>
+  <p>This is the pure player fantasy of Project Partisan: to kill the invader, to drive him off your ancestral land. This is <em>good</em>, righteous, almost poetically justified. This makes the violence feel grounded and earned. Moments of rest, cultural encounters and lore touchpoints form natural gaps of rest as the player moves from combat to the tactical map and back to combat.</p>
+  <p>In Partisan, you are not a scavenger. You are not collecting battle pass items. Every bullet matters, every gun matters, every fighter matters. This is the unique hook we see as missing from extraction shooters on the market right now.</p>
+  <h3 style="margin-top:26px">Typography</h3>
+  <p>The Georgian, Greek and Mongolian writing systems.</p>
+  <h3 style="margin-top:26px">An analogue home, a technological empire</h3>
+  <p>Yantis is a fictional setting inspired by a wide range of cultures across southern Europe and neighbouring regions, including the Mediterranean, the southern Balkans and the Caucasus. It should feel a little suspended in time: less technological, more analogue, and closer to nature. Old stone buildings, mountain villages, traditional textiles, wildflower meadows and everyday handmade objects make this a tangible home worth defending.</p>
+  <p>The larger idea is the contrast between the righteous Rebels and the evil Empire: the occupiers bring overwhelming technological superiority into a place rooted in land, tradition and community. That contrast must be visible in architecture, clothing, equipment, sound and daily life. It also strengthens the gameplay reward of looting: taking the Empire’s weapons and turning them against its soldiers is how an outmatched resistance begins to fight back.</p>
+  <p><b>Visual references supplied by Vincent:</b> a weathered stone monastery beneath a vast snow-capped mountain; and a figure in red traditional clothing among poppies and wildflowers, with snowy peaks beyond. Draw on the relationship between people, old masonry, textiles and the natural landscape. These are mood references for Yantis, not a requirement to reproduce a real landmark.</p>
+  <aside class="note vincent"><img src="moodboard/vincent-chibi.jpg" width="48" height="48" alt=""><p><b>Note from Vincent:</b> “We could use <i>Star Wars Rebels</i> as a reference here too, but honestly I’m just so over Star Wars, man. They’re making more Star Wars than I can watch each year.”</p></aside>
+  <div class="grid g2" style="margin-top:22px">
+    <article class="card"><h3>The rebels · human and acoustic</h3><p>Traditional folk music, with no synthesizers: folk guitar, plucked and bowed string instruments, voices and hand-played percussion. Use intimate playing, communal singing, mournful strings and defiant melodies. Music can express grief, fellowship and joy as well as determination. The sound belongs to the people of Yantis and the homes they defend.</p></article>
+    <article class="card"><h3>The occupiers · digital and imposing</h3><p>Modern electronic music with an overtly synthetic sound: heavy synths, processed bass, hard programmed beats and aggressive dubstep. Skrillex is a tentative reference for the weight and abrasive energy. Loud playback from military spaces should feel like the occupation imposing itself on the island. These are the fictional foreign invaders: cruel, threatening antagonists whom the player wants to drive out.</p></article>
+  </div>
+  <h3 style="margin-top:30px">Music references</h3>
+  <div class="grid g3" style="margin-top:18px">
+    <article class="card music-reference"><h3>LADANIVA — Saraiman</h3><p>Reference for communal musical energy and a vivid, inhabited folk world.</p><iframe src="https://www.youtube-nocookie.com/embed/vGGbp88ziXU" title="LADANIVA — Saraiman (Official Video)" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe><a href="https://www.youtube.com/watch?v=vGGbp88ziXU" target="_blank" rel="noopener">Watch Saraiman on YouTube</a></article>
+    <article id="ararat" class="card music-reference"><h3>LADANIVA — Here’s to You, Ararat</h3><p>A reference for how the rebels might sing about a place they call home.</p><iframe src="https://www.youtube-nocookie.com/embed/3_JwkSBzZqM" title="LADANIVA — Here's to you Ararat | POSTCARD (Official Video)" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe><a href="https://www.youtube.com/watch?v=3_JwkSBzZqM" target="_blank" rel="noopener">Watch Here’s to You, Ararat on YouTube</a></article>
+    <article class="card music-reference"><h3>“Heroes” — Song of the Greek Partisans</h3><p>Reference for collective resolve and the emotional force of a resistance song.</p><iframe src="https://www.youtube-nocookie.com/embed/Crhai9Z7nxs" title="Heroes — Song of the Greek Partisans" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe><a href="https://www.youtube.com/watch?v=Crhai9Z7nxs" target="_blank" rel="noopener">Watch Heroes on YouTube</a></article>
+    <article class="card music-reference"><h3>Bosnian Bella Ciao</h3><p>Reference for a familiar resistance melody carried through local language and an intimate performance. Selected example: Bosnian/Italian cover.</p><iframe src="https://www.youtube-nocookie.com/embed/gmEy3eEc7-s" title="Bella Ciao — Bosnian/Italian version cover" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe><a href="https://www.youtube.com/watch?v=gmEy3eEc7-s" target="_blank" rel="noopener">Watch Bosnian/Italian Bella Ciao on YouTube</a></article>
+  </div>
+</section>
+
+<section id="loud" aria-labelledby="h-loud">
+  <h2 id="h-loud">Low poly and loud</h2>
+  <p class="lede">Partisan uses a native three.js low-poly art style, but its animation and sound are inspired by hardcore milsim. Gunfights are loud and chaotic.</p>
+<aside class="note vincent"><img src="moodboard/vincent-chibi.jpg" width="48" height="48" alt=""><p><b>Note from Vincent:</b> Will elaborate later</p></aside>
+</section>
+
+<section id="marketing" aria-labelledby="h-marketing">
+  <h2 id="h-marketing">Marketing ideas - This is Them, This is Us</h2>
+  <p>Juxtapose battle pass AAA shooters with our janky shit - This is them, this is us</p>
+<aside class="note vincent"><img src="moodboard/vincent-chibi.jpg" width="48" height="48" alt=""><p><b>Note from Vincent:</b> Personal idea: the game with themes of resistance doubles as the company idea - we are the AI vibe code kinda from-the-bedroom artists, no real money or backing behind us</p></aside>
+</section>
+
+<section id="moodboard" aria-labelledby="h-mood">
+  <h2 id="h-mood">Art direction - moodboard</h2>
+  <p class="lede">Faceted low poly with painterly facets, desaturated olive and coyote, and light that does the storytelling.</p>
+  <div class="mood" style="margin-top:22px">
+    <figure class="wide"><div class="frame"><img src="moodboard/recon-character-sheet.jpg" alt="Hooded recon character sheet with front, side, back and hero pose, and a column of patches and props" width="2000" height="1125" loading="lazy"></div></figure>
+    <figure class="third"><div class="frame"><img src="moodboard/ref-abiotic-factor-low-poly.jpg" alt="Style reference: chunky low-poly character with large visor and chest radio" width="1300" height="1047" loading="lazy"></div></figure>
+    <figure class="third"><div class="frame"><img src="moodboard/recon-insignia-props.jpg" alt="Column of reference props: MP-O patch, mountain shield patch, handheld radio, carabiner, canister" width="198" height="1312" loading="lazy" style="max-height:520px;object-fit:contain;background:#222"></div></figure>
+    <figure class="third"><div class="frame"><img src="moodboard/recon-hero-pose.jpg" alt="Hero pose: rifle held upright in the right hand" width="512" height="1355" loading="lazy" style="max-height:520px;object-fit:contain;background:#222"></div></figure>
+    <figure class="third"><div class="frame"><img src="moodboard/ref-2d-sprite-soldier.jpg" alt="2D sprite soldier with a big backpack, goggles, desert helmet and kneepads, thick black outlines, holding an AK-pattern rifle" width="538" height="796" loading="lazy" style="max-height:520px;object-fit:contain;background:#222"></div></figure>
+    <div class="side"><h3>2D sprite ideas</h3><ul>
+      <li><b>Thick black outline</b> around every shape: the figure reads against any ground, from any height.</li>
+      <li><b>Chunky, exaggerated gear</b> (pack, helmet, kneepads): the role shows in the silhouette, the same rule as the 3-D operators.</li>
+      <li><b>Few flat tones per surface</b> with a darker shade: it is close to the Art Style Lab's cel and ink looks, so we can test both before choosing.</li>
+      <li><b>A real rifle shape</b> held across the body: the weapon family stays recognisable at small sizes.</li>
+      <li>Candidate look for the top-down shooter's rebels and soldiers.</li>
+    </ul></div>
+  </div>
 </section>
 
 <section id="dispatches" aria-labelledby="h-dispatches">
-  <p class="eyebrow">Dispatches</p><h2 id="h-dispatches">What you can use today</h2>
+<div class="retired">
+  <h2 id="h-dispatches">What you can use today</h2>
   <p class="lede">Each dispatch is a demo. Status is honest: <span class="live">live</span> means it runs on this site; <span class="build">prototype</span>, <span class="build">demo</span> or <span class="build">test</span> means playable but partial; <span class="plan">planned</span> means a drawing and a packet.</p>
   <div class="grid g3" style="margin-top:22px">
     <article class="card"><span class="chip live">Live</span><h3>Weapon Modder</h3><p>Eleven rifles, from the AK-74M and the SIG Spear to the StG 44, Bren and Chauchat. Real attachments that fit every rifle, a CNC kit for the old ones, rails that stop parts overlapping, handling stats that move as you swap, finishes, camo, wear.</p><div class="row"><a class="btn" href="../workbench/">Open</a></div></article>
@@ -137,10 +184,13 @@ footer a{color:var(--olive)}
     <article class="card"><span class="chip live">Live</span><h3>Asset Viewer</h3><p>The inspector. Checks any registered model against its triangle budget before it reaches a demo.</p><div class="row"><a class="btn ghost" href="../viewer/">Open</a></div></article>
     <article class="card"><span class="chip plan">Planned · 2027</span><h3>Checkpoint &amp; the squad's mind</h3><p>A ruined-checkpoint diorama, and a visualiser for how a squad believes, doubts and breaks: belief and morale made visible.</p></article>
   </div>
+</div>
+<aside class="note vincent"><img src="moodboard/vincent-chibi.jpg" width="48" height="48" alt=""><p><b>Note from Vincent:</b> Dunno what all this stuff is, AI slop, begone</p></aside>
 </section>
 
 <section id="pillars" aria-labelledby="h-pillars">
-  <p class="eyebrow">Doctrine</p><h2 id="h-pillars">Four pillars</h2>
+<div class="retired">
+  <h2 id="h-pillars">Four pillars</h2>
   <div class="grid g4 pillars" style="margin-top:20px">
     <article class="card pillar"><h3>Gear is identity</h3><p>You are what you carry. Everything wearable or mountable is a slot with options, so a hundred loadouts come from a dozen parts.</p></article>
     <article class="card pillar"><h3>Readable at a glance</h3><p>Low-poly, faceted, flat-shaded. A silhouette must tell you who it is: hood, helmet and tubes, beanie, pack, rifle outline.</p></article>
@@ -148,15 +198,13 @@ footer a{color:var(--olive)}
     <article class="card pillar"><h3>Fair, not cheap</h3><p>Difficulty scales what the enemy knows and how fast it learns, never its health, damage or reflexes. Built for players who grew out of twitch.</p></article>
   </div>
   <p class="note"><b>Design note</b> Pillars 3 and 4 come from the earlier AI design compendium and audience study, kept on the portfolio site at <a href="https://vincentdenil.com/docs/partisan-ai/">vincentdenil.com/docs/partisan-ai</a>. Pillars 1 and 2 come from the demos and the moodboard.</p>
-</section>
-
-<section id="loud" aria-labelledby="h-loud">
-  <p class="eyebrow">Tone</p><h2 id="h-loud">Low poly and loud</h2>
-  <p class="lede">Partisan uses a native three.js low-poly art style, but its animation and sound are inspired by hardcore milsim. Gunfights are loud and chaotic.</p>
+</div>
+<aside class="note vincent"><img src="moodboard/vincent-chibi.jpg" width="48" height="48" alt=""><p><b>Note from Vincent:</b> AI being overly verbose is an interesting returning issue I see - Opus 5.5 and Astra have collectively begun hallucinating a whole bunch of details which subtly miss the mark. Useful for later?</p></aside>
 </section>
 
 <section id="design" aria-labelledby="h-design">
-  <p class="eyebrow">Design</p><h2 id="h-design">Core loop, progression and features</h2>
+<div class="retired">
+  <h2 id="h-design">Core loop, progression and features</h2>
   <p class="note"><b>Provisional</b> Setting canon (WP-D1) is undecided, so fiction-dependent details below are placeholders. Mechanics follow the pillars and the AI compendium.</p>
   <h3 style="margin-top:20px">The campaign loop</h3>
   <ol class="lede">
@@ -190,191 +238,23 @@ footer a{color:var(--olive)}
   </table></div>
   <h3 style="margin-top:20px">AI in one paragraph</h3>
   <p class="lede">Enemies hold beliefs about the player (last seen, likely routes, noise heard), act on them, and say what they are doing. Difficulty changes belief quality and learning rate, never health or aim. Full reasoning and the audience study: <a href="https://vincentdenil.com/docs/partisan-ai/">AI design compendium</a>.</p>
+</div>
+<aside class="note vincent"><img src="moodboard/vincent-chibi.jpg" width="48" height="48" alt=""><p><b>Note from Vincent:</b> blablabla</p></aside>
 </section>
-
-<section id="culture" aria-labelledby="h-culture">
-  <p class="eyebrow">The culture of Yantis · narrative and audio direction</p>
-  <h2 id="h-culture">A home worth defending</h2>
-  <p class="lede">You are the Resistance. Five years ago, a foreign army invaded Yantis. The rebels are the righteous defenders of their home; the occupying army is the villain. The people, music and environments must make the player feel what has been stolen, what survives, and why the island is worth fighting for.</p>
-  <p>Build Yantis as a lived-in fictional island with a musical culture blending Southern Balkan, Mediterranean and Caucasus influences. Neighbours know the same songs. Families keep instruments, songs travel between villages, and fighters carry those memories into the hills. Warm stone courtyards, worn domestic spaces, shared meals, firelight and handmade objects should give the Resistance a recognisable home. Occupation intrudes on that world through checkpoints, floodlights, military equipment and intimidation.</p>
-  <h3 style="margin-top:26px">The feeling of Yantis</h3>
-  <p>A large part of expressing the culture of Yantis must be the <em>feeling</em> of Yantis as the &ldquo;other&rdquo; place. Rather than the typical post-Soviet scavenger feel, the player must feel that they are defending something unique, something special, something precious. The occupier, by contrast, represents exaggerated perversions of imperialist, capitalist and hawkish society.</p>
-  <p>This is the pure player fantasy of Project Partisan: to kill the invader, to drive him off your ancestral land. This is <em>good</em>, righteous, almost poetically justified. This makes the violence feel grounded and earned. Moments of rest, cultural encounters and lore touchpoints form natural gaps of rest as the player moves from combat to the tactical map and back to combat.</p>
-  <p>In Partisan, you are not a scavenger. You are not collecting battle pass items. Every bullet matters, every gun matters, every fighter matters. This is the unique hook we see as missing from extraction shooters on the market right now.</p>
-  <h3 style="margin-top:26px">Typography</h3>
-  <p>The Georgian, Greek and Mongolian writing systems.</p>
-  <h3 style="margin-top:26px">An analogue home, a technological empire</h3>
-  <p>Yantis is a fictional setting inspired by a wide range of cultures across southern Europe and neighbouring regions, including the Mediterranean, the southern Balkans and the Caucasus. It should feel a little suspended in time: less technological, more analogue, and closer to nature. Old stone buildings, mountain villages, traditional textiles, wildflower meadows and everyday handmade objects make this a tangible home worth defending.</p>
-  <p>The larger idea is the contrast between the righteous Rebels and the evil Empire: the occupiers bring overwhelming technological superiority into a place rooted in land, tradition and community. That contrast must be visible in architecture, clothing, equipment, sound and daily life. It also strengthens the gameplay reward of looting: taking the Empire’s weapons and turning them against its soldiers is how an outmatched resistance begins to fight back.</p>
-  <p><b>Visual references supplied by Vincent:</b> a weathered stone monastery beneath a vast snow-capped mountain; and a figure in red traditional clothing among poppies and wildflowers, with snowy peaks beyond. Draw on the relationship between people, old masonry, textiles and the natural landscape. These are mood references for Yantis, not a requirement to reproduce a real landmark.</p>
-  <blockquote><p><b>Note from Vincent:</b> “We could use <i>Star Wars Rebels</i> as a reference here too, but honestly I’m just so over Star Wars, man. They’re making more Star Wars than I can watch each year.”</p></blockquote>
-  <div class="grid g2" style="margin-top:22px">
-    <article class="card"><h3>The rebels · human and acoustic</h3><p>Traditional folk music, with no synthesizers: folk guitar, plucked and bowed string instruments, voices and hand-played percussion. Use intimate playing, communal singing, mournful strings and defiant melodies. Music can express grief, fellowship and joy as well as determination. The sound belongs to the people of Yantis and the homes they defend.</p></article>
-    <article class="card"><h3>The occupiers · digital and imposing</h3><p>Modern electronic music with an overtly synthetic sound: heavy synths, processed bass, hard programmed beats and aggressive dubstep. Skrillex is a tentative reference for the weight and abrasive energy. Loud playback from military spaces should feel like the occupation imposing itself on the island. These are the fictional foreign invaders: cruel, threatening antagonists whom the player wants to drive out.</p></article>
-  </div>
-  <h3 style="margin-top:30px">Scene A · the rebel campfire</h3>
-  <p>A small band of rebels sits around a campfire after a hard day. One plays folk guitar; others join with string instruments and familiar voices. Show hands playing, tired faces relaxing and friends listening. Firelight catches patched civilian clothing, hoods and shemaghs. The surrounding landscape is quiet enough to hear fingers on strings and the fire. This is a brief, warm picture of the community the player is defending, with music performed by characters in the scene.</p>
-  <h3 style="margin-top:26px">Scene B · the occupier gathering</h3>
-  <p>Heavily equipped invaders stand around an NPC at an occupied checkpoint or courtyard, listening to loud, heavy synth dubstep from a portable speaker. Olive-drab armour, army helmets and covered faces contrast with the rebel camp. Their body language and treatment of the NPC establish contempt and intimidation; the bass dominates a place that should belong to local people. The intended emotional response is direct: these are vile, evil foreign occupiers. Drive them from your land.</p>
-  <p class="note"><b>Production status</b> Both scenes are planned narrative vignettes. The campaign uses a recorded acoustic guitar track. These videos are listening references in the design document, not the campaign soundtrack.</p>
-  <h3 style="margin-top:30px">Music references</h3>
-  <div class="grid g3" style="margin-top:18px">
-    <article class="card music-reference"><h3>LADANIVA — Saraiman</h3><p>Reference for communal musical energy and a vivid, inhabited folk world.</p><iframe src="https://www.youtube-nocookie.com/embed/vGGbp88ziXU" title="LADANIVA — Saraiman (Official Video)" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe><a href="https://www.youtube.com/watch?v=vGGbp88ziXU" target="_blank" rel="noopener">Watch Saraiman on YouTube</a></article>
-    <article id="ararat" class="card music-reference"><h3>LADANIVA — Here’s to You, Ararat</h3><p>A reference for how the rebels might sing about a place they call home.</p><iframe src="https://www.youtube-nocookie.com/embed/3_JwkSBzZqM" title="LADANIVA — Here's to you Ararat | POSTCARD (Official Video)" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe><a href="https://www.youtube.com/watch?v=3_JwkSBzZqM" target="_blank" rel="noopener">Watch Here’s to You, Ararat on YouTube</a></article>
-    <article class="card music-reference"><h3>“Heroes” — Song of the Greek Partisans</h3><p>Reference for collective resolve and the emotional force of a resistance song.</p><iframe src="https://www.youtube-nocookie.com/embed/Crhai9Z7nxs" title="Heroes — Song of the Greek Partisans" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe><a href="https://www.youtube.com/watch?v=Crhai9Z7nxs" target="_blank" rel="noopener">Watch Heroes on YouTube</a></article>
-    <article class="card music-reference"><h3>Bosnian Bella Ciao</h3><p>Reference for a familiar resistance melody carried through local language and an intimate performance. Selected example: Bosnian/Italian cover.</p><iframe src="https://www.youtube-nocookie.com/embed/gmEy3eEc7-s" title="Bella Ciao — Bosnian/Italian version cover" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe><a href="https://www.youtube.com/watch?v=gmEy3eEc7-s" target="_blank" rel="noopener">Watch Bosnian/Italian Bella Ciao on YouTube</a></article>
-  </div>
-  <h3 style="margin-top:30px">Campaign opening · the promise</h3>
-  <p>Fade in from black over a wide view of the island. The camera slowly approaches the rebel band while large text appears in successive beats. After the third line, hold on the island for a dramatic pause, then deliver the final call:</p>
-  <blockquote><p>YOU ARE THE RESISTANCE.</p><p>FIVE YEARS AGO, THE INVADERS TOOK YOUR LAND</p><p>YOU HAVE ONLY ONE OBJECTIVE</p><p><em>Dramatic pause.</em></p><p>DRIVE OUT THE INVADER<br>AND FREE YANTIS!</p></blockquote>
-  <p class="note"><b>Playable</b> New test campaigns now open with this island approach. The world remains paused; the player can pause or skip the introduction. Reduced motion uses a stationary view and the full text. Returning campaigns resume without replaying the opening.</p>
-</section>
-
-<section id="marketing" aria-labelledby="h-marketing">
-  <h2 id="h-marketing">Marketing ideas - This is Them, This is Us</h2>
-  <p>Juxtapose battle pass AAA shooters with our janky shit - This is them, this is us</p>
-</section>
-
-<section id="operators" aria-labelledby="h-operators">
-  <p class="eyebrow">Personnel</p><h2 id="h-operators">The operators</h2>
-  <p class="lede">Many people, one pose language. Poses and idles are data and the hands are solved onto whatever rifle is carried, so every new operator inherits the whole set the day it exists.</p>
-  <div class="grid g4" style="margin-top:22px">
-    <article class="operator card"><div class="portrait"><span class="stamp">LIVE</span><img src="moodboard/recon-hero-pose.jpg" alt="Hero pose reference: hooded operator holding a rifle upright" loading="lazy" style="object-position:center"></div><h3>Base Operator</h3><p>Purchased low-poly soldier. 8,646 triangles, 83 bones, 21 modular meshes. Playable now. <a href="../operator/">Open</a></p></article>
-    <article class="operator card"><div class="portrait"><span class="stamp">LIVE v1</span><img src="moodboard/recon-turnaround.jpg" alt="Recon turnaround sheet: front, side and back views of a hooded operator" loading="lazy" style="object-position:left top"></div><h3>Recon</h3><p>Hood and face mask, houndstooth scarf, plate carrier, chest radio. The default operator; awaiting owner sign-off. <a href="../operator/#base=recon">Open</a></p></article>
-    <article class="operator card"><div class="portrait"><img src="moodboard/keyframe-1-nvg-plaid.jpg" alt="Operator in a tan helmet with night-vision tubes, green face cover and plaid shirt" loading="lazy" style="object-position:30% 30%"></div><h3>Insurgent</h3><p>Plaid shirt, shemagh, knit beanie, AK kit. Scrappy and recognisable. <a href="../operator/#base=insurgent">Open</a> <span class="chip build">v1</span></p></article>
-    <article class="operator card"><div class="portrait"><img src="moodboard/keyframe-2-firefight.jpg" alt="Operator in black kit with olive belt pouches aiming a modern rifle" loading="lazy" style="object-position:35% 35%"></div><h3>Enforcer</h3><p>Black kit, bold pouches, beanie or NVG helmet, modern rifle. <a href="../operator/#base=enforcer">Open</a> <span class="chip build">v1</span></p></article>
-  </div>
-  <p class="note"><b>Design note</b> Matching keyframes to roster names is a proposal; the owner confirms it when each operator is signed off.</p>
-</section>
-
-<section id="moodboard" aria-labelledby="h-mood">
-  <p class="eyebrow">Art direction</p><h2 id="h-mood">Moodboard</h2>
-  <p class="lede">Faceted low poly with painterly facets, desaturated olive and coyote, and light that does the storytelling.</p>
-  <div class="mood" style="margin-top:22px">
-    <figure class="wide"><div class="frame"><img src="moodboard/recon-character-sheet.jpg" alt="Hooded recon character sheet with front, side, back and hero pose, and a column of patches and props" width="2000" height="1125" loading="lazy"></div><figcaption>Recon character sheet v01-09: turnaround, hero pose, insignia and props. Concept art, reference only.</figcaption></figure>
-    <figure><div class="frame"><img src="moodboard/keyframe-1-nvg-plaid.jpg" alt="Golden-hour keyframe: operator with NVG helmet and plaid shirt aiming a G3-style rifle with a holographic sight" width="1600" height="893" loading="lazy"></div><figcaption>Keyframe 1: golden-hour dust, warm key, long shadows. Concept art.</figcaption></figure>
-    <figure><div class="frame"><img src="moodboard/keyframe-2-firefight.jpg" alt="Overcast keyframe with god-rays: operator in black kit firing past concrete barriers, sparks and casings in the air" width="1600" height="893" loading="lazy"></div><figcaption>Keyframe 2: cool overcast haze, volumetric rays, impact sparks. Concept art.</figcaption></figure>
-    <figure class="third"><div class="frame"><img src="moodboard/ref-abiotic-factor-low-poly.jpg" alt="Style reference: chunky low-poly character with large visor and chest radio" width="1300" height="1047" loading="lazy"></div><figcaption>Style reference: <i>Abiotic Factor</i> (Deep Field Games). Chunky, readable, accent colour. Screenshot for study only.</figcaption></figure>
-    <figure class="third"><div class="frame"><img src="moodboard/recon-insignia-props.jpg" alt="Column of reference props: MP-O patch, mountain shield patch, handheld radio, carabiner, canister" width="198" height="1312" loading="lazy" style="max-height:520px;object-fit:contain;background:#222"></div><figcaption>Insignia and props from the Recon sheet.</figcaption></figure>
-    <figure class="third"><div class="frame"><img src="moodboard/recon-hero-pose.jpg" alt="Hero pose: rifle held upright in the right hand" width="512" height="1355" loading="lazy" style="max-height:520px;object-fit:contain;background:#222"></div><figcaption>The hero pose, now an actual pose in the Operator Modder.</figcaption></figure>
-    <figure class="third"><div class="frame"><img src="moodboard/ref-2d-sprite-soldier.jpg" alt="2D sprite soldier with a big backpack, goggles, desert helmet and kneepads, thick black outlines, holding an AK-pattern rifle" width="538" height="796" loading="lazy" style="max-height:520px;object-fit:contain;background:#222"></div><figcaption>2D sprite idea: thick outlines, chunky gear, a big pack and a readable rifle. A candidate look for the top-down shooter's characters.</figcaption></figure>
-    <div class="side"><h3>2D sprite ideas</h3><ul>
-      <li><b>Thick black outline</b> around every shape: the figure reads against any ground, from any height.</li>
-      <li><b>Chunky, exaggerated gear</b> (pack, helmet, kneepads): the role shows in the silhouette, the same rule as the 3-D operators.</li>
-      <li><b>Few flat tones per surface</b> with a darker shade: it is close to the Art Style Lab's cel and ink looks, so we can test both before choosing.</li>
-      <li><b>A real rifle shape</b> held across the body: the weapon family stays recognisable at small sizes.</li>
-      <li>Candidate look for the top-down shooter's rebels and soldiers.</li>
-    </ul></div>
-    <figure><div class="frame" style="background:#16200f"><img src="moodboard/ref-2d-armour-sprites-1.png" alt="Layered 2D sprite sheet: a bare body, then the same figure with a hood, an open helmet, a visored helmet and a visored helmet with a red tabard, plus gloves and two torso pieces" width="400" height="261" loading="lazy" style="image-rendering:pixelated;object-fit:contain"></div><figcaption>Layered people: one body, many heads and torsos. The model for our paper-doll characters and loot-driven looks.</figcaption></figure>
-    <figure><div class="frame" style="background:#16200f"><img src="moodboard/ref-2d-armour-sprites-2.png" alt="More layered 2D sprites: three mail hoods, a kettle hat, and red and blue padded tunics" width="365" height="209" loading="lazy" style="image-rendering:pixelated;object-fit:contain"></div><figcaption>More layers: hoods, hats, tunics. Each is one swappable piece.</figcaption></figure>
-    <figure class="twothirds"><div class="frame"><img src="moodboard/ref-2d-topdown-map.jpg" alt="RimWorld-style top-down 2D map: ruins with walls and urns, trees, bushes, flowers, rocks and a wrecked cart on grass and sand, with long diagonal shadows" width="1500" height="1020" loading="lazy"></div><figcaption>The world: 32 px tiles, seeded scatter, dark outlines, long shadows, walls with a visible front face.</figcaption></figure>
-    <figure class="third"><div class="frame"><img src="moodboard/ref-retro-overworld-map.jpg" alt="Retro handheld-RPG region map of an island: banded green landmass on flat blue sea with yellow routes and small red-roofed towns" width="533" height="575" loading="lazy" style="max-height:520px;object-fit:contain;background:#222"></div><figcaption>The first overworld idea, a retro region map. Retired: the island became a Bannerlord-style 3-D map (TAC-K-04).</figcaption></figure>
-    <div class="side" style="grid-column:span 12"><h3>2.5-D graphics direction</h3><ul>
-      <li><b>The shooter becomes RimWorld-style 2.5-D top-down sprites</b>: thick dark outlines, flat fills with a shade, layered people, long sun shadows. The simulation does not change.</li>
-      <li><b>The campaign map is a Bannerlord-style 3-D island</b> (<a href="../map/">Overworld Map</a>): rocky Mediterranean terrain, snowy peaks, an azure coast, provinces in their owners' colours.</li>
-      <li>The sprite view already runs on placeholder art; the plan for the real art is the <a href="https://github.com/VincentDN/partisan-project/blob/main/docs/graphics-roadmap.md">graphics roadmap</a>.</li>
-    </ul></div>
-  </div>
-
-  <h3 style="margin-top:34px">Palette</h3>
-  <div class="swatches" role="list">
-    <div class="sw" role="listitem"><i style="background:#17181d"></i><span><b>Night kit</b><br>#17181d</span></div>
-    <div class="sw" role="listitem"><i style="background:#3b3635"></i><span><b>Charcoal</b><br>#3b3635</span></div>
-    <div class="sw" role="listitem"><i style="background:#4b5a3a"></i><span><b>Olive drab</b><br>#4b5a3a</span></div>
-    <div class="sw" role="listitem"><i style="background:#6e6f43"></i><span><b>Pouch olive</b><br>#6e6f43</span></div>
-    <div class="sw" role="listitem"><i style="background:#b68f65"></i><span><b>Coyote</b><br>#b68f65</span></div>
-    <div class="sw" role="listitem"><i style="background:#d7b892"></i><span><b>Sand</b><br>#d7b892</span></div>
-    <div class="sw" role="listitem"><i style="background:#758492"></i><span><b>Wolf grey</b><br>#758492</span></div>
-    <div class="sw" role="listitem"><i style="background:#afb3b3"></i><span><b>Concrete</b><br>#afb3b3</span></div>
-    <div class="sw" role="listitem"><i style="background:#ef8f39"></i><span><b>Spark</b><br>#ef8f39</span></div>
-    <div class="sw" role="listitem"><i style="background:#959622"></i><span><b>Hazard</b><br>#959622</span></div>
-    <div class="sw" role="listitem"><i style="background:#b5c79a"></i><span><b>LCD paper</b><br>#b5c79a</span></div>
-    <div class="sw" role="listitem"><i style="background:#16200f"></i><span><b>LCD ink</b><br>#16200f</span></div>
-  </div>
-
-  <h3>Rules of the look</h3>
-  <ol class="rules">
-    <li><b>Faceted, flat-shaded.</b> Visible polygons on skin, cloth and armour; colour varies per facet, never a smooth normal map.</li>
-    <li><b>Silhouette first.</b> Recognisable from a black cut-out at hero distance.</li>
-    <li><b>Layered identity.</b> Slots, colour zones and insignia over one skeleton.</li>
-    <li><b>Palette discipline.</b> Muted kit, saturated rewards: a patch, a carabiner, a spark.</li>
-    <li><b>Two lights.</b> Golden-hour dust, or overcast haze with god-rays; rim light on dark kit.</li>
-    <li><b>Storytelling props.</b> Casings, rebar, worn paint, taped magazines, a radio.</li>
-    <li><b>Real silhouettes</b> for weapons, with modern furniture on historic bodies.</li>
-    <li><b>Hero pose language.</b> Weight on one leg, rifle upright or low, head turned toward camera, camera 24° off front.</li>
-    <li><b>The UI is a phone.</b> 1-bit LCD tones, ordered dither, stencil type, hard edges.</li>
-  </ol>
-  <p class="note"><b>Design note</b> The keyframes and sheet are AI-assisted concept art. Text on signs in them (e.g. "BLACKSITE") is not a naming decision. Full notes: <a href="https://github.com/VincentDN/partisan-project/blob/main/docs/art-direction.md">art-direction.md</a>.</p>
-</section>
-
-<section id="roadmap" aria-labelledby="h-road">
-  <p class="eyebrow">Orders of march</p><h2 id="h-road">Roadmap</h2>
-  <p class="lede">Work is cut into packets small enough to finish inside one usage window of a $20 AI plan and hand to the other plan when the window runs dry. Progress below is read live from the packet list.</p>
-  <div id="milestones" aria-live="polite">
-    <div class="ms"><div><h3>M0 · Foundation <small>v0.3.0</small></h3></div><div class="pct">loading…</div></div>
-  </div>
-  <div class="row"><a class="btn" href="master-roadmap.html">Full master roadmap</a><a class="btn ghost" href="campaign-roadmap.html">Campaign roadmap</a><a class="btn ghost" href="https://github.com/VincentDN/partisan-project/blob/main/docs/agent-ops/README.md">How the budget system works</a></div>
-  <p class="note"><b>Open decisions</b> (1) Setting canon: the earlier premise is Yantis, 2012, a prologue to a WW2044 timeline; the island and its factions need a reconciling decision. (2) Roster naming and sign-off. (3) When to drop <code>noindex</code>. (4) Local PvE only, or funded live co-op. <b>Settled</b>: the 2.5-D shooter, the 3-D overworld, barter, auto-resolve and the hideout rules (TAC-K-01 to K-04). Credits and licences stay in the GitHub documentation.</p>
-</section>
-
-<section id="specs" aria-labelledby="h-specs">
-  <p class="eyebrow">Quartermaster</p><h2 id="h-specs">Field specs we are held to</h2>
-  <div class="scroll"><table>
-    <thead><tr><th>Item</th><th>Standard</th><th>Check</th></tr></thead>
-    <tbody>
-      <tr><td>Operator + equipment</td><td>≤ 15,000 triangles, ≤ 60 draw calls</td><td>Readout in the Operator Modder; automated test</td></tr>
-      <tr><td>Weapon + attachments</td><td>≤ 30,000 triangles</td><td>Asset Viewer; register budget</td></tr>
-      <tr><td>Frame rate</td><td>Goal: 60 fps desktop, 30 fps mid-range phone</td><td>Adaptive resolution built in; device acceptance pending (WP-Q2)</td></tr>
-      <tr><td>Accessibility</td><td>Keyboard, focus, reduced motion, text contrast, WCAG 2.2 AA target</td><td>axe-core on every page in CI; manual screen-reader pass pending (WP-Q6)</td></tr>
-      <tr><td>Assets</td><td>Every model registered with its source</td><td>Asset register (<code>assets/register.json</code>)</td></tr>
-      <tr><td>Privacy</td><td>No cookies, no analytics, no third-party requests</td><td>Site check; vendored three.js</td></tr>
-      <tr><td>Stats</td><td>Illustrative handling values, not real-world data</td><td>Labelled in the demos</td></tr>
-      <tr><td>Build</td><td>Relative URLs, allowlist deploy, link-checked</td><td>CI on every push</td></tr>
-    </tbody>
-  </table></div>
-</section>
-
 </main>
-
-<footer>
-  <p>Partisan Project · v0.3.1 · © 2026 Vincent De Nil, Atelier Vincent De Nil BV. <br>Credits and licences: see the documentation in the <a href="https://github.com/VincentDN/partisan-project">GitHub repository</a>, or contact <a href="mailto:vincent@kaisercatcinema.com">vincent@kaisercatcinema.com</a>.<br>
-  <a href="../menu/">Index</a> · <a href="master-roadmap.html">Roadmap</a> · <a href="https://github.com/VincentDN/partisan-project">Source</a> · <a href="https://vincentdenil.com/projects/">AVDN projects</a></p>
-</footer>
-
 <script type="module">
-import {drawDithered} from '../assets/js/dither.js';
 import {mountTopBar} from '../shared/topbar.js';
 mountTopBar({title: 'Game design doc', scene: 'viewer', current: 'doc', sticky: true, replaceHeader: false});
-const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-
-// Live milestone progress from packets.json (generated into docs/packets.json by the site build).
-try {
-  const data = await (await fetch('packets.json')).json();
-  const rows = Object.entries(data.milestones).map(([id, m]) => {
-    const ps = data.packets.filter(p => p.milestone === id);
-    if (!ps.length || ['TD', 'D'].includes(id)) return '';
-    const total = ps.reduce((s, p) => s + p.bu, 0), done = ps.filter(p => p.status === 'done').reduce((s, p) => s + p.bu, 0);
-    const pct = Math.round(done / total * 100);
-    return `<div class="ms"><div><h3>${esc(id)} · ${esc(m.name)} ${m.version ? `<small>v${esc(m.version)}</small>` : ''}</h3><small>${ps.filter(p => p.status === 'done').length} of ${ps.length} packets · ${total} budget units</small></div><div><div class="meter" role="img" aria-label="${pct}% complete"><i style="width:${pct}%"></i></div><div class="pct">${pct}%</div></div></div>`;
-  }).join('');
-  if (rows) $('#milestones').innerHTML = rows;
-} catch (e) { $('#milestones').innerHTML = '<p class="note"><b>Offline</b> Progress could not be loaded; see the master roadmap.</p>'; }
-
-// "Signal" mode: render the figures as a 1-bit Bayer-dithered radio signal.
-const btn = $('#signal');
-btn.addEventListener('click', async () => {
-  const on = btn.getAttribute('aria-pressed') !== 'true';
-  btn.setAttribute('aria-pressed', String(on));
-  btn.textContent = on ? 'Signal: dithered' : 'Signal: clean';
-  for (const frame of $$('.frame')) {
-    let c = frame.querySelector('canvas');
-    const img = frame.querySelector('img');
-    if (!on) { c?.remove(); continue; }
-    if (!c) { c = document.createElement('canvas'); c.setAttribute('aria-hidden', 'true'); frame.append(c); }
-    await drawDithered(c, img.currentSrc || img.src, {width: 190, contrast: 1.4}).catch(() => c.remove());
-  }
-});
+</script>
+<script>
+const frames = document.getElementById('keyframes');
+for (const button of document.querySelectorAll('[data-step]')) {
+  button.onclick = () => {
+    const index = Math.round(frames.scrollLeft / frames.clientWidth);
+    const next = (index + Number(button.dataset.step) + frames.children.length) % frames.children.length;
+    frames.scrollTo({left: next * frames.clientWidth});
+  };
+}
 </script>
 </body>
 </html>

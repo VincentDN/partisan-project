@@ -756,12 +756,11 @@ await check('viewer: lists registered models and reports triangles and licence',
   await page.close();
 });
 
-await check('design doc: sections and live progress render', async () => {
+await check('design doc: culture follows the introduction and the keyframes advance', async () => {
   const page = await open(browser, server.url + 'docs/game-design-master-doc.html');
-  await page.waitForFunction(() => document.querySelectorAll('#milestones .ms').length >= 4, null, {timeout: 15000});
-  assert.equal(await page.locator('#credits').count(), 0, 'no credits section');
-  await page.click('#signal');
-  await page.waitForSelector('.frame canvas', {timeout: 15000});
+  assert.equal(await page.locator('main > section').nth(1).getAttribute('id'), 'culture');
+  await page.getByRole('button', {name: 'Next keyframe'}).click();
+  await page.waitForFunction(() => document.getElementById('keyframes').scrollLeft > 0);
   noProblems(page);
   await page.close();
 });
