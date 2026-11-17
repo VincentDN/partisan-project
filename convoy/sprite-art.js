@@ -1,11 +1,11 @@
 // Partisan Tactical, 2.5-D sprite view: the art. Everything comes from the owner's RimWorld-style placeholder set
-// (inbound/Placeholder Assets, PSDs flattened to PNG by outbound/flatten-psd.py). This module loads the images, tints the
+// (inbound/_old/Placeholder Assets, PSDs flattened to PNG by outbound/flatten-psd.py). This module loads the images, tints the
 // grey layers, and assembles paper-doll pawns (body, clothes, head, hair, headgear) for the three drawn directions.
 
 import {OPTIMISED} from './set-optimised.js';
 import {classLook} from '../shared/campaign/looks.js';
 
-const BASE = new URL('../inbound/Placeholder%20Assets/', import.meta.url).href;
+const BASE = new URL('../inbound/_old/Placeholder%20Assets/', import.meta.url).href;
 const H = 'Things/Pawn/Humanlike/';
 const LIGHT = new URL('../assets/sprites/set/', import.meta.url).href; // WebP copies (tools/assets/optimise-set.mjs)
 
@@ -226,7 +226,7 @@ function load(path) {
   return images.get(path);
 }
 
-/** Any image from the placeholder set, by its path under inbound/Placeholder Assets (cached; null when missing). */
+/** Any image from the placeholder set, by its path under inbound/_old/Placeholder Assets (cached; null when missing). */
 export const loadSet = path => load(path);
 
 function loadUrl(url) {

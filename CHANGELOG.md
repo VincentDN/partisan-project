@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-11-17 — Handbook, radio and Neuro-Bash
+
+- Added Vincent’s art-direction note, six typography references, and on-demand half-track, textured StG 44 and Recon previews. The previews also open from disk.
+- The handbook opens on LADANIVA’s “Saraiman” through the shared radio. Music preferences carry across pages. The player retries after an interaction when the browser blocks autoplay.
+- The standard Weapon Workbench uses the StG bench’s dark studio palette and adds the Neuro-Bash rebuild, with 205 mm and 260 mm magazine models for the 25- and 40-round options. The magazine feed position and width are retained.
+- Neuro-Bash appears in the practice stash, and a supply-convoy leader carries one that can be looted and equipped in a campaign. The tactical rifle uses the 25-round magazine at issue.
+- Documented a staged ElevenLabs foley replacement plan with a per-cue listening rubric and an approval gate for generation.
+
 ## 2026-11-13 — Weapon Workbench: canted showroom view
 
 - Every rifle in the Weapon Workbench now sits in the StG bench's canted view: rolled 0.2 rad about the bore in the hero and 3/4 views (0.1 at the muzzle, level in left, right and top), from the StG's camera angle, with its vignette over the showroom stage. The sidebar is unchanged.

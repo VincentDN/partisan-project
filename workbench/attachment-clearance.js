@@ -17,7 +17,7 @@ export function frontInEnvelope(object, frame, envelope) {
   frame.updateWorldMatrix(true, true);
   const inverse = frame.matrixWorld.clone().invert();
   let front = -Infinity;
-  object.traverse(m => {
+  object.traverseVisible(m => {
     if (!m.isMesh) return;
     const g = m.geometry,
       p = g.attributes.position,

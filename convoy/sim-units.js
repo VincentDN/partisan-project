@@ -17,7 +17,7 @@ export const unitMethods = {
         side: 'army',
         x,
         z,
-        weapons: [role.weapon, ...(role.launcher ? [role.launcher] : [])],
+        weapons: [c.weapon || role.weapon, ...(role.launcher ? [role.launcher] : [])],
       });
       u.state = c.role === 'turret' ? 'turret' : 'mounted';
       u.vehicle = veh;

@@ -77,6 +77,7 @@ export function vary(
     strength = 1,
     seed = 1,
     convoy = null,
+    convoyLeaderWeapon = null,
     ambush = 'roadblock',
     name = null,
     prepared = false,
@@ -123,6 +124,7 @@ export function vary(
   // the campaign's convoy: its own vehicles and escort, the optional objective only if it has an MRAP, a brief to match
   if (L.convoy && convoy?.vehicles?.length) {
     L.convoy.vehicles = buildColumn({vehicles: convoy.vehicles, escort: convoy.escort || 0, seed});
+    if (convoyLeaderWeapon) L.convoy.vehicles.flatMap(v => v.crew).find(c => c.role === 'leader').weapon = convoyLeaderWeapon;
     if (!L.convoy.vehicles.some(v => v.id === 'mrap')) L.objectives = L.objectives.filter(o => o.target !== 'mrap');
     const soldiers = L.convoy.vehicles.reduce((a, v) => a + v.crew.length, 0);
     L.brief = `${name || 'The convoy'} comes down the road: ${describeColumn(L.convoy.vehicles)}, ${soldiers} soldiers. ${AMBUSHES[ambush]?.text || AMBUSHES.roadblock.text}`;

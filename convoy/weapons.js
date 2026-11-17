@@ -141,6 +141,7 @@ for (const [id, base] of Object.entries({
   ak74: 'ak',
   ak74m: 'ak',
   ak15k: 'ak',
+  'stg44-neuro-bash': 'ak',
   rpk: 'pkm',
   mk14: 'svd',
   smg: 'ak',
@@ -149,6 +150,7 @@ for (const [id, base] of Object.entries({
 })) {
   WEAPONS[id] = {...WEAPONS[base], label: id.toUpperCase()};
 }
+Object.assign(WEAPONS['stg44-neuro-bash'], {label: 'StG 44 (2044) Neuro-Bash', mag: 25});
 
 // What each army role carries and how it fights. sight: metres; suppressAt: belief confidence needed to fire blind
 // (Infinity: never suppresses); share: multiplier on squad callout delay while this soldier is alive.

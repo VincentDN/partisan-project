@@ -3,6 +3,7 @@ import {ARMS} from '../inventory/arms.js';
 import {TROOPS} from '../../band/troops.js';
 import {AMMO_INDEX} from './ammo-index.js';
 const PROFILE = {
+  'stg44-neuro-bash': [1, 3],
   hunting: [0.8, 2],
   tt: [0.4, 4],
   akm: [1, 3],

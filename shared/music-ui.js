@@ -6,9 +6,8 @@ import './frame.js';
 import {soundLayer} from './sound-layer.js';
 
 /** @param {{scene?: 'bench' | 'viewer'}} [options] bench: the music comes out of the old radio with the camp around it; viewer: clean. */
-export function bindMusicUI({scene = 'viewer'} = {}) {
-  const sound = soundLayer(),
-    prefs = sound.prefs;
+export function bindMusicUI({scene = 'viewer', sound = soundLayer()} = {}) {
+  const prefs = sound.prefs;
   const campaign = new URLSearchParams(location.search).has('campaign');
   sound.scene(campaign ? 'campaign' : scene);
   const toggle = document.querySelector('#music-toggle'),
@@ -43,8 +42,12 @@ export function bindMusicUI({scene = 'viewer'} = {}) {
   };
   function firstGesture(e) {
     if (e.target === toggle || e.target.closest?.('[data-track]')) return;
-    stopWaiting();
-    if (prefs.on) sound.start(FADE);
+    if (!sound.music.retryGesture) stopWaiting();
+    if (prefs.on) {
+      sound.start(FADE).then(playing => {
+        if (playing) stopWaiting();
+      });
+    }
   }
   addEventListener('pointerdown', firstGesture, true);
   addEventListener('keydown', firstGesture, true);
@@ -56,8 +59,8 @@ export function bindMusicUI({scene = 'viewer'} = {}) {
   if (toggle)
     toggle.onclick = () => {
       // Music "on" but still blocked by autoplay policy: the button starts it rather than switching it off.
-      if (prefs.on && !sound.music.audible()) {
-        stopWaiting();
+      if (prefs.on && !sound.music.audible() && sound.music.retryToggle !== false) {
+        if (!sound.music.retryGesture) stopWaiting();
         sound.start(FADE);
         return;
       }

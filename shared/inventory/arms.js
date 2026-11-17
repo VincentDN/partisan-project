@@ -5,6 +5,7 @@
 
 /** id -> {weapon, mag (null: loaded by hand, one at a time), round, start (rounds at deployment)} */
 export const ARMS = {
+  'stg44-neuro-bash': {weapon: 'stg44-neuro-bash', mag: 'stg44-kurz-25', round: '792x33-kurz-fmj', start: 60},
   akm: {
     weapon: 'kalashnikov-akm-762x39-assault-rifle',
     mag: 'ak-762x39-30-round-magazine-issued-55-or-later',

@@ -1,13 +1,13 @@
 // Generate the small auto-resolve calibre index from the same catalogue tactical inventory uses.
 import fs from 'node:fs';
 import {format} from 'prettier';
-import {createCatalogue} from '../../shared/inventory/catalogue.js';
+import {createCatalogue, EXTRA} from '../../shared/inventory/catalogue.js';
 import {ARMS} from '../../shared/inventory/arms.js';
 const data = JSON.parse(fs.readFileSync('convoy/data/inventory-items.json'));
 const cat = createCatalogue(data),
   groups = {};
 const calibres = new Set(Object.values(ARMS).map(a => cat.def(a.weapon).calibre));
-for (const item of data.items) {
+for (const item of [...data.items, ...EXTRA]) {
   const d = cat.def(item.slug);
   if (!['ammo', 'magazine'].includes(d.kind) || !calibres.has(d.calibre)) continue;
   (groups[`${d.kind}:${d.calibre}`] ||= []).push(item.slug);

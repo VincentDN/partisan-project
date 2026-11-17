@@ -5,14 +5,12 @@ Read `AGENTS.md` first. Work queue: [packets.json](packets.json).
 ## Latest handoff
 
 <!-- handoff:start -->
-**2026-10-27 · codex · W34 recorded acoustic campaign music**
+**2026-11-17 20:04 UTC · codex · WP-W16 · done**
 
-- Owner explicitly requested merging the prior loading fix; main was fast-forwarded and pushed to `33a727f`. This was a specific exception, not blanket authorization for future main updates.
-- New work branch: `codex/campaign-acoustic-recording`. W34 audio milestone replaces the synthesized campaign playback with Aussens@iter's CC0 recording, 3 Acoustic Guitars. Source and encoding notes are in the campaign roadmap.
-- Local 128 kbps MP3, -6 dB level, short edge fades; 88.97-second whole-performance loop. Existing music controls and saved demo preference retained; no external runtime audio requests.
-- Browser campaign music regression passes shell/map/combat/band, rapid switches, mute/volume, standalone playback, audio decode/level and actual loop wrapping. Lint/typecheck/changed-JS-format/build/link checks pass. Unit suite remains 565/566: pre-existing Windows CRLF downloader assertion.
-- W34 remains open for owner listening acceptance and separately reviewable faction music vignettes. No claim of a musically seamless loop or completed staged scenes.
-- Next: review the recording in-game, then continue W34 faction scenes or the owner's next selected packet. Future production merges still require an explicit exception.
+- Branch `review/handbook-radio-neurobash` at `b001735`; working tree clean.
+- Last commits: b001735 fix(WP-A10): verify current rifles and visible magazine clearance · 965ef37 feat(WP-W16): finish handbook radio and Neuro-Bash integration · d3e07b2 WIP: checkpoint handbook and Neuro-Bash updates for cloud continuation
+- What happened: Completed the handbook media and radio, standard bench styling, Neuro-Bash convoy loot and tactical equipment, and plan-only ElevenLabs foley work. 584 unit tests, site checks, Chromium feature regressions, 15-rifle fit audit and scoped accessibility checks passed.
+- Next step: Review the branch against main. Full browser smoke is still running. Play the real YouTube embed and open the handbook from disk in an environment that permits them. The foley pilot requires separate approval following an account-specific quote.
 <!-- handoff:end -->
 
 ## Gameplay/demo module boundary — 13 October 2026

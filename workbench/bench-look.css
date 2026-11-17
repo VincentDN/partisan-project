@@ -1,3 +1,9 @@
-/* Weapon Workbench: the StG bench's vignette over the showroom stage, under the stage's labels and buttons. */
+/* Weapon Workbench: the special bench's dark studio palette, retaining every existing control. */
+:root{color-scheme:dark;--bg:#06080b;--panel:#0c1014;--line:#ffffff1f;--text:#e6e9ec;--dim:#8e979f;--muted:#8e979f;--accent:#c9a45a}
+#stage{background:radial-gradient(ellipse at 50% 38%,#27313c 0%,#10151b 45%,#06080b 80%)}
 #stage::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse at 50% 50%,transparent 45%,#000000b3 100%)}
 #stage .hint,#stage .socket,#stage .stage-button{z-index:2}
+aside{padding:22px 20px 40px}h1{font-size:24px;font-weight:600}h2{color:var(--accent)}
+a{color:var(--accent)}button{background:#151b21;border-radius:4px}button[aria-pressed=true]{color:var(--accent);background:#1d1a12}
+#detail{background:#10151b;color:var(--text)}.hint{color:var(--muted)}.socket,.stage-button{background:#10151be8;color:var(--accent)}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}

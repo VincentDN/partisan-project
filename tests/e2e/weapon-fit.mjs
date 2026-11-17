@@ -1,6 +1,7 @@
 // Exhaustive attachment-choice geometry and interacting combinations in a real browser, using the built site too.
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import {MODELS} from '../../workbench/models.js';
 import {launch, open, startServer} from './browser.mjs';
 const server = await startServer(8184),
   browser = await launch();
@@ -18,7 +19,7 @@ try {
     );
   await page.goto(server.url + 'fit-audit.html');
   const report = await page.evaluate(async () => (await import('./tools/qa/weapon-fit-browser.js')).audit());
-  assert.equal(report.length, 12);
+  assert.deepEqual(report.map(model => model.id).sort(), Object.keys(MODELS).sort());
   const failures = report.flatMap(r => r.checks.errors);
   assert.deepEqual(failures, []);
   for (const r of report)

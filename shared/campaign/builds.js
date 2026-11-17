@@ -8,7 +8,7 @@ import {GEAR} from '../../band/troops.js';
 import {ARMS} from '../inventory/arms.js';
 
 /** Workbench rifles that are campaign weapons (model id -> gear id); the others are not found on this island. */
-export const RIFLE_GEAR = {ak74m: 'ak74m', ak15k: 'ak15k', rpk: 'rpk', mk14: 'mk14'};
+export const RIFLE_GEAR = {ak74m: 'ak74m', ak15k: 'ak15k', rpk: 'rpk', mk14: 'mk14', 'stg44-neuro-bash': 'stg44-neuro-bash'};
 /** Workbench options that are band gear: slot -> option -> gear id. Anything else is free to fit. */
 export const PART_GEAR = {
   muzzle: {can: 'suppressor'},

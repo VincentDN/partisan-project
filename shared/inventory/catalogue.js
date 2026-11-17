@@ -21,6 +21,42 @@ const MAG_CALIBRE = /(\d+(?:\.\d+)?x\d+R?|\d{2}ga|\.\d{3}\b)/;
 
 /** Items the catalogue lacks, in its own format. */
 export const EXTRA = [
+  {
+    slug: 'stg44-neuro-bash',
+    name: 'StG 44 (2044) Neuro-Bash',
+    short: 'StG 44',
+    w: 5,
+    h: 2,
+    kg: 4.1,
+    stats: {kind: 'weapon', caliber: '7.92x33'},
+  },
+  {
+    slug: 'stg44-kurz-25',
+    name: 'StG 44 7.92x33 25-round magazine',
+    short: 'Kurz 25',
+    w: 1,
+    h: 2,
+    kg: 0.42,
+    stats: {kind: 'magazine', capacity: 25},
+  },
+  {
+    slug: 'stg44-kurz-40',
+    name: 'StG 44 7.92x33 40-round magazine',
+    short: 'Kurz 40',
+    w: 1,
+    h: 3,
+    kg: 0.61,
+    stats: {kind: 'magazine', capacity: 40},
+  },
+  {
+    slug: '792x33-kurz-fmj',
+    name: '7.92x33 Kurz FMJ',
+    short: 'Kurz FMJ',
+    w: 1,
+    h: 1,
+    kg: 0.016,
+    stats: {kind: 'ammo', caliber: '7.92x33', damage: 58, penetrationPower: 24, stackMaxSize: 60},
+  },
   // what soldiers wear (WP-W17): worn in the kit's Head and Body slots, they change a fighter's look
   {slug: 'ssh-68-steel-helmet', name: 'SSh-68 steel helmet', short: 'SSh-68', w: 2, h: 2, kg: 1.5, stats: {kind: 'headwear', class: 2}},
   {slug: '6b47-helmet', name: '6B47 Ratnik helmet', short: '6B47', w: 2, h: 2, kg: 1.3, stats: {kind: 'headwear', class: 3}},

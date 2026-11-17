@@ -54,6 +54,7 @@ export const MODIFIERS = {
   },
   side: {light: {handling: -2, ergo: -1}, laser: {ergo: 3, handling: -1}, combo: {ergo: 2, handling: -4}, none: {}},
   magazine: {
+    25: {rounds: 25},
     20: {rounds: 20},
     30: {rounds: 30},
     drum71: {rounds: 71},
@@ -67,6 +68,8 @@ export const MODIFIERS = {
   grip: {rk9: {ergo: 6}, factory: {ergo: 4}, classic: {}, cnc: {ergo: 5}},
   handguard: {factory: {}, mlok: {ergo: 3, handling: 2}},
   stock: {
+    fixed: {},
+    adjustable: {handling: 2},
     extended: {},
     collapsed: {recoil: 3, handling: 6},
     folded: {recoil: 18, handling: 14, ergo: -6},

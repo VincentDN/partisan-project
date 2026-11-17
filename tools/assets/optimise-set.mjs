@@ -1,4 +1,4 @@
-// The placeholder art at a sensible weight (WP-QA13): every PNG over 150 KB in inbound/Placeholder Assets (terrain
+// The placeholder art at a sensible weight (WP-QA13): every PNG over 150 KB in inbound/_old/Placeholder Assets (terrain
 // surfaces at 1-2 MB each, biome and hero art) gets a WebP copy under assets/sprites/set/, same path plus .webp, at
 // the same size; convoy/set-optimised.js lists them so the loader (convoy/sprite-art.js) takes the copy. The owner's
 // originals in inbound/ are not touched.
@@ -7,7 +7,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import sharp from 'sharp';
 
-const SRC = 'inbound/Placeholder Assets',
+const SRC = 'inbound/_old/Placeholder Assets',
   OUT = 'assets/sprites/set',
   LIMIT = 150 * 1024;
 const walk = d =>

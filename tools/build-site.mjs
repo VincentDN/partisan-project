@@ -39,6 +39,8 @@ const ALLOW = [
   'wiki',
   'docs/game-design-master-doc.html',
   'docs/moodboard',
+  'docs/handbook-viewer',
+  'docs/handbook-models.js',
   'inbound',
   'outbound',
 ];
@@ -48,7 +50,7 @@ const SKIP_DIRS = [/^outbound\/tlou2-workbench-study\//, /^outbound\/rights-revi
 const SKIP_FILES = [/\.psd$/i, /\.manifest\.json$/, /\.md$/, /\.test\.m?js$/, /\.DS_Store$/];
 // placeholder images with a light WebP copy (tools/assets/optimise-set.mjs): the pages load the copy, so the heavy
 // original (70 MB in all) stays out of the site
-const SET_DIR = 'inbound/Placeholder Assets/';
+const SET_DIR = 'inbound/_old/Placeholder Assets/';
 const heavyOriginal = rel => rel.startsWith(SET_DIR) && OPTIMISED.has(rel.slice(SET_DIR.length));
 
 fs.rmSync(out, {recursive: true, force: true});

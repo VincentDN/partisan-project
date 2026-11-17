@@ -23,6 +23,8 @@ export function mountTopBar({
   sticky = false,
   replaceHeader = true,
   light = false,
+  tracks = TRACKS,
+  sound,
 } = {}) {
   if (!document.querySelector('link[data-pbar]')) {
     const link = document.createElement('link');
@@ -55,9 +57,8 @@ export function mountTopBar({
     `<span class="music-wrap"><button id="music-menu" aria-haspopup="true" aria-expanded="false" aria-controls="music-player" title="Music"><span class="dot" aria-hidden="true"></span>♪<span class="sr-only"> Music player</span></button>` +
     `<div class="player" id="music-player" role="group" aria-label="Music player" hidden>` +
     `<div class="row"><button id="music-toggle" aria-pressed="false" aria-label="Background music">Music</button></div>` +
-    `<div class="tracks">${TRACKS.filter(t =>
-      new URLSearchParams(location.search).has('campaign') ? t.id === 'campaign' : t.id !== 'campaign',
-    )
+    `<div class="tracks">${tracks
+      .filter(t => (new URLSearchParams(location.search).has('campaign') ? t.id === 'campaign' : t.id !== 'campaign'))
       .map(t => `<button data-track="${t.id}" aria-pressed="false">${t.label || t.id}</button>`)
       .join('')}</div>` +
     `<label>Vol<input id="music-volume" type="range" min="0" max="100" step="1" value="36" aria-label="Music volume"><output id="music-level">36%</output></label></div></span>`;
@@ -83,11 +84,17 @@ export function mountTopBar({
       trigger.focus();
     }
   });
-  const sound = bindMusicUI({scene});
+  sound = bindMusicUI({scene, sound});
   // The trigger shows whether the music is on.
   const mirror = () => (bar.dataset.music = sound.prefs.on ? 'on' : 'off');
   mirror();
-  sound.subscribe(mirror);
+  let unsubscribe = sound.subscribe(mirror);
+  addEventListener('pagehide', () => unsubscribe());
+  addEventListener('pageshow', event => {
+    if (!event.persisted) return;
+    unsubscribe = sound.subscribe(mirror);
+    mirror();
+  });
   trigger.addEventListener('click', mirror);
   panel.addEventListener('click', () => setTimeout(mirror, 0));
   return sound;

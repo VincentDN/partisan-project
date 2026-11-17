@@ -3,6 +3,8 @@ node_modules/
 _site/
 build/
 docs/archive/
+docs/handbook-viewer/*.glb.js
+docs/handbook-viewer/viewer.bundle.js
 docs/moodboard/
 *.glb
 *.gltf

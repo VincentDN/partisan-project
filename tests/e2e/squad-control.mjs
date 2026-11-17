@@ -63,7 +63,7 @@ export async function checkSquadControl(browser, url, reducedMotion = 'reduce') 
     await page.locator('#card:not([hidden])').waitFor();
     assert.match(await page.locator('#card-title').innerText(), /DEFEAT/);
     assert.equal(await page.locator('#squad-picker').isVisible(), false);
-    await page.locator('#restart').click();
+    await page.getByRole('button', {name: 'Back to camp'}).click();
     assert.equal(await page.evaluate(() => window.PARP_SPRITES.sim.player.id), 'player');
     assert.equal(await page.evaluate(() => window.PARP_SPRITES.sim.control.pending), null);
     assert.deepEqual(

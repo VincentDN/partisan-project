@@ -353,5 +353,47 @@ for (const variant of ['a', 'b']) {
     },
   };
 }
+const neuro = structuredClone(MODELS['stg44-astra-b']);
+neuro.label = neuro.title = 'StG 44 (2044) · Neuro-Bash';
+neuro.url = '../assets/models/weapons/stg44-2044-b.glb';
+neuro.sourceNote = 'Neuro-Bash rebuild with corrected magazine proportions.';
+neuro.mounts = neuro.mounts.filter(([id]) => id !== 'muzzle');
+neuro.sockets = [['muzzle', 'Muzzle', [0.53, 0.05, 0], [1, 0, 0]]];
+neuro.slots.muzzle = {
+  factory: [{id: 'factory', label: 'Factory muzzle device', original: true}],
+  library: [],
+};
+neuro.parts = [
+  {
+    id: 'receiver',
+    label: 'Receiver',
+    detail: 'Neuro-Bash receiver and fittings.',
+    nodes: [
+      'hull',
+      'pins_and_screws',
+      'rail_teeth',
+      'selector',
+      'side_rail',
+      'barrel',
+      'front_sight',
+      'rear_sight',
+      'grip',
+      'handguard',
+      'trigger',
+    ],
+  },
+  {id: 'muzzle', label: 'Muzzle device', detail: 'Neuro-Bash factory muzzle device.', nodes: ['muzzle_device']},
+  {id: 'stock', label: 'Stock', detail: 'Fixed or adjustable stock.', nodes: ['stock_fixed', 'stock_adj_body', 'stock_adj_tube']},
+  {id: 'magazine', label: 'Magazine', detail: 'Kurz magazine.', nodes: ['mag_25', 'mag_40']},
+];
+neuro.slots.stock.factory = [
+  {id: 'fixed', label: 'Fixed stock', original: true, grams: 380, showNodes: ['stock_fixed']},
+  {id: 'adjustable', label: 'Adjustable stock', original: true, grams: 330, showNodes: ['stock_adj_body', 'stock_adj_tube']},
+];
+neuro.slots.magazine.factory = [
+  {id: '25', label: '25 rounds, Kurz', rounds: 25, original: true, grams: 420, showNodes: ['mag_25']},
+  {id: '40', label: '40 rounds, extended', rounds: 40, original: true, grams: 610, showNodes: ['mag_40']},
+];
+MODELS['stg44-neuro-bash'] = neuro;
 for (const config of Object.values(MODELS)) complete(config);
 export const DEFAULT_MODEL = 'ak74m';

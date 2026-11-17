@@ -7,6 +7,8 @@ import {SLOTS, FINISHES, FINISH_TARGETS, FALLBACK_MATERIALS} from './attachments
 import {MODELS} from './models.js';
 import {paintSurface, paintRetro} from './surface.js';
 import {applyFinishState} from './rifle-finishes.js';
+import {correctNeuroMagazines} from './neuro-magazines.js';
+import {materials as stgMaterials} from './stg44/finish.js';
 // Lay the longest axis along x with the muzzle (the slimmer end) at +x, scale to meters, center. `stretch` [x, y, z]
 // corrects a source whose proportions are off (the M16's is too tall and too thin), in the laid-out axes.
 export function normalize(root, scale, stretch = null) {
@@ -57,6 +59,7 @@ const nodeName = name => T.PropertyBinding.sanitizeNodeName(name);
 export async function loadRifle(id, {decorate = () => {}} = {}) {
   const config = MODELS[id],
     root = await loadModel(new URL(config.url, import.meta.url).href);
+  if (id === 'stg44-neuro-bash') correctNeuroMagazines(root);
   root.traverse(o => {
     if (o.isMesh) o.castShadow = o.receiveShadow = true;
   });
@@ -82,8 +85,12 @@ export async function loadRifle(id, {decorate = () => {}} = {}) {
   partitionSource(model, id);
   if (config.surface) paintSurface(model, config);
   // Clone materials so highlighting, finishes and wireframe only touch this rifle's meshes.
+  const palette = id === 'stg44-neuro-bash' ? stgMaterials() : null;
   model.traverse(o => {
-    if (o.isMesh) o.material = o.material.clone();
+    if (!o.isMesh) return;
+    const name = o.material.name;
+    o.material = (palette?.[name] || o.material).clone();
+    if (palette) o.material.name = name === 'furniture' ? 'polymer' : name;
   });
   // A node claimed by one part is skipped when collecting another part's meshes.
   const claimed = new Set(config.parts.flatMap(p => p.nodes.map(nodeName)));
@@ -211,6 +218,9 @@ export function applySlotState(rifle, id, optionId, offset) {
   buildOption(rifle, id, option);
   rifle.build[id] = option.id;
   slot.original.visible = !!option.original || !!option.keepOriginal;
+  if (option.showNodes) {
+    for (const node of slot.original.children) node.visible = option.showNodes.includes(node.name);
+  }
   slot.original.rotation.set(0, option.pose?.rotationY || 0, 0);
   slot.original.position.set(...(option.pose?.position || [0, 0, 0]));
   for (const [node, p] of slot.home) {
