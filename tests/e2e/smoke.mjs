@@ -443,8 +443,8 @@ await check('workbench: no onboarding tour (deprecated), and the stats panel ren
   await page.waitForSelector('#stats .bar', {timeout: 10000});
   assert.equal(
     await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()),
-    '#ef8f39',
-    'shared/tokens.css loaded through panel-ui.css',
+    '#c9a45a',
+    'the Workbench uses the StG bench accent',
   );
   assert.equal(await page.locator('#first-run, .tour-lit').count(), 0, 'the onboarding tour is gone');
   noProblems(page);
@@ -704,6 +704,16 @@ await check('partisan tactical: G throws a grenade, Shift sprints, the fog hides
 await check('2.5-D sprite view: the ambush draws with the placeholder art and plays through the same simulation', async () => {
   const page = await open(browser, server.url + 'convoy/?seed=7');
   await page.waitForFunction(() => window.PARP_SPRITES?.ready, null, {timeout: 90000});
+  // every Workbench rifle has a gun sprite, and the Look panel dresses a rebel (saved per browser)
+  const looks = await page.evaluate(async () => {
+    const {MODELS} = await import('../workbench/models.js');
+    const guns = window.PARP_SPRITES.renderer.guns;
+    return {missing: Object.keys(MODELS).filter(id => !guns[id]), options: document.querySelectorAll('#look select').length};
+  });
+  assert.deepEqual(looks.missing, [], 'gun sprites for every Workbench rifle');
+  assert.ok(looks.options >= 6, 'the Look panel offers gun, body, hair, shirt, outfit and headgear');
+  await page.locator('#look label.row', {hasText: 'Gun'}).locator('select').selectOption('g3');
+  assert.match(await page.evaluate(() => localStorage.getItem('parp-sprite-looks')), /"gun":"g3"/);
   await page.locator('#start').click();
   await page.evaluate(() => {
     const {sim} = window.PARP_SPRITES;
@@ -730,16 +740,6 @@ await check('2.5-D sprite view: the ambush draws with the placeholder art and pl
   // the soundscape opened on the Start click and turned the shots and impacts into sound
   const heard = await page.evaluate(() => window.PARP_SPRITES.sound.stats.played);
   assert.ok(heard.shot > 0 && heard.impact > 0, `soundscape played ${JSON.stringify(heard)}`);
-  // every Workbench rifle has a gun sprite, and the Look panel dresses a rebel (saved per browser)
-  const looks = await page.evaluate(async () => {
-    const {MODELS} = await import('../workbench/models.js');
-    const guns = window.PARP_SPRITES.renderer.guns;
-    return {missing: Object.keys(MODELS).filter(id => !guns[id]), options: document.querySelectorAll('#look select').length};
-  });
-  assert.deepEqual(looks.missing, [], 'gun sprites for every Workbench rifle');
-  assert.ok(looks.options >= 6, 'the Look panel offers gun, body, hair, shirt, outfit and headgear');
-  await page.locator('#look label.row', {hasText: 'Gun'}).locator('select').selectOption('g3');
-  assert.match(await page.evaluate(() => localStorage.getItem('parp-sprite-looks')), /"gun":"g3"/);
   assert.ok(r.colours > 30, `the canvas shows textured art, not a flat fill (${r.colours} colours)`);
   noProblems(page);
   await page.close();
