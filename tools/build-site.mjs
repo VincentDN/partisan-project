@@ -39,6 +39,8 @@ const ALLOW = [
   'wiki',
   'docs/game-design-master-doc.html',
   'docs/moodboard',
+  'docs/handbook-viewer',
+  'docs/handbook-models.js',
   'inbound',
   'outbound',
 ];

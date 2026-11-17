@@ -6,9 +6,8 @@ import './frame.js';
 import {soundLayer} from './sound-layer.js';
 
 /** @param {{scene?: 'bench' | 'viewer'}} [options] bench: the music comes out of the old radio with the camp around it; viewer: clean. */
-export function bindMusicUI({scene = 'viewer'} = {}) {
-  const sound = soundLayer(),
-    prefs = sound.prefs;
+export function bindMusicUI({scene = 'viewer', sound = soundLayer()} = {}) {
+  const prefs = sound.prefs;
   const campaign = new URLSearchParams(location.search).has('campaign');
   sound.scene(campaign ? 'campaign' : scene);
   const toggle = document.querySelector('#music-toggle'),

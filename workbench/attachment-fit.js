@@ -19,6 +19,7 @@ export const FIT_PROFILES = {
   rpk: {under: [0.1, 0.054], side: [0.1, 0.101], optic: [-0.188, 0.136], travel: [-0.02, 0.02]},
 };
 FIT_PROFILES['spear-retro'] = FIT_PROFILES.spear;
+FIT_PROFILES['stg44-neuro-bash'] = FIT_PROFILES['stg44-astra-b'];
 
 export function localBounds(object, frame) {
   frame.updateWorldMatrix(true, true);

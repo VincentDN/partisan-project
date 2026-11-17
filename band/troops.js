@@ -10,6 +10,7 @@
 
 /** Equipment in the stash. gun: a gun sprite id; icon: an image path in the placeholder set. */
 export const GEAR = {
+  'stg44-neuro-bash': {label: 'StG 44 (2044) Neuro-Bash', kind: 'weapon', gun: 'set-assault'},
   ak74: {label: 'AK-74', kind: 'weapon', gun: 'set-assault'},
   ak74m: {label: 'AK-74M', kind: 'weapon', gun: 'ak74m'},
   ak15k: {label: 'AK-15K', kind: 'weapon', gun: 'ak15k'},
@@ -674,6 +675,7 @@ export const START_BAND = {
 
 /** The stolen depot stock: generous, so every path can be tried. */
 export const START_STASH = {
+  'stg44-neuro-bash': 1,
   ak74: 26,
   ak74m: 16,
   ak15k: 8,

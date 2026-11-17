@@ -1,6 +1,7 @@
 // StG 44 (2044) bench: the two competing rebuilds (A: LLM-Rebuild, B: Neuro-Bash), their finishes and attachment mounts.
 import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {correctNeuroMagazines} from '../neuro-magazines.js';
 
 // Where attachments sit, in metres (+x muzzle, +y up, +z the right side). Rail slots carry the x range a part may slide along.
 // Both rebuilds start from the same base model, so the rails line up within a few millimetres.
@@ -41,6 +42,7 @@ export const RIFLES = {
 async function load(v, M) {
   const gltf = await new GLTFLoader().loadAsync(new URL(`../../assets/models/weapons/${RIFLES[v].file}`, import.meta.url).href);
   const root = gltf.scene;
+  if (v === 'b') correctNeuroMagazines(root);
   let triangles = 0;
   root.traverse(o => {
     if (!o.isMesh) return;
