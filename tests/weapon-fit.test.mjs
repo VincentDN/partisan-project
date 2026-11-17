@@ -48,4 +48,9 @@ test('clearance uses the occupied magazine section, not the distant curve at its
   frame.add(mesh);
   const slice = new T.Box3(new T.Vector3(-2, -0.2, -0.1), new T.Vector3(2, 0, 0.1));
   assert.ok(Math.abs(frontInEnvelope(mesh, frame, slice) - 0.2) < 1e-6);
+  const hidden = new T.Mesh(new T.BoxGeometry(0.1, 0.2, 0.1));
+  hidden.position.x = 0.8;
+  hidden.visible = false;
+  frame.add(hidden);
+  assert.ok(Math.abs(frontInEnvelope(frame, frame, slice) - 0.2) < 1e-6);
 });
