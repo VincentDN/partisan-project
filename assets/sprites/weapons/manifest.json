@@ -58,5 +58,15 @@
     "label": "MCX retro textures",
     "file": "spear.png",
     "length": 1.209
+  },
+  "stg44-astra-a": {
+    "label": "StG 44 (2044) \u00b7 Magnific \u00b7 Tripo P2 A",
+    "file": "stg44.png",
+    "length": 0.953
+  },
+  "stg44-astra-b": {
+    "label": "StG 44 (2044) \u00b7 Magnific \u00b7 Tripo P2 B",
+    "file": "stg44.png",
+    "length": 0.953
   }
 }
