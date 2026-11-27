@@ -5,7 +5,7 @@ import {soundLayer} from './shared/sound-layer.js';
 const sound = soundLayer(); // created here, before the frame's pages ask for it
 const view = /** @type {HTMLIFrameElement} */ (document.querySelector('#view'));
 const base = new URL('./', location.href);
-const DEFAULT = 'intro/';
+const DEFAULT = 'docs/experience.html'; // the experience page is the homepage; Play opens intro/
 
 /** A page path inside this site, or null. Rejects other origins, scripts and anything that climbs out of the site. */
 export function safePath(p) {

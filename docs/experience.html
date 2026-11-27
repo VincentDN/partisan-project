@@ -14,8 +14,8 @@
   color-scheme:dark;
   --bg:#080908;--line:#24261f;
   --cream:#e7e0d0;--text:#d9d3c4;--dim:#a39d8f;--gold:#d6a344;
-  /* Condensed heavy display face and a DIN-like body face, from fonts already on the machine (no web fonts). */
-  --display:Impact,Haettenschweiler,"DIN Condensed","Bahnschrift Condensed","Arial Narrow Bold","Liberation Sans Narrow",sans-serif;
+  /* Condensed display face (regular weight) and a DIN-like body face, from fonts already on the machine (no web fonts). */
+  --display:"Bahnschrift Condensed",Bahnschrift,"Avenir Next Condensed","Roboto Condensed","Arial Narrow","Liberation Sans Narrow",sans-serif;
   --sans:Bahnschrift,"DIN Alternate","DIN Next","Segoe UI",system-ui,sans-serif;
   --gutter:clamp(16px,4vw,40px);
   /* Distressed edges: a speckled alpha mask from fractal noise. */
@@ -35,7 +35,7 @@ a{color:var(--cream)}a:hover{color:#fff}
 .wrap{max-width:1040px;margin:0 auto;padding:0 var(--gutter)}
 
 /* Type */
-h1,h2,h3{font-family:var(--display);font-weight:700;font-stretch:condensed;text-transform:uppercase;line-height:.92;letter-spacing:.005em;color:#fff;margin:0}
+h1,h2,h3{font-family:var(--display);font-weight:420;font-stretch:condensed;text-transform:uppercase;line-height:.92;letter-spacing:.005em;color:#fff;margin:0}
 .distress{-webkit-mask-image:repeating-linear-gradient(#000 0 .66em,transparent .66em .92em),var(--scuff);mask-image:repeating-linear-gradient(#000 0 .66em,transparent .66em .92em),var(--scuff);
   -webkit-mask-size:100% 100%,220px 220px;mask-size:100% 100%,220px 220px;-webkit-mask-composite:source-over;mask-composite:add}
 .eyebrow{font:600 12px/1.4 var(--sans);letter-spacing:.32em;text-transform:uppercase;color:var(--cream);margin:0 0 10px}
@@ -157,7 +157,7 @@ footer{font-size:13px;color:var(--dim);padding:24px 0 40px;border-top:1px solid 
 <footer><div class="wrap">Project: Partisan · experience page layout with placeholder images and copy.</div></footer>
 <script type="module">
 import {mountTopBar} from '../shared/topbar.js';
-mountTopBar({title: 'Experience', scene: 'viewer', current: 'experience', sticky: true, replaceHeader: false});
+mountTopBar({title: 'Experience', scene: 'viewer', current: 'home', sticky: true, replaceHeader: false});
 </script>
 </body>
 </html>

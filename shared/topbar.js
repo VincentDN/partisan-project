@@ -1,5 +1,5 @@
-// The top bar shared by every Partisan Project page: a thin strip of dark-green Nokia LCD with the lambda mark (back to the opening
-// scene), INDEX and GAME DESIGN DOC, and a small music player that drops down from one button. It replaces each page's
+// The top bar shared by every Partisan Project page: a thin strip of dark-green Nokia LCD with the lambda mark (home: the experience
+// page), HOME / ABOUT, INDEX, GAME DESIGN DOC, a highlighted PLAY (the opening scene) and a small music player that drops down from one button. It replaces each page's
 // own header and music controls.
 //
 //   import {mountTopBar} from '../shared/topbar.js';
@@ -11,7 +11,7 @@ const root = new URL('../', import.meta.url);
 const href = path => new URL(path, root).href;
 
 /**
- * @param {{title?: string, scene?: 'bench'|'viewer', current?: 'index'|'doc'|'intro'|string, overlay?: boolean, sticky?: boolean, replaceHeader?: boolean, light?: boolean}} [opts]
+ * @param {{title?: string, scene?: 'bench'|'viewer', current?: 'home'|'index'|'doc'|'intro'|string, overlay?: boolean, sticky?: boolean, replaceHeader?: boolean, light?: boolean}} [opts]
  *   light: the pale-green version, for the game design doc whose own bar is already dark
  *   current: which button is the page you are on (shown pressed instead of a link)
  */
@@ -43,15 +43,17 @@ export function mountTopBar({
     '<svg viewBox="0 0 32 32" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="square"><path d="M8 5 25 27M17.4 16.8 8 27"/></svg>';
   bar.innerHTML =
     link(
-      'intro',
+      'brand', // never shown as pressed: the mark always links home
       `${lambda}<span class="name">Partisan Project</span>`,
-      'intro/',
+      'docs/experience.html',
       'brand',
       'title="Return to home" aria-label="Partisan Project: return to home"',
     ) +
+    link('home', '<span class="long">Home / about</span><span class="short">Home</span>', 'docs/experience.html') +
     link('index', 'Index', 'menu/') +
     link('doc', '<span class="long">Game design doc</span><span class="short">Game doc</span>', 'docs/game-design-master-doc.html') +
     '<span class="spacer"></span>' +
+    link('intro', 'Play', 'intro/', 'play') +
     `<span class="music-wrap"><button id="music-menu" aria-haspopup="true" aria-expanded="false" aria-controls="music-player" title="Music"><span class="dot" aria-hidden="true"></span>♪<span class="sr-only"> Music player</span></button>` +
     `<div class="player" id="music-player" role="group" aria-label="Music player" hidden>` +
     `<div class="row"><button id="music-toggle" aria-pressed="false" aria-label="Background music">Music</button></div>` +
