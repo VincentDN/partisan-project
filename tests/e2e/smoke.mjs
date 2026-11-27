@@ -139,7 +139,9 @@ await check(
     assert.equal(await page.locator('.pbar a[href$="menu/"]').count(), 1, 'top bar has INDEX');
     assert.equal(await page.locator('.pbar a[href$="game-design-master-doc.html"]').count(), 1, 'top bar has GAME DESIGN DOC');
     assert.equal(await page.locator('.pbar a.brand[title="Return to home"]').count(), 1, 'lambda mark returns home');
-    assert.equal(await page.locator('.pbar > a:not(.brand)').count(), 2, 'top bar has only INDEX and GAME DESIGN DOC');
+    assert.equal(await page.locator('.pbar a.brand[href$="docs/experience.html"]').count(), 1, 'home is the experience page');
+    assert.equal(await page.locator('.pbar a.play[aria-current="page"]').count(), 1, 'PLAY is the opening scene, shown as current here');
+    assert.equal(await page.locator('.pbar > a:not(.brand)').count(), 4, 'top bar has HOME / ABOUT, INDEX, GAME DESIGN DOC and PLAY');
     assert.equal(await page.locator('#music-player').isHidden(), true, 'the player is a drop-down');
     await page.locator('#music-menu').click();
     assert.equal(await page.locator('#music-player').isVisible(), true);
@@ -147,14 +149,14 @@ await check(
     noProblems(page);
     await page.close();
     // The shell: pages open inside one frame that owns the sound layer, and the address follows the frame.
+    // the site root shows the experience page (the homepage) in the frame
     const shell = await open(browser, server.url);
     await shell.waitForFunction(
-      () => {
-        const b = document.querySelector('#view')?.contentDocument?.querySelector('#start');
-        return !!b && !b.disabled;
-      },
+      () => /Project: Partisan/.test(document.querySelector('#view')?.contentDocument?.querySelector('h1')?.textContent || ''),
       null,
-      {timeout: 90000},
+      {
+        timeout: 90000,
+      },
     );
     const same = () =>
       shell.evaluate(() => document.querySelector('#view').contentWindow.parent.parpSound === window.parpSound && !!window.parpSound);

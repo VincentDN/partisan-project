@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-11-27 — Experience page is the homepage
+
+- The site root now opens the experience page. The top bar gains **Home / about** (the experience page; the Partisan Project mark links there too) and a highlighted **Play** button that opens the opening scene, which used to be the root.
+- Experience page headings are about 40% lighter (weight 420 instead of 700), set in Bahnschrift Condensed where available.
+
 ## 2026-11-27 — Experience page restyle
 
 - The experience page now reads **Project: Partisan** under the eyebrow **Insurgency warfare simulator**, with condensed distressed headings, light film grain, a near-black background with cream and gold accents, cream filled and outlined buttons, gold section numbers and dash lists in the gameplay rows. Still placeholders throughout.
