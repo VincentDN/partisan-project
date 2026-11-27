@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-11-27 — Experience homepage (placeholder layout)
+
+- New page at `docs/experience.html`, linked from the game design doc hero: a full-width hero, a trailer section with a placeholder video, and four gameplay rows that alternate footage left and right, then a closing call to action. Every image, video and line of copy is a placeholder.
+
 ## 2026-11-13 — Weapon Workbench: canted showroom view
 
 - Every rifle in the Weapon Workbench now sits in the StG bench's canted view: rolled 0.2 rad about the bore in the hero and 3/4 views (0.1 at the muzzle, level in left, right and top), from the StG's camera angle, with its vignette over the showroom stage. The sidebar is unchanged.

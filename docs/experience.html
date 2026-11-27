@@ -1,0 +1,142 @@
+<!doctype html>
+<!-- Partisan Project experience homepage: full-width hero, trailer, alternating gameplay rows (all placeholders for now). -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex"><meta name="googlebot" content="noindex, nofollow"><meta name="seo_hidden" content="true">
+<meta name="theme-color" content="#0d100c">
+<title>Partisan Project | Experience</title>
+<meta name="description" content="Partisan Project experience homepage: hero, trailer and gameplay footage. Placeholder layout.">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<style>
+:root{
+  color-scheme:dark;
+  --ink:#0d100c;--panel:#151a12;--panel-2:#1c2317;--line:#2e3828;--text:#e4e8d6;--dim:#97a487;
+  --olive:#c8d4a8;--olive-2:#8fa070;--spark:#ef8f39;
+  --display:Impact,Haettenschweiler,"Arial Narrow Bold","Franklin Gothic Medium",sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;
+  --serif:Georgia,"Iowan Old Style","Palatino Linotype",serif;
+  --gutter:clamp(16px,4vw,40px);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
+body{margin:0;background:var(--ink);color:var(--text);font:17px/1.65 var(--serif);overflow-x:hidden}
+a{color:#9fd0e6}a:hover{color:#fff}
+:focus-visible{outline:2px solid var(--spark);outline-offset:3px}
+.skip{position:absolute;left:-999px;top:8px;background:var(--spark);color:#000;padding:8px 12px;z-index:60;font:700 13px var(--mono)}
+.skip:focus{left:8px}
+h1,h2,h3{font-family:var(--display);font-weight:800;text-transform:uppercase;letter-spacing:.04em;line-height:1.02;margin:0}
+.eyebrow{font:700 12px var(--mono);letter-spacing:.28em;text-transform:uppercase;color:var(--spark);margin:0 0 12px}
+.wrap{max-width:1280px;margin:0 auto;padding:0 var(--gutter)}
+.btn{display:inline-flex;align-items:center;min-height:44px;font:700 13px var(--mono);letter-spacing:.14em;text-transform:uppercase;padding:10px 18px;background:var(--spark);color:#111;text-decoration:none}
+.btn:hover{background:#fff;color:#000}
+.btn.ghost{background:transparent;color:var(--olive);border:1px solid var(--olive-2)}.btn.ghost:hover{background:var(--olive);color:#000}
+
+/* Placeholder media: a dithered panel with crosshair diagonals and a label, standing in for images and footage. */
+.ph{position:relative;display:grid;place-items:center;overflow:hidden;background:var(--panel-2);border:1px solid var(--line);
+  background-image:linear-gradient(45deg,#ffffff08 25%,transparent 25% 75%,#ffffff08 75%),linear-gradient(45deg,#ffffff08 25%,transparent 25% 75%,#ffffff08 75%);
+  background-size:6px 6px;background-position:0 0,3px 3px}
+.ph::before{content:"";position:absolute;inset:0;
+  background:linear-gradient(to top right,transparent calc(50% - .5px),var(--line) 50%,transparent calc(50% + .5px)),
+             linear-gradient(to bottom right,transparent calc(50% - .5px),var(--line) 50%,transparent calc(50% + .5px))}
+.ph span{position:relative;font:700 12px var(--mono);letter-spacing:.2em;text-transform:uppercase;color:var(--dim);background:var(--ink);padding:6px 12px;border:1px solid var(--line);text-align:center}
+
+/* Hero: full width, full viewport, copy pinned bottom left over the placeholder still. */
+.hero{position:relative;min-height:calc(100svh - 30px);display:flex;align-items:flex-end;border:0;border-bottom:1px solid var(--line)}
+.hero .ph{position:absolute;inset:0;border:0}
+.hero .ph span{position:absolute;top:24px;right:var(--gutter)}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 35%,#0d100cee);pointer-events:none}
+.hero .copy{position:relative;z-index:1;width:100%;padding-bottom:clamp(40px,8vh,96px)}
+.hero h1{font-size:clamp(56px,12vw,168px);color:var(--olive)}
+.hero .lede{font-size:clamp(18px,2.2vw,23px);max-width:44ch;margin:14px 0 0}
+.hero .row{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
+
+/* Trailer */
+.trailer{padding:clamp(64px,10vw,120px) 0}
+.trailer h2,.gameplay h2{font-size:clamp(34px,5vw,58px);color:#fff;margin-bottom:24px}
+.video{aspect-ratio:16/9}
+.video .play{position:relative;width:clamp(64px,9vw,104px);aspect-ratio:1;border-radius:50%;border:2px solid var(--olive);display:grid;place-items:center;background:#0d100ccc;margin-bottom:64px}
+.video .play::after{content:"";margin-left:8%;border-style:solid;border-width:14px 0 14px 24px;border-color:transparent transparent transparent var(--olive)}
+.video span{position:absolute;bottom:24px}
+
+/* Gameplay: rows alternate media left / text right, then text left / media right. */
+.gameplay{padding:0 0 clamp(64px,10vw,120px)}
+.feature{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:clamp(24px,5vw,72px);align-items:center;padding:clamp(40px,6vw,72px) 0;border-top:1px solid var(--line)}
+.feature:nth-of-type(even){grid-template-columns:minmax(0,5fr) minmax(0,7fr)}
+.feature:nth-of-type(even) .ph{order:2}
+.feature .ph{aspect-ratio:16/9}
+.feature h3{font-size:clamp(26px,3.4vw,40px);color:var(--olive);margin-bottom:12px}
+.feature p{margin:0;max-width:44ch;color:var(--text)}
+.feature .num{font:40px/1 var(--display);color:var(--olive-2);margin-bottom:8px}
+@media(max-width:780px){
+  .feature,.feature:nth-of-type(even){grid-template-columns:1fr}
+  .feature:nth-of-type(even) .ph{order:0}
+}
+
+/* Closing call to action */
+.closing{padding:clamp(64px,10vw,120px) 0;text-align:center;border-top:1px solid var(--line)}
+.closing h2{font-size:clamp(34px,6vw,72px);color:#fff}
+.closing .row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:24px}
+footer{font:12px/1.6 var(--mono);color:var(--dim);padding:24px 0 40px;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<main id="main">
+<section class="hero" aria-labelledby="h-title">
+  <div class="ph" role="img" aria-label="Placeholder: full-width hero image"><span>Hero image · placeholder</span></div>
+  <div class="copy wrap">
+    <p class="eyebrow">Placeholder eyebrow</p>
+    <h1 id="h-title">Partisan Project</h1>
+    <p class="lede">Placeholder tagline. One or two lines that say what the game is.</p>
+    <div class="row"><a class="btn" href="#trailer">Watch the trailer</a><a class="btn ghost" href="game-design-master-doc.html">Game design doc</a></div>
+  </div>
+</section>
+
+<section class="trailer" id="trailer" aria-labelledby="h-trailer">
+  <div class="wrap">
+    <p class="eyebrow">Trailer</p>
+    <h2 id="h-trailer">Placeholder trailer title</h2>
+    <div class="ph video" role="img" aria-label="Placeholder: trailer video, 16:9"><div class="play" aria-hidden="true"></div><span>Trailer video · placeholder</span></div>
+  </div>
+</section>
+
+<section class="gameplay" id="gameplay" aria-labelledby="h-gameplay">
+  <div class="wrap">
+    <p class="eyebrow">Gameplay</p>
+    <h2 id="h-gameplay">Placeholder gameplay title</h2>
+    <article class="feature" aria-labelledby="h-f1">
+      <div class="ph" role="img" aria-label="Placeholder: gameplay footage 1"><span>Gameplay footage 1 · placeholder</span></div>
+      <div><div class="num" aria-hidden="true">01</div><h3 id="h-f1">Placeholder feature one</h3><p>Placeholder copy. Two or three sentences about what the player does in this clip and why it matters.</p></div>
+    </article>
+    <article class="feature" aria-labelledby="h-f2">
+      <div class="ph" role="img" aria-label="Placeholder: gameplay footage 2"><span>Gameplay footage 2 · placeholder</span></div>
+      <div><div class="num" aria-hidden="true">02</div><h3 id="h-f2">Placeholder feature two</h3><p>Placeholder copy. Two or three sentences about what the player does in this clip and why it matters.</p></div>
+    </article>
+    <article class="feature" aria-labelledby="h-f3">
+      <div class="ph" role="img" aria-label="Placeholder: gameplay footage 3"><span>Gameplay footage 3 · placeholder</span></div>
+      <div><div class="num" aria-hidden="true">03</div><h3 id="h-f3">Placeholder feature three</h3><p>Placeholder copy. Two or three sentences about what the player does in this clip and why it matters.</p></div>
+    </article>
+    <article class="feature" aria-labelledby="h-f4">
+      <div class="ph" role="img" aria-label="Placeholder: gameplay footage 4"><span>Gameplay footage 4 · placeholder</span></div>
+      <div><div class="num" aria-hidden="true">04</div><h3 id="h-f4">Placeholder feature four</h3><p>Placeholder copy. Two or three sentences about what the player does in this clip and why it matters.</p></div>
+    </article>
+  </div>
+</section>
+
+<section class="closing" aria-labelledby="h-closing">
+  <div class="wrap">
+    <h2 id="h-closing">Placeholder closing line</h2>
+    <div class="row"><a class="btn" href="../menu/">Play the demos</a><a class="btn ghost" href="game-design-master-doc.html">Read the design doc</a></div>
+  </div>
+</section>
+</main>
+<footer><div class="wrap">Partisan Project · experience page layout with placeholder images and copy.</div></footer>
+<script type="module">
+import {mountTopBar} from '../shared/topbar.js';
+mountTopBar({title: 'Experience', scene: 'viewer', current: 'experience', sticky: true, replaceHeader: false});
+</script>
+</body>
+</html>
