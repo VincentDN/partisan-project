@@ -15,7 +15,7 @@
 .pbar .brand svg{width:12px;height:12px;flex:none}
 .pbar .spacer{flex:1}
 /* Play: the one highlighted control, the way into the game (the opening scene). */
-.pbar a.play{background:#ef8f39;color:#111;font-weight:700;padding:3px 14px;margin-right:6px}
+.pbar a.play{background:#ef8f39;color:#111;font-weight:700;padding:3px 14px;margin-right:8px}
 .pbar a.play:hover,.pbar a.play:focus-visible{background:#fff;color:#000;box-shadow:none}
 .pbar a.play[aria-current=page]{background:#ef8f39;color:#111}
 /* Music: one small button; the player drops down from it. */

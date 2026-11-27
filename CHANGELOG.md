@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-11-27 — Top bar: Play on the left; heading weight 560
+
+- **Play** now sits right after the Partisan Project mark. Experience page headings are weight 560, halfway between the earlier 700 and 420.
+
 ## 2026-11-27 — Experience page is the homepage
 
 - The site root now opens the experience page. The top bar gains **Home / about** (the experience page; the Partisan Project mark links there too) and a highlighted **Play** button that opens the opening scene, which used to be the root.
