@@ -5,81 +5,94 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex"><meta name="googlebot" content="noindex, nofollow"><meta name="seo_hidden" content="true">
-<meta name="theme-color" content="#0d100c">
-<title>Partisan Project | Experience</title>
-<meta name="description" content="Partisan Project experience homepage: hero, trailer and gameplay footage. Placeholder layout.">
+<meta name="theme-color" content="#080908">
+<title>Project: Partisan | Experience</title>
+<meta name="description" content="Project: Partisan experience homepage: hero, trailer and gameplay footage. Placeholder layout.">
 <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
 <style>
 :root{
   color-scheme:dark;
-  --ink:#0d100c;--panel:#151a12;--panel-2:#1c2317;--line:#2e3828;--text:#e4e8d6;--dim:#97a487;
-  --olive:#c8d4a8;--olive-2:#8fa070;--spark:#ef8f39;
-  --display:Impact,Haettenschweiler,"Arial Narrow Bold","Franklin Gothic Medium",sans-serif;
-  --mono:ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;
-  --serif:Georgia,"Iowan Old Style","Palatino Linotype",serif;
+  --bg:#080908;--line:#24261f;
+  --cream:#e7e0d0;--text:#d9d3c4;--dim:#a39d8f;--gold:#d6a344;
+  /* Condensed heavy display face and a DIN-like body face, from fonts already on the machine (no web fonts). */
+  --display:Impact,Haettenschweiler,"DIN Condensed","Bahnschrift Condensed","Arial Narrow Bold","Liberation Sans Narrow",sans-serif;
+  --sans:Bahnschrift,"DIN Alternate","DIN Next","Segoe UI",system-ui,sans-serif;
   --gutter:clamp(16px,4vw,40px);
+  /* Distressed edges: a speckled alpha mask from fractal noise. */
+  --scuff:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.38' numOctaves='3' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -16 0 0 0 12.4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  /* Film grain over the whole page. */
+  --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
-body{margin:0;background:var(--ink);color:var(--text);font:17px/1.65 var(--serif);overflow-x:hidden}
-a{color:#9fd0e6}a:hover{color:#fff}
-:focus-visible{outline:2px solid var(--spark);outline-offset:3px}
-.skip{position:absolute;left:-999px;top:8px;background:var(--spark);color:#000;padding:8px 12px;z-index:60;font:700 13px var(--mono)}
+body{margin:0;background:var(--bg);color:var(--text);font:17px/1.65 var(--sans);overflow-x:hidden}
+body::after{content:"";position:fixed;inset:0;z-index:40;pointer-events:none;background-image:var(--grain);opacity:.07;mix-blend-mode:overlay}
+a{color:var(--cream)}a:hover{color:#fff}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.skip{position:absolute;left:-999px;top:8px;background:var(--cream);color:#000;padding:8px 12px;z-index:60;font:700 13px var(--sans)}
 .skip:focus{left:8px}
-h1,h2,h3{font-family:var(--display);font-weight:800;text-transform:uppercase;letter-spacing:.04em;line-height:1.02;margin:0}
-.eyebrow{font:700 12px var(--mono);letter-spacing:.28em;text-transform:uppercase;color:var(--spark);margin:0 0 12px}
-.wrap{max-width:1280px;margin:0 auto;padding:0 var(--gutter)}
-.btn{display:inline-flex;align-items:center;min-height:44px;font:700 13px var(--mono);letter-spacing:.14em;text-transform:uppercase;padding:10px 18px;background:var(--spark);color:#111;text-decoration:none}
+.wrap{max-width:1040px;margin:0 auto;padding:0 var(--gutter)}
+
+/* Type */
+h1,h2,h3{font-family:var(--display);font-weight:700;font-stretch:condensed;text-transform:uppercase;line-height:.92;letter-spacing:.005em;color:#fff;margin:0}
+.distress{-webkit-mask-image:repeating-linear-gradient(#000 0 .66em,transparent .66em .92em),var(--scuff);mask-image:repeating-linear-gradient(#000 0 .66em,transparent .66em .92em),var(--scuff);
+  -webkit-mask-size:100% 100%,220px 220px;mask-size:100% 100%,220px 220px;-webkit-mask-composite:source-over;mask-composite:add}
+.eyebrow{font:600 12px/1.4 var(--sans);letter-spacing:.32em;text-transform:uppercase;color:var(--cream);margin:0 0 10px}
+.num{font:700 13px/1 var(--sans);letter-spacing:.32em;color:var(--gold);margin:0 0 12px}
+.fine{font-size:14px;color:var(--dim);margin:18px 0 0}
+
+/* Buttons: cream fill and cream outline, letterspaced caps */
+.btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:26px}
+.btn{display:inline-flex;align-items:center;gap:12px;min-height:48px;padding:12px 26px;font:700 14px/1 var(--sans);letter-spacing:.2em;text-transform:uppercase;text-decoration:none;
+  background:var(--cream);color:#111;border:1px solid var(--cream);transition:background .15s,color .15s}
 .btn:hover{background:#fff;color:#000}
-.btn.ghost{background:transparent;color:var(--olive);border:1px solid var(--olive-2)}.btn.ghost:hover{background:var(--olive);color:#000}
+.btn.ghost{background:transparent;color:var(--cream)}.btn.ghost:hover{background:var(--cream);color:#111}
+.btn svg{width:16px;height:16px;flex:none}
 
-/* Placeholder media: a dithered panel with crosshair diagonals and a label, standing in for images and footage. */
-.ph{position:relative;display:grid;place-items:center;overflow:hidden;background:var(--panel-2);border:1px solid var(--line);
-  background-image:linear-gradient(45deg,#ffffff08 25%,transparent 25% 75%,#ffffff08 75%),linear-gradient(45deg,#ffffff08 25%,transparent 25% 75%,#ffffff08 75%);
-  background-size:6px 6px;background-position:0 0,3px 3px}
+/* Placeholder media: dark plate, faint diagonals, small label */
+.ph{position:relative;display:grid;place-items:center;overflow:hidden;background:#151714 linear-gradient(160deg,#1d201b,#0e100e)}
 .ph::before{content:"";position:absolute;inset:0;
-  background:linear-gradient(to top right,transparent calc(50% - .5px),var(--line) 50%,transparent calc(50% + .5px)),
-             linear-gradient(to bottom right,transparent calc(50% - .5px),var(--line) 50%,transparent calc(50% + .5px))}
-.ph span{position:relative;font:700 12px var(--mono);letter-spacing:.2em;text-transform:uppercase;color:var(--dim);background:var(--ink);padding:6px 12px;border:1px solid var(--line);text-align:center}
+  background:linear-gradient(to top right,transparent calc(50% - .5px),#ffffff12 50%,transparent calc(50% + .5px)),
+             linear-gradient(to bottom right,transparent calc(50% - .5px),#ffffff12 50%,transparent calc(50% + .5px))}
+.ph span{position:relative;font:600 11px var(--sans);letter-spacing:.28em;text-transform:uppercase;color:var(--dim);padding:6px 12px;border:1px solid #ffffff24;background:#080908b3}
 
-/* Hero: full width, full viewport, copy pinned bottom left over the placeholder still. */
-.hero{position:relative;min-height:calc(100svh - 30px);display:flex;align-items:flex-end;border:0;border-bottom:1px solid var(--line)}
-.hero .ph{position:absolute;inset:0;border:0}
-.hero .ph span{position:absolute;top:24px;right:var(--gutter)}
-.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 35%,#0d100cee);pointer-events:none}
-.hero .copy{position:relative;z-index:1;width:100%;padding-bottom:clamp(40px,8vh,96px)}
-.hero h1{font-size:clamp(56px,12vw,168px);color:var(--olive)}
-.hero .lede{font-size:clamp(18px,2.2vw,23px);max-width:44ch;margin:14px 0 0}
-.hero .row{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
+/* Hero: full bleed, centred copy, vignette */
+.hero{position:relative;min-height:calc(100svh - 30px);display:grid;place-items:center;text-align:center;overflow:hidden}
+.hero>.ph{position:absolute;inset:0}
+.hero>.ph span{position:absolute;bottom:22px;right:var(--gutter)}
+.hero::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse at 50% 45%,#08090833 0%,#080908b3 70%,#080908 100%),linear-gradient(transparent 70%,var(--bg))}
+.hero .copy{position:relative;z-index:1;padding:80px var(--gutter)}
+.hero h1{font-size:clamp(64px,10.5vw,148px)}
+.hero .lede{max-width:40ch;margin:16px auto 0;font-size:clamp(16px,1.6vw,19px);color:var(--cream)}
 
 /* Trailer */
-.trailer{padding:clamp(64px,10vw,120px) 0}
-.trailer h2,.gameplay h2{font-size:clamp(34px,5vw,58px);color:#fff;margin-bottom:24px}
-.video{aspect-ratio:16/9}
-.video .play{position:relative;width:clamp(64px,9vw,104px);aspect-ratio:1;border-radius:50%;border:2px solid var(--olive);display:grid;place-items:center;background:#0d100ccc;margin-bottom:64px}
-.video .play::after{content:"";margin-left:8%;border-style:solid;border-width:14px 0 14px 24px;border-color:transparent transparent transparent var(--olive)}
-.video span{position:absolute;bottom:24px}
+.trailer{padding:clamp(56px,8vw,96px) 0 clamp(40px,6vw,72px);text-align:center}
+.trailer h2{font-size:clamp(44px,6vw,80px);margin-bottom:28px}
+.video{aspect-ratio:16/9;border:1px solid var(--line)}
+.video .play{position:relative;width:clamp(64px,8vw,92px);aspect-ratio:1;border:2px solid var(--cream);display:grid;place-items:center;background:#080908b3;margin-bottom:48px}
+.video .play::after{content:"";margin-left:8%;border-style:solid;border-width:13px 0 13px 22px;border-color:transparent transparent transparent var(--cream)}
+.video span{position:absolute;bottom:22px}
+.caption{font-size:14px;color:var(--dim);margin:12px 0 0}
 
-/* Gameplay: rows alternate media left / text right, then text left / media right. */
-.gameplay{padding:0 0 clamp(64px,10vw,120px)}
-.feature{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:clamp(24px,5vw,72px);align-items:center;padding:clamp(40px,6vw,72px) 0;border-top:1px solid var(--line)}
-.feature:nth-of-type(even){grid-template-columns:minmax(0,5fr) minmax(0,7fr)}
+/* Gameplay rows: media left / text right, then text left / media right */
+.feature{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.82fr);gap:clamp(28px,6vw,64px);align-items:center;padding:clamp(48px,7vw,96px) 0}
+.feature:nth-of-type(even){grid-template-columns:minmax(0,.82fr) minmax(0,1fr)}
 .feature:nth-of-type(even) .ph{order:2}
 .feature .ph{aspect-ratio:16/9}
-.feature h3{font-size:clamp(26px,3.4vw,40px);color:var(--olive);margin-bottom:12px}
-.feature p{margin:0;max-width:44ch;color:var(--text)}
-.feature .num{font:40px/1 var(--display);color:var(--olive-2);margin-bottom:8px}
-@media(max-width:780px){
-  .feature,.feature:nth-of-type(even){grid-template-columns:1fr}
-  .feature:nth-of-type(even) .ph{order:0}
-}
+.feature h3{font-size:clamp(56px,7vw,96px);margin-bottom:18px;overflow-wrap:anywhere}
+.feature p{margin:0;color:var(--dim);font-size:17px}
+.points{list-style:none;padding:0;margin:20px 0 0;border-top:1px solid var(--line)}
+.points li{position:relative;padding:10px 0 10px 18px;border-bottom:1px solid var(--line);font-size:15px;font-weight:600;color:var(--cream);line-height:1.5}
+.points li::before{content:"–";position:absolute;left:0;color:var(--gold)}
+@media(max-width:780px){.feature,.feature:nth-of-type(even){grid-template-columns:1fr}.feature:nth-of-type(even) .ph{order:0}}
 
-/* Closing call to action */
-.closing{padding:clamp(64px,10vw,120px) 0;text-align:center;border-top:1px solid var(--line)}
-.closing h2{font-size:clamp(34px,6vw,72px);color:#fff}
-.closing .row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:24px}
-footer{font:12px/1.6 var(--mono);color:var(--dim);padding:24px 0 40px;border-top:1px solid var(--line)}
+/* Closing */
+.closing{padding:clamp(64px,10vw,120px) 0;text-align:center}
+.closing h2{font-size:clamp(56px,8vw,112px)}
+.closing .lede{max-width:46ch;margin:16px auto 0;color:var(--dim);font-size:clamp(16px,1.6vw,19px)}
+footer{font-size:13px;color:var(--dim);padding:24px 0 40px;border-top:1px solid var(--line);text-align:center}
 </style>
 </head>
 <body>
@@ -87,53 +100,61 @@ footer{font:12px/1.6 var(--mono);color:var(--dim);padding:24px 0 40px;border-top
 <main id="main">
 <section class="hero" aria-labelledby="h-title">
   <div class="ph" role="img" aria-label="Placeholder: full-width hero image"><span>Hero image · placeholder</span></div>
-  <div class="copy wrap">
-    <p class="eyebrow">Placeholder eyebrow</p>
-    <h1 id="h-title">Partisan Project</h1>
-    <p class="lede">Placeholder tagline. One or two lines that say what the game is.</p>
-    <div class="row"><a class="btn" href="#trailer">Watch the trailer</a><a class="btn ghost" href="game-design-master-doc.html">Game design doc</a></div>
+  <div class="copy">
+    <p class="eyebrow">Insurgency warfare simulator</p>
+    <h1 id="h-title" class="distress">Project: Partisan</h1>
+    <p class="lede">Placeholder tagline. One or two lines that say what the game is and why it matters.</p>
+    <div class="btns">
+      <a class="btn" href="#trailer"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M4 2l10 6-10 6z"/></svg>Watch the trailer</a>
+      <a class="btn ghost" href="game-design-master-doc.html">Game design doc</a>
+    </div>
+    <p class="fine">Placeholder line: platform, price or status.</p>
   </div>
 </section>
 
 <section class="trailer" id="trailer" aria-labelledby="h-trailer">
   <div class="wrap">
     <p class="eyebrow">Trailer</p>
-    <h2 id="h-trailer">Placeholder trailer title</h2>
+    <h2 id="h-trailer" class="distress">Placeholder trailer</h2>
     <div class="ph video" role="img" aria-label="Placeholder: trailer video, 16:9"><div class="play" aria-hidden="true"></div><span>Trailer video · placeholder</span></div>
+    <p class="caption">Placeholder caption</p>
   </div>
 </section>
 
-<section class="gameplay" id="gameplay" aria-labelledby="h-gameplay">
+<section class="gameplay" id="gameplay" aria-label="Gameplay">
   <div class="wrap">
-    <p class="eyebrow">Gameplay</p>
-    <h2 id="h-gameplay">Placeholder gameplay title</h2>
     <article class="feature" aria-labelledby="h-f1">
-      <div class="ph" role="img" aria-label="Placeholder: gameplay footage 1"><span>Gameplay footage 1 · placeholder</span></div>
-      <div><div class="num" aria-hidden="true">01</div><h3 id="h-f1">Placeholder feature one</h3><p>Placeholder copy. Two or three sentences about what the player does in this clip and why it matters.</p></div>
+      <div class="ph" role="img" aria-label="Placeholder: gameplay footage 1"><span>Gameplay footage 1</span></div>
+      <div><p class="num">0 1</p><h3 id="h-f1" class="distress">Feature</h3><p>Placeholder copy. Two or three sentences about what the player does in this clip and why it matters.</p>
+        <ul class="points"><li>Placeholder point one</li><li>Placeholder point two, a little longer so it wraps to a second line</li><li>Placeholder point three</li></ul></div>
     </article>
     <article class="feature" aria-labelledby="h-f2">
-      <div class="ph" role="img" aria-label="Placeholder: gameplay footage 2"><span>Gameplay footage 2 · placeholder</span></div>
-      <div><div class="num" aria-hidden="true">02</div><h3 id="h-f2">Placeholder feature two</h3><p>Placeholder copy. Two or three sentences about what the player does in this clip and why it matters.</p></div>
+      <div class="ph" role="img" aria-label="Placeholder: gameplay footage 2"><span>Gameplay footage 2</span></div>
+      <div><p class="num">0 2</p><h3 id="h-f2" class="distress">Feature</h3><p>Placeholder copy. Two or three sentences about what the player does in this clip and why it matters.</p>
+        <ul class="points"><li>Placeholder point one</li><li>Placeholder point two, a little longer so it wraps to a second line</li><li>Placeholder point three</li></ul></div>
     </article>
     <article class="feature" aria-labelledby="h-f3">
-      <div class="ph" role="img" aria-label="Placeholder: gameplay footage 3"><span>Gameplay footage 3 · placeholder</span></div>
-      <div><div class="num" aria-hidden="true">03</div><h3 id="h-f3">Placeholder feature three</h3><p>Placeholder copy. Two or three sentences about what the player does in this clip and why it matters.</p></div>
+      <div class="ph" role="img" aria-label="Placeholder: gameplay footage 3"><span>Gameplay footage 3</span></div>
+      <div><p class="num">0 3</p><h3 id="h-f3" class="distress">Feature</h3><p>Placeholder copy. Two or three sentences about what the player does in this clip and why it matters.</p>
+        <ul class="points"><li>Placeholder point one</li><li>Placeholder point two, a little longer so it wraps to a second line</li><li>Placeholder point three</li></ul></div>
     </article>
     <article class="feature" aria-labelledby="h-f4">
-      <div class="ph" role="img" aria-label="Placeholder: gameplay footage 4"><span>Gameplay footage 4 · placeholder</span></div>
-      <div><div class="num" aria-hidden="true">04</div><h3 id="h-f4">Placeholder feature four</h3><p>Placeholder copy. Two or three sentences about what the player does in this clip and why it matters.</p></div>
+      <div class="ph" role="img" aria-label="Placeholder: gameplay footage 4"><span>Gameplay footage 4</span></div>
+      <div><p class="num">0 4</p><h3 id="h-f4" class="distress">Feature</h3><p>Placeholder copy. Two or three sentences about what the player does in this clip and why it matters.</p>
+        <ul class="points"><li>Placeholder point one</li><li>Placeholder point two, a little longer so it wraps to a second line</li><li>Placeholder point three</li></ul></div>
     </article>
   </div>
 </section>
 
 <section class="closing" aria-labelledby="h-closing">
   <div class="wrap">
-    <h2 id="h-closing">Placeholder closing line</h2>
-    <div class="row"><a class="btn" href="../menu/">Play the demos</a><a class="btn ghost" href="game-design-master-doc.html">Read the design doc</a></div>
+    <h2 id="h-closing" class="distress">Play the demos</h2>
+    <p class="lede">Placeholder line about the playable demos and the design document.</p>
+    <div class="btns"><a class="btn" href="../menu/">Open the demos</a><a class="btn ghost" href="game-design-master-doc.html">Read the design doc</a></div>
   </div>
 </section>
 </main>
-<footer><div class="wrap">Partisan Project · experience page layout with placeholder images and copy.</div></footer>
+<footer><div class="wrap">Project: Partisan · experience page layout with placeholder images and copy.</div></footer>
 <script type="module">
 import {mountTopBar} from '../shared/topbar.js';
 mountTopBar({title: 'Experience', scene: 'viewer', current: 'experience', sticky: true, replaceHeader: false});
