@@ -21,6 +21,17 @@ Things only the project owner can do. Agents cannot, or must not, do these. The 
 - [ ] **WP-X1, Bench Lab look.** Open `bench/`, fit a few parts and tell an agent what looks wrong (hand poses, camera, tray). Mark which handling sounds you like.
 
 
+## Partisan × Claudov combat module (27 November 2026)
+
+The plan is [partisan-claudov-roadmap.md](partisan-claudov-roadmap.md). These six answers unblock its phases 1 and 3.
+
+- [ ] **PXC-1, what leaves Claudov before it goes public as MIT.** Recommended: move all Partisan-derived content (rifles, parts, StG 44, handling takes, `showcase/`) to the Partisan fork, with the C2, C3 and C14 weapon tasks.
+- [ ] **PXC-2, the platform's name.** "Escape From Claudov" is a working title that echoes an existing game.
+- [ ] **PXC-3, roster size and going down.** Recommended: four operators; a downed operator is wounded 48 hours and loses their kit.
+- [ ] **PXC-4, weapon instances in the stash** (each weapon keeps its attachments and loaded rounds; needs campaign save version 2). Recommended: yes.
+- [ ] **PXC-5, solo or co-op campaign fights.** Recommended: solo first.
+- [ ] **PXC-6, the Partisan fork public or private.** Recommended: private for now.
+
 ## Whenever convenient
 - [ ] **WP-Q6, manual accessibility pass.** Screen reader (NVDA or VoiceOver), 200 % zoom, high-contrast mode, a real phone.
 
