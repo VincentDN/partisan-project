@@ -33,6 +33,7 @@ test('internal documents and raw sources are not published', () => {
     'intro/index.html',
     'menu/index.html',
     'docs/game-design-master-doc.html',
+    'docs/experience.html',
     'docs/master-roadmap.html',
     'docs/packets.json',
     'workbench/index.html',

@@ -38,6 +38,7 @@ const ALLOW = [
   'inventory',
   'wiki',
   'docs/game-design-master-doc.html',
+  'docs/experience.html',
   'docs/moodboard',
   'inbound',
   'outbound',

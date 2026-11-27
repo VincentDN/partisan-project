@@ -38,6 +38,7 @@ const pages = [
   ],
   ['viewer', 'viewer/', async p => p.waitForFunction(() => window.PARP_VIEWER?.ready, null, {timeout: 60000})],
   ['design document', 'docs/game-design-master-doc.html', async p => p.waitForSelector('#keyframes img')],
+  ['experience page', 'docs/experience.html', async p => p.waitForSelector('.pbar')],
   ['master roadmap', 'docs/master-roadmap.html', async p => p.waitForSelector('main h1')],
 ];
 let failures = 0;
